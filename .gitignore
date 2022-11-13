@@ -68,3 +68,4 @@ _site/
 .metadata/.plugins/org.eclipse.ui.workbench/workingsets.xml
 
 .vscode/
+/.apt_generated/

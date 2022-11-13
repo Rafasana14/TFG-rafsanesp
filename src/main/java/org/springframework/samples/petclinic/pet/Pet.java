@@ -30,12 +30,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PropertyComparator;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.samples.petclinic.model.NamedEntity;
 import org.springframework.samples.petclinic.owner.Owner;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Simple business object representing a pet.
@@ -46,6 +51,8 @@ import org.springframework.samples.petclinic.owner.Owner;
  */
 @Entity
 @Table(name = "pets")
+@Getter
+@Setter
 public class Pet extends NamedEntity {
 
 	@Column(name = "birth_date")        
@@ -55,10 +62,12 @@ public class Pet extends NamedEntity {
 	@ManyToOne
 	@JoinColumn(name = "type_id")
 	private PetType type;
+	
+	@NotNull
+	@Valid
+	@ManyToOne(optional=false)
+	protected Owner owner;
 
-	@ManyToOne
-	@JoinColumn(name = "owner_id")
-	private Owner owner;
 
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "pet", fetch = FetchType.EAGER)
 	private Set<Visit> visits;
@@ -79,13 +88,13 @@ public class Pet extends NamedEntity {
 		this.type = type;
 	}
 
-	public Owner getOwner() {
-		return this.owner;
-	}
-
-	public void setOwner(Owner owner) {
-		this.owner = owner;
-	}
+//	public Owner getOwner() {
+//		return this.owner;
+//	}
+//
+//	public void setOwner(Owner owner) {
+//		this.owner = owner;
+//	}
 
 	protected Set<Visit> getVisitsInternal() {
 		if (this.visits == null) {

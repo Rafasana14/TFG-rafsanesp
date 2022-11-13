@@ -88,7 +88,7 @@ public class PetController {
 	@GetMapping(value = "/pets/new")
 	public String initCreationForm(Owner owner, ModelMap model) {
 		Pet pet = new Pet();
-		owner.addPet(pet);
+		//owner.addPet(pet);
 		model.put("pet", pet);
 		return VIEWS_PETS_CREATE_OR_UPDATE_FORM;
 	}
@@ -101,7 +101,7 @@ public class PetController {
 		}
 		else {
                     try{
-                    	owner.addPet(pet);
+                    	//owner.addPet(pet);
                     	this.petService.savePet(pet);
                     }catch(DuplicatedPetNameException ex){
                         result.rejectValue("name", "duplicate", "already exists");

@@ -16,9 +16,12 @@
 package org.springframework.samples.petclinic.pet;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,19 +60,42 @@ public class PetService {
 
 	@Transactional(readOnly = true)
 	public Pet findPetById(int id) throws DataAccessException {
-		return petRepository.findById(id);
+		Optional<Pet> opt = petRepository.findById(id);
+		if(opt.isPresent()) return opt.get();
+		else return null;
+	}
+	
+	@Transactional(readOnly = true)
+	public Owner findOwnerByPetId(int id) throws DataAccessException {
+		return petRepository.findOwnerById(id);
+	}
+	
+	@Transactional(readOnly = true)
+	public List<Pet> findAllPetsByOwnerId(int id) throws DataAccessException {
+		return petRepository.findAllPetsByOwnerId(id);
 	}
 
 	@Transactional(rollbackFor = DuplicatedPetNameException.class)
 	public void savePet(Pet pet) throws DataAccessException, DuplicatedPetNameException {
-			if(pet.getOwner()!=null){
-				Pet otherPet=pet.getOwner().getPetwithIdDifferent(pet.getName(), pet.getId());
+			if(petRepository.findOwnerById(pet.getId())!=null){
+				Pet otherPet=getPetWithNameAndIdDifferent(pet);
             	if (StringUtils.hasLength(pet.getName()) &&  (otherPet!= null && otherPet.getId()!=pet.getId())) {            	
             		throw new DuplicatedPetNameException();
             	}else
                 	petRepository.save(pet);                
 			}else
 				petRepository.save(pet);
+	}
+	
+	private Pet getPetWithNameAndIdDifferent(Pet pet) {
+		String name = pet.getName().toLowerCase();
+		for (Pet p : findAllPetsByOwnerId(pet.getOwner().getId())) {
+			String compName = p.getName().toLowerCase();
+			if (compName.equals(name) && p.getId()!=pet.getId()) {
+				return pet;
+			}
+		}
+		return null;
 	}
 
 

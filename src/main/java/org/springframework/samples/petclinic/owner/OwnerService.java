@@ -16,6 +16,7 @@
 package org.springframework.samples.petclinic.owner;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -45,15 +46,24 @@ public class OwnerService {
 	public OwnerService(OwnerRepository ownerRepository) {
 		this.ownerRepository = ownerRepository;
 	}	
-
+	
 	@Transactional(readOnly = true)
-	public Owner findOwnerById(int id) throws DataAccessException {
-		return ownerRepository.findById(id);
+	public Iterable<Owner> findAll() throws DataAccessException {
+		return ownerRepository.findAll();
 	}
 
 	@Transactional(readOnly = true)
 	public Collection<Owner> findOwnerByLastName(String lastName) throws DataAccessException {
 		return ownerRepository.findByLastName(lastName);
+	}
+	
+	@Transactional(readOnly = true)
+	public Owner findOwnerById(int id) throws DataAccessException {
+		Optional<Owner> opt = ownerRepository.findById(id);
+		if(opt.isPresent()) {
+			return opt.get();
+		}
+		else return null;
 	}
 
 	@Transactional
@@ -64,6 +74,16 @@ public class OwnerService {
 		userService.saveUser(owner.getUser());
 		//creating authorities
 		authoritiesService.saveAuthorities(owner.getUser().getUsername(), "owner");
-	}		
+	}	
+	
+	@Transactional
+	public void deleteOwner(Owner owner) throws DataAccessException {
+		ownerRepository.delete(owner);
+	}
+	
+	@Transactional
+	public void deleteOwner(int id) throws DataAccessException {
+		ownerRepository.deleteById(id);
+	}
 
 }
