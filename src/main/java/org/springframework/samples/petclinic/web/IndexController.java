@@ -1,10 +1,15 @@
 package org.springframework.samples.petclinic.web;
 
-//@Controller
-//public class IndexController {
-//	
-//   @RequestMapping(value = "/api/v1", method = RequestMethod.GET)
-//   public String index() {
-//      return "target/classes/static/index.html";
-//   }
-//}
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.ModelAndView;
+
+@Controller
+public class IndexController {
+
+	@GetMapping("")
+	public ModelAndView home() {
+		ModelAndView mav = new ModelAndView("index");
+		return mav;
+	}
+}
