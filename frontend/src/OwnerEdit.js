@@ -24,7 +24,7 @@ class OwnerEdit extends Component {
 
     async componentDidMount() {
         if (this.props.match.params.id !== 'new') {
-            const owner = await (await fetch(`/api/v1/owner/${this.props.match.params.id}`)).json();
+            const owner = await (await fetch(`/api/v1/owners/${this.props.match.params.id}`)).json();
             this.setState({item: owner});
         }
     }
@@ -41,7 +41,7 @@ class OwnerEdit extends Component {
     async handleSubmit(event) {
         event.preventDefault();
         const {item} = this.state;
-    
+        
         await fetch('/api/v1/owners' + (item.id ? '/' + item.id : ''), {
             method: (item.id) ? 'PUT' : 'POST',
             headers: {
@@ -84,7 +84,7 @@ class OwnerEdit extends Component {
                     </FormGroup>
                     <FormGroup>
                         <Label for="telephone">Telephone</Label>
-                        <Input type="telephone" name="telephone" id="telephone" value={item.telephone || ''}
+                        <Input type="tel" pattern="[0-9]{9}" name="telephone" id="telephone" value={item.telephone || ''}
                                onChange={this.handleChange} autoComplete="telephone"/>
                     </FormGroup>
                     <FormGroup>

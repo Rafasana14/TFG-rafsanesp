@@ -65,7 +65,7 @@ public class Pet extends NamedEntity {
 	
 	@NotNull
 	@Valid
-	@ManyToOne(optional=false)
+	@ManyToOne(optional=false, cascade = CascadeType.ALL)
 	protected Owner owner;
 
 

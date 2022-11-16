@@ -16,10 +16,12 @@
 package org.springframework.samples.petclinic.owner;
 
 import java.util.Collection;
-import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
+import org.springframework.samples.petclinic.pet.PetRepository;
 import org.springframework.samples.petclinic.user.AuthoritiesService;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.stereotype.Service;
@@ -38,6 +40,9 @@ public class OwnerService {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private PetRepository petRepository;
 	
 	@Autowired
 	private AuthoritiesService authoritiesService;
@@ -59,21 +64,28 @@ public class OwnerService {
 	
 	@Transactional(readOnly = true)
 	public Owner findOwnerById(int id) throws DataAccessException {
-		Optional<Owner> opt = ownerRepository.findById(id);
-		if(opt.isPresent()) {
-			return opt.get();
-		}
-		else return null;
+		return this.ownerRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Owner","ID",id));
 	}
 
 	@Transactional
-	public void saveOwner(Owner owner) throws DataAccessException {
+	public Owner saveOwner(Owner owner) throws DataAccessException {
 		//creating owner
 		ownerRepository.save(owner);		
 		//creating user
 		userService.saveUser(owner.getUser());
 		//creating authorities
 		authoritiesService.saveAuthorities(owner.getUser().getUsername(), "owner");
+		
+		return owner;
+	}
+	
+	@Transactional
+	public Owner updateOwner(Owner owner, int id) throws DataAccessException {
+		Owner toUpdate = findOwnerById(id);
+		BeanUtils.copyProperties(owner, toUpdate, "id");
+		ownerRepository.save(toUpdate);
+		
+		return toUpdate;
 	}	
 	
 	@Transactional
@@ -83,7 +95,11 @@ public class OwnerService {
 	
 	@Transactional
 	public void deleteOwner(int id) throws DataAccessException {
-		ownerRepository.deleteById(id);
+		Owner toDelete=findOwnerById(id);
+//		List<Pet> petsToDelete = this.ownerRepository.findPetsOfOwner(id);
+//		petRepository.deleteAll(petsToDelete);
+		ownerRepository.deletePetsOfOwner(id);
+		ownerRepository.delete(toDelete);
 	}
 
 }

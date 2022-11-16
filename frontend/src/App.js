@@ -14,7 +14,7 @@ class App extends Component {
           <Switch>
             <Route path='/' exact={true} component={Home}/>
             <Route path='/api/v1/owners' exact={true} component={OwnerList}/>
-            <Route path='/api/v1/owners/:id/edit' component={OwnerEdit}/>
+            <Route path='/api/v1/owners/:id' component={OwnerEdit}/>
             <Route path='/api/v1/vets' exact={true} component={VetList}/>
           </Switch>
         </Router>

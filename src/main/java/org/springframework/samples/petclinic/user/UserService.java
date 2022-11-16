@@ -16,10 +16,9 @@
 package org.springframework.samples.petclinic.user;
 
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +44,7 @@ public class UserService {
 		userRepository.save(user);
 	}
 	
-	public Optional<User> findUser(String username) {
-		return userRepository.findById(username);
+	public User findUser(String username) {
+		return userRepository.findById(username).orElseThrow(()->new ResourceNotFoundException("User", "username", username));
 	}
 }

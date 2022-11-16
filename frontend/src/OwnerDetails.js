@@ -7,12 +7,12 @@ class OwnerList extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {owners: []};
+        this.state = {owner: []};
         this.remove = this.remove.bind(this);
     }
 
     componentDidMount() {
-        fetch('/api/v1/owners')
+        fetch('/api/v1/owners/')
             .then(response => response.json())
             .then(data => this.setState({owners: data}));
     }
@@ -46,7 +46,7 @@ class OwnerList extends Component {
                 <td>{owner.user.username}</td>
                 <td>
                     <ButtonGroup>
-                        <Button size="sm" color="primary" tag={Link} to={"/api/v1/owners/" + owner.id }>Edit</Button>
+                        <Button size="sm" color="primary" tag={Link} to={"/api/v1/owners/" + owner.id + "/edit"}>Edit</Button>
                         <Button size="sm" color="danger" onClick={() => this.remove(owner.id)}>Delete</Button>
                     </ButtonGroup>
                 </td>
@@ -84,4 +84,3 @@ class OwnerList extends Component {
 }
 
 export default OwnerList;
-

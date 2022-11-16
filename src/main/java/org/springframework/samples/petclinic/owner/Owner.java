@@ -28,6 +28,9 @@ import org.springframework.core.style.ToStringCreator;
 import org.springframework.samples.petclinic.model.Person;
 import org.springframework.samples.petclinic.user.User;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Simple JavaBean domain object representing an owner.
  *
@@ -37,6 +40,8 @@ import org.springframework.samples.petclinic.user.User;
  * @author Michael Isvy
  */
 @Entity
+@Getter
+@Setter
 @Table(name = "owners")
 public class Owner extends Person {
 
@@ -61,39 +66,6 @@ public class Owner extends Person {
 	@OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "username", referencedColumnName = "username")
 	private User user;
-	//
-	
-	public String getAddress() {
-		return this.address;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	public String getCity() {
-		return this.city;
-	}
-
-	public void setCity(String city) {
-		this.city = city;
-	}
-
-	public String getTelephone() {
-		return this.telephone;
-	}
-
-	public void setTelephone(String telephone) {
-		this.telephone = telephone;
-	}
 
 //	protected Set<Pet> getPetsInternal() {
 //		if (this.pets == null) {
