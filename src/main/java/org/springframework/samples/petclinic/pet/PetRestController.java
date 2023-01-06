@@ -15,23 +15,31 @@
  */
 package org.springframework.samples.petclinic.pet;
 
-import java.util.Collection;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
 import org.springframework.samples.petclinic.util.RestPreconditions;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -41,7 +49,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Arjen Poutsma
  */
 @RestController
-@RequestMapping("/api/v1/owners/{ownerId}")
+//@RequestMapping("/api/v1/owners/{ownerId}/pets")
 public class PetRestController {
 
 	private final PetService petService;
@@ -53,15 +61,15 @@ public class PetRestController {
 		this.ownerService = ownerService;
 	}
 
-	@ModelAttribute("types")
-	public Collection<PetType> populatePetTypes() {
-		return this.petService.findPetTypes();
-	}
-
-	@ModelAttribute("owner")
-	public Owner findOwner(@PathVariable("ownerId") int ownerId) {
-		return this.ownerService.findOwnerById(ownerId);
-	}
+//	@ModelAttribute("types")
+//	public Collection<PetType> populatePetTypes() {
+//		return this.petService.findPetTypes();
+//	}
+//
+//	@ModelAttribute("owner")
+//	public Owner findOwner(@PathVariable("ownerId") int ownerId) {
+//		return this.ownerService.findOwnerById(ownerId);
+//	}
 
 	@InitBinder("owner")
 	public void initOwnerBinder(WebDataBinder dataBinder) {
@@ -100,5 +108,53 @@ public class PetRestController {
 		}
 
 	}
+	
+
+	@GetMapping("/api/v1/pets")
+	public List<Pet> findAll() {
+		return StreamSupport.stream(petService.findAll().spliterator(), false)
+				.collect(Collectors.toList());
+	}
+	
+	@GetMapping("/api/v1/owners/{ownerId}/pets")
+	public List<Pet> findAllPetsOfOwner(@PathVariable("ownerId") int ownerId) {
+		return petService.findAllPetsByOwnerId(ownerId);
+	}
+	
+	@GetMapping(value = "/api/v1/pets/{petId}")
+    public ResponseEntity<Pet> findById(@PathVariable("petId") int petId) {
+		return new ResponseEntity<Pet>(petService.findPetById(petId),HttpStatus.OK);
+    }
+	
+	@PostMapping("/api/v1/owners/{ownerId}/pets")
+	@ResponseStatus(HttpStatus.CREATED)
+	public ResponseEntity<Pet> create(@RequestBody Pet pet, @PathVariable("ownerId") int ownerId)
+			throws URISyntaxException, DataAccessException, DuplicatedPetNameException{
+		Owner owner = ownerService.findOwnerById(ownerId);
+		RestPreconditions.checkNotNull(pet);
+		Pet newPet = new Pet();
+		BeanUtils.copyProperties(pet, newPet,"id");
+		newPet.setOwner(owner);
+		Pet savedPet = this.petService.savePet(newPet);
+		
+		return ResponseEntity.created(new URI("/clients/" + savedPet.getId())).body(savedPet);
+		//return new ResponseEntity<Owner>(this.ownerService.saveOwner(owner),HttpStatus.CREATED);
+	}
+
+
+	@PutMapping(value = "/api/v1/owners/{ownerId}/pets/{petId}")
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<Pet> update(@PathVariable("petId") int petId,@PathVariable("ownerId") int ownerId,
+			@RequestBody @Valid Pet pet ) {
+		 RestPreconditions.checkNotNull(pet);
+	     RestPreconditions.checkNotNull(ownerService.findOwnerById(ownerId));
+	     return new ResponseEntity<Pet>(this.petService.updatePet(pet,petId),HttpStatus.OK);
+	}
+	
+	@DeleteMapping(value = "/api/v1/owners/{ownerId}/pets/{petId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void delete(@PathVariable("petId") int id) {
+        petService.deletePet(id);
+    }
 
 }

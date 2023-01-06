@@ -10,5 +10,10 @@ package org.springframework.samples.petclinic.pet.exceptions;
  * @author japarejo
  */
 public class DuplicatedPetNameException extends Exception{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3330551940727004798L;
     
 }

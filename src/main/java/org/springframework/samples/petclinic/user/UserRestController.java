@@ -35,7 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Michael Isvy
  */
 @RestController
-@RequestMapping("api/v1/users")
+@RequestMapping("/api/v1/users")
 class UserRestController {
 
 	private final OwnerService ownerService;
@@ -56,6 +56,5 @@ class UserRestController {
         RestPreconditions.checkNotNull(owner);
         ownerService.saveOwner(owner);
     }
-
 
 }

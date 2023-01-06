@@ -40,11 +40,14 @@ public class UserService {
 
 	@Transactional
 	public void saveUser(User user) throws DataAccessException {
-		user.setEnabled(true);
 		userRepository.save(user);
 	}
 	
 	public User findUser(String username) {
 		return userRepository.findById(username).orElseThrow(()->new ResourceNotFoundException("User", "username", username));
+	}
+	
+	public Boolean existsUser(String username) {
+		return userRepository.existsById(username);
 	}
 }

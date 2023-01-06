@@ -39,6 +39,11 @@ public class AuthoritiesService {
 		this.authoritiesRepository = authoritiesRepository;
 		this.userService = userService;
 	}
+	
+	@Transactional(readOnly = true)
+	public Authorities findByAuthority(String authority) {
+		return this.authoritiesRepository.findByName(authority).orElseThrow(()->new ResourceNotFoundException("Authority","Name",authority));
+	}
 
 	@Transactional
 	public void saveAuthorities(Authorities authorities) throws DataAccessException {

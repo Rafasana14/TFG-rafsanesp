@@ -61,11 +61,6 @@ public class OwnerRestController {
 		this.userService = userService;
 	}
 
-//	@InitBinder
-//	public void setAllowedFields(WebDataBinder dataBinder) {
-//		dataBinder.setDisallowedFields("id");
-//	}
-
 	@GetMapping
 	public List<Owner> findAll() {
 		return StreamSupport.stream(ownerService.findAll().spliterator(), false)

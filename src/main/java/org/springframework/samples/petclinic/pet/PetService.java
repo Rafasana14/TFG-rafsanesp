@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.owner.Owner;
@@ -53,11 +54,10 @@ public class PetService {
 		return petRepository.findPetTypes();
 	}
 	
-	@Transactional
-	public void saveVisit(Visit visit) throws DataAccessException {
-		visitRepository.save(visit);
+	public Collection<Pet> findAll() {
+		return (List<Pet>)petRepository.findAll();
 	}
-
+	
 	@Transactional(readOnly = true)
 	public Pet findPetById(int id) throws DataAccessException {
 		Optional<Pet> opt = petRepository.findById(id);
@@ -76,7 +76,7 @@ public class PetService {
 	}
 
 	@Transactional(rollbackFor = DuplicatedPetNameException.class)
-	public void savePet(Pet pet) throws DataAccessException, DuplicatedPetNameException {
+	public Pet savePet(Pet pet) throws DataAccessException, DuplicatedPetNameException {
 			if(petRepository.findOwnerById(pet.getId())!=null){
 				Pet otherPet=getPetWithNameAndIdDifferent(pet);
             	if (StringUtils.hasLength(pet.getName()) &&  (otherPet!= null && otherPet.getId()!=pet.getId())) {            	
@@ -85,6 +85,8 @@ public class PetService {
                 	petRepository.save(pet);                
 			}else
 				petRepository.save(pet);
+			
+			return pet;
 	}
 	
 	private Pet getPetWithNameAndIdDifferent(Pet pet) {
@@ -97,10 +99,39 @@ public class PetService {
 		}
 		return null;
 	}
-
-
+	
+	@Transactional
+	public Pet updatePet(Pet pet, int id) throws DataAccessException {
+		Pet toUpdate = findPetById(id);
+		BeanUtils.copyProperties(pet, toUpdate, "id");
+		petRepository.save(toUpdate);
+		
+		return toUpdate;
+	}	
+	
+	@Transactional
+	public void deletePet(Pet pet) throws DataAccessException {
+		petRepository.deleteVisitsOfPet(pet.getId());
+		petRepository.delete(pet);
+	}
+	
+	@Transactional
+	public void deletePet(int id) throws DataAccessException {
+		Pet toDelete=findPetById(id);
+		petRepository.deleteVisitsOfPet(toDelete.getId());
+		petRepository.delete(toDelete);
+	}
+	
+// Visit Services
+	@Transactional(readOnly = true)
 	public Collection<Visit> findVisitsByPetId(int petId) {
 		return visitRepository.findByPetId(petId);
 	}
+	
+	@Transactional
+	public void saveVisit(Visit visit) throws DataAccessException {
+		visitRepository.save(visit);
+	}
+	
 
 }
