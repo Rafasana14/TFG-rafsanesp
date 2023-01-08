@@ -10,6 +10,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -129,11 +130,29 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/api/auth/signup").permitAll()
 				.antMatchers("/").permitAll()
 				.antMatchers("/#/").permitAll()
-				.anyRequest().authenticated();
+				.antMatchers("/v2/api-docs").permitAll()
+				.antMatchers("/swagger-ui.html").permitAll()
+				.antMatchers("/api/v1/**").authenticated();
+			
+				//.anyRequest().authenticated();
 
 			http.headers().frameOptions().sameOrigin();
 			http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 		}
-	
+		
+		@Override
+	    public void configure(WebSecurity web) throws Exception {
+	        web.ignoring()
+	                .antMatchers("/index.html")
+	                .antMatchers("/error")
+	                .antMatchers("/swagger-ui.html")
+	                .antMatchers("/swagger-resources");
+	    }
+		
+//		public void addResourceHandlers(ResourceHandlerRegistry registry) {
+//			registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+//
+//			registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+//		}
 
 }

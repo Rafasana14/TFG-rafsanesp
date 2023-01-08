@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -40,7 +39,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author Ken Krebs
  * @author Arjen Poutsma
  */
-@Controller
+//@Controller
 @RequestMapping("/owners/{ownerId}")
 public class PetController {
 
