@@ -54,6 +54,7 @@ public class PetService {
 		return petRepository.findPetTypes();
 	}
 	
+	@Transactional(readOnly = true)
 	public Collection<Pet> findAll() {
 		return (List<Pet>)petRepository.findAll();
 	}
@@ -77,7 +78,8 @@ public class PetService {
 
 	@Transactional(rollbackFor = DuplicatedPetNameException.class)
 	public Pet savePet(Pet pet) throws DataAccessException, DuplicatedPetNameException {
-			if(petRepository.findOwnerById(pet.getId())!=null){
+		
+			if(pet.getOwner()!=null){
 				Pet otherPet=getPetWithNameAndIdDifferent(pet);
             	if (StringUtils.hasLength(pet.getName()) &&  (otherPet!= null && otherPet.getId()!=pet.getId())) {            	
             		throw new DuplicatedPetNameException();

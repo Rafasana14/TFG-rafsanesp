@@ -15,14 +15,24 @@
  */
 package org.springframework.samples.petclinic.user;
 
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.samples.petclinic.owner.Owner;
-import org.springframework.samples.petclinic.owner.OwnerService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.util.RestPreconditions;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -38,11 +48,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/users")
 class UserRestController {
 
-	private final OwnerService ownerService;
+	private final UserService userService;
 
 	@Autowired
-	public UserRestController(OwnerService clinicService) {
-		this.ownerService = clinicService;
+	public UserRestController(UserService userService) {
+		this.userService = userService;
 	}
 
 	@InitBinder
@@ -50,11 +60,42 @@ class UserRestController {
 		dataBinder.setDisallowedFields("id");
 	}
 	
+	@GetMapping
+	public List<User> findAll() {
+		return StreamSupport.stream(userService.findAll().spliterator(), false)
+				.collect(Collectors.toList());
+	}
+	
+	@GetMapping(value = "{username}")
+    public ResponseEntity<User> findById(@PathVariable("username") String username) {
+		return new ResponseEntity<User>(userService.findUser(username),HttpStatus.OK);
+    }
+	
 	@PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody Owner owner) {
-        RestPreconditions.checkNotNull(owner);
-        ownerService.saveOwner(owner);
+    public void create(@RequestBody User user) {
+        RestPreconditions.checkNotNull(user);
+        userService.saveUser(user);
+    }
+	
+	@PutMapping(value = "{username}")
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<User> update(@PathVariable("username") String username, @RequestBody @Valid User user ) {
+		 RestPreconditions.checkNotNull(user);
+	     RestPreconditions.checkNotNull(userService.findUser(user.getUsername()));
+	     return new ResponseEntity<User>(this.userService.updateUser(user,username),HttpStatus.OK);
+	}
+	
+	@DeleteMapping(value = "{username}")
+    @ResponseStatus(HttpStatus.OK)
+    public void delete(@PathVariable("username") String username) {
+        try {
+			userService.deleteUser(username);
+		} catch (ResourceNotFoundException e) {
+			//Mandar a otra vista de error
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
 }

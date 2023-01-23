@@ -21,8 +21,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
-import org.springframework.samples.petclinic.user.AuthoritiesService;
-import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,18 +35,18 @@ public class OwnerService {
 
 	private OwnerRepository ownerRepository;	
 	
-	private UserService userService;
-	
-//	@Autowired
-//	private PetRepository petRepository;
-	
-	private AuthoritiesService authoritiesService;
+//	private UserService userService;
+//	
+////	@Autowired
+////	private PetRepository petRepository;
+//	
+//	private AuthoritiesService authoritiesService;
 
 	@Autowired
-	public OwnerService(OwnerRepository ownerRepository,UserService userService,AuthoritiesService authoritiesService) {
+	public OwnerService(OwnerRepository ownerRepository) {
 		this.ownerRepository = ownerRepository;
-		this.userService = userService;
-		this.authoritiesService = authoritiesService;
+//		this.userService = userService;
+//		this.authoritiesService = authoritiesService;
 	}	
 	
 	@Transactional(readOnly = true)
@@ -71,9 +69,9 @@ public class OwnerService {
 		//creating owner
 		ownerRepository.save(owner);		
 		//creating user
-		userService.saveUser(owner.getUser());
+		//userService.saveUser(owner.getUser());
 		//creating authorities
-		authoritiesService.saveAuthorities(owner.getUser().getUsername(), "OWNER");
+		//authoritiesService.saveAuthorities(owner.getUser().getUsername(), "OWNER");
 		
 		return owner;
 	}

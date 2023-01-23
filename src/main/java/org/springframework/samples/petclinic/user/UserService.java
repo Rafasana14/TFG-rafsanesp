@@ -15,10 +15,15 @@
  */
 package org.springframework.samples.petclinic.user;
 
+import javax.validation.Valid;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
+import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.owner.OwnerService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,21 +38,66 @@ public class UserService {
 
 	private UserRepository userRepository;
 
+	private OwnerService ownerService;
+
 	@Autowired
-	public UserService(UserRepository userRepository) {
+	public UserService(UserRepository userRepository, OwnerService ownerService) {
 		this.userRepository = userRepository;
+		this.ownerService = ownerService;
 	}
 
 	@Transactional
 	public void saveUser(User user) throws DataAccessException {
 		userRepository.save(user);
 	}
-	
+
+	@Transactional(readOnly = true)
 	public User findUser(String username) {
-		return userRepository.findById(username).orElseThrow(()->new ResourceNotFoundException("User", "username", username));
+		return userRepository.findById(username)
+				.orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 	}
-	
+
+	@Transactional(readOnly = true)
+	public User findCurrentUser() {
+		return userRepository.findById(SecurityContextHolder.getContext().getAuthentication().getName())
+				.orElseThrow(() -> new ResourceNotFoundException("User", "Logged In", true));
+	}
+
 	public Boolean existsUser(String username) {
 		return userRepository.existsById(username);
 	}
+
+	@Transactional(readOnly = true)
+	public Iterable<User> findAll() {
+		return userRepository.findAll();
+	}
+
+	@Transactional
+	public User updateUser(@Valid User user, String username) {
+		User toUpdate = findUser(username);
+		BeanUtils.copyProperties(user, toUpdate);
+		userRepository.save(toUpdate);
+
+		return toUpdate;
+	}
+
+	@Transactional(readOnly = true)
+	public Owner findOwnerByUser(String username) throws DataAccessException {
+		return this.userRepository.findOwnerByUser(username)
+				.orElseThrow(() -> new ResourceNotFoundException("Owner", "User", username));
+	}
+
+	@Transactional
+	public void deleteUser(String username) {	
+		deleteRelations(username);
+		User toDelete = findUser(username);
+		userRepository.delete(toDelete);
+	}
+
+	private void deleteRelations(String username) {
+		Owner owner = findOwnerByUser(username);
+		ownerService.deleteOwner(owner.getId());
+
+	}
+
 }

@@ -31,7 +31,6 @@ import org.springframework.samples.petclinic.user.AuthoritiesService;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.RestPreconditions;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -72,7 +71,7 @@ public class OwnerRestController {
 		RestPreconditions.checkNotNull(owner);
 		Owner newOwner = new Owner();
 		BeanUtils.copyProperties(owner, newOwner,"id");
-		User user = userService.findUser(SecurityContextHolder.getContext().getAuthentication().getName());
+		User user = userService.findCurrentUser();
 		newOwner.setUser(user);
 		Owner savedOwner = this.ownerService.saveOwner(newOwner);
 		
@@ -92,6 +91,7 @@ public class OwnerRestController {
 	@DeleteMapping(value = "{ownerId}")
     @ResponseStatus(HttpStatus.OK)
     public void delete(@PathVariable("ownerId") int id) {
+		RestPreconditions.checkNotNull(ownerService.findOwnerById(id));
         ownerService.deleteOwner(id);
     }
 

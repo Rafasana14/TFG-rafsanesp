@@ -20,4 +20,10 @@ public class JwtResponse {
 		this.roles = roles;
 	}
 
+	@Override
+	public String toString() {
+		return "JwtResponse [token=" + token + ", type=" + type + ", username=" + username + ", roles=" + roles + "]";
+	}
+	
+
 }

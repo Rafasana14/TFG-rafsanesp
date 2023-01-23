@@ -125,16 +125,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 				.authorizeRequests().antMatchers("/resources/**", "/webjars/**", "/h2-console/**").permitAll()
+				//.antMatchers(HttpMethod.GET, "/**", "/oups").permitAll()
+				.antMatchers("/").permitAll()
 				.antMatchers("/api/auth/**").permitAll()
 				.antMatchers("/api/auth/signin").permitAll()
 				.antMatchers("/api/auth/signup").permitAll()
-				.antMatchers("/").permitAll()
-				.antMatchers("/#/").permitAll()
 				.antMatchers("/v2/api-docs").permitAll()
 				.antMatchers("/swagger-ui.html").permitAll()
-				.antMatchers("/api/v1/**").authenticated();
+				//.antMatchers("/api/v1/**").authenticated()
 			
-				//.anyRequest().authenticated();
+				.anyRequest().authenticated();
 
 			http.headers().frameOptions().sameOrigin();
 			http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);

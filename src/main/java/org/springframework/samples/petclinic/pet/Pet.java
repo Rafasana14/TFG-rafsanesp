@@ -24,7 +24,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.samples.petclinic.model.NamedEntity;
@@ -54,9 +53,8 @@ public class Pet extends NamedEntity {
 	@JoinColumn(name = "type_id")
 	private PetType type;
 	
-	@NotNull
 	@Valid
-	@ManyToOne(optional=false, cascade = CascadeType.ALL)
+	@ManyToOne(optional=true, cascade = CascadeType.ALL)
 	protected Owner owner;
 
 
