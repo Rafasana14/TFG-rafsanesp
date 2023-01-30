@@ -6,7 +6,7 @@ import { useLocalState } from "../util/useLocalStorage";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [jwt, setJwt] = useLocalState("jwt", "");
+  const [, setJwt] = useLocalState("jwt", "");
 
   function sendLoginRequest() {
     const reqBody = {
@@ -16,7 +16,7 @@ const Login = () => {
 
     fetch("api/auth/signin", {
       headers: { "Content-Type": "application/json" },
-      method: "post",
+      method: "POST",
       body: JSON.stringify(reqBody),
     })
       .then(function (response) {
@@ -26,8 +26,7 @@ const Login = () => {
           return Promise.reject("Invalid login attempt");
       })
       .then(function (data) {
-        console.log(data);
-        setJwt(data["token"]);
+        setJwt(data.token);
         window.location.href = "dashboard";
       }).catch((message) => {
         alert(message);
@@ -37,21 +36,21 @@ const Login = () => {
   return (
     <>
       <Container className="d-flex justify-content-center">
-        <Form onSubmit={() => sendLoginRequest()}>
+        <Form>
           <Col>
             <FormGroup>
               <Label for="username">Username</Label>
-              <Input type="text" name="username" id="username" value={username || ''}
+              <Input type="text" required name="username" id="username" value={username || ''}
                 onChange={(e) => setUsername(e.target.value)} autoComplete="username" />
             </FormGroup>
             <FormGroup>
               <Label for="password">Password</Label>
-              <Input type="password" name="password" id="password" value={password || ''}
+              <Input type="password" required name="password" id="password" value={password || ''}
                 onChange={(e) => setPassword(e.target.value)} autoComplete="lastName" />
             </FormGroup>
             <br />
             <FormGroup>
-              <Button color="primary" type="submit">Login</Button>{' '}
+              <Button color="primary" onClick={() => sendLoginRequest()}>Login</Button>{' '}
               <Button color="secondary" tag={Link} to="/">Cancel</Button>
             </FormGroup>
           </Col>

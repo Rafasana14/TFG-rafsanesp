@@ -3,6 +3,7 @@ package org.springframework.samples.petclinic.configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.samples.petclinic.configuration.jwt.AuthEntryPointJwt;
 import org.springframework.samples.petclinic.configuration.jwt.AuthTokenFilter;
 import org.springframework.samples.petclinic.configuration.services.UserDetailsServiceImpl;
@@ -124,15 +125,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			http.cors().and().csrf().disable()
 				.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-				.authorizeRequests().antMatchers("/resources/**", "/webjars/**", "/h2-console/**").permitAll()
-				//.antMatchers(HttpMethod.GET, "/**", "/oups").permitAll()
-				.antMatchers("/").permitAll()
+				.authorizeRequests().antMatchers("/resources/**", "/webjars/**", "/h2-console/**","/static/**").permitAll()
+				.antMatchers(HttpMethod.GET, "/**", "/oups").permitAll()
+				.antMatchers("/login").permitAll()
 				.antMatchers("/api/auth/**").permitAll()
-				.antMatchers("/api/auth/signin").permitAll()
-				.antMatchers("/api/auth/signup").permitAll()
 				.antMatchers("/v2/api-docs").permitAll()
 				.antMatchers("/swagger-ui.html").permitAll()
-				//.antMatchers("/api/v1/**").authenticated()
+				//.antMatchers("/api/v1/**").authenticated();
 			
 				.anyRequest().authenticated();
 
@@ -143,7 +142,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		@Override
 	    public void configure(WebSecurity web) throws Exception {
 	        web.ignoring()
-	                .antMatchers("/index.html")
+	                //.antMatchers("/index.html")
+	        		.antMatchers("/static/**")
 	                .antMatchers("/error")
 	                .antMatchers("/swagger-ui.html")
 	                .antMatchers("/swagger-resources");

@@ -84,7 +84,7 @@ public class OwnerRestController {
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Owner> update(@PathVariable("ownerId") int ownerId, @RequestBody @Valid Owner owner ) {
 		 RestPreconditions.checkNotNull(owner);
-	     RestPreconditions.checkNotNull(ownerService.findOwnerById(owner.getId()));
+	     RestPreconditions.checkNotNull(ownerService.findOwnerById(ownerId));
 	     return new ResponseEntity<Owner>(this.ownerService.updateOwner(owner,ownerId),HttpStatus.OK);
 	}
 	

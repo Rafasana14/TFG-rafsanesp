@@ -88,8 +88,12 @@ public class UserService {
 	}
 
 	@Transactional
-	public void deleteUser(String username) {	
-		deleteRelations(username);
+	public void deleteUser(String username) {
+		try {
+			deleteRelations(username);		
+		}catch(ResourceNotFoundException e) {
+			System.out.println("Owner already deleted. Deleting user.");
+		}
 		User toDelete = findUser(username);
 		userRepository.delete(toDelete);
 	}

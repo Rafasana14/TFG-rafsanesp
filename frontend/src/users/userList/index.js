@@ -8,20 +8,21 @@ class UserList extends Component {
         super(props);
         this.state = { users: [] };
         this.remove = this.remove.bind(this);
-        this.jwt = window.localStorage.getItem("jwt");
+        this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
     }
 
     componentDidMount() {
         fetch("/api/v1/users", {
             headers: {
                 "Authorization": `Bearer ${this.jwt}`,
+                "Content-Type": "application/json",
             },
         }).then((response) => response.json())
             .then((data) => this.setState({ users: data }));
     }
 
-    async remove(id) {
-        await fetch(`/api/v1/users/${id}`, {
+    async remove(username) {
+        await fetch(`/api/v1/users/${username}`, {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${this.jwt}`,
@@ -29,8 +30,8 @@ class UserList extends Component {
                 "Content-Type": "application/json",
             },
         }).then(() => {
-            let updatedUsers = [...this.state.users].filter((i) => i.id !== id);
-            this.setState({ owners: updatedUsers });
+            let updatedUsers = [...this.state.users].filter((i) => i.username !== username);
+            this.setState({ users: updatedUsers });
         });
     }
 
@@ -43,7 +44,7 @@ class UserList extends Component {
 
         const userList = users.map((user) => {
             return (
-                <tr key={user.id}>
+                <tr key={user.username}>
                     <td>{user.username}</td>
                     <td>
                         <ButtonGroup>
@@ -51,14 +52,14 @@ class UserList extends Component {
                                 size="sm"
                                 color="primary"
                                 tag={Link}
-                                to={"/api/v1/users/" + user.id}
+                                to={"/api/v1/users/" + user.username}
                             >
                                 Edit
                             </Button>
                             <Button
                                 size="sm"
                                 color="danger"
-                                onClick={() => this.remove(user.id)}
+                                onClick={() => this.remove(user.username)}
                             >
                                 Delete
                             </Button>

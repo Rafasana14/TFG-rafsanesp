@@ -8,7 +8,7 @@ class OwnerList extends Component {
     super(props);
     this.state = { owners: [] };
     this.remove = this.remove.bind(this);
-    this.jwt = window.localStorage.getItem("jwt");
+    this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
   }
 
   componentDidMount() {

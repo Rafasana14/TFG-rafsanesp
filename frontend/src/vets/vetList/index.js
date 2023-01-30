@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, ButtonGroup, Container, Table } from 'reactstrap';
-import AppNavbar from './AppNavbar';
+// import AppNavbar from './AppNavbar';
 import { Link } from 'react-router-dom';
 
 class VetList extends Component {
@@ -9,10 +9,15 @@ class VetList extends Component {
         super(props);
         this.state = { vets: [] };
         this.remove = this.remove.bind(this);
+        this.jwt = window.localStorage.getItem("jwt");
     }
 
     componentDidMount() {
-        fetch('/api/v1/vets')
+        fetch('/api/v1/vets', {
+            headers: {
+                "Authorization": `Bearer ${this.jwt}`,
+            },
+        })
             .then(response => response.json())
             .then(data => this.setState({ vets: data }));
     }
@@ -21,6 +26,7 @@ class VetList extends Component {
         await fetch(`/api/v1/vets/${id}`, {
             method: 'DELETE',
             headers: {
+                "Authorization": `Bearer ${this.jwt}`,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }

@@ -82,13 +82,14 @@ class UserRestController {
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<User> update(@PathVariable("username") String username, @RequestBody @Valid User user ) {
 		 RestPreconditions.checkNotNull(user);
-	     RestPreconditions.checkNotNull(userService.findUser(user.getUsername()));
+	     RestPreconditions.checkNotNull(userService.findUser(username));
 	     return new ResponseEntity<User>(this.userService.updateUser(user,username),HttpStatus.OK);
 	}
 	
 	@DeleteMapping(value = "{username}")
     @ResponseStatus(HttpStatus.OK)
     public void delete(@PathVariable("username") String username) {
+		RestPreconditions.checkNotNull(userService.findUser(username));
         try {
 			userService.deleteUser(username);
 		} catch (ResourceNotFoundException e) {

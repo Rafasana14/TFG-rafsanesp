@@ -79,7 +79,7 @@ public class OwnerService {
 	@Transactional
 	public Owner updateOwner(Owner owner, int id) throws DataAccessException {
 		Owner toUpdate = findOwnerById(id);
-		BeanUtils.copyProperties(owner, toUpdate, "id");
+		BeanUtils.copyProperties(owner, toUpdate, "id","user");
 		ownerRepository.save(toUpdate);
 		
 		return toUpdate;

@@ -9,7 +9,7 @@ const Dashboard = () => {
     function createPet() {
         fetch("/api/v1/pets", {
             headers: {
-                "Content-type": "application/json",
+                "Content-Type": "application/json",
                 Authorization: `Bearer ${jwt}`,
             },
             method: "POST"
