@@ -16,10 +16,9 @@
 package org.springframework.samples.petclinic.user;
 
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,6 +39,11 @@ public class AuthoritiesService {
 		this.authoritiesRepository = authoritiesRepository;
 		this.userService = userService;
 	}
+	
+	@Transactional(readOnly = true)
+	public Authorities findByAuthority(String authority) {
+		return this.authoritiesRepository.findByName(authority).orElseThrow(()->new ResourceNotFoundException("Authority","Name",authority));
+	}
 
 	@Transactional
 	public void saveAuthorities(Authorities authorities) throws DataAccessException {
@@ -47,16 +51,15 @@ public class AuthoritiesService {
 	}
 	
 	@Transactional
-	public void saveAuthorities(String username, String role) throws DataAccessException {
+	public void saveAuthorities(String username, String role) throws ResourceNotFoundException {
 		Authorities authority = new Authorities();
-		Optional<User> user = userService.findUser(username);
-		if(user.isPresent()) {
-			authority.setUser(user.get());
-			authority.setAuthority(role);
-			//user.get().getAuthorities().add(authority);
-			authoritiesRepository.save(authority);
-		}else
-			throw new DataAccessException("User '"+username+"' not found!") {};
+		User user = userService.findUser(username);
+		//authority.setUser(user);
+		authority.setAuthority(role);
+		//user.get().getAuthorities().add(authority);
+		authoritiesRepository.save(authority);
+		user.setAuthority(authority);
+		userService.saveUser(user);
 	}
 
 

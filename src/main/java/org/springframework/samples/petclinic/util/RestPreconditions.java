@@ -1,6 +1,6 @@
 package org.springframework.samples.petclinic.util;
 
-import org.springframework.samples.petclinic.exceptions.MyResourceNotFoundException;
+import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 
 public final class RestPreconditions {
 	
@@ -20,7 +20,7 @@ public final class RestPreconditions {
      */
     public static void checkFound(final boolean expression) {
         if (!expression) {
-            throw new MyResourceNotFoundException();
+            throw new ResourceNotFoundException();
         }
     }
 
@@ -34,7 +34,7 @@ public final class RestPreconditions {
      */
     public static <T> T checkFound(final T resource) {
         if (resource == null) {
-            throw new MyResourceNotFoundException();
+            throw new ResourceNotFoundException();
         }
 
         return resource;
@@ -42,7 +42,7 @@ public final class RestPreconditions {
     
     public static <T> T checkNotNull(final T resource) {
         if (resource == null) {
-            throw new MyResourceNotFoundException();
+            throw new ResourceNotFoundException();
         }
 
         return resource;

@@ -7,6 +7,6 @@ package org.springframework.samples.petclinic.web;
 //	  @GetMapping({"/","/welcome"})
 //	  public String welcome(Map<String, Object> model) {	    
 //
-//	    return "/WEB-INF/jsp/welcome.jsp";
+//	    return "index.html";
 //	  }
 //}

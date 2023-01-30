@@ -16,12 +16,11 @@
 package org.springframework.samples.petclinic.owner;
 
 import java.util.Collection;
-import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.samples.petclinic.user.AuthoritiesService;
-import org.springframework.samples.petclinic.user.UserService;
+import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,15 +35,18 @@ public class OwnerService {
 
 	private OwnerRepository ownerRepository;	
 	
-	@Autowired
-	private UserService userService;
-	
-	@Autowired
-	private AuthoritiesService authoritiesService;
+//	private UserService userService;
+//	
+////	@Autowired
+////	private PetRepository petRepository;
+//	
+//	private AuthoritiesService authoritiesService;
 
 	@Autowired
 	public OwnerService(OwnerRepository ownerRepository) {
 		this.ownerRepository = ownerRepository;
+//		this.userService = userService;
+//		this.authoritiesService = authoritiesService;
 	}	
 	
 	@Transactional(readOnly = true)
@@ -59,31 +61,43 @@ public class OwnerService {
 	
 	@Transactional(readOnly = true)
 	public Owner findOwnerById(int id) throws DataAccessException {
-		Optional<Owner> opt = ownerRepository.findById(id);
-		if(opt.isPresent()) {
-			return opt.get();
-		}
-		else return null;
+		return this.ownerRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Owner","ID",id));
 	}
 
 	@Transactional
-	public void saveOwner(Owner owner) throws DataAccessException {
+	public Owner saveOwner(Owner owner) throws DataAccessException {
 		//creating owner
 		ownerRepository.save(owner);		
 		//creating user
-		userService.saveUser(owner.getUser());
+		//userService.saveUser(owner.getUser());
 		//creating authorities
-		authoritiesService.saveAuthorities(owner.getUser().getUsername(), "owner");
+		//authoritiesService.saveAuthorities(owner.getUser().getUsername(), "OWNER");
+		
+		return owner;
+	}
+	
+	@Transactional
+	public Owner updateOwner(Owner owner, int id) throws DataAccessException {
+		Owner toUpdate = findOwnerById(id);
+		BeanUtils.copyProperties(owner, toUpdate, "id","user");
+		ownerRepository.save(toUpdate);
+		
+		return toUpdate;
 	}	
 	
 	@Transactional
 	public void deleteOwner(Owner owner) throws DataAccessException {
+		ownerRepository.deletePetsOfOwner(owner.getId());
 		ownerRepository.delete(owner);
 	}
 	
 	@Transactional
 	public void deleteOwner(int id) throws DataAccessException {
-		ownerRepository.deleteById(id);
+		Owner toDelete=findOwnerById(id);
+//		List<Pet> petsToDelete = this.ownerRepository.findPetsOfOwner(id);
+//		petRepository.deleteAll(petsToDelete);
+		ownerRepository.deletePetsOfOwner(id);
+		ownerRepository.delete(toDelete);
 	}
 
 }

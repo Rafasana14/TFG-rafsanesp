@@ -15,19 +15,9 @@
  */
 package org.springframework.samples.petclinic.pet;
 
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -39,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class VisitRestController {
 
+	@SuppressWarnings("unused")
 	private final PetService petService;
 
 	@Autowired
@@ -51,18 +42,18 @@ public class VisitRestController {
 		dataBinder.setDisallowedFields("id");
 	}
 
-	@PostMapping(value = "/api/v1/owners/{ownerId}/pets/{petId}/visits/new")
-	@ResponseStatus(HttpStatus.CREATED)
-	public Visit createNewVisit(@PathVariable("petId") int petId, @RequestBody Visit visit, BindingResult result) {
-		Pet pet = this.petService.findPetById(petId);
-		pet.addVisit(visit);
-		this.petService.saveVisit(visit);
-		return visit;
-	}
-
-	@GetMapping(value = "/api/v1/owners/*/pets/{petId}/visits")
-	public List<Visit> showVisits(@PathVariable int petId, Map<String, Object> model) {
-		return this.petService.findPetById(petId).getVisits();
-	}
+//	@PostMapping(value = "/api/v1/owners/{ownerId}/pets/{petId}/visits/new")
+//	@ResponseStatus(HttpStatus.CREATED)
+//	public Visit createNewVisit(@PathVariable("petId") int petId, @RequestBody Visit visit, BindingResult result) {
+//		Pet pet = this.petService.findPetById(petId);
+//		pet.addVisit(visit);
+//		this.petService.saveVisit(visit);
+//		return visit;
+//	}
+//
+//	@GetMapping(value = "/api/v1/owners/*/pets/{petId}/visits")
+//	public List<Visit> showVisits(@PathVariable int petId, Map<String, Object> model) {
+//		return this.petService.findPetById(petId).getVisits();
+//	}
 
 }
