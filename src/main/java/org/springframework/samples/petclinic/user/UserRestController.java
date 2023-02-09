@@ -66,9 +66,9 @@ class UserRestController {
 				.collect(Collectors.toList());
 	}
 	
-	@GetMapping(value = "{username}")
-    public ResponseEntity<User> findById(@PathVariable("username") String username) {
-		return new ResponseEntity<User>(userService.findUser(username),HttpStatus.OK);
+	@GetMapping(value = "{id}")
+    public ResponseEntity<User> findById(@PathVariable("id") Integer id) {
+		return new ResponseEntity<User>(userService.findUser(id),HttpStatus.OK);
     }
 	
 	@PostMapping
@@ -78,20 +78,20 @@ class UserRestController {
         userService.saveUser(user);
     }
 	
-	@PutMapping(value = "{username}")
+	@PutMapping(value = "{userId}")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<User> update(@PathVariable("username") String username, @RequestBody @Valid User user ) {
+	public ResponseEntity<User> update(@PathVariable("userId") Integer id, @RequestBody @Valid User user ) {
 		 RestPreconditions.checkNotNull(user);
-	     RestPreconditions.checkNotNull(userService.findUser(username));
-	     return new ResponseEntity<User>(this.userService.updateUser(user,username),HttpStatus.OK);
+	     RestPreconditions.checkNotNull(userService.findUser(id));
+	     return new ResponseEntity<User>(this.userService.updateUser(user,id),HttpStatus.OK);
 	}
 	
-	@DeleteMapping(value = "{username}")
+	@DeleteMapping(value = "{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable("username") String username) {
-		RestPreconditions.checkNotNull(userService.findUser(username));
+    public void delete(@PathVariable("userId") int id) {
+		RestPreconditions.checkNotNull(userService.findUser(id));
         try {
-			userService.deleteUser(username);
+			userService.deleteUser(id);
 		} catch (ResourceNotFoundException e) {
 			//Mandar a otra vista de error
 			// TODO Auto-generated catch block

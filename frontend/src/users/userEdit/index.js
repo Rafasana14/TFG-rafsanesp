@@ -5,6 +5,7 @@ import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
 class UserEdit extends Component {
 
     emptyItem = {
+        id: null,
         username: '',
         password: '',
     };
@@ -17,19 +18,18 @@ class UserEdit extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
-        this.username = window.location.href.split("/api/v1/users/")[1];
-        this.oldUsername = "";
+        this.id = window.location.href.split("/api/v1/users/")[1];
     }
 
     async componentDidMount() {
-        if (this.username !== 'new') {
-            const user = await (await fetch(`/api/v1/users/${this.username}`, {
+        console.log(this.id)
+        if (this.id !== "new") {
+            const user = await (await fetch(`/api/v1/users/${this.id}`, {
                 headers: {
                     "Authorization": `Bearer ${this.jwt}`,
                 },
             })).json();
             this.setState({ item: user });
-            this.oldUsername = user.username;
         }
     }
 
@@ -45,10 +45,9 @@ class UserEdit extends Component {
     async handleSubmit(event) {
         event.preventDefault();
         const { item } = this.state;
-        console.log(this.oldUsername);
 
-        await fetch('/api/v1/users' + (item.username ? '/' + this.oldUsername : ''), {
-            method: (this.oldUsername !== "") ? 'PUT' : 'POST',
+        await fetch('/api/v1/users' + (item.id ? '/' + this.id : ''), {
+            method: item.id ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${this.jwt}`,
                 'Accept': 'application/json',
@@ -56,12 +55,12 @@ class UserEdit extends Component {
             },
             body: JSON.stringify(item),
         });
-        // window.location.href = '/api/v1/users';
+        window.location.href = '/api/v1/users';
     }
 
     render() {
         const { item } = this.state;
-        const title = <h2>{this.oldUsername !== "" ? 'Edit User' : 'Add User'}</h2>;
+        const title = <h2>{item.id ? 'Edit User' : 'Add User'}</h2>;
 
         return <div>
             {/* <AppNavbar /> */}

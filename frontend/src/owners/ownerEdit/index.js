@@ -5,6 +5,7 @@ import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
 class OwnerEdit extends Component {
 
     emptyItem = {
+        id: '',
         firstName: '',
         lastName: '',
         address: '',
@@ -61,7 +62,7 @@ class OwnerEdit extends Component {
 
     render() {
         const { item } = this.state;
-        const title = <h2>{item.id ? 'Edit Owner' : 'Add Owner'}</h2>;
+        const title = <h2>{item.id !== 'new' ? 'Edit Owner' : 'Add Owner'}</h2>;
 
         return <div>
             {/* <AppNavbar /> */}

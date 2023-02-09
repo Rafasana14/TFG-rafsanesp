@@ -33,7 +33,8 @@ import petclinic.payload.response.MessageResponse;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-
+	
+	@Autowired
 	AuthenticationManager authenticationManager;
 
 	private final UserService userService;
@@ -45,9 +46,8 @@ public class AuthController {
 	private final JwtUtils jwtUtils;
 
 	@Autowired
-	public AuthController(AuthenticationManager authenticationManager, UserService userService,
+	public AuthController(UserService userService,
 			AuthoritiesService authoritiesService, PasswordEncoder encoder, JwtUtils jwtUtils) {
-		this.authenticationManager = authenticationManager;
 		this.userService = userService;
 		this.authoritiesService = authoritiesService;
 		this.encoder = encoder;
@@ -67,7 +67,7 @@ public class AuthController {
 		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
 				.collect(Collectors.toList());
 
-		return ResponseEntity.ok().body(new JwtResponse(jwt, userDetails.getUsername(), roles));
+		return ResponseEntity.ok().body(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), roles));
 	}
 
 	@PostMapping("/signup")

@@ -53,18 +53,24 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public User findUser(String username) {
-		return userRepository.findById(username)
+		return userRepository.findByUsername(username)
 				.orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+	}
+	
+	@Transactional(readOnly = true)
+	public User findUser(Integer id) {
+		return userRepository.findById(id)
+				.orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 	}
 
 	@Transactional(readOnly = true)
 	public User findCurrentUser() {
-		return userRepository.findById(SecurityContextHolder.getContext().getAuthentication().getName())
+		return userRepository.findByUsername(SecurityContextHolder.getContext().getAuthentication().getName())
 				.orElseThrow(() -> new ResourceNotFoundException("User", "Logged In", true));
 	}
 
 	public Boolean existsUser(String username) {
-		return userRepository.existsById(username);
+		return userRepository.existsByUsername(username);
 	}
 
 	@Transactional(readOnly = true)
@@ -73,9 +79,9 @@ public class UserService {
 	}
 
 	@Transactional
-	public User updateUser(@Valid User user, String username) {
-		User toUpdate = findUser(username);
-		BeanUtils.copyProperties(user, toUpdate);
+	public User updateUser(@Valid User user, Integer idToUpdate) {
+		User toUpdate = findUser(idToUpdate);
+		BeanUtils.copyProperties(user, toUpdate, "id");
 		userRepository.save(toUpdate);
 
 		return toUpdate;
@@ -87,14 +93,25 @@ public class UserService {
 				.orElseThrow(() -> new ResourceNotFoundException("Owner", "User", username));
 	}
 
+//	@Transactional
+//	public void deleteUser(String username) {
+//		try {
+//			deleteRelations(username);		
+//		}catch(ResourceNotFoundException e) {
+//			System.out.println("Owner already deleted. Deleting user.");
+//		}
+//		User toDelete = findUser(username);
+//		userRepository.delete(toDelete);
+//	}
+	
 	@Transactional
-	public void deleteUser(String username) {
+	public void deleteUser(Integer id) {
+		User toDelete = findUser(id);
 		try {
-			deleteRelations(username);		
+			deleteRelations(toDelete.getUsername());		
 		}catch(ResourceNotFoundException e) {
 			System.out.println("Owner already deleted. Deleting user.");
 		}
-		User toDelete = findUser(username);
 		userRepository.delete(toDelete);
 	}
 

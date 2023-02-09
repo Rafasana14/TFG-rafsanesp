@@ -21,8 +21,8 @@ class UserList extends Component {
             .then((data) => this.setState({ users: data }));
     }
 
-    async remove(username) {
-        await fetch(`/api/v1/users/${username}`, {
+    async remove(id) {
+        await fetch(`/api/v1/users/${id}`, {
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${this.jwt}`,
@@ -30,7 +30,7 @@ class UserList extends Component {
                 "Content-Type": "application/json",
             },
         }).then(() => {
-            let updatedUsers = [...this.state.users].filter((i) => i.username !== username);
+            let updatedUsers = [...this.state.users].filter((i) => i.id !== id);
             this.setState({ users: updatedUsers });
         });
     }
@@ -44,7 +44,7 @@ class UserList extends Component {
 
         const userList = users.map((user) => {
             return (
-                <tr key={user.username}>
+                <tr key={user.id}>
                     <td>{user.username}</td>
                     <td>
                         <ButtonGroup>
@@ -52,14 +52,14 @@ class UserList extends Component {
                                 size="sm"
                                 color="primary"
                                 tag={Link}
-                                to={"/api/v1/users/" + user.username}
+                                to={"/api/v1/users/" + user.id}
                             >
                                 Edit
                             </Button>
                             <Button
                                 size="sm"
                                 color="danger"
-                                onClick={() => this.remove(user.username)}
+                                onClick={() => this.remove(user.id)}
                             >
                                 Delete
                             </Button>

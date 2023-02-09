@@ -63,7 +63,7 @@ public class Owner extends Person {
 //	private Set<Pet> pets;
 	
 	@OneToOne(cascade = {CascadeType.DETACH,CascadeType.REFRESH,CascadeType.PERSIST})
-    @JoinColumn(name = "username", referencedColumnName = "username")
+    @JoinColumn(name = "user", referencedColumnName = "id")
 	private User user;
 
 //	protected Set<Pet> getPetsInternal() {

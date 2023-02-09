@@ -14,6 +14,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class UserDetailsImpl implements UserDetails{
 
 	private static final long serialVersionUID = 1L;
+	
+	private Integer id;
 
 	private String username;
 
@@ -24,8 +26,9 @@ public class UserDetailsImpl implements UserDetails{
 
 	private Collection<? extends GrantedAuthority> authorities;
 
-	public UserDetailsImpl(String username, String password,
+	public UserDetailsImpl(Integer id, String username, String password,
 			Collection<? extends GrantedAuthority> authorities) {
+		this.id = id;
 		this.username = username;
 		//this.email = email;
 		this.password = password;
@@ -40,7 +43,8 @@ public class UserDetailsImpl implements UserDetails{
 //				.collect(Collectors.toList());
 		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getAuthority().getAuthority()));
 
-		return new UserDetailsImpl( 
+		return new UserDetailsImpl(
+				user.getId(),
 				user.getUsername(), 
 				//user.getEmail(),
 				user.getPassword(), 
@@ -55,6 +59,10 @@ public class UserDetailsImpl implements UserDetails{
 //	public String getEmail() {
 //		return email;
 //	}
+	
+	public Integer getId() {
+		return id;
+	}
 
 	@Override
 	public String getPassword() {
@@ -93,7 +101,7 @@ public class UserDetailsImpl implements UserDetails{
 		if (o == null || getClass() != o.getClass())
 			return false;
 		UserDetailsImpl user = (UserDetailsImpl) o;
-		return Objects.equals(username, user.username);
+		return Objects.equals(id, user.id);
 	}
 
 }
