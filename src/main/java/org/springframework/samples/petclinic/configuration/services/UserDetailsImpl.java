@@ -20,6 +20,8 @@ public class UserDetailsImpl implements UserDetails{
 	private String username;
 
 	//private String email;
+	
+//	private PricingPlan plan;
 
 	@JsonIgnore
 	private String password;
@@ -30,6 +32,7 @@ public class UserDetailsImpl implements UserDetails{
 			Collection<? extends GrantedAuthority> authorities) {
 		this.id = id;
 		this.username = username;
+//		this.plan = plan;
 		//this.email = email;
 		this.password = password;
 		this.authorities = authorities;
@@ -45,9 +48,10 @@ public class UserDetailsImpl implements UserDetails{
 
 		return new UserDetailsImpl(
 				user.getId(),
-				user.getUsername(), 
+				user.getUsername(),
 				//user.getEmail(),
 				user.getPassword(), 
+//				user.getPlan(),
 				authorities);
 	}
 
@@ -73,6 +77,10 @@ public class UserDetailsImpl implements UserDetails{
 	public String getUsername() {
 		return username;
 	}
+	
+//	public PricingPlan getPlan() {
+//		return plan;
+//	}
 
 	@Override
 	public boolean isAccountNonExpired() {

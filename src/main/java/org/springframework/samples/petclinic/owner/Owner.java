@@ -23,6 +23,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.core.style.ToStringCreator;
 import org.springframework.samples.petclinic.model.Person;
@@ -57,6 +58,9 @@ public class Owner extends Person {
 	@NotEmpty
 	@Digits(fraction = 0, integer = 10)
 	private String telephone;
+	
+	@NotNull
+	private PricingPlan plan;
 
 //	@OneToMany(cascade = CascadeType.ALL)
 //	//@JoinColumn(name="owner_id")

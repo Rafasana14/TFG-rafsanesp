@@ -29,9 +29,14 @@ class UserList extends Component {
                 Accept: "application/json",
                 "Content-Type": "application/json",
             },
-        }).then(() => {
-            let updatedUsers = [...this.state.users].filter((i) => i.id !== id);
-            this.setState({ users: updatedUsers });
+        }).then((response) => {
+            if (response.status === 200) {
+                let updatedUsers = [...this.state.users].filter((i) => i.id !== id);
+                this.setState({ users: updatedUsers });
+            }
+            return response.json();
+        }).then(function (data) {
+            alert(data.message);
         });
     }
 
@@ -46,6 +51,7 @@ class UserList extends Component {
             return (
                 <tr key={user.id}>
                     <td>{user.username}</td>
+                    <td>{user.authority.authority}</td>
                     <td>
                         <ButtonGroup>
                             <Button
@@ -83,6 +89,8 @@ class UserList extends Component {
                         <thead>
                             <tr>
                                 <th>Username</th>
+                                <th>Authority</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>{userList}</tbody>

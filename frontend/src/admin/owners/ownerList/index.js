@@ -51,23 +51,11 @@ class OwnerList extends Component {
           <td>{owner.city}</td>
           <td>{owner.telephone}</td>
           <td>{owner.user.username}</td>
+          <td>{owner.plan}</td>
           <td>
             <ButtonGroup>
-              <Button
-                size="sm"
-                color="primary"
-                tag={Link}
-                to={"/api/v1/owners/" + owner.id}
-              >
-                Edit
-              </Button>
-              <Button
-                size="sm"
-                color="danger"
-                onClick={() => this.remove(owner.id)}
-              >
-                Delete
-              </Button>
+              <Button size="sm" color="primary" tag={Link} to={"/api/v1/owners/" + owner.id}>Edit</Button>
+              <Button size="sm" color="danger" onClick={() => this.remove(owner.id)}>Delete</Button>
             </ButtonGroup>
           </td>
         </tr>
@@ -87,11 +75,12 @@ class OwnerList extends Component {
           <Table className="mt-4">
             <thead>
               <tr>
-                <th width="20%">Name</th>
+                <th width="10%">Name</th>
                 <th width="10%">Address</th>
                 <th width="10%">City</th>
                 <th width="10%">Telephone</th>
                 <th width="10%">User</th>
+                <th width="10%">Plan</th>
                 <th width="40%">Actions</th>
               </tr>
             </thead>

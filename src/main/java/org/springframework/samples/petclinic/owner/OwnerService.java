@@ -21,6 +21,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
+import org.springframework.samples.petclinic.pet.Pet;
+import org.springframework.samples.petclinic.pet.PetService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OwnerService {
 
 	private OwnerRepository ownerRepository;	
+	private PetService petService;
 	
 //	private UserService userService;
 //	
@@ -43,8 +46,9 @@ public class OwnerService {
 //	private AuthoritiesService authoritiesService;
 
 	@Autowired
-	public OwnerService(OwnerRepository ownerRepository) {
+	public OwnerService(OwnerRepository ownerRepository, PetService petService) {
 		this.ownerRepository = ownerRepository;
+		this.petService = petService;
 //		this.userService = userService;
 //		this.authoritiesService = authoritiesService;
 	}	
@@ -62,6 +66,11 @@ public class OwnerService {
 	@Transactional(readOnly = true)
 	public Owner findOwnerById(int id) throws DataAccessException {
 		return this.ownerRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Owner","ID",id));
+	}
+	
+	@Transactional(readOnly = true)
+	public Owner findOwnerByUser(int userId) throws DataAccessException {
+		return this.ownerRepository.findByUser(userId).orElseThrow(()->new ResourceNotFoundException("Owner","User ID",userId));
 	}
 
 	@Transactional
@@ -83,10 +92,20 @@ public class OwnerService {
 		ownerRepository.save(toUpdate);
 		
 		return toUpdate;
+	}
+	
+	@Transactional
+	public Owner updatePlan(PricingPlan plan, int id) throws DataAccessException {
+		Owner toUpdate = findOwnerById(id);
+		toUpdate.setPlan(plan);
+		ownerRepository.save(toUpdate);
+		
+		return toUpdate;
 	}	
 	
 	@Transactional
 	public void deleteOwner(Owner owner) throws DataAccessException {
+		for(Pet pet: petService.findAllPetsByOwnerId(owner.getId())) petService.deleteVisitsOfPet(pet.getId());
 		ownerRepository.deletePetsOfOwner(owner.getId());
 		ownerRepository.delete(owner);
 	}
@@ -96,6 +115,7 @@ public class OwnerService {
 		Owner toDelete=findOwnerById(id);
 //		List<Pet> petsToDelete = this.ownerRepository.findPetsOfOwner(id);
 //		petRepository.deleteAll(petsToDelete);
+		for(Pet pet: petService.findAllPetsByOwnerId(id)) petService.deleteVisitsOfPet(pet.getId());
 		ownerRepository.deletePetsOfOwner(id);
 		ownerRepository.delete(toDelete);
 	}

@@ -130,9 +130,44 @@ public class PetService {
 		return visitRepository.findByPetId(petId);
 	}
 	
+	@Transactional(readOnly = true)
+	public Visit findVisitById(int id) throws DataAccessException {
+		Optional<Visit> opt = visitRepository.findById(id);
+		if(opt.isPresent()) return opt.get();
+		else return null;
+	}
+	
 	@Transactional
-	public void saveVisit(Visit visit) throws DataAccessException {
+	public Visit saveVisit(Visit visit) throws DataAccessException {
 		visitRepository.save(visit);
+		return visit;
+	}
+	
+	@Transactional
+	public Visit updateVisit(Visit visit, int id) throws DataAccessException {
+		Visit toUpdate = findVisitById(id);
+		BeanUtils.copyProperties(visit, toUpdate, "id");
+		visitRepository.save(toUpdate);
+		
+		return toUpdate;
+	}	
+	
+	@Transactional
+	public void deleteVisitsOfPet(int petId) {
+		Pet pet = findPetById(petId);
+		petRepository.deleteVisitsOfPet(petId);
+		petRepository.save(pet);
+	}
+	
+	@Transactional
+	public void deleteVisit(Visit visit) throws DataAccessException {
+		visitRepository.delete(visit);
+	}
+	
+	@Transactional
+	public void deleteVisit(int id) throws DataAccessException {
+		Visit toDelete=findVisitById(id);
+		visitRepository.delete(toDelete);
 	}
 	
 

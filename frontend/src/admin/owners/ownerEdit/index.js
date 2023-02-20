@@ -11,6 +11,7 @@ class OwnerEdit extends Component {
         address: '',
         city: '',
         telephone: '',
+        plan: null,
     };
 
     constructor(props) {
@@ -62,7 +63,7 @@ class OwnerEdit extends Component {
 
     render() {
         const { item } = this.state;
-        const title = <h2>{item.id !== 'new' ? 'Edit Owner' : 'Add Owner'}</h2>;
+        const title = <h2>{this.id !== 'new' ? 'Edit Owner' : 'Add Owner'}</h2>;
 
         return <div>
             {/* <AppNavbar /> */}
@@ -93,6 +94,14 @@ class OwnerEdit extends Component {
                         <Label for="telephone">Telephone</Label>
                         <Input type="tel" pattern="[0-9]{9}" name="telephone" id="telephone" value={item.telephone || ''}
                             onChange={this.handleChange} autoComplete="telephone" />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label for="plan">Plan</Label>
+                        <Input id="plan" name="plan" type="select" value={item.plan} onChange={this.handleChange} autoComplete="plan">
+                            <option value={0}>BASIC</option>
+                            <option value={1}>GOLD</option>
+                            <option value={2}>PLATINUM</option>
+                        </Input>
                     </FormGroup>
                     <FormGroup>
                         <Button color="primary" type="submit">Save</Button>{' '}

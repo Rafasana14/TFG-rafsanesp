@@ -38,6 +38,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import petclinic.payload.response.MessageResponse;
+
 /**
  * @author Juergen Hoeller
  * @author Ken Krebs
@@ -88,15 +90,16 @@ class UserRestController {
 	
 	@DeleteMapping(value = "{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable("userId") int id) {
-		RestPreconditions.checkNotNull(userService.findUser(id));
-        try {
-			userService.deleteUser(id);
+    public ResponseEntity<MessageResponse> delete(@PathVariable("userId") int id) {
+		try {
+			RestPreconditions.checkNotNull(userService.findUser(id));
 		} catch (ResourceNotFoundException e) {
-			//Mandar a otra vista de error
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return new ResponseEntity<MessageResponse>(new MessageResponse(e.getMessage()),HttpStatus.BAD_REQUEST);
 		}
+		if(userService.findCurrentUser().getId()!=id) {
+				userService.deleteUser(id);
+				return new ResponseEntity<MessageResponse>(new MessageResponse("User deleted!"),HttpStatus.OK);
+		}else return new ResponseEntity<MessageResponse>(new MessageResponse("You can't delete yourself!"),HttpStatus.BAD_REQUEST);
     }
 
 }

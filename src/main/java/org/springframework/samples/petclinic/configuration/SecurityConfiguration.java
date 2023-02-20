@@ -125,9 +125,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
 				.antMatchers("/resources/**", "/webjars/**", "/h2-console/**", "/static/**").permitAll()
-				.antMatchers(HttpMethod.GET, "/", "/oups").permitAll().antMatchers("/login").permitAll()
+				.antMatchers(HttpMethod.GET, "/", "/oups").permitAll()
 				.antMatchers("/api/auth/**").permitAll().antMatchers("/v2/api-docs").permitAll()
 				.antMatchers("/swagger-ui.html").permitAll()
+				.antMatchers("/plan").hasAuthority("OWNER")
+				.antMatchers("/api/v1/users/**").hasAuthority("ADMIN")
+				.antMatchers("/api/v1/owners/**").hasAuthority("ADMIN")
+				.antMatchers("/api/v1/pets/**").hasAuthority("ADMIN")
+				.antMatchers("/api/v1/vets/**").hasAuthority("ADMIN")
 				// .antMatchers("/api/v1/**").authenticated();
 
 				.anyRequest().authenticated();

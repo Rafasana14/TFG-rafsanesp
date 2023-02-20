@@ -9,7 +9,7 @@ class VetList extends Component {
         super(props);
         this.state = { vets: [] };
         this.remove = this.remove.bind(this);
-        this.jwt = window.localStorage.getItem("jwt");
+        this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
     }
 
     componentDidMount() {
@@ -44,11 +44,16 @@ class VetList extends Component {
         }
 
         const vetList = vets.map(vet => {
+
+            let specialtiesAux = [];
+            vet.specialties.map(specialty => specialtiesAux.push(specialty.name))
+
             return <tr key={vet.id}>
                 <td style={{ whiteSpace: 'nowrap' }}>{vet.firstName} {vet.lastName}</td>
+                <td style={{ whiteSpace: 'break-spaces' }}>{specialtiesAux.toString()}</td>
                 <td>
                     <ButtonGroup>
-                        <Button size="sm" color="primary" tag={Link} to={"/api/v1/vets/" + vet.id + "/edit"}>Edit</Button>
+                        <Button size="sm" color="primary" tag={Link} to={"/api/v1/vets/" + vet.id}>Edit</Button>
                         <Button size="sm" color="danger" onClick={() => this.remove(vet.id)}>Delete</Button>
                     </ButtonGroup>
                 </td>
@@ -65,8 +70,9 @@ class VetList extends Component {
                     <Table className="mt-4">
                         <thead>
                             <tr>
-                                <th width="60%">Name</th>
-                                <th width="40%">Actions</th>
+                                <th width="30%">Name</th>
+                                <th width="50%">Specialties</th>
+                                <th width="20%">Actions</th>
                             </tr>
                         </thead>
                         <tbody>

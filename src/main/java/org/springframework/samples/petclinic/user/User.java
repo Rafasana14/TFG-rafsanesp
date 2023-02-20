@@ -26,6 +26,9 @@ public class User extends BaseEntity{
 	
 	//boolean enabled;
 	
+//	@NotNull
+//	PricingPlan plan;
+	
 	
 	@ManyToOne
 	@JoinColumn(name = "authority")

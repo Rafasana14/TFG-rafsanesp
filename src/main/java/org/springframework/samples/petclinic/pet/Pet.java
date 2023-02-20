@@ -17,7 +17,6 @@ package org.springframework.samples.petclinic.pet;
 
 import java.time.LocalDate;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -54,7 +53,7 @@ public class Pet extends NamedEntity {
 	private PetType type;
 	
 	@Valid
-	@ManyToOne(optional=true, cascade = CascadeType.ALL)
+	@ManyToOne(optional=true)
 	protected Owner owner;
 
 

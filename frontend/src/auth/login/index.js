@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Form, Button, Container, FormGroup, Input, Label, Col } from "reactstrap";
-import { useLocalState } from "../util/useLocalStorage";
+import { useLocalState } from "../../util/useLocalStorage";
 
 const Login = () => {
   const [username, setUsername] = useState("");
