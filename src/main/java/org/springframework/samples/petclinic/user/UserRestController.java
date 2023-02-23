@@ -38,6 +38,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import petclinic.payload.response.MessageResponse;
+
 /**
  * @author Juergen Hoeller
  * @author Ken Krebs
@@ -66,9 +68,9 @@ class UserRestController {
 				.collect(Collectors.toList());
 	}
 	
-	@GetMapping(value = "{username}")
-    public ResponseEntity<User> findById(@PathVariable("username") String username) {
-		return new ResponseEntity<User>(userService.findUser(username),HttpStatus.OK);
+	@GetMapping(value = "{id}")
+    public ResponseEntity<User> findById(@PathVariable("id") Integer id) {
+		return new ResponseEntity<User>(userService.findUser(id),HttpStatus.OK);
     }
 	
 	@PostMapping
@@ -78,25 +80,26 @@ class UserRestController {
         userService.saveUser(user);
     }
 	
-	@PutMapping(value = "{username}")
+	@PutMapping(value = "{userId}")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<User> update(@PathVariable("username") String username, @RequestBody @Valid User user ) {
+	public ResponseEntity<User> update(@PathVariable("userId") Integer id, @RequestBody @Valid User user ) {
 		 RestPreconditions.checkNotNull(user);
-	     RestPreconditions.checkNotNull(userService.findUser(username));
-	     return new ResponseEntity<User>(this.userService.updateUser(user,username),HttpStatus.OK);
+	     RestPreconditions.checkNotNull(userService.findUser(id));
+	     return new ResponseEntity<User>(this.userService.updateUser(user,id),HttpStatus.OK);
 	}
 	
-	@DeleteMapping(value = "{username}")
+	@DeleteMapping(value = "{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable("username") String username) {
-		RestPreconditions.checkNotNull(userService.findUser(username));
-        try {
-			userService.deleteUser(username);
+    public ResponseEntity<MessageResponse> delete(@PathVariable("userId") int id) {
+		try {
+			RestPreconditions.checkNotNull(userService.findUser(id));
 		} catch (ResourceNotFoundException e) {
-			//Mandar a otra vista de error
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			return new ResponseEntity<MessageResponse>(new MessageResponse(e.getMessage()),HttpStatus.BAD_REQUEST);
 		}
+		if(userService.findCurrentUser().getId()!=id) {
+				userService.deleteUser(id);
+				return new ResponseEntity<MessageResponse>(new MessageResponse("User deleted!"),HttpStatus.OK);
+		}else return new ResponseEntity<MessageResponse>(new MessageResponse("You can't delete yourself!"),HttpStatus.BAD_REQUEST);
     }
 
 }

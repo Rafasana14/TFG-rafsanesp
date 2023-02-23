@@ -1,10 +1,12 @@
 package org.springframework.samples.petclinic.user;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.springframework.samples.petclinic.model.BaseEntity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,8 +15,9 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "users")
-public class User{
-	@Id
+public class User extends BaseEntity{
+	
+	@Column(unique=true)
 	String username;
 	
 	String password;
@@ -22,6 +25,9 @@ public class User{
 	//private String token;
 	
 	//boolean enabled;
+	
+//	@NotNull
+//	PricingPlan plan;
 	
 	
 	@ManyToOne

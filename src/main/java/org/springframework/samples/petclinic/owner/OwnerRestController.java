@@ -15,7 +15,6 @@
  */
 package org.springframework.samples.petclinic.owner;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,7 +26,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.user.AuthoritiesService;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.RestPreconditions;
@@ -49,7 +47,7 @@ public class OwnerRestController {
 	private final UserService userService;
 
 	@Autowired
-	public OwnerRestController(OwnerService ownerService, UserService userService, AuthoritiesService authoritiesService) {
+	public OwnerRestController(OwnerService ownerService, UserService userService) {
 		this.ownerService = ownerService;
 		this.userService = userService;
 	}
@@ -75,10 +73,9 @@ public class OwnerRestController {
 		newOwner.setUser(user);
 		Owner savedOwner = this.ownerService.saveOwner(newOwner);
 		
-		return ResponseEntity.created(new URI("/clients/" + savedOwner.getId())).body(savedOwner);
-		//return new ResponseEntity<Owner>(this.ownerService.saveOwner(owner),HttpStatus.CREATED);
+		//return ResponseEntity.created(new URI("/clients/" + savedOwner.getId())).body(savedOwner);
+		return new ResponseEntity<Owner>(savedOwner,HttpStatus.CREATED);
 	}
-
 
 	@PutMapping(value = "{ownerId}")
 	@ResponseStatus(HttpStatus.OK)

@@ -9,10 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.configuration.jwt.JwtUtils;
 import org.springframework.samples.petclinic.configuration.services.UserDetailsImpl;
+import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.user.Authorities;
 import org.springframework.samples.petclinic.user.AuthoritiesService;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
+import org.springframework.samples.petclinic.vet.Vet;
+import org.springframework.samples.petclinic.vet.VetService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,9 +38,12 @@ import petclinic.payload.response.MessageResponse;
 @RequestMapping("/api/auth")
 public class AuthController {
 
+	@Autowired
 	AuthenticationManager authenticationManager;
 
 	private final UserService userService;
+	private final OwnerService ownerService;
+	private final VetService vetService;
 
 	private final AuthoritiesService authoritiesService;
 
@@ -45,11 +52,12 @@ public class AuthController {
 	private final JwtUtils jwtUtils;
 
 	@Autowired
-	public AuthController(AuthenticationManager authenticationManager, UserService userService,
-			AuthoritiesService authoritiesService, PasswordEncoder encoder, JwtUtils jwtUtils) {
-		this.authenticationManager = authenticationManager;
+	public AuthController(UserService userService, AuthoritiesService authoritiesService, PasswordEncoder encoder,
+			JwtUtils jwtUtils, OwnerService ownerService, VetService vetService) {
 		this.userService = userService;
 		this.authoritiesService = authoritiesService;
+		this.ownerService = ownerService;
+		this.vetService = vetService;
 		this.encoder = encoder;
 		this.jwtUtils = jwtUtils;
 	}
@@ -67,7 +75,7 @@ public class AuthController {
 		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
 				.collect(Collectors.toList());
 
-		return ResponseEntity.ok().body(new JwtResponse(jwt, userDetails.getUsername(), roles));
+		return ResponseEntity.ok().body(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), roles));
 	}
 
 	@PostMapping("/signup")
@@ -76,24 +84,47 @@ public class AuthController {
 			return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
 		}
 
-		// Create new user's account
+		createUser(signUpRequest);
+		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+	}
+
+	private void createUser(@Valid SignupRequest request) {
 		User user = new User();
-		user.setUsername(signUpRequest.getUsername());
-		user.setPassword(encoder.encode(signUpRequest.getPassword()));
-		String strRoles = signUpRequest.getRole();
+		user.setUsername(request.getUsername());
+		user.setPassword(encoder.encode(request.getPassword()));
+		String strRoles = request.getAuthority();
 		Authorities role;
 		if (strRoles == null) {
 			role = authoritiesService.findByAuthority("OWNER");
 		} else {
 			switch (strRoles.toLowerCase()) {
-			case "admin" :
+			case "admin":
 				role = authoritiesService.findByAuthority("ADMIN");
 				break;
 			case "veterinarian":
 				role = authoritiesService.findByAuthority("VETERINARIAN");
+				user.setAuthority(role);
+				userService.saveUser(user);
+				Vet vet = new Vet();
+				vet.setFirstName(request.getFirstName());
+				vet.setLastName(request.getLastName());
+				vet.setSpecialties(request.getSpecialties());
+				vet.setUser(user);
+				vetService.saveVet(vet);
 				break;
 			default:
 				role = authoritiesService.findByAuthority("OWNER");
+				user.setAuthority(role);
+				userService.saveUser(user);
+				Owner owner = new Owner();
+				owner.setFirstName(request.getFirstName());
+				owner.setLastName(request.getLastName());
+				owner.setAddress(request.getAddress());
+				owner.setCity(request.getCity());
+				owner.setTelephone(request.getTelephone());
+				owner.setPlan(request.getPlan());
+				owner.setUser(user);
+				ownerService.saveOwner(owner);
 			}
 		}
 
@@ -126,10 +157,6 @@ public class AuthController {
 //		}
 
 		// user.setRoles(roles);
-		user.setAuthority(role);
-		userService.saveUser(user);
-
-		return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
 	}
 
 }

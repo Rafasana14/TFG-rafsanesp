@@ -81,74 +81,75 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 //		PasswordEncoder encoder = NoOpPasswordEncoder.getInstance();
 //		return encoder;
 //	}
-	
+
 @SuppressWarnings("deprecation")
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(
-			// securedEnabled = true,
-			// jsr250Enabled = true,
-			prePostEnabled = true)
+		// securedEnabled = true,
+		// jsr250Enabled = true,
+		prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
-	
-		@Autowired
-		UserDetailsServiceImpl userDetailsService;
 
-		@Autowired
-		private AuthEntryPointJwt unauthorizedHandler;
+	@Autowired
+	UserDetailsServiceImpl userDetailsService;
 
-		@Bean
-		public AuthTokenFilter authenticationJwtTokenFilter() {
-			return new AuthTokenFilter();
-		}
+	@Autowired
+	private AuthEntryPointJwt unauthorizedHandler;
 
-		@Override
-		public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
-			authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
-		}
+	@Bean
+	public AuthTokenFilter authenticationJwtTokenFilter() {
+		return new AuthTokenFilter();
+	}
 
-		@Bean
-		@Override
-		public AuthenticationManager authenticationManagerBean() throws Exception {
-			return super.authenticationManagerBean();
-		}
+	@Override
+	public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
+		authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+	}
 
-		@Bean
-		public PasswordEncoder passwordEncoder() {
-			PasswordEncoder encoder = NoOpPasswordEncoder.getInstance();
-			return encoder;
+	@Bean
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
+	}
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		PasswordEncoder encoder = NoOpPasswordEncoder.getInstance();
+		return encoder;
 //			return new BCryptPasswordEncoder();
-		}
+	}
 
-		@Override
-		protected void configure(HttpSecurity http) throws Exception {
-			http.cors().and().csrf().disable()
-				.exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-				.authorizeRequests().antMatchers("/resources/**", "/webjars/**", "/h2-console/**","/static/**").permitAll()
-				.antMatchers(HttpMethod.GET, "/**", "/oups").permitAll()
-				.antMatchers("/login").permitAll()
-				.antMatchers("/api/auth/**").permitAll()
-				.antMatchers("/v2/api-docs").permitAll()
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
+				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
+				.antMatchers("/resources/**", "/webjars/**", "/h2-console/**", "/static/**").permitAll()
+				.antMatchers(HttpMethod.GET, "/", "/oups").permitAll()
+				.antMatchers("/api/auth/**").permitAll().antMatchers("/v2/api-docs").permitAll()
 				.antMatchers("/swagger-ui.html").permitAll()
-				//.antMatchers("/api/v1/**").authenticated();
-			
+				.antMatchers("/plan").hasAuthority("OWNER")
+				.antMatchers("/api/v1/users/**").hasAuthority("ADMIN")
+				.antMatchers("/api/v1/owners/**").hasAuthority("ADMIN")
+				.antMatchers("/api/v1/pets/**").hasAuthority("ADMIN")
+				.antMatchers("/api/v1/vets/**").hasAuthority("ADMIN")
+				// .antMatchers("/api/v1/**").authenticated();
+
 				.anyRequest().authenticated();
 
-			http.headers().frameOptions().sameOrigin();
-			http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-		}
-		
-		@Override
-	    public void configure(WebSecurity web) throws Exception {
-	        web.ignoring()
-	                //.antMatchers("/index.html")
-	        		.antMatchers("/static/**")
-	                .antMatchers("/error")
-	                .antMatchers("/swagger-ui.html")
-	                .antMatchers("/swagger-resources");
-	    }
-		
+		http.headers().frameOptions().sameOrigin();
+		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+//			http.addFilterAfter(new SpaWebFilter(), UsernamePasswordAuthenticationFilter.class);
+	}
+
+	@Override
+	public void configure(WebSecurity web) throws Exception {
+		web.ignoring()
+				// .antMatchers("/index.html")
+				.antMatchers("/static/**").antMatchers("/error").antMatchers("/swagger-ui.html")
+				.antMatchers("/swagger-resources");
+	}
+
 //		public void addResourceHandlers(ResourceHandlerRegistry registry) {
 //			registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
 //

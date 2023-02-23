@@ -15,10 +15,12 @@
  */
 package org.springframework.samples.petclinic.vet;
 
-import java.util.Collection;
+import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,16 +34,108 @@ import org.springframework.transaction.annotation.Transactional;
 public class VetService {
 
 	private VetRepository vetRepository;
+	private SpecialtyRepository specialtyRepository;
 
 
 	@Autowired
-	public VetService(VetRepository vetRepository) {
+	public VetService(VetRepository vetRepository, SpecialtyRepository specialtyRepository) {
 		this.vetRepository = vetRepository;
+		this.specialtyRepository = specialtyRepository;
 	}		
 
 	@Transactional(readOnly = true)	
-	public Collection<Vet> findVets() throws DataAccessException {
+	public Iterable<Vet> findVets() throws DataAccessException {
 		return vetRepository.findAll();
-	}	
+	}
+	
+	@Transactional(readOnly = true)	
+	public Vet findVetById(int id) throws DataAccessException {
+		return vetRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Vet","ID",id));
+	}
+	
+	@Transactional
+	public Vet saveVet(Vet vet) throws DataAccessException {
+		vetRepository.save(vet);		
+		
+		return vet;
+	}
+	
+	@Transactional
+	public Vet updateVet(Vet vet, int id) throws DataAccessException {
+		Vet toUpdate = findVetById(id);
+		BeanUtils.copyProperties(vet, toUpdate, "id","user");
+		vetRepository.save(toUpdate);
+		
+		return toUpdate;
+	}
+	
+	@Transactional
+	public void deleteVet(Vet vet) throws DataAccessException {
+		vetRepository.delete(vet);
+	}
+	
+	@Transactional
+	public void deleteVet(int id) throws DataAccessException {
+		Vet toDelete=findVetById(id);
+		vetRepository.delete(toDelete);
+	}
+	
+	@Transactional(readOnly = true)	
+	public Iterable<Specialty> findSpecialties() throws DataAccessException {
+		return specialtyRepository.findAll();
+	}
+	
+	@Transactional(readOnly = true)	
+	public Specialty findSpecialtyById(int id) throws DataAccessException {
+		return specialtyRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Specialty","ID",id));
+	}
+	
+	@Transactional
+	public Specialty saveSpecialty(Specialty specialty) throws DataAccessException {
+		specialtyRepository.save(specialty);		
+		
+		return specialty;
+	}
+	
+	@Transactional
+	public Specialty updateSpecialty(Specialty specialty, int id) throws DataAccessException {
+		Specialty toUpdate = findSpecialtyById(id);
+		BeanUtils.copyProperties(specialty, toUpdate, "id");
+		specialtyRepository.save(toUpdate);
+		
+		return toUpdate;
+	}
+	
+	@Transactional
+	public void deleteSpecialty(Specialty specialty) throws DataAccessException {
+		specialtyRepository.delete(specialty);
+	}
+	
+	@Transactional
+	public void deleteSpecialty(int id) throws DataAccessException {
+		Specialty toDelete=findSpecialtyById(id);
+		specialtyRepository.delete(toDelete);
+	}
+	
+	@Transactional
+	public Vet addSpecialty(Vet vet, Specialty specialty) {
+		List<Specialty> specialties = vet.getSpecialties();
+		if(!specialties.contains(specialty)) {
+			specialties.add(specialty);
+			vet.setSpecialties(specialties);
+			vetRepository.save(vet);
+		}
+		return vet;
+	}
+
+	public Vet removeSpecialty(Vet vet, Specialty specialty) {
+		List<Specialty> specialties = vet.getSpecialties();
+		if(specialties.contains(specialty)) {
+			specialties.remove(specialty);
+			vet.setSpecialties(specialties);
+			vetRepository.save(vet);
+		}
+		return vet;
+	}
 
 }

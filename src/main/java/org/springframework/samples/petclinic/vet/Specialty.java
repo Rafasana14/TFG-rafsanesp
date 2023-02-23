@@ -20,6 +20,9 @@ import javax.persistence.Table;
 
 import org.springframework.samples.petclinic.model.NamedEntity;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * Models a {@link Vet Vet's} specialty (for example, dentistry).
  *
@@ -27,6 +30,8 @@ import org.springframework.samples.petclinic.model.NamedEntity;
  */
 @Entity
 @Table(name = "specialties")
+@Getter
+@Setter
 public class Specialty extends NamedEntity {
 
 }

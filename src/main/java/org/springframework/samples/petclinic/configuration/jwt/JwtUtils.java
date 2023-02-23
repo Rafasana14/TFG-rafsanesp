@@ -1,6 +1,9 @@
 package org.springframework.samples.petclinic.configuration.jwt;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +32,13 @@ public class JwtUtils {
 	public String generateJwtToken(Authentication authentication) {
 
 		UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+		Map<String, Object> claims = new HashMap<>();
+		claims.put("authorities", userPrincipal.getAuthorities().stream()
+				.map(auth-> auth.getAuthority())
+				.collect(Collectors.toList()));
 
 		return Jwts.builder()
+				.setClaims(claims)
 				.setSubject((userPrincipal.getUsername()))
 				.setIssuedAt(new Date())
 				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))

@@ -19,5 +19,11 @@ public interface UserRepository extends  CrudRepository<User, String>{
 	
 	@Query("SELECT o FROM Owner o WHERE o.user.username = :username")
 	Optional<Owner> findOwnerByUser(String username);
+
+	Optional<User> findByUsername(String username);
+
+	Boolean existsByUsername(String username);
+
+	Optional<User> findById(Integer id);
 	
 }
