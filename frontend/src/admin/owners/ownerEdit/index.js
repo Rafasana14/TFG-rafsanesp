@@ -97,10 +97,10 @@ class OwnerEdit extends Component {
                     </FormGroup>
                     <FormGroup>
                         <Label for="plan">Plan</Label>
-                        <Input id="plan" name="plan" type="select" value={item.plan} onChange={this.handleChange} autoComplete="plan">
-                            <option value={0}>BASIC</option>
-                            <option value={1}>GOLD</option>
-                            <option value={2}>PLATINUM</option>
+                        <Input id="plan" name="plan" type="select" value={item.plan || ''} onChange={this.handleChange} autoComplete="plan">
+                            <option value="BASIC">BASIC</option>
+                            <option value="GOLD">GOLD</option>
+                            <option value="PLATINUM">PLATINUM</option>
                         </Input>
                     </FormGroup>
                     <FormGroup>

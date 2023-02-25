@@ -23,6 +23,10 @@ import Login from "./auth/login";
 import Logout from "./auth/logout";
 import VisitList from "./admin/visits/visitList";
 import VisitEdit from "./admin/visits/visitEdit";
+import PetOwnerList from "./owner/pets/petList";
+import PetOwnerEdit from "./owner/pets/petEdit";
+import VisitOwnerEdit from "./owner/visits/visitEdit";
+import PlanList from "./public/plan";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -47,7 +51,7 @@ function App() {
 
   let adminRoutes = <></>;
   let ownerRoutes = <></>;
-  // let userRoutes = <></>;
+  let userRoutes = <></>;
   let publicRoutes = <></>;
 
   roles.forEach((role) => {
@@ -72,6 +76,9 @@ function App() {
       ownerRoutes = (
         <>
           <Route path="/plan" exact={true} element={<PrivateRoute><PricingPlan /></PrivateRoute>} />
+          <Route path="/myPets" exact={true} element={<PrivateRoute><PetOwnerList /></PrivateRoute>} />
+          <Route path="/myPets/:id" exact={true} element={<PrivateRoute><PetOwnerEdit /></PrivateRoute>} />
+          <Route path="/myPets/:id/visits/:id" exact={true} element={<PrivateRoute><VisitOwnerEdit /></PrivateRoute>} />
         </>)
     }
   })
@@ -84,19 +91,26 @@ function App() {
         <Route path="/login" element={<Login />} />
       </>
     )
+  } else {
+    userRoutes = (
+      <Route path="/logout" element={<Logout />} />
+    )
   }
 
   return (
     <div>
       <AppNavbar />
-      <ErrorBoundary FallbackComponent={ErrorFallback} ><Routes>
-        <Route path="/" exact={true} element={<Home />} />
-        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
-        {publicRoutes}
-        <Route path="/logout" element={<Logout />} />
-        {adminRoutes}
-        {ownerRoutes}
-      </Routes></ErrorBoundary>
+      <ErrorBoundary FallbackComponent={ErrorFallback} >
+        <Routes>
+          <Route path="/" exact={true} element={<Home />} />
+          <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+          <Route path="/plans" element={<PlanList />} />
+          {publicRoutes}
+          {userRoutes}
+          {adminRoutes}
+          {ownerRoutes}
+        </Routes>
+      </ErrorBoundary>
     </div>
   );
 }

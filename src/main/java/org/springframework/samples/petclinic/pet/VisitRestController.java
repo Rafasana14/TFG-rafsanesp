@@ -28,6 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
+import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.RestPreconditions;
@@ -53,24 +55,43 @@ public class VisitRestController {
 
 	private final PetService petService;
 	private final UserService userService;
+	private final OwnerService ownerService;
 
 	@Autowired
-	public VisitRestController(PetService petService, UserService userService) {
+	public VisitRestController(PetService petService, UserService userService, OwnerService ownerService) {
 		this.petService = petService;
 		this.userService = userService;
+		this.ownerService = ownerService;
 	}
-	
-	//ADMIN
-	
+
+	// ADMIN
+
 	@GetMapping("/api/v1/pets/{petId}/visits")
-	public List<Visit> findAll(@PathVariable("petId") int petId) {
-		return StreamSupport.stream(petService.findVisitsByPetId(petId).spliterator(), false).collect(Collectors.toList());
+	public ResponseEntity<?> findAll(@PathVariable("petId") int petId) {
+		try {
+			Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId));
+			User user = userService.findCurrentUser();
+			Owner logged = null, owner = null;
+			if (user.hasAuthority("OWNER")) {
+				logged = ownerService.findOwnerByUser(user.getId());
+				owner = pet.getOwner();
+			}
+			if (user.hasAuthority("ADMIN") || user.hasAuthority("VETERINARIAN") || logged.getId() == owner.getId()) {
+				List<Visit> res = StreamSupport.stream(petService.findVisitsByPetId(petId).spliterator(), false)
+						.collect(Collectors.toList());
+				return new ResponseEntity<List<Visit>>(res, HttpStatus.OK);
+			} else {
+				throw new ResourceNotOwnedException(Pet.class.getName());
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<MessageResponse>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+		}
 	}
-	
+
 	@PostMapping("/api/v1/pets/{petId}/visits")
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<Visit> create(@PathVariable("petId") int petId, @RequestBody Visit visit)
-			throws URISyntaxException{
+			throws URISyntaxException {
 		RestPreconditions.checkNotNull(visit);
 		Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId));
 		Visit newVisit = new Visit();
@@ -100,19 +121,21 @@ public class VisitRestController {
 	public ResponseEntity<Visit> findById(@PathVariable("visitId") int visitId) {
 		return new ResponseEntity<Visit>(petService.findVisitById(visitId), HttpStatus.OK);
 	}
-	
+
 	@DeleteMapping(value = "/api/v1/pets/{petId}/visits/{visitId}")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<MessageResponse> delete(@PathVariable("visitId") int id) {
-		Visit visit;
+	public ResponseEntity<MessageResponse> delete(@PathVariable("petId") int petId,
+			@PathVariable("visitId") int visitId) {
 		try {
-			visit = RestPreconditions.checkNotNull(petService.findVisitById(id));
+			Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId));
+			RestPreconditions.checkNotNull(petService.findVisitById(visitId));
 			User user = userService.findCurrentUser();
-			if (user.getAuthority().getAuthority().equals("ADMIN")) {
-				petService.deleteVisit(id);
+			if (user.hasAuthority("ADMIN")
+					|| ownerService.findOwnerByUser(user.getId()).getId() == pet.getOwner().getId()) {
+				petService.deleteVisit(visitId);
 				return new ResponseEntity<MessageResponse>(new MessageResponse("Visit deleted!"), HttpStatus.OK);
 			} else
-				throw new ResourceNotOwnedException(visit.getClass().getName());
+				throw new ResourceNotOwnedException(Visit.class.getSimpleName());
 		} catch (Exception e) {
 			return new ResponseEntity<MessageResponse>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
 		}

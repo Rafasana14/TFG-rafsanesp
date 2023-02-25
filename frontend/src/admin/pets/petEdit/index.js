@@ -8,8 +8,10 @@ class PetEdit extends Component {
         id: null,
         name: '',
         birthDate: '',
-        type: [],
-        owner: [],
+        type: {},
+        owner: {
+            user: {},
+        },
     };
 
     constructor(props) {
@@ -20,6 +22,8 @@ class PetEdit extends Component {
             owners: [],
         };
         this.handleChange = this.handleChange.bind(this);
+        this.handleOwnerChange = this.handleOwnerChange.bind(this);
+        this.handleTypeChange = this.handleTypeChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
         this.id = window.location.href.split("/api/v1/pets/")[1];
@@ -58,6 +62,34 @@ class PetEdit extends Component {
         this.setState({ pet });
     }
 
+    handleTypeChange(event) {
+        const target = event.target;
+        const value = target.value;
+        const types = { ...this.state.types }
+        let selectedType = null;
+        for (let i = 0; i < Object.keys(types).length; i++) {
+            if (types[i].name === value) selectedType = types[i];
+        }
+        let pet = { ...this.state.pet };
+        pet["type"] = selectedType;
+        this.setState({ pet });
+
+    }
+
+    handleOwnerChange(event) {
+        const target = event.target;
+        const value = target.value;
+        const owners = { ...this.state.owners }
+        let selectedOwner = null;
+        for (let i = 0; i < Object.keys(owners).length; i++) {
+            if (owners[i].user.username === value) selectedOwner = owners[i];
+        }
+        let pet = { ...this.state.pet };
+        pet["owner"] = selectedOwner;
+        this.setState({ pet });
+
+    }
+
     async handleSubmit(event) {
         event.preventDefault();
         const { pet, } = this.state;
@@ -79,7 +111,7 @@ class PetEdit extends Component {
         const title = <h2>{pet.id ? 'Edit Pet' : 'Add Pet'}</h2>;
 
         const typeOptions = types.map(type => <option key={type.id} value={type.name}>{type.name}</option>);
-        const ownerOptions = owners.map(owner => <option key={owner.id} value={owner.id}>{owner.user.username}</option>)
+        const ownerOptions = owners.map(owner => <option key={owner.id} value={owner.user.username}>{owner.user.username}</option>);
 
         return <div>
             {/* <AppNavbar /> */}
@@ -99,7 +131,7 @@ class PetEdit extends Component {
                     <FormGroup>
                         <Label for="type">type</Label>
                         <Input type="select" name="type" id="type" value={pet.type.name}
-                            onChange={this.handleChange} autoComplete="type">
+                            onChange={this.handleTypeChange} autoComplete="type">
                             {typeOptions}
                         </Input>
                     </FormGroup>
@@ -107,8 +139,8 @@ class PetEdit extends Component {
                         <Label for="owner">Owner</Label>
                         {pet.id ?
                             <p>{pet.owner.user.username || ''}</p> :
-                            <Input type="select" name="owner" id="owner" value={pet.owner || ''}
-                                onChange={this.handleChange} autoComplete="owner">
+                            <Input type="select" name="owner" id="owner" value={pet.owner.user.username || ''}
+                                onChange={this.handleOwnerChange} autoComplete="owner">
                                 {ownerOptions}
                             </Input>}
                     </FormGroup>

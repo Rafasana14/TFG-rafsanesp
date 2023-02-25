@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Col, Container, Form, FormGroup, Input, Label } from 'reactstrap';
+import { Button, Col, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 
 class VetEdit extends Component {
 
@@ -15,9 +15,11 @@ class VetEdit extends Component {
         super(props);
         this.state = {
             item: this.emptyItem,
-            availableSpecialties: []
+            availableSpecialties: [],
+            allSpecialties: [],
         };
         this.handleChange = this.handleChange.bind(this);
+        this.handleSpecialtyChange = this.handleSpecialtyChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
         this.id = window.location.href.split("/api/v1/vets/")[1];
@@ -38,7 +40,7 @@ class VetEdit extends Component {
             },
         })).json();
         const { item, } = this.state;
-        // this.setState({ specialties: specialtiesList });
+        this.setState({ allSpecialties: specialtiesList });
         let aux = []
         for (var i = 0; i < specialtiesList.length; i++) {
             if (item.specialties.length > 0) {
@@ -61,6 +63,48 @@ class VetEdit extends Component {
         this.setState({ item });
     }
 
+    // handleSpecialtyChange(event) {
+    //     const target = event.target;
+    //     const value = target.value;
+    //     const allSpecialties = { ...this.state.allSpecialties }
+    //     let item = { ...this.state.item };
+    //     let selectedSpecialties = item.specialties;
+    //     const selectedIds = selectedSpecialties.map(specialty => specialty.id);
+    //     console.log(selectedIds);
+    //     for (let i = 0; i < Object.keys(allSpecialties).length; i++) {
+    //         if (allSpecialties[i].name === value) {
+    //             if (allSpecialties[i].id in selectedIds) {
+    //                 var index = selectedSpecialties.indexOf(allSpecialties[i]);
+    //                 console.log(index);
+    //                 if (index !== -1) {
+    //                     selectedSpecialties.splice(index, 1);
+    //                 }
+    //                 selectedSpecialties = selectedSpecialties.filter(specialty => specialty.name !== value);
+    //             } else selectedSpecialties.push(allSpecialties[i]);
+    //         }
+    //         console.log(selectedSpecialties);
+    //     }
+    //     item["specialties"] = selectedSpecialties;
+    //     this.setState({ item });
+    // }
+
+    handleSpecialtyChange(event) {
+        const target = event.target;
+        const checked = target.checked;
+        const name = target.name;
+        const allSpecialties = { ...this.state.allSpecialties }
+        let item = { ...this.state.item };
+        let selectedSpecialties = item.specialties;
+        for (let i = 0; i < Object.keys(allSpecialties).length; i++) {
+            if (allSpecialties[i].name === name) {
+                if (!checked) selectedSpecialties = selectedSpecialties.filter(specialty => specialty.name !== name);
+                else selectedSpecialties.push(allSpecialties[i]);
+            }
+        }
+        item["specialties"] = selectedSpecialties;
+        this.setState({ item });
+    }
+
     async handleSubmit(event) {
         event.preventDefault();
         const { item } = this.state;
@@ -78,37 +122,61 @@ class VetEdit extends Component {
     }
 
     render() {
-        const { item, availableSpecialties } = this.state;
+        const { item, allSpecialties } = this.state;
         const title = <h2>{item.id ? 'Edit Vet' : 'Add Vet'}</h2>;
 
-        return <div>
-            {/* <AppNavbar /> */}
-            <Container className="d-flex ">
-                <Col md={4}>
-                    {title}
-                    {availableSpecialties.map(specialty => <p key={specialty.id}>{specialty.name}</p>)}
-                    <Form onSubmit={this.handleSubmit}>
-                        <FormGroup>
-                            <Label for="firstName">First Name</Label>
-                            <Input type="text" name="firstName" id="firstName" value={item.firstName || ''}
-                                onChange={this.handleChange} autoComplete="firstName" />
-                        </FormGroup>
-                        <FormGroup>
-                            <Label for="lastName">Last Name</Label>
-                            <Input type="text" name="lastName" id="lastName" value={item.lastName || ''}
-                                onChange={this.handleChange} autoComplete="lastName" />
-                        </FormGroup>
-                        <Label for="">Specialties</Label>
-                        {item.specialties.map(specialty => <div key={specialty.id}>{specialty.name}</div>)}
-                        <br></br>
-                        <FormGroup>
-                            <Button color="primary" type="submit">Save</Button>{' '}
-                            <Button color="secondary" tag={Link} to="/api/v1/vets">Cancel</Button>
-                        </FormGroup>
-                    </Form>
-                </Col>
-            </Container>
-        </div >
+        const selectedSpecialties = item.specialties.map(specialty => specialty.name);
+        const specialties = allSpecialties.map(specialty => {
+            if (selectedSpecialties.includes(specialty.name)) {
+                return (<FormGroup key={specialty.name}>
+                    <Input type="checkbox" name={specialty.name} onChange={this.handleSpecialtyChange} checked />
+                    <Label for={specialty.name}> {specialty.name}</Label>
+                </FormGroup>);
+            } else {
+                return (<FormGroup key={specialty.name}>
+                    <Input type="checkbox" key={specialty.name} name={specialty.name} onChange={this.handleSpecialtyChange} />
+                    <Label for={specialty.name}> {specialty.name}</Label>
+                </FormGroup>);
+            }
+        });
+        // const specialties = allSpecialties.map(specialty => {
+        //     return <option key={specialty.id} value={specialty.name}>{specialty.name}</option>
+        // });
+
+        return (
+            <div>
+                <Container className="d-flex ">
+                    <Col md={4}>
+                        {title}
+                        <Form onSubmit={this.handleSubmit}>
+                            <FormGroup>
+                                <Label for="firstName">First Name</Label>
+                                <Input type="text" name="firstName" id="firstName" value={item.firstName || ''}
+                                    onChange={this.handleChange} autoComplete="firstName" />
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="lastName">Last Name</Label>
+                                <Input type="text" name="lastName" id="lastName" value={item.lastName || ''}
+                                    onChange={this.handleChange} autoComplete="lastName" />
+                            </FormGroup>
+                            <Label for="specialties">Specialties</Label>
+                            <Row className="row-cols-lg-auto g-3 align-items-center">
+                                {specialties}
+                            </Row>
+                            {/* <Input type="select" multiple name="specialties" id="specialties" value={item.specialties.map(specialty => specialty.name) || ''}
+                                onChange={this.handleSpecialtyChange} autoComplete="specialties">
+                                {specialties}
+                            </Input> */}
+                            <br></br>
+                            <FormGroup>
+                                <Button color="primary" type="submit">Save</Button>{' '}
+                                <Button color="secondary" tag={Link} to="/api/v1/vets">Cancel</Button>
+                            </FormGroup>
+                        </Form>
+                    </Col>
+                </Container>
+            </div >
+        )
     }
 }
 export default VetEdit;

@@ -15,5 +15,9 @@ public class DuplicatedPetNameException extends Exception{
 	 * 
 	 */
 	private static final long serialVersionUID = -3330551940727004798L;
+	
+	public DuplicatedPetNameException() {
+		super("You can't have two pets with the same name.");
+	}
     
 }

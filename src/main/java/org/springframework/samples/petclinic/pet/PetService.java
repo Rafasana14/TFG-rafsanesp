@@ -22,7 +22,7 @@ import java.util.Optional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,6 +55,11 @@ public class PetService {
 	}
 	
 	@Transactional(readOnly = true)
+	public PetType findPetTypeByName(String name) throws DataAccessException {
+		return petRepository.findPetTypeByName(name).orElseThrow(()->new ResourceNotFoundException("PetType","name",name));
+	}
+	
+	@Transactional(readOnly = true)
 	public Collection<Pet> findAll() {
 		return (List<Pet>)petRepository.findAll();
 	}
@@ -66,10 +71,10 @@ public class PetService {
 		else return null;
 	}
 	
-	@Transactional(readOnly = true)
-	public Owner findOwnerByPetId(int id) throws DataAccessException {
-		return petRepository.findOwnerById(id);
-	}
+//	@Transactional(readOnly = true)
+//	public Owner findOwnerByPetId(int id) throws DataAccessException {
+//		return petRepository.findOwnerByPetId(id).orElseThrow(()->new ResourceNotFoundException("Owner","pet",id));
+//	}
 	
 	@Transactional(readOnly = true)
 	public List<Pet> findAllPetsByOwnerId(int id) throws DataAccessException {
@@ -96,7 +101,7 @@ public class PetService {
 		for (Pet p : findAllPetsByOwnerId(pet.getOwner().getId())) {
 			String compName = p.getName().toLowerCase();
 			if (compName.equals(name) && p.getId()!=pet.getId()) {
-				return pet;
+				return p;
 			}
 		}
 		return null;

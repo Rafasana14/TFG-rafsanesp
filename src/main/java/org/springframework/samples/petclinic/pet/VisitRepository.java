@@ -17,6 +17,7 @@ package org.springframework.samples.petclinic.pet;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.samples.petclinic.model.BaseEntity;
 
@@ -38,7 +39,7 @@ public interface VisitRepository extends CrudRepository<Visit, Integer> {
 	 * @param visit the <code>Visit</code> to save
 	 * @see BaseEntity#isNew
 	 */
-
+	@Query("SELECT v FROM Visit v WHERE v.pet.id = :petId ORDER BY v.date DESC")
 	List<Visit> findByPetId(Integer petId);
 
 }

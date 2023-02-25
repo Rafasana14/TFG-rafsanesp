@@ -15,7 +15,7 @@ import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.samples.petclinic.model.BaseEntity;
 import org.springframework.stereotype.Component;
 
-@Component()
+@Component
 public final class GenericIdToEntityConverter implements ConditionalGenericConverter {
     private static final Logger log = LoggerFactory.getLogger(GenericIdToEntityConverter.class);
 
@@ -39,6 +39,7 @@ public final class GenericIdToEntityConverter implements ConditionalGenericConve
     }
 
     public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
+    	System.out.println("AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
         if (source == null || entityManager==null) {
             return null;
         }

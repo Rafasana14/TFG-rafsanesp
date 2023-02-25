@@ -34,6 +34,10 @@ public class User extends BaseEntity{
 	@JoinColumn(name = "authority")
 	Authorities authority;
 	
+	public Boolean hasAuthority(String auth) {
+		return authority.getAuthority().equals(auth);
+	}
+	
 //	@ManyToMany(fetch = FetchType.LAZY)
 //	@JoinTable(	name = "user_roles", 
 //				joinColumns = @JoinColumn(name = "user_id"), 

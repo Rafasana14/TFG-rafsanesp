@@ -27,7 +27,7 @@ export default function AppNavbar() {
     let ownerLinks = <></>;
     let userLinks = <></>;
     let userLogout = <></>;
-    let nonUserLinks = <></>;
+    let publicLinks = <></>;
 
     roles.forEach((role) => {
         if (role === "ADMIN") {
@@ -50,16 +50,24 @@ export default function AppNavbar() {
         }
         if (role === "OWNER") {
             ownerLinks = (
-                <NavItem>
-                    <NavLink tag={Link} to="/plan">Plan</NavLink>
-                </NavItem>
+                <>
+                    <NavItem>
+                        <NavLink tag={Link} to="/myPets">My Pets</NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink tag={Link} to="/plan">Plan</NavLink>
+                    </NavItem>
+                </>
             )
         }
     })
 
     if (jwt === "") {
-        nonUserLinks = (
+        publicLinks = (
             <>
+                <NavItem>
+                    <NavLink id="plans" tag={Link} to="/plans">Pricing Plans</NavLink>
+                </NavItem>
                 <NavItem>
                     <NavLink id="register" tag={Link} to="/register">Register</NavLink>
                 </NavItem>
@@ -78,6 +86,9 @@ export default function AppNavbar() {
         )
         userLogout = (
             <>
+                <NavItem>
+                    <NavLink id="plans" tag={Link} to="/plans">Pricing Plans</NavLink>
+                </NavItem>
                 <NavbarText>{username}</NavbarText>
                 <NavItem>
                     <NavLink className="ml-auto" id="logout" tag={Link} to="/logout">Logout</NavLink>
@@ -94,7 +105,7 @@ export default function AppNavbar() {
                 {userLinks}
                 {adminLinks}
                 {ownerLinks}
-                {nonUserLinks}
+                {publicLinks}
                 {userLogout}
             </Nav>
         </Navbar>

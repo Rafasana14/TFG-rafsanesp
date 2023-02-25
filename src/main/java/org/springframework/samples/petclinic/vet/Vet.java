@@ -57,31 +57,11 @@ public class Vet extends Person {
 	@OneToOne(cascade = {CascadeType.DETACH,CascadeType.REFRESH,CascadeType.PERSIST})
     @JoinColumn(name = "user", referencedColumnName = "id")
 	private User user;
-
-//	protected Set<Specialty> getSpecialtiesInternal() {
-//		if (this.specialties == null) {
-//			this.specialties = new HashSet<>();
-//		}
-//		return this.specialties;
-//	}
-//
-//	protected void setSpecialtiesInternal(Set<Specialty> specialties) {
-//		this.specialties = specialties;
-//	}
-
-//	@XmlElement
-//	public List<Specialty> getSpecialties() {
-//		List<Specialty> sortedSpecs = new ArrayList<>(getSpecialtiesInternal());
-//		PropertyComparator.sort(sortedSpecs, new MutableSortDefinition("name", true, true));
-//		return Collections.unmodifiableList(sortedSpecs);
-//	}
+	
+	//ciudad
 
 	public int getNrOfSpecialties() {
 		return getSpecialties().size();
 	}
-
-//	public void addSpecialty(Specialty specialty) {
-//		getSpecialtiesInternal().add(specialty);
-//	}
 
 }

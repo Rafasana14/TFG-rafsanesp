@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
 
-class VisitEdit extends Component {
+class VisitOwnerEdit extends Component {
 
     emptyVisit = {
         id: '',
@@ -22,8 +22,8 @@ class VisitEdit extends Component {
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
 
         var pathArray = window.location.pathname.split('/');
-        this.petId = pathArray[4];
-        this.visitId = pathArray[6];
+        this.petId = pathArray[2];
+        this.visitId = pathArray[4];
     }
 
     async componentDidMount() {
@@ -70,12 +70,22 @@ class VisitEdit extends Component {
             },
             body: JSON.stringify(visit),
         });
-        window.location.href = `/api/v1/pets/${this.petId}/visits`;
+        window.location.href = `/myPets`;
     }
 
     render() {
         const { visit, pet } = this.state;
         const title = <h2>{visit.id ? 'Edit Visit' : 'Add Visit'}</h2>;
+
+        const date = new Date(visit.date);
+        let dateInput;
+        if (visit.id && date < Date.now()) {
+            dateInput = <Input type="date" readOnly name="date" id="date" value={visit.date || ''}
+                onChange={this.handleChange} autoComplete="date" />
+        } else {
+            dateInput = <Input type="date" required name="date" id="date" value={visit.date || ''}
+                onChange={this.handleChange} autoComplete="date" />
+        }
 
         return <div>
             {/* <AppNavbar /> */}
@@ -84,13 +94,12 @@ class VisitEdit extends Component {
                 <Form onSubmit={this.handleSubmit}>
                     <FormGroup>
                         <Label for="date">Date</Label>
-                        <Input type="date" required name="date" id="date" value={visit.date || ''}
-                            onChange={this.handleChange} autoComplete="date" />
+                        {dateInput}
                     </FormGroup>
                     <FormGroup>
                         <Label for="description">Description</Label>
-                        <Input type="text" required name="description" id="description" value={visit.description || ''}
-                            onChange={this.handleChange} autoComplete="description" />
+                        {<Input type="text" required name="description" id="description" value={visit.description || ''}
+                            onChange={this.handleChange} autoComplete="description" />}
                     </FormGroup>
                     <FormGroup>
                         <Label for="pet">Pet</Label>
@@ -98,11 +107,11 @@ class VisitEdit extends Component {
                     </FormGroup>
                     <FormGroup>
                         <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="secondary" tag={Link} to={`/api/v1/pets/${this.petId}/visits`}>Cancel</Button>
+                        <Button color="secondary" tag={Link} to={`/myPets`}>Cancel</Button>
                     </FormGroup>
                 </Form>
             </Container>
         </div >
     }
 }
-export default VisitEdit;
+export default VisitOwnerEdit;

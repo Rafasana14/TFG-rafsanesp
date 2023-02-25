@@ -1,5 +1,7 @@
 package org.springframework.samples.petclinic.configuration;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +11,6 @@ import org.springframework.samples.petclinic.configuration.jwt.AuthTokenFilter;
 import org.springframework.samples.petclinic.configuration.services.UserDetailsServiceImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -85,10 +86,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @SuppressWarnings("deprecation")
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(
-		// securedEnabled = true,
-		// jsr250Enabled = true,
-		prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -96,6 +93,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private AuthEntryPointJwt unauthorizedHandler;
+	
+	@Autowired
+	DataSource dataSource;
 
 	@Bean
 	public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -130,8 +130,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/swagger-ui.html").permitAll()
 				.antMatchers("/plan").hasAuthority("OWNER")
 				.antMatchers("/api/v1/users/**").hasAuthority("ADMIN")
+				.antMatchers("/api/v1/owners/**/pets/**").authenticated()
 				.antMatchers("/api/v1/owners/**").hasAuthority("ADMIN")
-				.antMatchers("/api/v1/pets/**").hasAuthority("ADMIN")
+//				.antMatchers("/api/v1/pets/**").hasAuthority("ADMIN")
 				.antMatchers("/api/v1/vets/**").hasAuthority("ADMIN")
 				// .antMatchers("/api/v1/**").authenticated();
 
