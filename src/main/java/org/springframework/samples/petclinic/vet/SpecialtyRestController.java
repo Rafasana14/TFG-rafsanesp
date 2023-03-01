@@ -47,7 +47,6 @@ public class SpecialtyRestController {
 	@PostMapping()
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<Specialty> create(@RequestBody Specialty specialty) throws URISyntaxException{
-		RestPreconditions.checkNotNull(specialty);
 		Specialty newSpecialty = new Specialty();
 		BeanUtils.copyProperties(specialty, newSpecialty,"id");
 		Specialty savedSpecialty = this.vetService.saveSpecialty(newSpecialty);
@@ -59,15 +58,14 @@ public class SpecialtyRestController {
 	@PutMapping(value = "{specialtyId}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Specialty> update(@PathVariable("specialtyId") int specialtyId, @RequestBody @Valid Specialty specialty ) {
-		 RestPreconditions.checkNotNull(specialty);
-	     RestPreconditions.checkNotNull(vetService.findSpecialtyById(specialtyId));
+	     RestPreconditions.checkNotNull(vetService.findSpecialtyById(specialtyId), "Specialty", "ID", specialtyId);
 	     return new ResponseEntity<Specialty>(this.vetService.updateSpecialty(specialty,specialtyId),HttpStatus.OK);
 	}
 	
 	@DeleteMapping(value = "{specialtyId}")
     @ResponseStatus(HttpStatus.OK)
     public void delete(@PathVariable("specialtyId") int id) {
-		RestPreconditions.checkNotNull(vetService.findSpecialtyById(id));
+		RestPreconditions.checkNotNull(vetService.findSpecialtyById(id), "Specialty", "ID", id);
         vetService.deleteSpecialty(id);
     }
 

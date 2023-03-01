@@ -8,6 +8,7 @@ class VisitEdit extends Component {
         id: '',
         date: '',
         description: '',
+        vet: {},
         pet: {},
     };
 
@@ -16,14 +17,16 @@ class VisitEdit extends Component {
         this.state = {
             visit: this.emptyVisit,
             pet: {},
+            vets: [],
         };
         this.handleChange = this.handleChange.bind(this);
+        this.handleVetChange = this.handleVetChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
 
         var pathArray = window.location.pathname.split('/');
-        this.petId = pathArray[4];
-        this.visitId = pathArray[6];
+        this.petId = pathArray[2];
+        this.visitId = pathArray[4];
     }
 
     async componentDidMount() {
@@ -33,6 +36,13 @@ class VisitEdit extends Component {
             },
         })).json();
         this.setState({ pet: pet });
+
+        const vets = await (await fetch(`/api/v1/vets/`, {
+            headers: {
+                "Authorization": `Bearer ${this.jwt}`,
+            },
+        })).json();
+        this.setState({ vets: vets });
 
         if (this.visitId !== 'new') {
             const visit = await (await fetch(`/api/v1/pets/${this.petId}/visits/${this.visitId}`, {
@@ -55,6 +65,18 @@ class VisitEdit extends Component {
         this.setState({ visit });
     }
 
+    handleVetChange(event) {
+        const target = event.target;
+        const value = Number(target.value);
+        const vets = [...this.state.vets]
+        let selectedVet = null;
+        selectedVet = vets.filter((vet) => vet.id === value)[0];
+        let visit = { ...this.state.visit };
+        visit["vet"] = selectedVet;
+        this.setState({ visit });
+
+    }
+
     async handleSubmit(event) {
         event.preventDefault();
         let visit = { ...this.state.visit };
@@ -70,12 +92,14 @@ class VisitEdit extends Component {
             },
             body: JSON.stringify(visit),
         });
-        window.location.href = `/api/v1/pets/${this.petId}/visits`;
+        window.location.href = `/pets/${this.petId}/visits`;
     }
 
     render() {
-        const { visit, pet } = this.state;
+        const { visit, pet, vets } = this.state;
         const title = <h2>{visit.id ? 'Edit Visit' : 'Add Visit'}</h2>;
+
+        const vetOptions = vets.map(vet => <option key={vet.id} value={vet.id}>{vet.firstName} {vet.lastName}</option>);
 
         return <div>
             {/* <AppNavbar /> */}
@@ -93,12 +117,19 @@ class VisitEdit extends Component {
                             onChange={this.handleChange} autoComplete="description" />
                     </FormGroup>
                     <FormGroup>
+                        <Label for="vet">Vet</Label>
+                        <Input type="select" name="vet" id="vet" value={visit.vet.id}
+                            onChange={this.handleVetChange} autoComplete="vet">
+                            {vetOptions}
+                        </Input>
+                    </FormGroup>
+                    <FormGroup>
                         <Label for="pet">Pet</Label>
                         <p>{pet.name || ''}</p>
                     </FormGroup>
                     <FormGroup>
                         <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="secondary" tag={Link} to={`/api/v1/pets/${this.petId}/visits`}>Cancel</Button>
+                        <Button color="secondary" tag={Link} to={`/pets/${this.petId}/visits`}>Cancel</Button>
                     </FormGroup>
                 </Form>
             </Container>

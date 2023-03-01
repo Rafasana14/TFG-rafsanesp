@@ -69,14 +69,14 @@ public class VisitRestController {
 	@GetMapping("/api/v1/pets/{petId}/visits")
 	public ResponseEntity<?> findAll(@PathVariable("petId") int petId) {
 		try {
-			Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId));
+			Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId), "Pet", "ID", petId);
 			User user = userService.findCurrentUser();
 			Owner logged = null, owner = null;
 			if (user.hasAuthority("OWNER")) {
 				logged = ownerService.findOwnerByUser(user.getId());
 				owner = pet.getOwner();
 			}
-			if (user.hasAuthority("ADMIN") || user.hasAuthority("VETERINARIAN") || logged.getId() == owner.getId()) {
+			if (user.hasAuthority("ADMIN") || user.hasAuthority("VET") || logged.getId() == owner.getId()) {
 				List<Visit> res = StreamSupport.stream(petService.findVisitsByPetId(petId).spliterator(), false)
 						.collect(Collectors.toList());
 				return new ResponseEntity<List<Visit>>(res, HttpStatus.OK);
@@ -90,17 +90,20 @@ public class VisitRestController {
 
 	@PostMapping("/api/v1/pets/{petId}/visits")
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Visit> create(@PathVariable("petId") int petId, @RequestBody Visit visit)
+	public ResponseEntity<?> create(@PathVariable("petId") int petId, @RequestBody @Valid Visit visit)
 			throws URISyntaxException {
-		RestPreconditions.checkNotNull(visit);
-		Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId));
-		Visit newVisit = new Visit();
-		BeanUtils.copyProperties(visit, newVisit, "id");
-		visit.setPet(pet);
-		Visit savedVisit = this.petService.saveVisit(newVisit);
-
-		return ResponseEntity.created(new URI("/api/v1/pets/" + petId + "/visits/" + savedVisit.getId()))
-				.body(savedVisit);
+		try {
+			Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId), "Pet", "ID", petId);
+			Visit newVisit = new Visit();
+			BeanUtils.copyProperties(visit, newVisit, "id");
+			visit.setPet(pet);
+			Visit savedVisit = this.petService.saveVisit(newVisit);
+			
+			return ResponseEntity.created(new URI("/api/v1/pets/" + petId + "/visits/" + savedVisit.getId()))
+					.body(savedVisit);
+		} catch (Exception e) {
+			return new ResponseEntity<MessageResponse>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+		}
 //		 return new ResponseEntity<Pet>(savedPet,HttpStatus.CREATED);
 	}
 
@@ -109,8 +112,8 @@ public class VisitRestController {
 	public ResponseEntity<?> update(@PathVariable("petId") int petId, @PathVariable("visitId") int visitId,
 			@RequestBody @Valid Visit visit) {
 		try {
-			RestPreconditions.checkNotNull(visit);
-			RestPreconditions.checkNotNull(petService.findPetById(petId));
+			RestPreconditions.checkNotNull(petService.findVisitById(visitId), "Visit", "ID", visitId);
+			RestPreconditions.checkNotNull(petService.findPetById(petId), "Pet", "ID", petId);
 			return new ResponseEntity<Visit>(this.petService.updateVisit(visit, visitId), HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<MessageResponse>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
@@ -118,8 +121,22 @@ public class VisitRestController {
 	}
 
 	@GetMapping(value = "/api/v1/pets/{petId}/visits/{visitId}")
-	public ResponseEntity<Visit> findById(@PathVariable("visitId") int visitId) {
-		return new ResponseEntity<Visit>(petService.findVisitById(visitId), HttpStatus.OK);
+	public ResponseEntity<?> findById(@PathVariable("visitId") int visitId) {
+		try {
+			RestPreconditions.checkNotNull(petService.findVisitById(visitId), "Visit", "ID", visitId);
+			Visit visit = petService.findVisitById(visitId);
+			User user = userService.findCurrentUser();
+			if (user.hasAuthority("VET") || user.hasAuthority("VET")) {
+				return new ResponseEntity<Visit>(visit, HttpStatus.OK);
+			} else {
+				Owner owner = ownerService.findOwnerByUser(user.getId());
+				if (owner.getId() == visit.getPet().getOwner().getId())
+					return new ResponseEntity<Visit>(visit, HttpStatus.OK);
+				else throw new ResourceNotOwnedException(Visit.class.getSimpleName());
+			}
+		} catch (Exception e) {
+			return new ResponseEntity<MessageResponse>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@DeleteMapping(value = "/api/v1/pets/{petId}/visits/{visitId}")
@@ -127,8 +144,8 @@ public class VisitRestController {
 	public ResponseEntity<MessageResponse> delete(@PathVariable("petId") int petId,
 			@PathVariable("visitId") int visitId) {
 		try {
-			Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId));
-			RestPreconditions.checkNotNull(petService.findVisitById(visitId));
+			Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId), "Pet", "ID", petId);
+			RestPreconditions.checkNotNull(petService.findVisitById(visitId), "Visit", "ID", visitId);
 			User user = userService.findCurrentUser();
 			if (user.hasAuthority("ADMIN")
 					|| ownerService.findOwnerByUser(user.getId()).getId() == pet.getOwner().getId()) {

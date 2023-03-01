@@ -4,68 +4,9 @@ import { BsCheckLg, BsXLg } from 'react-icons/bs';
 
 class PlanList extends Component {
 
-    // emptyItem = {
-    //     id: '',
-    //     firstName: '',
-    //     lastName: '',
-    //     address: '',
-    //     city: '',
-    //     telephone: '',
-    //     plan: null,
-    // };
-
-    // constructor(props) {
-    //     super(props);
-    //     this.state = {
-    //         item: this.emptyItem
-    //     };
-    //     this.handleChange = this.handleChange.bind(this);
-    //     this.handleSubmit = this.handleSubmit.bind(this);
-    //     this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
-    //     this.id = window.location.href.split("/api/v1/owners/")[1];
-    // }
-
-    // async componentDidMount() {
-    //     if (this.id !== 'new') {
-    //         const owner = await (await fetch(`/api/v1/owners/${this.id}`, {
-    //             headers: {
-    //                 "Authorization": `Bearer ${this.jwt}`,
-    //             },
-    //         })).json();
-    //         this.setState({ item: owner });
-    //     }
-    // }
-
-    // handleChange(event) {
-    //     const target = event.target;
-    //     const value = target.value;
-    //     const name = target.name;
-    //     let item = { ...this.state.item };
-    //     item[name] = value;
-    //     this.setState({ item });
-    // }
-
-    // async handleSubmit(event) {
-    //     event.preventDefault();
-    //     const { item } = this.state;
-
-    //     await fetch('/api/v1/owners' + (item.id ? '/' + item.id : ''), {
-    //         method: (item.id) ? 'PUT' : 'POST',
-    //         headers: {
-    //             "Authorization": `Bearer ${this.jwt}`,
-    //             'Accept': 'application/json',
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify(item),
-    //     });
-    //     window.location.href = '/api/v1/owners';
-    // }
-
     render() {
-        // const { item } = this.state;
-        // const title = <h2>{this.id !== 'new' ? 'Edit Owner' : 'Add Owner'}</h2>;
 
-        const cell = "border border-left border-dark";
+        const cell = "border border-left border-dark text-center";
 
         const basicStyle = {
             backgroundColor: "#A5F2AA",
@@ -220,60 +161,60 @@ class PlanList extends Component {
                 <Row>
                     <Col md="3"></Col>
                     <Col md="6">
-                        <Table className="text-center" striped>
+                        <Table striped>
                             <thead>
                                 <tr>
                                     <th className="bg-white border-bottom border-dark" ></th>
-                                    <th style={basicStyle} className="border border-dark">BASIC</th>
-                                    <th style={goldStyle} className="border border-dark">GOLD</th>
-                                    <th style={platinumStyle} className="border border-dark">PLATINUM</th>
+                                    <th style={basicStyle} className={cell}>BASIC</th>
+                                    <th style={goldStyle} className={cell}>GOLD</th>
+                                    <th style={platinumStyle} className={cell}>PLATINUM</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr className="border border-dark">
-                                    <div className="text-left table-info"><td>Max Number of Pets</td></div>
+                                    <td className="table-info border border-dark">Max Number of Pets</td>
                                     <td style={basicStyle} className={cell}>2</td>
                                     <td style={goldStyle} className={cell}>4</td>
                                     <td style={platinumStyle} className={cell}>7</td>
                                 </tr>
                                 <tr className="border border-dark">
-                                    <div className="text-left table-info"><td>Number of Visits per Month and Pet</td></div>
+                                    <td className="table-info border border-dark">Number of Visits per Month and Pet</td>
                                     <td style={basicStyle} className={cell}>1</td>
                                     <td style={goldStyle} className={cell}>3</td>
                                     <td style={platinumStyle} className={cell}>6</td>
                                 </tr>
                                 <tr className="border border-dark">
-                                    <div className="text-left table-info"><td>Vet Selection for Visits</td></div>
+                                    <td className="table-info border border-dark">Vet Selection for Visits</td>
                                     <td style={basicStyle} className={cell}><BsXLg /></td>
                                     <td style={goldStyle} className={cell}><BsCheckLg /></td>
                                     <td style={platinumStyle} className={cell}><BsCheckLg /></td>
                                 </tr>
                                 <tr className="border border-dark">
-                                    <div className="text-left table-info"><td>Calendar with Upcoming Visits</td></div>
+                                    <td className="table-info border border-dark">Calendar with Upcoming Visits</td>
                                     <td style={basicStyle} className={cell}><BsXLg /></td>
                                     <td style={goldStyle} className={cell}><BsCheckLg /></td>
                                     <td style={platinumStyle} className={cell}><BsCheckLg /></td>
                                 </tr>
                                 <tr className="border border-dark">
-                                    <div className="text-left table-info"><td>Statistics Dashboard for your Pets</td></div>
+                                    <td className="table-info border border-dark">Statistics Dashboard for your Pets</td>
                                     <td style={basicStyle} className={cell}><BsXLg /></td>
                                     <td style={goldStyle} className={cell}><BsXLg /></td>
                                     <td style={platinumStyle} className={cell}><BsCheckLg /></td>
                                 </tr>
                                 <tr className="border border-dark">
-                                    <div className="text-left table-info"><td>Online Consultation</td></div>
+                                    <td className="table-info border border-dark">Online Consultation</td>
                                     <td style={basicStyle} className={cell}><BsXLg /></td>
                                     <td style={goldStyle} className={cell}><BsXLg /></td>
                                     <td style={platinumStyle} className={cell}><BsCheckLg /></td>
                                 </tr>
                                 <tr className="border border-dark">
-                                    <div className="text-left table-info"><td>Support Priority</td></div>
+                                    <td className="table-info border border-dark">Support Priority</td>
                                     <td style={basicStyle} className={cell}>Low</td>
                                     <td style={goldStyle} className={cell}>Medium</td>
                                     <td style={platinumStyle} className={cell}>High</td>
                                 </tr>
                                 <tr className="border border-dark">
-                                    <div className="text-left table-info"><td>Prize</td></div>
+                                    <td className="table-info border border-dark">Prize</td>
                                     <td style={basicStyle} className={cell}>FREE</td>
                                     <td style={goldStyle} className={cell}>€5</td>
                                     <td style={platinumStyle} className={cell}>€12</td>

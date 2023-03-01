@@ -8,7 +8,7 @@ class PetOwnerEdit extends Component {
         id: null,
         name: '',
         birthDate: '',
-        type: {},
+        type: { id: 1, },
         owner: {},
     };
 
@@ -17,6 +17,7 @@ class PetOwnerEdit extends Component {
         this.state = {
             pet: this.emptyItem,
             types: [],
+            message: null,
         };
         this.handleChange = this.handleChange.bind(this);
         // this.handleTypeChange = this.handleTypeChange.bind(this);
@@ -34,20 +35,23 @@ class PetOwnerEdit extends Component {
                     "Authorization": `Bearer ${this.jwt}`,
                 },
             })).json();
-            const type = {
-                type: pet.type.name,
+            if (pet.message) this.setState({ message: pet.message });
+            else {
+                this.setState({
+                    pet: pet,
+                    selectedType: pet.type.name,
+                });
             }
-            this.setState({
-                pet: pet,
-                selectedType: type,
-            });
         }
-        const types = await (await fetch(`/api/v1/pets/types`, {
-            headers: {
-                "Authorization": `Bearer ${this.jwt}`,
-            },
-        })).json();
-        this.setState({ types: types });
+        if (!this.state.message) {
+            const types = await (await fetch(`/api/v1/pets/types`, {
+                headers: {
+                    "Authorization": `Bearer ${this.jwt}`,
+                },
+            })).json();
+            if (types.message) this.setState({ message: types.message });
+            else this.setState({ types: types });
+        }
     }
 
     handleChange(event) {
@@ -95,42 +99,48 @@ class PetOwnerEdit extends Component {
     }
 
     render() {
-        const { pet, types } = this.state;
-        const title = <h2>{pet.id ? 'Edit Pet' : 'Add Pet'}</h2>;
+        if (this.state.message) {
+            return <div className="text-center">
+                <h2>{this.state.message}</h2>
+            </div>
+        } else {
+            const { pet, types } = this.state;
+            const title = <h2>{pet.id ? 'Edit Pet' : 'Add Pet'}</h2>;
 
-        const typeOptions = types.map(type => {
-            return < option key={type.id} value={type.name} > {type.name}</option >
-        });
+            const typeOptions = types.map(type => {
+                return < option key={type.id} value={type.name} > {type.name}</option >
+            });
 
-        return <div>
-            {/* <AppNavbar /> */}
-            <Container>
-                {title}
-                <Form onSubmit={this.handleSubmit}>
-                    <FormGroup>
-                        <Label for="name">Name</Label>
-                        <Input type="text" required name="name" id="name" value={pet.name || ''}
-                            onChange={this.handleChange} autoComplete="name" />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="birthDate">Birth Date</Label>
-                        <Input type="date" required name="birthDate" id="birthDate" value={pet.birthDate || ''}
-                            onChange={this.handleChange} autoComplete="birthDate" />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="type">Type</Label>
-                        <Input type="select" required name="type" id="type" value={pet.type.name || ""}
-                            onChange={this.handleChange} autoComplete="type">
-                            {typeOptions}
-                        </Input>
-                    </FormGroup>
-                    <FormGroup>
-                        <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="secondary" tag={Link} to="/myPets">Cancel</Button>
-                    </FormGroup>
-                </Form>
-            </Container>
-        </div>
+            return <div>
+                {/* <AppNavbar /> */}
+                <Container>
+                    {title}
+                    <Form onSubmit={this.handleSubmit}>
+                        <FormGroup>
+                            <Label for="name">Name</Label>
+                            <Input type="text" required name="name" id="name" value={pet.name || ''}
+                                onChange={this.handleChange} autoComplete="name" />
+                        </FormGroup>
+                        <FormGroup>
+                            <Label for="birthDate">Birth Date</Label>
+                            <Input type="date" required name="birthDate" id="birthDate" value={pet.birthDate || ''}
+                                onChange={this.handleChange} autoComplete="birthDate" />
+                        </FormGroup>
+                        <FormGroup>
+                            <Label for="type">Type</Label>
+                            <Input type="select" required name="type" id="type" value={pet.type.name || ""}
+                                onChange={this.handleChange} autoComplete="type">
+                                {typeOptions}
+                            </Input>
+                        </FormGroup>
+                        <FormGroup>
+                            <Button color="primary" type="submit">Save</Button>{' '}
+                            <Button color="secondary" tag={Link} to="/myPets">Cancel</Button>
+                        </FormGroup>
+                    </Form>
+                </Container>
+            </div>
+        }
     }
 }
 export default PetOwnerEdit;

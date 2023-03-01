@@ -34,16 +34,16 @@ export default function AppNavbar() {
             adminLinks = (
                 <>
                     <NavItem>
-                        <NavLink tag={Link} to="/api/v1/owners">Owners</NavLink>
+                        <NavLink tag={Link} to="/owners">Owners</NavLink>
                     </NavItem>
                     <NavItem>
-                        <NavLink tag={Link} to="/api/v1/pets">Pets</NavLink>
+                        <NavLink tag={Link} to="/pets">Pets</NavLink>
                     </NavItem>
                     <NavItem>
-                        <NavLink tag={Link} to="/api/v1/vets">Vets</NavLink>
+                        <NavLink tag={Link} to="/vets">Vets</NavLink>
                     </NavItem>
                     <NavItem>
-                        <NavLink tag={Link} to="/api/v1/users">Users</NavLink>
+                        <NavLink tag={Link} to="/users">Users</NavLink>
                     </NavItem>
                 </>
             )

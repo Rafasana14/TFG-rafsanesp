@@ -15,8 +15,14 @@
  */
 package org.springframework.samples.petclinic.vet;
 
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 public interface VetRepository extends CrudRepository<Vet, Integer>{
+	
+	@Query("SELECT DISTINCT vet FROM Vet vet WHERE vet.user.id = :userId")
+	public Optional<Vet> findVetByUser(int userId);
 
 }

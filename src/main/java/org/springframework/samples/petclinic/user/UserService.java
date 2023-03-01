@@ -15,6 +15,8 @@
  */
 package org.springframework.samples.petclinic.user;
 
+import java.util.Optional;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
@@ -23,6 +25,8 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
+import org.springframework.samples.petclinic.vet.Vet;
+import org.springframework.samples.petclinic.vet.VetService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,10 +44,13 @@ public class UserService {
 
 	private OwnerService ownerService;
 
+	private VetService vetService;
+
 	@Autowired
-	public UserService(UserRepository userRepository, OwnerService ownerService) {
+	public UserService(UserRepository userRepository, OwnerService ownerService, VetService vetService) {
 		this.userRepository = userRepository;
 		this.ownerService = ownerService;
+		this.vetService = vetService;
 	}
 
 	@Transactional
@@ -56,11 +63,10 @@ public class UserService {
 		return userRepository.findByUsername(username)
 				.orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
 	}
-	
+
 	@Transactional(readOnly = true)
 	public User findUser(Integer id) {
-		return userRepository.findById(id)
-				.orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
+		return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 	}
 
 	@Transactional(readOnly = true)
@@ -103,21 +109,25 @@ public class UserService {
 //		User toDelete = findUser(username);
 //		userRepository.delete(toDelete);
 //	}
-	
+
 	@Transactional
-	public void deleteUser(Integer id) {
+	public void deleteUser(Integer id){
 		User toDelete = findUser(id);
-		try {
-			deleteRelations(toDelete.getUsername());		
-		}catch(ResourceNotFoundException e) {
-			System.out.println("Owner already deleted. Deleting user.");
-		}
+		deleteRelations(id, toDelete.getAuthority().getAuthority());
 		userRepository.delete(toDelete);
 	}
 
-	private void deleteRelations(String username) {
-		Owner owner = findOwnerByUser(username);
-		ownerService.deleteOwner(owner.getId());
+	private void deleteRelations(Integer id, String auth) {
+		switch (auth) {
+		case "OWNER":
+			Optional<Owner> owner = ownerService.optFindOwnerByUser(id);
+			if(owner.isPresent()) ownerService.deleteOwner(owner.get().getId());
+			break;
+		case "VET":
+			Optional<Vet> vet = vetService.optFindVetByUser(id);
+			if(vet.isPresent()) vetService.deleteVet(vet.get().getId());
+			break;
+		}
 
 	}
 

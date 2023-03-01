@@ -20,15 +20,7 @@ public class User extends BaseEntity{
 	@Column(unique=true)
 	String username;
 	
-	String password;
-	
-	//private String token;
-	
-	//boolean enabled;
-	
-//	@NotNull
-//	PricingPlan plan;
-	
+	String password;	
 	
 	@ManyToOne
 	@JoinColumn(name = "authority")

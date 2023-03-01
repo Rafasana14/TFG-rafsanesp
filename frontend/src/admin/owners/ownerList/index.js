@@ -54,7 +54,7 @@ class OwnerList extends Component {
           <td>{owner.plan}</td>
           <td>
             <ButtonGroup>
-              <Button size="sm" color="primary" tag={Link} to={"/api/v1/owners/" + owner.id}>Edit</Button>
+              <Button size="sm" color="primary" tag={Link} to={"/owners/" + owner.id}>Edit</Button>
               <Button size="sm" color="danger" onClick={() => this.remove(owner.id)}>Delete</Button>
             </ButtonGroup>
           </td>
@@ -67,7 +67,7 @@ class OwnerList extends Component {
         {/* <AppNavbar /> */}
         <Container fluid>
           <div className="float-right">
-            <Button color="success" tag={Link} to="/api/v1/owners/new">
+            <Button color="success" tag={Link} to="/owners/new">
               Add Owner
             </Button>
           </div>

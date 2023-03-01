@@ -59,16 +59,16 @@ function App() {
       adminRoutes = (
         <>
 
-          <Route path="/api/v1/users" exact={true} element={<PrivateRoute><UserList /></PrivateRoute>} />
-          <Route path="/api/v1/users/:username" exact={true} element={<PrivateRoute><UserEdit /></PrivateRoute>} />
-          <Route path="/api/v1/owners" exact={true} element={<PrivateRoute><OwnerList /></PrivateRoute>} />
-          <Route path="/api/v1/owners/:id" exact={true} element={<PrivateRoute><OwnerEdit /></PrivateRoute>} />
-          <Route path="/api/v1/pets" exact={true} element={<PrivateRoute><PetList /></PrivateRoute>} />
-          <Route path="/api/v1/pets/:id" exact={true} element={<PrivateRoute><PetEdit /></PrivateRoute>} />
-          <Route path="/api/v1/pets/:petId/visits" exact={true} element={<PrivateRoute><VisitList /></PrivateRoute>} />
-          <Route path="/api/v1/pets/:petId/visits/:visitId" exact={true} element={<PrivateRoute><VisitEdit /></PrivateRoute>} />
-          <Route path="/api/v1/vets" exact={true} element={<PrivateRoute><VetList /></PrivateRoute>} />
-          <Route path="/api/v1/vets/:id" exact={true} element={<PrivateRoute><VetEdit /></PrivateRoute>} />
+          <Route path="/users" exact={true} element={<PrivateRoute><UserList /></PrivateRoute>} />
+          <Route path="/users/:username" exact={true} element={<PrivateRoute><UserEdit /></PrivateRoute>} />
+          <Route path="/owners" exact={true} element={<PrivateRoute><OwnerList /></PrivateRoute>} />
+          <Route path="/owners/:id" exact={true} element={<PrivateRoute><OwnerEdit /></PrivateRoute>} />
+          <Route path="/pets" exact={true} element={<PrivateRoute><PetList /></PrivateRoute>} />
+          <Route path="/pets/:id" exact={true} element={<PrivateRoute><PetEdit /></PrivateRoute>} />
+          <Route path="/pets/:petId/visits" exact={true} element={<PrivateRoute><VisitList /></PrivateRoute>} />
+          <Route path="/pets/:petId/visits/:visitId" exact={true} element={<PrivateRoute><VisitEdit /></PrivateRoute>} />
+          <Route path="/vets" exact={true} element={<PrivateRoute><VetList /></PrivateRoute>} />
+          <Route path="/vets/:id" exact={true} element={<PrivateRoute><VetEdit /></PrivateRoute>} />
 
         </>)
     }

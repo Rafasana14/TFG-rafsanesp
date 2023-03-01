@@ -41,6 +41,11 @@ public class AuthoritiesService {
 	}
 	
 	@Transactional(readOnly = true)
+	public Iterable<Authorities> findAll() {
+		return this.authoritiesRepository.findAll();
+	}
+	
+	@Transactional(readOnly = true)
 	public Authorities findByAuthority(String authority) {
 		return this.authoritiesRepository.findByName(authority).orElseThrow(()->new ResourceNotFoundException("Authority","Name",authority));
 	}

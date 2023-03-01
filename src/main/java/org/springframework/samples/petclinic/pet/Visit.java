@@ -26,6 +26,7 @@ import javax.validation.constraints.NotEmpty;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.samples.petclinic.model.BaseEntity;
+import org.springframework.samples.petclinic.vet.Vet;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -61,6 +62,10 @@ public class Visit extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "pet_id")
 	private Pet pet;
+	
+	@ManyToOne()
+	@JoinColumn(name = "vet_id")
+	private Vet vet;
 
 	/**
 	 * Creates a new instance of Visit for the current date

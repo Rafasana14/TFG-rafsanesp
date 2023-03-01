@@ -117,6 +117,7 @@ class PetOwnerList extends Component {
                     <thead>
                         <tr>
                             <th>Visits</th>
+                            <th /><th />
                             <th><Button color="info" tag={Link} to={`/myPets/${pet.id}/visits/new`}>
                                 Add Visit
                             </Button></th>
@@ -125,6 +126,8 @@ class PetOwnerList extends Component {
                     <tbody>
                         <tr className="table-info" >
                             <td>There are no visits for this pet.</td>
+                            <td></td>
+                            <td></td>
                             <td></td>
                         </tr >
                     </tbody>
@@ -161,6 +164,7 @@ class PetOwnerList extends Component {
                         <tr className="table-info" key={visit["id"]}>
                             <td>{visit["date"]}</td>
                             <td>{visit.description}</td>
+                            <td>{visit.vet.firstName} {visit.vet.lastName}</td>
                             <td>
                                 {buttons}
                             </td>
@@ -171,7 +175,7 @@ class PetOwnerList extends Component {
                         <thead>
                             <tr>
                                 <th>Visits</th>
-                                <th />
+                                <th /><th />
                                 <th>
                                     <Button color="info" tag={Link} to={`/myPets/${pet.id}/visits/new`}>
                                         Add Visit
@@ -181,8 +185,8 @@ class PetOwnerList extends Component {
                             <tr>
                                 <th>Date</th>
                                 <th>Description</th>
+                                <th>Vet</th>
                                 <th>Actions</th>
-
                             </tr>
                         </thead>
                         <tbody>{tableBody}</tbody>

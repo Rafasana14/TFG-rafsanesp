@@ -18,6 +18,7 @@ package org.springframework.samples.petclinic.vet;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -26,6 +27,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotEmpty;
 
 import org.springframework.samples.petclinic.model.Person;
 import org.springframework.samples.petclinic.user.User;
@@ -58,7 +60,9 @@ public class Vet extends Person {
     @JoinColumn(name = "user", referencedColumnName = "id")
 	private User user;
 	
-	//ciudad
+	@Column(name = "city")
+	@NotEmpty
+	private String city;
 
 	public int getNrOfSpecialties() {
 		return getSpecialties().size();

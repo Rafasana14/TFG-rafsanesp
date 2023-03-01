@@ -91,6 +91,7 @@ class OwnerServiceTests {
 		owner.setLastName("Schultz");
 		owner.setAddress("4, Evans Street");
 		owner.setCity("Wollongong");
+		owner.setPlan(PricingPlan.BASIC);
 		owner.setTelephone("4444444444");
                 User user=new User();
                 user.setUsername("Sam");

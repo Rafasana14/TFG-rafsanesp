@@ -7,9 +7,10 @@ class RegisterVet extends Component {
     emptyRequest = {
         username: '',
         password: '',
-        authority: 'VETERINARIAN',
+        authority: 'VET',
         firstName: '',
         lastName: '',
+        city: '',
         specialties: [],
     };
 
@@ -121,6 +122,11 @@ class RegisterVet extends Component {
                                 <Label for="lastName">Last Name</Label>
                                 <Input type="text" required name="lastName" id="lastName" value={request.lastName || ''}
                                     onChange={this.handleChange} autoComplete="lastName" />
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="city">City</Label>
+                                <Input type="text" required name="city" id="city" value={request.city || ''}
+                                    onChange={this.handleChange} autoComplete="city" />
                             </FormGroup>
                             <br></br>
                             <FormGroup>

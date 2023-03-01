@@ -151,6 +151,8 @@ public class PetService {
 	@Transactional
 	public Visit updateVisit(Visit visit, int id) throws DataAccessException {
 		Visit toUpdate = findVisitById(id);
+		System.out.println(visit);
+		System.out.println(toUpdate);
 		BeanUtils.copyProperties(visit, toUpdate, "id");
 		visitRepository.save(toUpdate);
 		

@@ -22,7 +22,8 @@ class OwnerEdit extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
-        this.id = window.location.href.split("/api/v1/owners/")[1];
+        var pathArray = window.location.pathname.split('/');
+        this.id = pathArray[2];
     }
 
     async componentDidMount() {
@@ -58,7 +59,7 @@ class OwnerEdit extends Component {
             },
             body: JSON.stringify(item),
         });
-        window.location.href = '/api/v1/owners';
+        window.location.href = '/owners';
     }
 
     render() {
@@ -105,7 +106,7 @@ class OwnerEdit extends Component {
                     </FormGroup>
                     <FormGroup>
                         <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="secondary" tag={Link} to="/api/v1/owners">Cancel</Button>
+                        <Button color="secondary" tag={Link} to="/owners">Cancel</Button>
                     </FormGroup>
                 </Form>
             </Container>

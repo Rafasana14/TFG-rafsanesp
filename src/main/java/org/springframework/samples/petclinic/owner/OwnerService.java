@@ -16,6 +16,7 @@
 package org.springframework.samples.petclinic.owner;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,11 @@ public class OwnerService {
 	@Transactional(readOnly = true)
 	public Owner findOwnerByUser(int userId) throws DataAccessException {
 		return this.ownerRepository.findByUser(userId).orElseThrow(()->new ResourceNotFoundException("Owner","User ID",userId));
+	}
+	
+	@Transactional(readOnly = true)
+	public Optional<Owner> optFindOwnerByUser(int userId) throws DataAccessException {
+		return this.ownerRepository.findByUser(userId);
 	}
 
 	@Transactional

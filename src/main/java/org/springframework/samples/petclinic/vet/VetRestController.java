@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import petclinic.payload.response.MessageResponse;
+
 @RestController
 @RequestMapping("/api/v1/vets")
 public class VetRestController {
@@ -47,31 +49,35 @@ public class VetRestController {
 		return new ResponseEntity<Vet>(vetService.findVetById(id), HttpStatus.OK);
 	}
 
-	@PostMapping()
+	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Vet> create(@RequestBody Vet vet) throws URISyntaxException {
-		RestPreconditions.checkNotNull(vet);
-		Vet newVet = new Vet();
-		BeanUtils.copyProperties(vet, newVet, "id");
-		User user = userService.findCurrentUser();
-		newVet.setUser(user);
-		Vet savedVet = this.vetService.saveVet(newVet);
+	public ResponseEntity<?> create(@RequestBody @Valid Vet vet) throws URISyntaxException {
+		try {
+			Vet newVet = new Vet();
+			BeanUtils.copyProperties(vet, newVet, "id");
+			User user = userService.findCurrentUser();
+			newVet.setUser(user);
+			Vet savedVet = this.vetService.saveVet(newVet);
 
-		return new ResponseEntity<Vet>(savedVet, HttpStatus.CREATED);
+			return new ResponseEntity<Vet>(savedVet, HttpStatus.CREATED);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return new ResponseEntity<MessageResponse>(new MessageResponse(e.getMessage()), HttpStatus.BAD_REQUEST);
+		} 
 	}
 
 	@PutMapping(value = "{vetId}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Vet> update(@PathVariable("vetId") int vetId, @RequestBody @Valid Vet vet) {
-		RestPreconditions.checkNotNull(vet);
-		RestPreconditions.checkNotNull(vetService.findVetById(vetId));
+		RestPreconditions.checkNotNull(vetService.findVetById(vetId), "Vet", "ID", vetId);
 		return new ResponseEntity<Vet>(this.vetService.updateVet(vet, vetId), HttpStatus.OK);
 	}
 
 	@DeleteMapping(value = "{vetId}")
 	@ResponseStatus(HttpStatus.OK)
 	public void delete(@PathVariable("vetId") int id) {
-		RestPreconditions.checkNotNull(vetService.findVetById(id));
+		RestPreconditions.checkNotNull(vetService.findVetById(id), "Vet", "ID", id);
 		vetService.deleteVet(id);
 	}
 
@@ -79,8 +85,8 @@ public class VetRestController {
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Vet> addSpecialty(@PathVariable("vetId") int vetId,
 			@PathVariable("specialtyId") int specialtyId) {
-		RestPreconditions.checkNotNull(vetService.findSpecialtyById(specialtyId));
-		RestPreconditions.checkNotNull(vetService.findVetById(vetId));
+		RestPreconditions.checkNotNull(vetService.findSpecialtyById(specialtyId), "Specialty", "ID", specialtyId);
+		RestPreconditions.checkNotNull(vetService.findVetById(vetId), "Vet", "ID", vetId);
 		return new ResponseEntity<Vet>(
 				this.vetService.addSpecialty(vetService.findVetById(vetId), vetService.findSpecialtyById(specialtyId)),
 				HttpStatus.OK);
@@ -90,8 +96,8 @@ public class VetRestController {
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Vet> removeSpecialty(@PathVariable("vetId") int vetId,
 			@PathVariable("specialtyId") int specialtyId) {
-		RestPreconditions.checkNotNull(vetService.findSpecialtyById(specialtyId));
-		RestPreconditions.checkNotNull(vetService.findVetById(vetId));
+		RestPreconditions.checkNotNull(vetService.findSpecialtyById(specialtyId), "Specialty", "ID", specialtyId);
+		RestPreconditions.checkNotNull(vetService.findVetById(vetId), "Vet", "ID", vetId);
 		return new ResponseEntity<Vet>(
 				this.vetService.removeSpecialty(vetService.findVetById(vetId), vetService.findSpecialtyById(specialtyId)),
 				HttpStatus.OK);

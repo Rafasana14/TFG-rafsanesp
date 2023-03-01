@@ -16,6 +16,7 @@
 package org.springframework.samples.petclinic.vet;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,16 @@ public class VetService {
 	public Vet findVetById(int id) throws DataAccessException {
 		return vetRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Vet","ID",id));
 	}
+	
+	@Transactional(readOnly = true)	
+	public Vet findVetByUser(int userId) throws DataAccessException {
+		return vetRepository.findVetByUser(userId).orElseThrow(()->new ResourceNotFoundException("Vet","User",userId));
+	}
+	
+	public Optional<Vet> optFindVetByUser(Integer userId) {
+		return vetRepository.findVetByUser(userId);
+	}
+
 	
 	@Transactional
 	public Vet saveVet(Vet vet) throws DataAccessException {

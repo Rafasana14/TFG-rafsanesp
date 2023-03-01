@@ -22,7 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
-import org.springframework.samples.petclinic.util.RestPreconditions;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -68,7 +67,6 @@ public class OwnerPlanController {
 	@PutMapping
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Owner> updatePlan(@RequestBody @Valid PricingPlan plan ) {
-		 RestPreconditions.checkNotNull(plan);
 		 User user = userService.findCurrentUser();
 		 Owner owner = ownerService.findOwnerByUser(user.getId());
 	     return new ResponseEntity<Owner>(this.ownerService.updatePlan(plan,owner.getId()),HttpStatus.OK);

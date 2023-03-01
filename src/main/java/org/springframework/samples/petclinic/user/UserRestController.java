@@ -24,7 +24,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.util.RestPreconditions;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +32,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -49,16 +49,28 @@ import petclinic.payload.response.MessageResponse;
 class UserRestController {
 
 	private final UserService userService;
+	private final AuthoritiesService authService;
 
 	@Autowired
-	public UserRestController(UserService userService) {
+	public UserRestController(UserService userService, AuthoritiesService authService) {
 		this.userService = userService;
+		this.authService = authService;
 	}
 	
 	@GetMapping
-	public List<User> findAll() {
-		return StreamSupport.stream(userService.findAll().spliterator(), false)
-				.collect(Collectors.toList());
+	public List<User> findAll(@RequestParam(required = false) String auth) {
+		if(auth != null) {
+			return StreamSupport.stream(userService.findAll().spliterator(), false)
+					.filter(user->user.getAuthority().getAuthority().equals(auth))
+					.collect(Collectors.toList());
+		}else return (List<User>) userService.findAll();
+//			return StreamSupport.stream(userService.findAll().spliterator(), false)
+//				.collect(Collectors.toList());
+	}
+	
+	@GetMapping("authorities")
+	public List<Authorities> findAllAuths() {
+		return (List<Authorities>) authService.findAll();
 	}
 	
 	@GetMapping(value = "{id}")
@@ -68,16 +80,14 @@ class UserRestController {
 	
 	@PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void create(@RequestBody User user) {
-        RestPreconditions.checkNotNull(user);
+    public void create(@RequestBody @Valid User user) {
         userService.saveUser(user);
     }
 	
 	@PutMapping(value = "{userId}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<User> update(@PathVariable("userId") Integer id, @RequestBody @Valid User user ) {
-		 RestPreconditions.checkNotNull(user);
-	     RestPreconditions.checkNotNull(userService.findUser(id));
+	     RestPreconditions.checkNotNull(userService.findUser(id),"User", "ID", id);
 	     return new ResponseEntity<User>(this.userService.updateUser(user,id),HttpStatus.OK);
 	}
 	
@@ -85,14 +95,14 @@ class UserRestController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<MessageResponse> delete(@PathVariable("userId") int id) {
 		try {
-			RestPreconditions.checkNotNull(userService.findUser(id));
-		} catch (ResourceNotFoundException e) {
-			return new ResponseEntity<MessageResponse>(new MessageResponse(e.getMessage()),HttpStatus.BAD_REQUEST);
-		}
-		if(userService.findCurrentUser().getId()!=id) {
+			RestPreconditions.checkNotNull(userService.findUser(id), "User", "ID", id);
+			if(userService.findCurrentUser().getId()!=id) {
 				userService.deleteUser(id);
 				return new ResponseEntity<MessageResponse>(new MessageResponse("User deleted!"),HttpStatus.OK);
-		}else return new ResponseEntity<MessageResponse>(new MessageResponse("You can't delete yourself!"),HttpStatus.BAD_REQUEST);
+			}else return new ResponseEntity<MessageResponse>(new MessageResponse("You can't delete yourself!"),HttpStatus.BAD_REQUEST);
+		} catch (Exception e) {
+			return new ResponseEntity<MessageResponse>(new MessageResponse(e.getMessage()),HttpStatus.BAD_REQUEST);
+		}
     }
 
 }

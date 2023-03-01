@@ -45,15 +45,17 @@ class VetList extends Component {
 
         const vetList = vets.map(vet => {
 
-            let specialtiesAux = [];
-            vet.specialties.map(specialty => specialtiesAux.push(specialty.name))
+            let specialtiesAux = vet.specialties.map(s => s.name).toString().replace(",", ", ");;
+
 
             return <tr key={vet.id}>
                 <td style={{ whiteSpace: 'nowrap' }}>{vet.firstName} {vet.lastName}</td>
-                <td style={{ whiteSpace: 'break-spaces' }}>{specialtiesAux.toString()}</td>
+                <td >{vet.city}</td>
+                <td style={{ whiteSpace: 'break-spaces' }}>{specialtiesAux}</td>
+                <td >{vet.user.username}</td>
                 <td>
                     <ButtonGroup>
-                        <Button size="sm" color="primary" tag={Link} to={"/api/v1/vets/" + vet.id}>Edit</Button>
+                        <Button size="sm" color="primary" tag={Link} to={"/vets/" + vet.id}>Edit</Button>
                         <Button size="sm" color="danger" onClick={() => this.remove(vet.id)}>Delete</Button>
                     </ButtonGroup>
                 </td>
@@ -64,14 +66,16 @@ class VetList extends Component {
             <div>
                 <Container fluid>
                     <div className="float-right">
-                        <Button color="success" tag={Link} to="/api/v1/vets/new">Add Vet</Button>
+                        <Button color="success" tag={Link} to="/vets/new">Add Vet</Button>
                     </div>
                     <h3>Vets</h3>
                     <Table className="mt-4">
                         <thead>
                             <tr>
-                                <th width="30%">Name</th>
-                                <th width="50%">Specialties</th>
+                                <th width="20%">Name</th>
+                                <th width="20%">City</th>
+                                <th width="20%">Specialties</th>
+                                <th width="20%">User</th>
                                 <th width="20%">Actions</th>
                             </tr>
                         </thead>

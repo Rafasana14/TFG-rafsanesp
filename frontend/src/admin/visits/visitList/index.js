@@ -11,7 +11,7 @@ class VisitList extends Component {
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
 
         var pathArray = window.location.pathname.split('/');
-        this.petId = pathArray[4];
+        this.petId = pathArray[2];
     }
 
     componentDidMount() {
@@ -55,10 +55,11 @@ class VisitList extends Component {
                 <tr key={visit.id}>
                     <td>{visit.date}</td>
                     <td>{visit.description}</td>
+                    <td>{visit.vet.firstName} {visit.vet.lastName}</td>
                     <td>
                         <ButtonGroup>
                             <Button size="sm" color="primary" tag={Link}
-                                to={`/api/v1/pets/${this.petId}/visits/${visit.id}`}>
+                                to={`/pets/${this.petId}/visits/${visit.id}`}>
                                 Edit
                             </Button>
                             <Button size="sm" color="danger" onClick={() => this.remove(visit.id)}>
@@ -75,10 +76,10 @@ class VisitList extends Component {
                 {/* <AppNavbar /> */}
                 <Container fluid>
                     <div className="float-right">
-                        <Button color="success" tag={Link} to={`/api/v1/pets/${this.petId}/visits/new`}>
+                        <Button color="success" tag={Link} to={`/pets/${this.petId}/visits/new`}>
                             Add Visit
                         </Button>
-                        <Button color="primary" tag={Link} to={`/api/v1/pets/`}>
+                        <Button color="primary" tag={Link} to={`/pets/`}>
                             Back
                         </Button>
                     </div>
@@ -88,6 +89,7 @@ class VisitList extends Component {
                             <tr>
                                 <th>Date</th>
                                 <th>Description</th>
+                                <th>Vet</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>

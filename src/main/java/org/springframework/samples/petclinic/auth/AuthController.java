@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.web;
+package org.springframework.samples.petclinic.auth;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.configuration.jwt.JwtUtils;
 import org.springframework.samples.petclinic.configuration.services.UserDetailsImpl;
+import org.springframework.samples.petclinic.exceptions.TokenRefreshException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.user.Authorities;
@@ -30,8 +31,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import petclinic.payload.request.LoginRequest;
 import petclinic.payload.request.SignupRequest;
+import petclinic.payload.request.TokenRefreshRequest;
 import petclinic.payload.response.JwtResponse;
 import petclinic.payload.response.MessageResponse;
+import petclinic.payload.response.TokenRefreshResponse;
+
+
+
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -44,8 +50,8 @@ public class AuthController {
 	private final UserService userService;
 	private final OwnerService ownerService;
 	private final VetService vetService;
-
 	private final AuthoritiesService authoritiesService;
+	private final RefreshTokenService refreshTokenService;
 
 	private final PasswordEncoder encoder;
 
@@ -53,11 +59,13 @@ public class AuthController {
 
 	@Autowired
 	public AuthController(UserService userService, AuthoritiesService authoritiesService, PasswordEncoder encoder,
-			JwtUtils jwtUtils, OwnerService ownerService, VetService vetService) {
+			JwtUtils jwtUtils, OwnerService ownerService, VetService vetService,
+			RefreshTokenService refreshTokenService) {
 		this.userService = userService;
 		this.authoritiesService = authoritiesService;
 		this.ownerService = ownerService;
 		this.vetService = vetService;
+		this.refreshTokenService = refreshTokenService;
 		this.encoder = encoder;
 		this.jwtUtils = jwtUtils;
 	}
@@ -75,7 +83,22 @@ public class AuthController {
 		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
 				.collect(Collectors.toList());
 
-		return ResponseEntity.ok().body(new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), roles));
+		RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+
+		return ResponseEntity.ok().body(
+				new JwtResponse(jwt, refreshToken.getToken(), userDetails.getId(), userDetails.getUsername(), roles));
+	}
+
+	@PostMapping("/refreshtoken")
+	public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request) {
+		String requestRefreshToken = request.getRefreshToken();
+
+		return refreshTokenService.findByToken(requestRefreshToken).map(refreshTokenService::verifyExpiration)
+				.map(RefreshToken::getUser).map(user -> {
+					String token = jwtUtils.generateTokenFromUsername(user.getUsername());
+					return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
+				})
+				.orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
 	}
 
 	@PostMapping("/signup")
@@ -101,13 +124,14 @@ public class AuthController {
 			case "admin":
 				role = authoritiesService.findByAuthority("ADMIN");
 				break;
-			case "veterinarian":
-				role = authoritiesService.findByAuthority("VETERINARIAN");
+			case "vet":
+				role = authoritiesService.findByAuthority("VET");
 				user.setAuthority(role);
 				userService.saveUser(user);
 				Vet vet = new Vet();
 				vet.setFirstName(request.getFirstName());
 				vet.setLastName(request.getLastName());
+				vet.setCity(request.getCity());
 				vet.setSpecialties(request.getSpecialties());
 				vet.setUser(user);
 				vetService.saveVet(vet);

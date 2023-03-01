@@ -40,9 +40,9 @@ public final class RestPreconditions {
         return resource;
     }
     
-    public static <T> T checkNotNull(final T resource) {
+    public static <T> T checkNotNull(final T resource,String resourceName, String fieldName, Object fieldValue) {
         if (resource == null) {
-            throw new ResourceNotFoundException();
+            throw new ResourceNotFoundException(resourceName, fieldName, fieldValue);
         }
 
         return resource;

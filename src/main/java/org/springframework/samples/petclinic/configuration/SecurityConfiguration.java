@@ -124,16 +124,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
-				.antMatchers("/resources/**", "/webjars/**", "/h2-console/**", "/static/**").permitAll()
+				.antMatchers("/resources/**", "/webjars/**", "/h2-console/**", "/static/**", "/swagger-resources/**").permitAll()
 				.antMatchers(HttpMethod.GET, "/", "/oups").permitAll()
 				.antMatchers("/api/auth/**").permitAll().antMatchers("/v2/api-docs").permitAll()
-				.antMatchers("/swagger-ui.html").permitAll()
+				.antMatchers("/swagger-ui.html/**").permitAll()
 				.antMatchers("/plan").hasAuthority("OWNER")
 				.antMatchers("/api/v1/users/**").hasAuthority("ADMIN")
 				.antMatchers("/api/v1/owners/**/pets/**").authenticated()
 				.antMatchers("/api/v1/owners/**").hasAuthority("ADMIN")
 //				.antMatchers("/api/v1/pets/**").hasAuthority("ADMIN")
-				.antMatchers("/api/v1/vets/**").hasAuthority("ADMIN")
+				.antMatchers(HttpMethod.GET,"/api/v1/vets/**").authenticated()
+				.antMatchers("/api/v1/vets/**").hasAnyAuthority("ADMIN","VET")
 				// .antMatchers("/api/v1/**").authenticated();
 
 				.anyRequest().authenticated();
@@ -148,7 +149,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		web.ignoring()
 				// .antMatchers("/index.html")
 				.antMatchers("/static/**").antMatchers("/error").antMatchers("/swagger-ui.html")
-				.antMatchers("/swagger-resources");
+				.antMatchers("/swagger-resources/**");
 	}
 
 //		public void addResourceHandlers(ResourceHandlerRegistry registry) {
