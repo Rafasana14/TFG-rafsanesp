@@ -70,7 +70,7 @@ INSERT INTO types VALUES (6, 'hamster');
 INSERT INTO types VALUES (7, 'turtle');
 
 INSERT INTO	owners VALUES (1, 'George', 'Franklin', '110 W. Liberty St.', 'Sevilla', 0, '6085551023', 2);
-INSERT INTO owners VALUES (2, 'Betty', 'Davis', '638 Cardinal Ave.', 'Sun Sevilla',0, '6085551749', 3);
+INSERT INTO owners VALUES (2, 'Betty', 'Davis', '638 Cardinal Ave.', 'Sevilla',0, '6085551749', 3);
 INSERT INTO owners VALUES (3, 'Eduardo', 'Rodriquez', '2693 Commerce St.', 'Sevilla',0, '6085558763', 4);
 INSERT INTO owners VALUES (4, 'Harold', 'Davis', '563 Friendly St.', 'Sevilla',0, '6085553198', 5);
 INSERT INTO owners VALUES (5, 'Peter', 'McTavish', '2387 S. Fair Way', 'Sevilla',0, '6085552765', 6);

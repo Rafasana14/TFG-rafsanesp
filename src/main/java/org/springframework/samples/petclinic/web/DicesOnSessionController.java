@@ -2,11 +2,10 @@ package org.springframework.samples.petclinic.web;
 
 import javax.servlet.http.HttpSession;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-@Controller
+//@Controller
 public class DicesOnSessionController {
 
     public static int NUM_DICES=5;

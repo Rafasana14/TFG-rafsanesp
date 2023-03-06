@@ -13,33 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.samples.petclinic.pet;
+package org.springframework.samples.petclinic.visit;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.samples.petclinic.model.BaseEntity;
 
-/**
- * Repository class for <code>Visit</code> domain objects All method names are compliant
- * with Spring Data naming conventions so this interface can easily be extended for Spring
- * Data See here:
- * http://static.springsource.org/spring-data/jpa/docs/current/reference/html/jpa.repositories.html#jpa.query-methods.query-creation
- *
- * @author Ken Krebs
- * @author Juergen Hoeller
- * @author Sam Brannen
- * @author Michael Isvy
- */
 public interface VisitRepository extends CrudRepository<Visit, Integer> {
 
-	/**
-	 * Save a <code>Visit</code> to the data store, either inserting or updating it.
-	 * @param visit the <code>Visit</code> to save
-	 * @see BaseEntity#isNew
-	 */
 	@Query("SELECT v FROM Visit v WHERE v.pet.id = :petId ORDER BY v.date DESC")
 	List<Visit> findByPetId(Integer petId);
+	
+	@Query("SELECT v FROM Visit v WHERE v.pet.owner.id = :ownerId ORDER BY v.date DESC")
+	Collection<Visit> findByOwnerId(int ownerId);
 
 }

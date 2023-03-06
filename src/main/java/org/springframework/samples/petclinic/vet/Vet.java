@@ -35,21 +35,13 @@ import org.springframework.samples.petclinic.user.User;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * Simple JavaBean domain object representing a veterinarian.
- *
- * @author Ken Krebs
- * @author Juergen Hoeller
- * @author Sam Brannen
- * @author Arjen Poutsma
- */
 @Entity
 @Table(name = "vets")
 @Getter
 @Setter
 public class Vet extends Person {
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
 	@JoinTable(name = "vet_specialties", joinColumns = @JoinColumn(name = "vet_id"),
 			inverseJoinColumns = @JoinColumn(name = "specialty_id"),uniqueConstraints={
 				    @UniqueConstraint(columnNames = {"vet_id", "specialty_id"})
@@ -64,8 +56,8 @@ public class Vet extends Person {
 	@NotEmpty
 	private String city;
 
-	public int getNrOfSpecialties() {
-		return getSpecialties().size();
-	}
+	public void removeSpecialty(Specialty s) {
+		specialties.remove(s);
+    }
 
 }

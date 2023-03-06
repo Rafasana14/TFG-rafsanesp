@@ -4,7 +4,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.servlet.error.BasicErrorController;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
@@ -12,7 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  * responses to [ErrorController], which produces validation response. So we need to fake it in tests.
  * It's not ideal, but at least we can use classic MockMvc tests for testing error response + document it.
  */
-@ControllerAdvice
+//@ControllerAdvice
 public class ExceptionHandlerConfiguration 
 {
 	@SuppressWarnings("unused")

@@ -64,11 +64,12 @@ class VetList extends Component {
 
         return (
             <div>
-                <Container fluid>
+                <Container style={{ marginTop: "15px" }} fluid>
+                    <h1 className='text-center'>Vets</h1>
                     <div className="float-right">
-                        <Button color="success" tag={Link} to="/vets/new">Add Vet</Button>
+                        <Button color="success" tag={Link} to="/vets/new">Add Vet</Button>{" "}
+                        <Button color="info" tag={Link} to="/vets/specialties">Specialties</Button>
                     </div>
-                    <h3>Vets</h3>
                     <Table className="mt-4">
                         <thead>
                             <tr>

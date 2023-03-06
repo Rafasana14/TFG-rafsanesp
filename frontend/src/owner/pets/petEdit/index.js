@@ -8,7 +8,7 @@ class PetOwnerEdit extends Component {
         id: null,
         name: '',
         birthDate: '',
-        type: { id: 1, },
+        type: {},
         owner: {},
     };
 
@@ -59,16 +59,19 @@ class PetOwnerEdit extends Component {
         const value = target.value;
         const name = target.name;
         let pet = { ...this.state.pet };
-        if (name === "type" || !pet.type.name) {
-            const types = { ...this.state.types }
-            let selectedType = null;
-            for (let i = 0; i < Object.keys(types).length; i++) {
-                if (types[i].name === value) selectedType = types[i];
-                if (!pet.type.name && types[i].name === "bird") selectedType = types[i];
-            }
-            pet["type"] = selectedType;
+        if (name === "type") {
+            pet.type.id = Number(value);
         }
-        if (name !== "type") pet[name] = value
+        // if (name === "type" || !pet.type.name) {
+        //     const types = { ...this.state.types }
+        //     let selectedType = null;
+        //     for (let i = 0; i < Object.keys(types).length; i++) {
+        //         if (types[i].name === value) selectedType = types[i];
+        //         if (!pet.type.name && types[i].name === "bird") selectedType = types[i];
+        //     }
+        //     pet["type"] = selectedType;
+        // }
+        else pet[name] = value
         this.setState({ pet });
 
     }
@@ -108,7 +111,7 @@ class PetOwnerEdit extends Component {
             const title = <h2>{pet.id ? 'Edit Pet' : 'Add Pet'}</h2>;
 
             const typeOptions = types.map(type => {
-                return < option key={type.id} value={type.name} > {type.name}</option >
+                return <option key={type.id} value={type.id} > {type.name}</option>
             });
 
             return <div>
@@ -128,8 +131,9 @@ class PetOwnerEdit extends Component {
                         </FormGroup>
                         <FormGroup>
                             <Label for="type">Type</Label>
-                            <Input type="select" required name="type" id="type" value={pet.type.name || ""}
+                            <Input type="select" required name="type" id="type" value={pet.type.id || ""}
                                 onChange={this.handleChange} autoComplete="type">
+                                < option value="">None</option >
                                 {typeOptions}
                             </Input>
                         </FormGroup>

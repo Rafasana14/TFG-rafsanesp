@@ -161,7 +161,7 @@ class PlanList extends Component {
                 <Row>
                     <Col md="3"></Col>
                     <Col md="6">
-                        <Table striped>
+                        <Table>
                             <thead>
                                 <tr>
                                     <th className="bg-white border-bottom border-dark" ></th>

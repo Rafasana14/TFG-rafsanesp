@@ -1,12 +1,16 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Form, Button, Container, FormGroup, Input, Label, Col } from "reactstrap";
-import { useLocalState } from "../../util/useLocalStorage";
+import tokenService from "../../services/token.service";
+// import tokenService from "../../services/token.service";
+// import { useLocalState } from "../../util/useLocalStorage";
+// import api from '../../services/api';
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [, setJwt] = useLocalState("jwt", "");
+  // const [, setJwt] = useLocalState("jwt", "");
+  // const jwt = tokenService.getLocalAccessToken();
 
   function sendLoginRequest() {
     const reqBody = {
@@ -14,7 +18,7 @@ const Login = () => {
       password: password,
     };
 
-    fetch("/api/auth/signin", {
+    fetch("/api/v1/auth/signin", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       body: JSON.stringify(reqBody),
@@ -26,11 +30,25 @@ const Login = () => {
           return Promise.reject("Invalid login attempt");
       })
       .then(function (data) {
-        setJwt(data.token);
+        // setJwt(data.token);
+        tokenService.updateLocalAccessToken(data.token)
         window.location.href = "dashboard";
       }).catch((message) => {
         alert(message);
       });
+    // api.post("/auth/signin", {
+    //   username, password
+    // }).then(response => {
+    //   if (response.data.token) {
+    //     // setJwt(response.data.token);
+    //     tokenService.setUser(response.data);
+    //     window.location.href = "dashboard";
+    //   }
+
+    //   return response.data;
+    // }).catch((message) => {
+    //   alert(message);
+    // });
   }
 
   return (

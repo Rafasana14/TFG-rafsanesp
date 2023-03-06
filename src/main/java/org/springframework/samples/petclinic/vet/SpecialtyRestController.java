@@ -8,7 +8,6 @@ import java.util.stream.StreamSupport;
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.util.RestPreconditions;
@@ -28,13 +27,14 @@ public class SpecialtyRestController {
 	
 	private final VetService vetService;
 
-	@Autowired
 	public SpecialtyRestController(VetService clinicService) {
 		this.vetService = clinicService;
 	}
 	
 	@GetMapping
 	public List<Specialty> findAll() {
+		System.out.println(StreamSupport.stream(vetService.findSpecialties().spliterator(), false)
+				.collect(Collectors.toList()));
 		return StreamSupport.stream(vetService.findSpecialties().spliterator(), false)
 				.collect(Collectors.toList());
 	}

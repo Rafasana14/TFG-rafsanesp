@@ -118,8 +118,9 @@ class VisitEdit extends Component {
                     </FormGroup>
                     <FormGroup>
                         <Label for="vet">Vet</Label>
-                        <Input type="select" name="vet" id="vet" value={visit.vet.id}
+                        <Input type="select" required name="vet" id="vet" value={visit.vet.id}
                             onChange={this.handleVetChange} autoComplete="vet">
+                            <option value="">None</option>
                             {vetOptions}
                         </Input>
                     </FormGroup>

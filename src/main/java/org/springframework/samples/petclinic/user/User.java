@@ -1,5 +1,6 @@
 package org.springframework.samples.petclinic.user;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -22,7 +23,7 @@ public class User extends BaseEntity{
 	
 	String password;	
 	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "authority")
 	Authorities authority;
 	

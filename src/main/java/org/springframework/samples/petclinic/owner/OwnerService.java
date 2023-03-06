@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.pet.Pet;
@@ -27,31 +26,15 @@ import org.springframework.samples.petclinic.pet.PetService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Mostly used as a facade for all Petclinic controllers Also a placeholder
- * for @Transactional and @Cacheable annotations
- *
- * @author Michael Isvy
- */
 @Service
 public class OwnerService {
 
 	private OwnerRepository ownerRepository;	
 	private PetService petService;
-	
-//	private UserService userService;
-//	
-////	@Autowired
-////	private PetRepository petRepository;
-//	
-//	private AuthoritiesService authoritiesService;
 
-	@Autowired
 	public OwnerService(OwnerRepository ownerRepository, PetService petService) {
 		this.ownerRepository = ownerRepository;
 		this.petService = petService;
-//		this.userService = userService;
-//		this.authoritiesService = authoritiesService;
 	}	
 	
 	@Transactional(readOnly = true)
@@ -81,13 +64,7 @@ public class OwnerService {
 
 	@Transactional
 	public Owner saveOwner(Owner owner) throws DataAccessException {
-		//creating owner
 		ownerRepository.save(owner);		
-		//creating user
-		//userService.saveUser(owner.getUser());
-		//creating authorities
-		//authoritiesService.saveAuthorities(owner.getUser().getUsername(), "OWNER");
-		
 		return owner;
 	}
 	
@@ -110,17 +87,8 @@ public class OwnerService {
 	}	
 	
 	@Transactional
-	public void deleteOwner(Owner owner) throws DataAccessException {
-		for(Pet pet: petService.findAllPetsByOwnerId(owner.getId())) petService.deleteVisitsOfPet(pet.getId());
-		ownerRepository.deletePetsOfOwner(owner.getId());
-		ownerRepository.delete(owner);
-	}
-	
-	@Transactional
 	public void deleteOwner(int id) throws DataAccessException {
 		Owner toDelete=findOwnerById(id);
-//		List<Pet> petsToDelete = this.ownerRepository.findPetsOfOwner(id);
-//		petRepository.deleteAll(petsToDelete);
 		for(Pet pet: petService.findAllPetsByOwnerId(id)) petService.deleteVisitsOfPet(pet.getId());
 		ownerRepository.deletePetsOfOwner(id);
 		ownerRepository.delete(toDelete);

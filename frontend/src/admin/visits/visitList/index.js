@@ -74,16 +74,14 @@ class VisitList extends Component {
         return (
             <div>
                 {/* <AppNavbar /> */}
-                <Container fluid>
-                    <div className="float-right">
-                        <Button color="success" tag={Link} to={`/pets/${this.petId}/visits/new`}>
-                            Add Visit
-                        </Button>
-                        <Button color="primary" tag={Link} to={`/pets/`}>
-                            Back
-                        </Button>
-                    </div>
-                    <h3>Visits</h3>
+                <Container style={{ marginTop: "15px" }} fluid>
+                    <h1 className="text-center">Visits</h1>
+                    <Button color="success" tag={Link} to={`/pets/${this.petId}/visits/new`}>
+                        Add Visit
+                    </Button>{" "}
+                    <Button color="primary" tag={Link} to={`/pets/`}>
+                        Back
+                    </Button>
                     <Table className="mt-4">
                         <thead>
                             <tr>

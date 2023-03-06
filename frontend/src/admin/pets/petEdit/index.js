@@ -9,9 +9,7 @@ class PetEdit extends Component {
         name: '',
         birthDate: '',
         type: {},
-        owner: {
-            user: {},
-        },
+        owner: {},
     };
 
     constructor(props) {
@@ -20,6 +18,7 @@ class PetEdit extends Component {
             pet: this.emptyItem,
             types: [],
             owners: [],
+            message: null,
         };
         this.handleChange = this.handleChange.bind(this);
         // this.handleOwnerChange = this.handleOwnerChange.bind(this);
@@ -37,21 +36,27 @@ class PetEdit extends Component {
                     "Authorization": `Bearer ${this.jwt}`,
                 },
             })).json();
-            this.setState({ pet: pet });
+            if (pet.mesagge) this.setState({ message: pet.message });
+            else this.setState({ pet: pet });
         }
-        const types = await (await fetch(`/api/v1/pets/types`, {
-            headers: {
-                "Authorization": `Bearer ${this.jwt}`,
-            },
-        })).json();
-        this.setState({ types: types });
-
-        const owners = await (await fetch(`/api/v1/owners`, {
-            headers: {
-                "Authorization": `Bearer ${this.jwt}`,
-            },
-        })).json();
-        this.setState({ owners: owners });
+        if (!this.state.message) {
+            const types = await (await fetch(`/api/v1/pets/types`, {
+                headers: {
+                    "Authorization": `Bearer ${this.jwt}`,
+                },
+            })).json();
+            if (types.mesagge) this.setState({ message: types.message });
+            else this.setState({ types: types });
+        }
+        if (!this.state.message) {
+            const owners = await (await fetch(`/api/v1/owners`, {
+                headers: {
+                    "Authorization": `Bearer ${this.jwt}`,
+                },
+            })).json();
+            if (owners.mesagge) this.setState({ message: owners.message });
+            else this.setState({ owners: owners });
+        }
     }
 
     handleChange(event) {
@@ -60,9 +65,9 @@ class PetEdit extends Component {
         const name = target.name;
         let pet = { ...this.state.pet };
         if (name === "type") {
-            pet.type.id = value;
+            pet.type.id = Number(value);
         } else if (name === "owner") {
-            pet.owner.id = value;
+            pet.owner.id = Number(value);
         }
         else pet[name] = value;
         this.setState({ pet });
@@ -97,7 +102,7 @@ class PetEdit extends Component {
         event.preventDefault();
         const { pet, } = this.state;
 
-        await fetch('/api/v1/pets' + (pet.id ? '/' + this.id : ''), {
+        const response = await (await fetch('/api/v1/pets' + (pet.id ? '/' + this.id : ''), {
             method: pet.id ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${this.jwt}`,
@@ -105,8 +110,9 @@ class PetEdit extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(pet),
-        });
-        window.location.href = '/pets';
+        })).json();
+        if (response.message) this.setState({ message: response.message })
+        else window.location.href = '/pets';
     }
 
     render() {
@@ -115,6 +121,8 @@ class PetEdit extends Component {
 
         const typeOptions = types.map(type => <option key={type.id} value={type.id}>{type.name}</option>);
         const ownerOptions = owners.map(owner => <option key={owner.id} value={owner.id}>{owner.user.username}</option>);
+
+        if (this.state.message) return <h2 className="text-center">{this.state.message}</h2>
 
         return <div>
             {/* <AppNavbar /> */}
@@ -142,8 +150,8 @@ class PetEdit extends Component {
                     <FormGroup>
                         <Label for="owner">Owner</Label>
                         {pet.id ?
-                            <p>{pet.owner.user.username || ''}</p> :
-                            <Input type="select" required name="owner" id="owner" value={pet.owner.id || 1}
+                            <p>{pet.owner.user?.username}</p> :
+                            <Input type="select" required name="owner" id="owner" value={pet.owner.id || ""}
                                 onChange={this.handleChange} >
                                 <option value="">None</option>
                                 {ownerOptions}

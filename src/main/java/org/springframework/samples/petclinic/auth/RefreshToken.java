@@ -2,6 +2,18 @@ package org.springframework.samples.petclinic.auth;
 
 import java.time.Instant;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+
+import org.springframework.samples.petclinic.user.User;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter

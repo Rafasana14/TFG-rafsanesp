@@ -15,7 +15,6 @@
  */
 package org.springframework.samples.petclinic.web;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 /**
@@ -26,7 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * Also see how the bean of type 'SimpleMappingExceptionResolver' has been declared inside
  * /WEB-INF/mvc-core-config.xml
  */
-@Controller
+//@Controller
 public class CrashController {
 
 	@GetMapping(value = "/oups")

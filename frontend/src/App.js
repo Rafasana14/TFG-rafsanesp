@@ -4,7 +4,6 @@ import { Route, Routes } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { ErrorBoundary } from "react-error-boundary";
 import AppNavbar from "./AppNavbar";
-import Dashboard from "./dashboard";
 import Home from "./home";
 import PrivateRoute from "./privateRoute";
 import RegisterOwner from "./auth/register/owner";
@@ -27,6 +26,10 @@ import PetOwnerList from "./owner/pets/petList";
 import PetOwnerEdit from "./owner/pets/petEdit";
 import VisitOwnerEdit from "./owner/visits/visitEdit";
 import PlanList from "./public/plan";
+import tokenService from "./services/token.service";
+import SpecialtiesList from "./admin/vets/specialtiesList";
+import SpecialtyEdit from "./admin/vets/specialtyEdit";
+import OwnerDashboard from "./owner/dashboard";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -39,7 +42,9 @@ function ErrorFallback({ error, resetErrorBoundary }) {
 }
 
 function App() {
-  const jwt = JSON.parse(window.localStorage.getItem("jwt"));
+  // const jwt = JSON.parse(window.localStorage.getItem("jwt"));
+  const jwt = tokenService.getLocalAccessToken();
+  // console.log(jwt);
   let roles = []
   if (jwt) {
     roles = getRolesFromJWT(jwt);
@@ -69,12 +74,14 @@ function App() {
           <Route path="/pets/:petId/visits/:visitId" exact={true} element={<PrivateRoute><VisitEdit /></PrivateRoute>} />
           <Route path="/vets" exact={true} element={<PrivateRoute><VetList /></PrivateRoute>} />
           <Route path="/vets/:id" exact={true} element={<PrivateRoute><VetEdit /></PrivateRoute>} />
-
+          <Route path="/vets/specialties" exact={true} element={<PrivateRoute><SpecialtiesList /></PrivateRoute>} />
+          <Route path="/vets/specialties/:specialtyId" exact={true} element={<PrivateRoute><SpecialtyEdit /></PrivateRoute>} />
         </>)
     }
     if (role === "OWNER") {
       ownerRoutes = (
         <>
+          <Route path="/dashboard" element={<PrivateRoute><OwnerDashboard /></PrivateRoute>} />
           <Route path="/plan" exact={true} element={<PrivateRoute><PricingPlan /></PrivateRoute>} />
           <Route path="/myPets" exact={true} element={<PrivateRoute><PetOwnerList /></PrivateRoute>} />
           <Route path="/myPets/:id" exact={true} element={<PrivateRoute><PetOwnerEdit /></PrivateRoute>} />
@@ -93,7 +100,10 @@ function App() {
     )
   } else {
     userRoutes = (
-      <Route path="/logout" element={<Logout />} />
+      <>
+        {/* <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} /> */}
+        <Route path="/logout" element={<Logout />} />
+      </>
     )
   }
 
@@ -103,7 +113,6 @@ function App() {
       <ErrorBoundary FallbackComponent={ErrorFallback} >
         <Routes>
           <Route path="/" exact={true} element={<Home />} />
-          <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
           <Route path="/plans" element={<PlanList />} />
           {publicRoutes}
           {userRoutes}

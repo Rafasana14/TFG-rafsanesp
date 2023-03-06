@@ -32,18 +32,11 @@ import org.springframework.data.repository.query.Param;
  */
 public interface PetRepository extends CrudRepository<Pet, Integer> {
 
-	/**
-	 * Retrieve all <code>PetType</code>s from the data store.
-	 * @return a <code>Collection</code> of <code>PetType</code>s
-	 */
 	@Query("SELECT ptype FROM PetType ptype ORDER BY ptype.name")
 	List<PetType> findPetTypes() throws DataAccessException;
 	
 	@Query("SELECT ptype FROM PetType ptype WHERE ptype.name LIKE :name")
 	Optional<PetType> findPetTypeByName(String name) throws DataAccessException;
-	
-//	@Query(("SELECT o FROM Owner o WHERE o.id = :id"))
-//	Optional<Owner> findOwnerById(int id) throws DataAccessException;
 	
 	@Query(("SELECT p FROM Pet p WHERE p.owner.id = :id"))
 	List<Pet> findAllPetsByOwnerId(int id) throws DataAccessException;

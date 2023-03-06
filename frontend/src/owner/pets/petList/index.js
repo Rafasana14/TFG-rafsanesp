@@ -1,16 +1,20 @@
 import React, { Component } from "react";
-import { Button, ButtonGroup, Card, CardBody, CardFooter, CardTitle, Col, Container, ListGroup, ListGroupItem, Row, Table } from "reactstrap";
+import { Button, ButtonGroup, Card, CardBody, CardFooter, CardTitle, Col, Container, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter, ModalHeader, Row, Table } from "reactstrap";
 // import AppNavbar from "../AppNavbar";
 import { Link } from "react-router-dom";
+// import api from "../../../services/api"
 
 class PetOwnerList extends Component {
     constructor(props) {
         super(props);
         this.state = {
             pets: [],
+            message: null,
+            modalShow: false,
             // visits: [[]],
         };
         this.removePet = this.removePet.bind(this);
+        this.handleShow = this.handleShow.bind(this);
         this.removeVisit = this.removeVisit.bind(this);
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
     }
@@ -22,37 +26,37 @@ class PetOwnerList extends Component {
                 "Content-Type": "application/json",
             },
         })).json();
-
-        for (let i = 0; i < pets.length; i++) {
-            // let visits = [];
-            await (await fetch(`/api/v1/pets/${pets[i].id}/visits`, {
-                headers: {
-                    "Authorization": `Bearer ${this.jwt}`,
-                    "Content-Type": "application/json",
-                },
-            }).then((response) => response.json())
-                .then((data) => {
-                    pets[i]["visits"] = data;
-                }));
+        if (pets.message) this.setState({ message: pets.message })
+        else {
+            for (let i = 0; i < pets.length; i++) {
+                await (await fetch(`/api/v1/pets/${pets[i].id}/visits`, {
+                    headers: {
+                        "Authorization": `Bearer ${this.jwt}`,
+                        "Content-Type": "application/json",
+                    },
+                }).then((response) => response.json())
+                    .then((data) => {
+                        if (data.message) this.setState({ message: data.message })
+                        else pets[i]["visits"] = data;
+                    }));
+            }
+            this.setState({ pets: pets });
         }
-        this.setState({ pets: pets });
-    }
+        // let pets = api(`/api/v1/pets/`).data;
+        // if (pets.message) this.setState({ message: pets.message })
+        // else {
+        //     for (let i = 0; i < pets.length; i++) {
+        //         // let visits = [];
+        //         api(`/api/v1/pets/${pets[i].id}/visits`)
+        //             .then((data) => {
+        //                 if (data.message) this.setState({ message: data.message })
+        //                 else pets[i]["visits"] = data;
+        //             });
+        //     }
+        //     this.setState({ pets: pets });
 
-    // async getVisits(pets) {
-    //     for (let i = 0; i < pets.length; i++) {
-    //         // let visits = [];
-    //         await (await fetch(`/api/v1/pets/${pets[i].id}/visits`, {
-    //             headers: {
-    //                 "Authorization": `Bearer ${this.jwt}`,
-    //                 "Content-Type": "application/json",
-    //             },
-    //         }).then((response) => response.json())
-    //             .then((data) => {
-    //                 pets[i]["visits"] = data;
-    //             }));
-    //     }
-    //     return pets;
-    // }
+        // }
+    }
 
     async removePet(id) {
         await fetch(`/api/v1/pets/${id}`, {
@@ -69,7 +73,7 @@ class PetOwnerList extends Component {
             }
             return response.json();
         }).then(function (data) {
-            alert(data.message);
+            this.setState({ message: data.message });
         });
     }
 
@@ -83,14 +87,14 @@ class PetOwnerList extends Component {
                 "Content-Type": "application/json",
             },
         }).then((response) => {
-            if (response.status === 200) {
-                status = "200";
-                let updatedVisits = [...this.state.pets].filter((i) => i.id !== visitId);
-                this.setState({ visits: updatedVisits });
-            }
+            if (response.status === 200) status = "200";
             return response.json();
-        }).then(function (data) {
-            alert(data.message);
+        }).then(data => {
+            this.setState({
+                message: data.message,
+                modalShow: true
+            });
+            // alert(data.message);
         });
 
         if (status === "200") {
@@ -98,17 +102,46 @@ class PetOwnerList extends Component {
             const index = pets.findIndex((i) => i.id === petId);
             let pet = [...this.state.pets].filter((i) => i.id === petId);
             let updatedVisits = pet[0].visits.filter((i) => i.id !== visitId);
-            pet[0].visits = updatedVisits;
+            if (updatedVisits.length > 0) pet[0].visits = updatedVisits;
+            else pet[0].visits = [];
             pets[index] = pet[0];
 
             this.setState({ pets: pets });
         }
     }
 
+    handleShow() {
+        let modalShow = this.state.modalShow;
+        this.setState({ modalShow: !modalShow })
+    }
+
     render() {
         const { pets, isLoading } = this.state;
         if (isLoading) {
             return <p>Loading...</p>;
+        }
+        // if (this.state.message) {
+        //     return <h2 className='text-center'>{this.state.message}</h2>
+        // }
+        let modal = <></>;
+        if (this.state.message) {
+            const show = this.state.modalShow;
+            const closeBtn = (
+                <button className="close" onClick={this.handleShow} type="button">
+                    &times;
+                </button>
+            );
+            modal = <div>
+                <Modal isOpen={show} toggle={this.handleShow}
+                    keyboard={false}>
+                    <ModalHeader toggle={this.handleShow} close={closeBtn}>Error!</ModalHeader>
+                    <ModalBody>
+                        {this.state.message || ""}
+                    </ModalBody>
+                    <ModalFooter>
+                        <Button color="primary" onClick={this.handleShow}>Close</Button>
+                    </ModalFooter>
+                </Modal></div>
         }
         const petList = pets.map((pet) => {
             const visits = pet["visits"];
@@ -238,7 +271,7 @@ class PetOwnerList extends Component {
         return (
             <div>
                 {/* <AppNavbar /> */}
-                < Container fluid >
+                < Container fluid style={{ marginTop: "20px" }}>
                     <div className="float-right">
                         <Button color="success" tag={Link} to="/myPets/new">
                             Add Pet
@@ -246,6 +279,7 @@ class PetOwnerList extends Component {
                     </div>
                     <h3>Pets</h3>
                     {petList}
+                    {modal}
                 </Container >
             </div >
         );

@@ -6,7 +6,7 @@ import { BsCheckLg, BsXLg } from 'react-icons/bs';
 
 class PricingPlan extends Component {
 
-    emptyItem = {
+    emptyOwner = {
         id: '',
         firstName: '',
         lastName: '',
@@ -19,27 +19,28 @@ class PricingPlan extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            item: this.emptyItem,
-            plan: null
+            owner: this.emptyOwner,
+            plan: null,
+            message: null,
         };
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
     }
 
     async componentDidMount() {
-        if (this.id !== 'new') {
-            const owner = await (await fetch(`/plan`, {
-                headers: {
-                    "Authorization": `Bearer ${this.jwt}`,
-                },
-            })).json();
-            this.setState({ item: owner, plan: owner.plan });
-        }
+        const owner = await (await fetch(`/api/v1/plan`, {
+            headers: {
+                "Authorization": `Bearer ${this.jwt}`,
+            },
+        })).json();
+        if (owner.message) this.setState({ message: owner.message })
+        else this.setState({ owner: owner, plan: owner.plan });
+
     }
 
     async changePlan(event, plan) {
         event.preventDefault();
 
-        await fetch('/plan', {
+        await fetch('/api/v1/plan', {
             method: 'PUT',
             headers: {
                 "Authorization": `Bearer ${this.jwt}`,
@@ -86,6 +87,9 @@ class PricingPlan extends Component {
         } else {
             platinumButton = <td className={cell}><Button className="text-dark" style={{ backgroundColor: "#E17596" }} onClick={(e) => this.changePlan(e, "PLATINUM")}>CHANGE</Button></td>;
         }
+        if (this.state.message) {
+            return <h2 className='text-center'>{this.state.message}</h2>
+        }
 
         return <div>
             {/* <AppNavbar /> */}
@@ -94,7 +98,7 @@ class PricingPlan extends Component {
                 <Row>
                     <Col md="3"></Col>
                     <Col md="6">
-                        <Table >
+                        <Table>
                             <thead>
                                 <tr>
                                     <th className="bg-white border-bottom border-dark" ></th>
@@ -152,13 +156,13 @@ class PricingPlan extends Component {
                                     <td style={goldStyle} className={cell}>€5</td>
                                     <td style={platinumStyle} className={cell}>€12</td>
                                 </tr>
+                                <tr style={{ height: "60px" }}>
+                                    <td className="border-bottom-0"></td>
+                                    {basicButton}
+                                    {goldButton}
+                                    {platinumButton}
+                                </tr>
                             </tbody>
-                            <tr style={{ height: "60px" }}>
-                                <td className="border-bottom-0"></td>
-                                {basicButton}
-                                {goldButton}
-                                {platinumButton}
-                            </tr>
                         </Table>
                     </Col>
                     <Col md="3"></Col>

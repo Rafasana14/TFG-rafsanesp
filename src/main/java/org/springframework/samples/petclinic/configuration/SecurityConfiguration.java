@@ -97,10 +97,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	DataSource dataSource;
 
-	@Bean
-	public AuthTokenFilter authenticationJwtTokenFilter() {
-		return new AuthTokenFilter();
-	}
+    @Bean
+    AuthTokenFilter authenticationJwtTokenFilter() {
+        return new AuthTokenFilter();
+    }
 
 	@Override
 	public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
@@ -113,12 +113,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return super.authenticationManagerBean();
 	}
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		PasswordEncoder encoder = NoOpPasswordEncoder.getInstance();
-		return encoder;
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        PasswordEncoder encoder = NoOpPasswordEncoder.getInstance();
+        return encoder;
 //			return new BCryptPasswordEncoder();
-	}
+    }
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -126,9 +126,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
 				.antMatchers("/resources/**", "/webjars/**", "/h2-console/**", "/static/**", "/swagger-resources/**").permitAll()
 				.antMatchers(HttpMethod.GET, "/", "/oups").permitAll()
-				.antMatchers("/api/auth/**").permitAll().antMatchers("/v2/api-docs").permitAll()
+				.antMatchers("/api/v1/auth/**").permitAll().antMatchers("/v2/api-docs").permitAll()
 				.antMatchers("/swagger-ui.html/**").permitAll()
-				.antMatchers("/plan").hasAuthority("OWNER")
+				.antMatchers("/api/v1/plan").hasAuthority("OWNER")
 				.antMatchers("/api/v1/users/**").hasAuthority("ADMIN")
 				.antMatchers("/api/v1/owners/**/pets/**").authenticated()
 				.antMatchers("/api/v1/owners/**").hasAuthority("ADMIN")

@@ -65,13 +65,13 @@ class OwnerList extends Component {
     return (
       <div>
         {/* <AppNavbar /> */}
-        <Container fluid>
+        <Container fluid style={{ marginTop: "15px" }}>
+          <h1 className="text-center">Owners</h1>
           <div className="float-right">
             <Button color="success" tag={Link} to="/owners/new">
               Add Owner
             </Button>
           </div>
-          <h3>Owners</h3>
           <Table className="mt-4">
             <thead>
               <tr>

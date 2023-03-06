@@ -23,11 +23,6 @@ import org.springframework.samples.petclinic.model.NamedEntity;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * Models a {@link Vet Vet's} specialty (for example, dentistry).
- *
- * @author Juergen Hoeller
- */
 @Entity
 @Table(name = "specialties")
 @Getter
