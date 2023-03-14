@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { Navbar, NavbarBrand, NavLink, NavItem, Nav, NavbarText } from 'reactstrap';
+import { Navbar, NavbarBrand, NavLink, NavItem, Nav, NavbarText, NavbarToggler, Collapse } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import jwt_decode from "jwt-decode";
-import { useLocalState } from './util/useLocalStorage';
+// import { useLocalState } from './util/useLocalStorage';
+import tokenService from './services/token.service';
 
 export default function AppNavbar() {
-    const [jwt,] = useLocalState("jwt", "");
+    // const [jwt,] = useLocalState("jwt", "");
     const [roles, setRoles] = useState([]);
     const [username, setUsername] = useState("");
+    const jwt = tokenService.getLocalAccessToken();
+    const [collapsed, setCollapsed] = useState(true);
+
+    const toggleNavbar = () => setCollapsed(!collapsed);
 
     function getRolesFromJWT(jwt) {
         return jwt_decode(jwt).authorities;
@@ -27,44 +32,52 @@ export default function AppNavbar() {
     let ownerLinks = <></>;
     let userLinks = <></>;
     let userLogout = <></>;
-    let nonUserLinks = <></>;
+    let publicLinks = <></>;
 
     roles.forEach((role) => {
         if (role === "ADMIN") {
             adminLinks = (
                 <>
                     <NavItem>
-                        <NavLink tag={Link} to="/api/v1/owners">Owners</NavLink>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/owners">Owners</NavLink>
                     </NavItem>
                     <NavItem>
-                        <NavLink tag={Link} to="/api/v1/pets">Pets</NavLink>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/pets">Pets</NavLink>
                     </NavItem>
                     <NavItem>
-                        <NavLink tag={Link} to="/api/v1/vets">Vets</NavLink>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/vets">Vets</NavLink>
                     </NavItem>
                     <NavItem>
-                        <NavLink tag={Link} to="/api/v1/users">Users</NavLink>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/users">Users</NavLink>
                     </NavItem>
                 </>
             )
         }
         if (role === "OWNER") {
             ownerLinks = (
-                <NavItem>
-                    <NavLink tag={Link} to="/plan">Plan</NavLink>
-                </NavItem>
+                <>
+                    <NavItem>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/myPets">My Pets</NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/plan">Plan</NavLink>
+                    </NavItem>
+                </>
             )
         }
     })
 
-    if (jwt === "") {
-        nonUserLinks = (
+    if (!jwt) {
+        publicLinks = (
             <>
                 <NavItem>
-                    <NavLink id="register" tag={Link} to="/register">Register</NavLink>
+                    <NavLink style={{ color: "white" }} id="plans" tag={Link} to="/plans">Pricing Plans</NavLink>
                 </NavItem>
-                <NavItem>
-                    <NavLink id="login" tag={Link} to="/login">Login</NavLink>
+                <NavItem className="ms-auto">
+                    <NavLink style={{ color: "white" }} id="register" tag={Link} to="/register">Register</NavLink>
+                </NavItem>
+                <NavItem className="ms-auto">
+                    <NavLink style={{ color: "white" }} id="login" tag={Link} to="/login">Login</NavLink>
                 </NavItem>
             </>
         )
@@ -72,15 +85,18 @@ export default function AppNavbar() {
         userLinks = (
             <>
                 <NavItem>
-                    <NavLink tag={Link} to="/dashboard">Dashboard</NavLink>
+                    <NavLink style={{ color: "white" }} tag={Link} to="/dashboard">Dashboard</NavLink>
                 </NavItem>
             </>
         )
         userLogout = (
             <>
-                <NavbarText>{username}</NavbarText>
                 <NavItem>
-                    <NavLink className="ml-auto" id="logout" tag={Link} to="/logout">Logout</NavLink>
+                    <NavLink style={{ color: "white" }} id="plans" tag={Link} to="/plans">Pricing Plans</NavLink>
+                </NavItem>
+                <NavbarText style={{ color: "white" }} className="justify-content-end">{username}</NavbarText>
+                <NavItem className="d-flex">
+                    <NavLink style={{ color: "white" }} id="logout" tag={Link} to="/logout">Logout</NavLink>
                 </NavItem>
             </>
         )
@@ -88,87 +104,25 @@ export default function AppNavbar() {
     }
 
     return (
-        <Navbar color="dark" dark expand="md">
-            <NavbarBrand className="NavbarBrand" tag={Link} to="/">Home</NavbarBrand>
-            <Nav navbar>
-                {userLinks}
-                {adminLinks}
-                {ownerLinks}
-                {nonUserLinks}
-                {userLogout}
-            </Nav>
-        </Navbar>
+        <div>
+            <Navbar expand="md" dark color="success">
+                <NavbarBrand href="/">
+                    <img alt="logo" src="/logo1-recortado.png" style={{ height: 40, width: 40 }} />
+                    PetClinic
+                </NavbarBrand>
+                <NavbarToggler onClick={toggleNavbar} className="ms-2" />
+                <Collapse isOpen={!collapsed} navbar>
+                    <Nav className="me-auto mb-2 mb-lg-0" navbar>
+                        {userLinks}
+                        {adminLinks}
+                        {ownerLinks}
+                    </Nav>
+                    <Nav className="ms-auto mb-2 mb-lg-0" navbar>
+                        {publicLinks}
+                        {userLogout}
+                    </Nav>
+                </Collapse>
+            </Navbar>
+        </div>
     );
 }
-
-
-// export default class AppNavbar extends Component {
-//     constructor(props) {
-//         super(props);
-//         this.state = {
-//             isOpen: false,
-//             jwt: JSON.parse(window.localStorage.getItem("jwt")),
-//             roles: [],
-//         }
-//         this.toggle = this.toggle.bind(this);
-
-//     }
-
-//     toggle() {
-//         this.setState({
-//             isOpen: !this.state.isOpen
-//         });
-//     }
-
-
-//     render() {
-//         const { state } = this.state;
-//         function getRolesFromJWT(jwt) {
-//             return jwt_decode(jwt).authorities;
-//         }
-
-//         if (state.jwt) this.setState({
-//             roles: getRolesFromJWT(state.jwt)
-//         });
-
-//         let adminLinks = <></>;
-//         let ownerLinks = <></>;
-//         this.state.roles.forEach((role) => {
-//             if (role === "ADMIN") {
-//                 adminLinks = (
-//                     <NavItem>
-//                         <NavLink tag={Link} to="/api/v1/users">Users</NavLink>
-//                     </NavItem>
-//                 )
-//             }
-//             if (role === "OWNER") {
-//                 ownerLinks = (
-//                     <NavItem>
-//                         <NavLink tag={Link} to="/plan">Plan</NavLink>
-//                     </NavItem>
-//                 )
-//             }
-//         })
-//         return (
-//             <Navbar color="dark" dark expand="md">
-//                 <NavbarBrand className="NavbarBrand" tag={Link} to="/">Home</NavbarBrand>
-//                 <Nav className="container-fluid" navbar>
-//                     <NavItem>
-//                         <NavLink tag={Link} to="/dashboard">Dashboard</NavLink>
-//                     </NavItem>
-//                     {adminLinks}
-//                     {ownerLinks}
-//                     <NavItem>
-//                         <NavLink className="ml-auto" id="register" tag={Link} to="/register">Register</NavLink>
-//                     </NavItem>
-//                     <NavItem>
-//                         <NavLink className="ml-auto" id="login" tag={Link} to="/login">Login</NavLink>
-//                     </NavItem>
-//                     <NavItem>
-//                         <NavLink className="ml-auto" id="logout" tag={Link} to="/logout">Logout</NavLink>
-//                     </NavItem>
-//                 </Nav>
-//             </Navbar>
-//         );
-//     }
-// }

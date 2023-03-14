@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.samples.petclinic.owner.Owner;
 
-
 public interface UserRepository extends  CrudRepository<User, String>{
 	
 //	@Modifying

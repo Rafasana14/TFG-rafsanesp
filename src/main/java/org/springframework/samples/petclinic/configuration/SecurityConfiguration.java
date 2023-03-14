@@ -1,5 +1,7 @@
 package org.springframework.samples.petclinic.configuration;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,7 +11,6 @@ import org.springframework.samples.petclinic.configuration.jwt.AuthTokenFilter;
 import org.springframework.samples.petclinic.configuration.services.UserDetailsServiceImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -85,10 +86,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @SuppressWarnings("deprecation")
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(
-		// securedEnabled = true,
-		// jsr250Enabled = true,
-		prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -96,11 +93,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Autowired
 	private AuthEntryPointJwt unauthorizedHandler;
+	
+	@Autowired
+	DataSource dataSource;
 
-	@Bean
-	public AuthTokenFilter authenticationJwtTokenFilter() {
-		return new AuthTokenFilter();
-	}
+    @Bean
+    public AuthTokenFilter authenticationJwtTokenFilter() {
+        return new AuthTokenFilter();
+    }
 
 	@Override
 	public void configure(AuthenticationManagerBuilder authenticationManagerBuilder) throws Exception {
@@ -113,26 +113,28 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		return super.authenticationManagerBean();
 	}
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		PasswordEncoder encoder = NoOpPasswordEncoder.getInstance();
-		return encoder;
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        PasswordEncoder encoder = NoOpPasswordEncoder.getInstance();
+        return encoder;
 //			return new BCryptPasswordEncoder();
-	}
+    }
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.cors().and().csrf().disable().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
-				.antMatchers("/resources/**", "/webjars/**", "/h2-console/**", "/static/**").permitAll()
+				.antMatchers("/resources/**", "/webjars/**", "/h2-console/**", "/static/**", "/swagger-resources/**").permitAll()
 				.antMatchers(HttpMethod.GET, "/", "/oups").permitAll()
-				.antMatchers("/api/auth/**").permitAll().antMatchers("/v2/api-docs").permitAll()
-				.antMatchers("/swagger-ui.html").permitAll()
-				.antMatchers("/plan").hasAuthority("OWNER")
+				.antMatchers("/api/v1/auth/**").permitAll().antMatchers("/v2/api-docs").permitAll()
+				.antMatchers("/swagger-ui.html/**").permitAll()
+				.antMatchers("/api/v1/plan").hasAuthority("OWNER")
 				.antMatchers("/api/v1/users/**").hasAuthority("ADMIN")
+				.antMatchers("/api/v1/owners/**/pets/**").authenticated()
 				.antMatchers("/api/v1/owners/**").hasAuthority("ADMIN")
-				.antMatchers("/api/v1/pets/**").hasAuthority("ADMIN")
-				.antMatchers("/api/v1/vets/**").hasAuthority("ADMIN")
+//				.antMatchers("/api/v1/pets/**").hasAuthority("ADMIN")
+				.antMatchers(HttpMethod.GET,"/api/v1/vets/**").authenticated()
+				.antMatchers("/api/v1/vets/**").hasAnyAuthority("ADMIN","VET")
 				// .antMatchers("/api/v1/**").authenticated();
 
 				.anyRequest().authenticated();
@@ -147,7 +149,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 		web.ignoring()
 				// .antMatchers("/index.html")
 				.antMatchers("/static/**").antMatchers("/error").antMatchers("/swagger-ui.html")
-				.antMatchers("/swagger-resources");
+				.antMatchers("/swagger-resources/**");
 	}
 
 //		public void addResourceHandlers(ResourceHandlerRegistry registry) {

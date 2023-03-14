@@ -58,7 +58,7 @@ class UserList extends Component {
                                 size="sm"
                                 color="primary"
                                 tag={Link}
-                                to={"/api/v1/users/" + user.id}
+                                to={"/users/" + user.id}
                             >
                                 Edit
                             </Button>
@@ -78,13 +78,12 @@ class UserList extends Component {
         return (
             <div>
                 {/* <AppNavbar /> */}
-                <Container fluid>
-                    <div className="float-right">
-                        <Button color="success" tag={Link} to="/api/v1/users/new">
-                            Add User
-                        </Button>
-                    </div>
-                    <h3>Users</h3>
+                <Container style={{ marginTop: "15px" }} fluid>
+
+                    <h1 className="text-center">Users</h1>
+                    <Button color="success" tag={Link} to="/users/new">
+                        Add User
+                    </Button>
                     <Table className="mt-4">
                         <thead>
                             <tr>

@@ -16,31 +16,21 @@
 package org.springframework.samples.petclinic.pet;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
-import org.springframework.samples.petclinic.owner.Owner;
 
-/**
- * Spring Data JPA specialization of the {@link PetRepository} interface
- *
- * @author Michael Isvy
- * @since 15.1.2013
- */
 public interface PetRepository extends CrudRepository<Pet, Integer> {
 
-	/**
-	 * Retrieve all <code>PetType</code>s from the data store.
-	 * @return a <code>Collection</code> of <code>PetType</code>s
-	 */
 	@Query("SELECT ptype FROM PetType ptype ORDER BY ptype.name")
 	List<PetType> findPetTypes() throws DataAccessException;
 	
-	@Query(("SELECT o FROM Owner o WHERE o.id = :id"))
-	Owner findOwnerById(int id) throws DataAccessException;
+	@Query("SELECT ptype FROM PetType ptype WHERE ptype.name LIKE :name")
+	Optional<PetType> findPetTypeByName(String name) throws DataAccessException;
 	
 	@Query(("SELECT p FROM Pet p WHERE p.owner.id = :id"))
 	List<Pet> findAllPetsByOwnerId(int id) throws DataAccessException;
@@ -48,5 +38,8 @@ public interface PetRepository extends CrudRepository<Pet, Integer> {
 	@Modifying
 	@Query("DELETE FROM Visit v WHERE v.pet.id = :petId")
 	public void deleteVisitsOfPet(@Param("petId") int petId);
+	
+	@Query(("SELECT COUNT(p) FROM Pet p WHERE p.owner.id = :id"))
+	public Integer countPetsOfOwner(int id);
 	
 }

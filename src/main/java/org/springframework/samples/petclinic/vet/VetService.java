@@ -15,36 +15,27 @@
  */
 package org.springframework.samples.petclinic.vet;
 
-import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Mostly used as a facade for all Petclinic controllers Also a placeholder
- * for @Transactional and @Cacheable annotations
- *
- * @author Michael Isvy
- */
 @Service
 public class VetService {
 
 	private VetRepository vetRepository;
 	private SpecialtyRepository specialtyRepository;
 
-
-	@Autowired
 	public VetService(VetRepository vetRepository, SpecialtyRepository specialtyRepository) {
 		this.vetRepository = vetRepository;
 		this.specialtyRepository = specialtyRepository;
 	}		
 
 	@Transactional(readOnly = true)	
-	public Iterable<Vet> findVets() throws DataAccessException {
+	public Iterable<Vet> findAll() throws DataAccessException {
 		return vetRepository.findAll();
 	}
 	
@@ -53,10 +44,19 @@ public class VetService {
 		return vetRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Vet","ID",id));
 	}
 	
+	@Transactional(readOnly = true)	
+	public Vet findVetByUser(int userId) throws DataAccessException {
+		return vetRepository.findVetByUser(userId).orElseThrow(()->new ResourceNotFoundException("Vet","User",userId));
+	}
+	
+	public Optional<Vet> optFindVetByUser(Integer userId) {
+		return vetRepository.findVetByUser(userId);
+	}
+
+	
 	@Transactional
 	public Vet saveVet(Vet vet) throws DataAccessException {
 		vetRepository.save(vet);		
-		
 		return vet;
 	}
 	
@@ -67,11 +67,6 @@ public class VetService {
 		vetRepository.save(toUpdate);
 		
 		return toUpdate;
-	}
-	
-	@Transactional
-	public void deleteVet(Vet vet) throws DataAccessException {
-		vetRepository.delete(vet);
 	}
 	
 	@Transactional
@@ -107,35 +102,32 @@ public class VetService {
 	}
 	
 	@Transactional
-	public void deleteSpecialty(Specialty specialty) throws DataAccessException {
-		specialtyRepository.delete(specialty);
-	}
-	
-	@Transactional
 	public void deleteSpecialty(int id) throws DataAccessException {
 		Specialty toDelete=findSpecialtyById(id);
+		for(Vet v: findAll()) v.removeSpecialty(toDelete);
 		specialtyRepository.delete(toDelete);
 	}
 	
-	@Transactional
-	public Vet addSpecialty(Vet vet, Specialty specialty) {
-		List<Specialty> specialties = vet.getSpecialties();
-		if(!specialties.contains(specialty)) {
-			specialties.add(specialty);
-			vet.setSpecialties(specialties);
-			vetRepository.save(vet);
-		}
-		return vet;
-	}
-
-	public Vet removeSpecialty(Vet vet, Specialty specialty) {
-		List<Specialty> specialties = vet.getSpecialties();
-		if(specialties.contains(specialty)) {
-			specialties.remove(specialty);
-			vet.setSpecialties(specialties);
-			vetRepository.save(vet);
-		}
-		return vet;
-	}
+//	@Transactional
+//	public Vet addSpecialty(Vet vet, Specialty specialty) {
+//		List<Specialty> specialties = vet.getSpecialties();
+//		if(!specialties.contains(specialty)) {
+//			specialties.add(specialty);
+//			vet.setSpecialties(specialties);
+//			vetRepository.save(vet);
+//		}
+//		return vet;
+//	}
+//
+//	public Vet removeSpecialty(Vet vet, Specialty specialty) {
+////		List<Specialty> specialties = vet.getSpecialties();
+////		if(specialties.contains(specialty)) {
+////			specialties.remove(specialty);
+////			vet.setSpecialties(specialties);
+////			vetRepository.save(vet);
+////		}
+//		vet.removeSpecialty(specialty);
+//		return vet;
+//	}
 
 }

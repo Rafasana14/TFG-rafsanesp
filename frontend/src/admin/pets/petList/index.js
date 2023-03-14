@@ -56,14 +56,14 @@ class PetList extends Component {
                     <td>{pet.owner.user.username}</td>
                     <td>
                         <Button size="sm" color="info" tag={Link}
-                            to={`/api/v1/pets/${pet.id}/visits`}>
+                            to={`/pets/${pet.id}/visits`}>
                             Visits
                         </Button>
                     </td>
                     <td>
                         <ButtonGroup>
                             <Button size="sm" color="primary" tag={Link}
-                                to={"/api/v1/pets/" + pet.id}>
+                                to={"/pets/" + pet.id}>
                                 Edit
                             </Button>
                             <Button size="sm" color="danger" onClick={() => this.remove(pet.id)}>
@@ -78,13 +78,11 @@ class PetList extends Component {
         return (
             <div>
                 {/* <AppNavbar /> */}
-                <Container fluid>
-                    <div className="float-right">
-                        <Button color="success" tag={Link} to="/api/v1/pets/new">
-                            Add Pet
-                        </Button>
-                    </div>
-                    <h3>Pets</h3>
+                <Container style={{ marginTop: "15px" }} fluid>
+                    <h1 className="text-center">Pets</h1>
+                    <Button color="success" tag={Link} to="/pets/new">
+                        Add Pet
+                    </Button>
                     <Table className="mt-4">
                         <thead>
                             <tr>

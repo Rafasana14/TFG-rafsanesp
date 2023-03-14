@@ -15,52 +15,185 @@
  */
 package org.springframework.samples.petclinic.vet;
 
-/**
- * Integration test of the Service and the Repository layer.
- * <p>
- * ClinicServiceSpringDataJpaTests subclasses benefit from the following services provided
- * by the Spring TestContext Framework:
- * </p>
- * <ul>
- * <li><strong>Spring IoC container caching</strong> which spares us unnecessary set up
- * time between test execution.</li>
- * <li><strong>Dependency Injection</strong> of test fixture instances, meaning that we
- * don't need to perform application context lookups. See the use of
- * {@link Autowired @Autowired} on the <code>{@link
- * ClinicServiceTests#clinicService clinicService}</code> instance variable, which uses
- * autowiring <em>by type</em>.
- * <li><strong>Transaction management</strong>, meaning each test method is executed in
- * its own transaction, which is automatically rolled back by default. Thus, even if tests
- * insert or otherwise change database state, there is no need for a teardown or cleanup
- * script.
- * <li>An {@link org.springframework.context.ApplicationContext ApplicationContext} is
- * also inherited and can be used for explicit bean lookup if necessary.</li>
- * </ul>
- *
- * @author Ken Krebs
- * @author Rod Johnson
- * @author Juergen Hoeller
- * @author Sam Brannen
- * @author Michael Isvy
- * @author Dave Syer
- */
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.Collection;
+import java.util.Optional;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
+import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
+import org.springframework.samples.petclinic.user.User;
+import org.springframework.samples.petclinic.util.EntityUtils;
+import org.springframework.transaction.annotation.Transactional;
 
 //@DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
-//class VetServiceTests {
-//
-//	@Autowired
-//	protected VetService vetService;	
-//
-//	@Test
-//	void shouldFindVets() {
-//		Collection<Vet> vets = this.vetService.findVets();
-//
-//		Vet vet = EntityUtils.getById(vets, Vet.class, 3);
-//		assertThat(vet.getLastName()).isEqualTo("Douglas");
-//		assertThat(vet.getNrOfSpecialties()).isEqualTo(2);
-//		assertThat(vet.getSpecialties().get(0).getName()).isEqualTo("dentistry");
-//		assertThat(vet.getSpecialties().get(1).getName()).isEqualTo("surgery");
-//	}
-//
-//
-//}
+@SpringBootTest
+@AutoConfigureTestDatabase
+class VetServiceTests {
+
+	@Autowired
+	protected VetService vetService;
+
+	@Test
+	void shouldFindVets() {
+		Collection<Vet> vets = (Collection<Vet>) this.vetService.findAll();
+
+		Vet vet = EntityUtils.getById(vets, Vet.class, 3);
+		assertEquals("Douglas", vet.getLastName());
+		assertEquals(2, vet.getSpecialties().size());
+		assertEquals("surgery", vet.getSpecialties().get(0).getName());
+		assertEquals("dentistry", vet.getSpecialties().get(1).getName());
+	}
+
+	@Test
+	void shouldFindSingleVet() {
+		Vet vet = this.vetService.findVetById(1);
+		assertThat(vet.getLastName()).startsWith("Carter");
+		assertEquals("Sevilla", vet.getCity());
+		assertEquals(0, vet.getSpecialties().size());
+	}
+
+	@Test
+	void shouldNotFindSingleVetWithBadID() {
+		assertThrows(ResourceNotFoundException.class, () -> this.vetService.findVetById(100));
+	}
+
+	@Test
+	void shouldFindVetByUser() {
+		Vet vet = this.vetService.findVetByUser(12);
+		assertThat(vet.getLastName()).startsWith("Carter");
+		assertThrows(ResourceNotFoundException.class, () -> this.vetService.findVetByUser(34));
+	}
+
+	@Test
+	void shouldFindOptVetByUser() {
+		Optional<Vet> vet = this.vetService.optFindVetByUser(12);
+		assertThat(vet.get().getLastName()).startsWith("Carter");
+		assertThat(this.vetService.optFindVetByUser(25)).isEmpty();
+	}
+
+	@Test
+	@Transactional
+	void shouldUpdateVet() {
+		Vet vet = this.vetService.findVetById(1);
+		vet.setCity("Change");
+		vet.setLastName("Update");
+		vetService.updateVet(vet, 1);
+		vet = this.vetService.findVetById(1);
+		assertEquals("Change", vet.getCity());
+		assertEquals("Update", vet.getLastName());
+	}
+
+	@Test
+	@Transactional
+	void shouldInsertVet() {
+		Collection<Vet> vets = (Collection<Vet>) this.vetService.findAll();
+		int found = vets.size();
+
+		Vet vet = new Vet();
+		vet.setFirstName("Sam");
+		vet.setLastName("Schultz");
+		vet.setCity("Wollongong");
+		User user = new User();
+		user.setUsername("Sam");
+		user.setPassword("supersecretpassword");
+		vet.setUser(user);
+
+		this.vetService.saveVet(vet);
+		assertNotEquals(0, vet.getId().longValue());
+
+		vets = (Collection<Vet>) this.vetService.findAll();
+		assertEquals(found + 1, vets.size());
+	}
+
+	@Test
+	@Transactional
+	void shouldDeleteVet() throws DataAccessException, DuplicatedPetNameException {
+		Integer firstCount = ((Collection<Vet>) this.vetService.findAll()).size();
+		Vet vet = new Vet();
+		vet.setFirstName("Sam");
+		vet.setLastName("Schultz");
+		vet.setCity("Wollongong");
+		User user = new User();
+		user.setUsername("Sam");
+		user.setPassword("supersecretpassword");
+		vet.setUser(user);
+		this.vetService.saveVet(vet);
+
+		Integer secondCount = ((Collection<Vet>) this.vetService.findAll()).size();
+		assertEquals(firstCount + 1, secondCount);
+		vetService.deleteVet(vet.getId());
+		Integer lastCount = ((Collection<Vet>) this.vetService.findAll()).size();
+		assertEquals(firstCount, lastCount);
+	}
+
+	// Specialties Tests
+
+	@Test
+	void shouldFindSpecialties() {
+		Collection<Specialty> specialties = (Collection<Specialty>) this.vetService.findSpecialties();
+
+		Specialty specialty = EntityUtils.getById(specialties, Specialty.class, 1);
+		assertEquals("radiology", specialty.getName());
+	}
+
+	@Test
+	void shouldFindSingleSpecialty() {
+		Specialty specialty = this.vetService.findSpecialtyById(1);
+		assertEquals("radiology", specialty.getName());
+	}
+
+	@Test
+	void shouldNotFindSingleSpecialtyWithBadID() {
+		assertThrows(ResourceNotFoundException.class, () -> this.vetService.findSpecialtyById(100));
+	}
+
+	@Test
+	@Transactional
+	void shouldUpdateSpecialty() {
+		Specialty specialty = this.vetService.findSpecialtyById(1);
+		specialty.setName("Change");
+		vetService.updateSpecialty(specialty, 1);
+		specialty = this.vetService.findSpecialtyById(1);
+		assertEquals("Change", specialty.getName());
+	}
+
+	@Test
+	@Transactional
+	void shouldInsertSpecialty() {
+		Collection<Specialty> specialties = (Collection<Specialty>) this.vetService.findSpecialties();
+		int found = specialties.size();
+
+		Specialty specialty = new Specialty();
+		specialty.setName("Vaccination");
+		this.vetService.saveSpecialty(specialty);
+		assertNotEquals(0, specialty.getId().longValue());
+
+		specialties = (Collection<Specialty>) this.vetService.findSpecialties();
+		assertEquals(found + 1, specialties.size());
+	}
+
+	@Test
+	@Transactional
+	void shouldDeleteSpecialty() {
+		Integer firstCount = ((Collection<Specialty>) this.vetService.findSpecialties()).size();
+		Specialty specialty = new Specialty();
+		specialty.setName("Vaccination");
+		this.vetService.saveSpecialty(specialty);
+
+		Integer secondCount = ((Collection<Specialty>) this.vetService.findSpecialties()).size();
+		assertEquals(firstCount + 1, secondCount);
+		vetService.deleteSpecialty(specialty.getId());
+		Integer lastCount = ((Collection<Specialty>) this.vetService.findSpecialties()).size();
+		assertEquals(firstCount, lastCount);
+	}
+
+}

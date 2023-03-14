@@ -8,8 +8,8 @@ class PetEdit extends Component {
         id: null,
         name: '',
         birthDate: '',
-        type: [],
-        owner: [],
+        type: {},
+        owner: {},
     };
 
     constructor(props) {
@@ -18,11 +18,15 @@ class PetEdit extends Component {
             pet: this.emptyItem,
             types: [],
             owners: [],
+            message: null,
         };
         this.handleChange = this.handleChange.bind(this);
+        // this.handleOwnerChange = this.handleOwnerChange.bind(this);
+        // this.handleTypeChange = this.handleTypeChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
-        this.id = window.location.href.split("/api/v1/pets/")[1];
+        var pathArray = window.location.pathname.split('/');
+        this.id = pathArray[2];
     }
 
     async componentDidMount() {
@@ -32,21 +36,27 @@ class PetEdit extends Component {
                     "Authorization": `Bearer ${this.jwt}`,
                 },
             })).json();
-            this.setState({ pet: pet });
+            if (pet.mesagge) this.setState({ message: pet.message });
+            else this.setState({ pet: pet });
         }
-        const types = await (await fetch(`/api/v1/pets/types`, {
-            headers: {
-                "Authorization": `Bearer ${this.jwt}`,
-            },
-        })).json();
-        this.setState({ types: types });
-
-        const owners = await (await fetch(`/api/v1/owners`, {
-            headers: {
-                "Authorization": `Bearer ${this.jwt}`,
-            },
-        })).json();
-        this.setState({ owners: owners });
+        if (!this.state.message) {
+            const types = await (await fetch(`/api/v1/pets/types`, {
+                headers: {
+                    "Authorization": `Bearer ${this.jwt}`,
+                },
+            })).json();
+            if (types.mesagge) this.setState({ message: types.message });
+            else this.setState({ types: types });
+        }
+        if (!this.state.message) {
+            const owners = await (await fetch(`/api/v1/owners`, {
+                headers: {
+                    "Authorization": `Bearer ${this.jwt}`,
+                },
+            })).json();
+            if (owners.mesagge) this.setState({ message: owners.message });
+            else this.setState({ owners: owners });
+        }
     }
 
     handleChange(event) {
@@ -54,15 +64,45 @@ class PetEdit extends Component {
         const value = target.value;
         const name = target.name;
         let pet = { ...this.state.pet };
-        pet[name] = value;
+        if (name === "type") {
+            pet.type.id = Number(value);
+        } else if (name === "owner") {
+            pet.owner.id = Number(value);
+        }
+        else pet[name] = value;
         this.setState({ pet });
     }
+
+    // handleTypeChange(event) {
+    //     const target = event.target;
+    //     const value = target.value;
+    //     const types = [...this.state.types];
+    //     console.log(types);
+    //     let selectedType = null;
+    //     selectedType = types.filter((type) => type.name === value)[0];
+    //     let pet = { ...this.state.pet };
+    //     pet["type"] = selectedType;
+    //     this.setState({ pet });
+
+    // }
+
+    // handleOwnerChange(event) {
+    //     const target = event.target;
+    //     const value = target.value;
+    //     const owners = [...this.state.owners]
+    //     let selectedOwner = null;
+    //     selectedOwner = owners.filter((owner) => owner.user.username === value)[0];
+    //     let pet = { ...this.state.pet };
+    //     pet["owner"] = selectedOwner;
+    //     this.setState({ pet });
+
+    // }
 
     async handleSubmit(event) {
         event.preventDefault();
         const { pet, } = this.state;
 
-        await fetch('/api/v1/pets' + (pet.id ? '/' + this.id : ''), {
+        const response = await (await fetch('/api/v1/pets' + (pet.id ? '/' + this.id : ''), {
             method: pet.id ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${this.jwt}`,
@@ -70,16 +110,19 @@ class PetEdit extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(pet),
-        });
-        window.location.href = '/api/v1/pets';
+        })).json();
+        if (response.message) this.setState({ message: response.message })
+        else window.location.href = '/pets';
     }
 
     render() {
         const { pet, types, owners } = this.state;
         const title = <h2>{pet.id ? 'Edit Pet' : 'Add Pet'}</h2>;
 
-        const typeOptions = types.map(type => <option key={type.id} value={type.name}>{type.name}</option>);
-        const ownerOptions = owners.map(owner => <option key={owner.id} value={owner.id}>{owner.user.username}</option>)
+        const typeOptions = types.map(type => <option key={type.id} value={type.id}>{type.name}</option>);
+        const ownerOptions = owners.map(owner => <option key={owner.id} value={owner.id}>{owner.user.username}</option>);
+
+        if (this.state.message) return <h2 className="text-center">{this.state.message}</h2>
 
         return <div>
             {/* <AppNavbar /> */}
@@ -88,33 +131,35 @@ class PetEdit extends Component {
                 <Form onSubmit={this.handleSubmit}>
                     <FormGroup>
                         <Label for="name">Name</Label>
-                        <Input type="text" name="name" id="name" value={pet.name || ''}
-                            onChange={this.handleChange} autoComplete="name" />
+                        <Input type="text" required name="name" id="name" value={pet.name || ''}
+                            onChange={this.handleChange} />
                     </FormGroup>
                     <FormGroup>
                         <Label for="birthDate">Birth Date</Label>
                         <Input type="date" name="birthDate" id="birthDate" value={pet.birthDate || ''}
-                            onChange={this.handleChange} autoComplete="birthDate" />
+                            onChange={this.handleChange} />
                     </FormGroup>
                     <FormGroup>
-                        <Label for="type">type</Label>
-                        <Input type="select" name="type" id="type" value={pet.type.name}
-                            onChange={this.handleChange} autoComplete="type">
+                        <Label for="type">Type</Label>
+                        <Input type="select" required name="type" id="type" value={pet.type.id}
+                            onChange={this.handleChange}>
+                            <option value="">None</option>
                             {typeOptions}
                         </Input>
                     </FormGroup>
                     <FormGroup>
                         <Label for="owner">Owner</Label>
                         {pet.id ?
-                            <p>{pet.owner.user.username || ''}</p> :
-                            <Input type="select" name="owner" id="owner" value={pet.owner || ''}
-                                onChange={this.handleChange} autoComplete="owner">
+                            <p>{pet.owner.user?.username}</p> :
+                            <Input type="select" required name="owner" id="owner" value={pet.owner.id || ""}
+                                onChange={this.handleChange} >
+                                <option value="">None</option>
                                 {ownerOptions}
                             </Input>}
                     </FormGroup>
                     <FormGroup>
                         <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="secondary" tag={Link} to="/api/v1/pets">Cancel</Button>
+                        <Button color="secondary" tag={Link} to="/pets">Cancel</Button>
                     </FormGroup>
                 </Form>
             </Container>

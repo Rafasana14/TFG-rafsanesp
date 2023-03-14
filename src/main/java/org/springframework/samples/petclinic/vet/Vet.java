@@ -18,6 +18,7 @@ package org.springframework.samples.petclinic.vet;
 import java.util.List;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -26,6 +27,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotEmpty;
 
 import org.springframework.samples.petclinic.model.Person;
 import org.springframework.samples.petclinic.user.User;
@@ -33,21 +35,13 @@ import org.springframework.samples.petclinic.user.User;
 import lombok.Getter;
 import lombok.Setter;
 
-/**
- * Simple JavaBean domain object representing a veterinarian.
- *
- * @author Ken Krebs
- * @author Juergen Hoeller
- * @author Sam Brannen
- * @author Arjen Poutsma
- */
 @Entity
 @Table(name = "vets")
 @Getter
 @Setter
 public class Vet extends Person {
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
 	@JoinTable(name = "vet_specialties", joinColumns = @JoinColumn(name = "vet_id"),
 			inverseJoinColumns = @JoinColumn(name = "specialty_id"),uniqueConstraints={
 				    @UniqueConstraint(columnNames = {"vet_id", "specialty_id"})
@@ -57,31 +51,13 @@ public class Vet extends Person {
 	@OneToOne(cascade = {CascadeType.DETACH,CascadeType.REFRESH,CascadeType.PERSIST})
     @JoinColumn(name = "user", referencedColumnName = "id")
 	private User user;
+	
+	@Column(name = "city")
+	@NotEmpty
+	private String city;
 
-//	protected Set<Specialty> getSpecialtiesInternal() {
-//		if (this.specialties == null) {
-//			this.specialties = new HashSet<>();
-//		}
-//		return this.specialties;
-//	}
-//
-//	protected void setSpecialtiesInternal(Set<Specialty> specialties) {
-//		this.specialties = specialties;
-//	}
-
-//	@XmlElement
-//	public List<Specialty> getSpecialties() {
-//		List<Specialty> sortedSpecs = new ArrayList<>(getSpecialtiesInternal());
-//		PropertyComparator.sort(sortedSpecs, new MutableSortDefinition("name", true, true));
-//		return Collections.unmodifiableList(sortedSpecs);
-//	}
-
-	public int getNrOfSpecialties() {
-		return getSpecialties().size();
-	}
-
-//	public void addSpecialty(Specialty specialty) {
-//		getSpecialtiesInternal().add(specialty);
-//	}
+	public void removeSpecialty(Specialty s) {
+		specialties.remove(s);
+    }
 
 }

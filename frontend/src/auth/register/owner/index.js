@@ -13,7 +13,6 @@ class RegisterOwner extends Component {
         address: '',
         city: '',
         telephone: '',
-        plan: 0,
     };
 
     constructor(props) {
@@ -50,7 +49,7 @@ class RegisterOwner extends Component {
         const { request } = this.state;
         let state = "";
 
-        await (await fetch("/api/auth/signup", {
+        await (await fetch("/api/v1/auth/signup", {
             headers: { "Content-Type": "application/json" },
             method: "POST",
             body: JSON.stringify(request),
@@ -72,7 +71,7 @@ class RegisterOwner extends Component {
             password: request.password,
         };
         if (state === "200") {
-            await fetch("/api/auth/signin", {
+            await fetch("/api/v1/auth/signin", {
                 headers: { "Content-Type": "application/json" },
                 method: "POST",
                 body: JSON.stringify(loginRequest),
@@ -87,11 +86,13 @@ class RegisterOwner extends Component {
                 }
             }).then(function (data) {
                 if (state !== "200") alert(data.message);
-                window.localStorage.setItem("jwt", JSON.stringify(data.token));
+                else {
+                    window.localStorage.setItem("jwt", JSON.stringify(data.token));
+                    window.location.href = '/dashboard';
+                }
             }).catch((message) => {
                 alert(message);
             });
-            window.location.href = '/dashboard';
         }
 
     }

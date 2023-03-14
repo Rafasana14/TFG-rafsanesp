@@ -8,7 +8,6 @@ import java.util.stream.StreamSupport;
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.util.RestPreconditions;
@@ -28,13 +27,14 @@ public class SpecialtyRestController {
 	
 	private final VetService vetService;
 
-	@Autowired
 	public SpecialtyRestController(VetService clinicService) {
 		this.vetService = clinicService;
 	}
 	
 	@GetMapping
 	public List<Specialty> findAll() {
+		System.out.println(StreamSupport.stream(vetService.findSpecialties().spliterator(), false)
+				.collect(Collectors.toList()));
 		return StreamSupport.stream(vetService.findSpecialties().spliterator(), false)
 				.collect(Collectors.toList());
 	}
@@ -47,7 +47,6 @@ public class SpecialtyRestController {
 	@PostMapping()
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<Specialty> create(@RequestBody Specialty specialty) throws URISyntaxException{
-		RestPreconditions.checkNotNull(specialty);
 		Specialty newSpecialty = new Specialty();
 		BeanUtils.copyProperties(specialty, newSpecialty,"id");
 		Specialty savedSpecialty = this.vetService.saveSpecialty(newSpecialty);
@@ -59,15 +58,14 @@ public class SpecialtyRestController {
 	@PutMapping(value = "{specialtyId}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Specialty> update(@PathVariable("specialtyId") int specialtyId, @RequestBody @Valid Specialty specialty ) {
-		 RestPreconditions.checkNotNull(specialty);
-	     RestPreconditions.checkNotNull(vetService.findSpecialtyById(specialtyId));
+	     RestPreconditions.checkNotNull(vetService.findSpecialtyById(specialtyId), "Specialty", "ID", specialtyId);
 	     return new ResponseEntity<Specialty>(this.vetService.updateSpecialty(specialty,specialtyId),HttpStatus.OK);
 	}
 	
 	@DeleteMapping(value = "{specialtyId}")
     @ResponseStatus(HttpStatus.OK)
     public void delete(@PathVariable("specialtyId") int id) {
-		RestPreconditions.checkNotNull(vetService.findSpecialtyById(id));
+		RestPreconditions.checkNotNull(vetService.findSpecialtyById(id), "Specialty", "ID", id);
         vetService.deleteSpecialty(id);
     }
 

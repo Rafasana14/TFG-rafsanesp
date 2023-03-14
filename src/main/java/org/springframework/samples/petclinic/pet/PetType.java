@@ -27,4 +27,5 @@ import org.springframework.samples.petclinic.model.NamedEntity;
 @Table(name = "types")
 public class PetType extends NamedEntity {
 
+
 }

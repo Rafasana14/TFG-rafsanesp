@@ -17,60 +17,50 @@ package org.springframework.samples.petclinic.pet;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.owner.PricingPlan;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
-/**
- * Mostly used as a facade for all Petclinic controllers Also a placeholder
- * for @Transactional and @Cacheable annotations
- *
- * @author Michael Isvy
- */
 @Service
 public class PetService {
 
-	private PetRepository petRepository;
-	
-	private VisitRepository visitRepository;
-	
+	private final Integer BASIC_LIMIT = 2;
+	private final Integer GOLD_LIMIT = 4;
+	private final Integer PLATINUM_LIMIT = 7;
 
-	@Autowired
-	public PetService(PetRepository petRepository,
-			VisitRepository visitRepository) {
+	private PetRepository petRepository;
+
+	public PetService(PetRepository petRepository) {
 		this.petRepository = petRepository;
-		this.visitRepository = visitRepository;
 	}
 
 	@Transactional(readOnly = true)
 	public Collection<PetType> findPetTypes() throws DataAccessException {
 		return petRepository.findPetTypes();
 	}
-	
+
+	@Transactional(readOnly = true)
+	public PetType findPetTypeByName(String name) throws DataAccessException {
+		return petRepository.findPetTypeByName(name)
+				.orElseThrow(() -> new ResourceNotFoundException("PetType", "name", name));
+	}
+
 	@Transactional(readOnly = true)
 	public Collection<Pet> findAll() {
-		return (List<Pet>)petRepository.findAll();
+		return (List<Pet>) petRepository.findAll();
 	}
-	
+
 	@Transactional(readOnly = true)
 	public Pet findPetById(int id) throws DataAccessException {
-		Optional<Pet> opt = petRepository.findById(id);
-		if(opt.isPresent()) return opt.get();
-		else return null;
+		return petRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Pet", "ID", id));
 	}
-	
-	@Transactional(readOnly = true)
-	public Owner findOwnerByPetId(int id) throws DataAccessException {
-		return petRepository.findOwnerById(id);
-	}
-	
+
 	@Transactional(readOnly = true)
 	public List<Pet> findAllPetsByOwnerId(int id) throws DataAccessException {
 		return petRepository.findAllPetsByOwnerId(id);
@@ -78,97 +68,60 @@ public class PetService {
 
 	@Transactional(rollbackFor = DuplicatedPetNameException.class)
 	public Pet savePet(Pet pet) throws DataAccessException, DuplicatedPetNameException {
-		
-			if(pet.getOwner()!=null){
-				Pet otherPet=getPetWithNameAndIdDifferent(pet);
-            	if (StringUtils.hasLength(pet.getName()) &&  (otherPet!= null && otherPet.getId()!=pet.getId())) {            	
-            		throw new DuplicatedPetNameException();
-            	}else
-                	petRepository.save(pet);                
-			}else
-				petRepository.save(pet);
-			
-			return pet;
+//		if (pet.getOwner() != null) {
+		Pet otherPet = getPetWithNameAndIdDifferent(pet);
+		if (otherPet != null && otherPet.getId() != pet.getId()) {
+			throw new DuplicatedPetNameException();
+		} else
+			petRepository.save(pet);
+//		} else
+//			petRepository.save(pet);
+
+		return pet;
 	}
-	
+
 	private Pet getPetWithNameAndIdDifferent(Pet pet) {
 		String name = pet.getName().toLowerCase();
 		for (Pet p : findAllPetsByOwnerId(pet.getOwner().getId())) {
 			String compName = p.getName().toLowerCase();
-			if (compName.equals(name) && p.getId()!=pet.getId()) {
-				return pet;
+			if (compName.equals(name) && p.getId() != pet.getId()) {
+				return p;
 			}
 		}
 		return null;
 	}
-	
+
 	@Transactional
-	public Pet updatePet(Pet pet, int id) throws DataAccessException {
+	public Pet updatePet(Pet pet, int id) {
 		Pet toUpdate = findPetById(id);
 		BeanUtils.copyProperties(pet, toUpdate, "id");
-		petRepository.save(toUpdate);
-		
-		return toUpdate;
-	}	
-	
-	@Transactional
-	public void deletePet(Pet pet) throws DataAccessException {
-		petRepository.deleteVisitsOfPet(pet.getId());
-		petRepository.delete(pet);
+		return savePet(toUpdate);
 	}
-	
+
 	@Transactional
 	public void deletePet(int id) throws DataAccessException {
-		Pet toDelete=findPetById(id);
+		Pet toDelete = findPetById(id);
 		petRepository.deleteVisitsOfPet(toDelete.getId());
 		petRepository.delete(toDelete);
 	}
-	
-// Visit Services
-	@Transactional(readOnly = true)
-	public Collection<Visit> findVisitsByPetId(int petId) {
-		return visitRepository.findByPetId(petId);
-	}
-	
-	@Transactional(readOnly = true)
-	public Visit findVisitById(int id) throws DataAccessException {
-		Optional<Visit> opt = visitRepository.findById(id);
-		if(opt.isPresent()) return opt.get();
-		else return null;
-	}
-	
-	@Transactional
-	public Visit saveVisit(Visit visit) throws DataAccessException {
-		visitRepository.save(visit);
-		return visit;
-	}
-	
-	@Transactional
-	public Visit updateVisit(Visit visit, int id) throws DataAccessException {
-		Visit toUpdate = findVisitById(id);
-		BeanUtils.copyProperties(visit, toUpdate, "id");
-		visitRepository.save(toUpdate);
-		
-		return toUpdate;
-	}	
-	
-	@Transactional
-	public void deleteVisitsOfPet(int petId) {
-		Pet pet = findPetById(petId);
-		petRepository.deleteVisitsOfPet(petId);
-		petRepository.save(pet);
-	}
-	
-	@Transactional
-	public void deleteVisit(Visit visit) throws DataAccessException {
-		visitRepository.delete(visit);
-	}
-	
-	@Transactional
-	public void deleteVisit(int id) throws DataAccessException {
-		Visit toDelete=findVisitById(id);
-		visitRepository.delete(toDelete);
-	}
-	
 
+	public boolean underLimit(Owner owner) {
+		Integer petCount = this.petRepository.countPetsOfOwner(owner.getId());
+		PricingPlan plan = owner.getPlan();
+		switch (plan) {
+		case BASIC:
+			if (petCount < BASIC_LIMIT)
+				return true;
+			break;
+		case GOLD:
+			if (petCount < GOLD_LIMIT)
+				return true;
+			break;
+		case PLATINUM:
+			if (petCount < PLATINUM_LIMIT)
+				return true;
+			break;
+		}
+		return false;
+	}
 }

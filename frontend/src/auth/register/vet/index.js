@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Col, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap';
+import tokenService from '../../../services/token.service';
 
 class RegisterVet extends Component {
 
     emptyRequest = {
         username: '',
         password: '',
-        authority: 'VETERINARIAN',
+        authority: 'VET',
         firstName: '',
         lastName: '',
-        specialties: [],
+        city: '',
+        address: '',
+        telephone: '',
     };
 
     constructor(props) {
@@ -47,7 +50,7 @@ class RegisterVet extends Component {
         const { request } = this.state;
         let state = "";
 
-        await (await fetch("/api/auth/signup", {
+        await (await fetch("/api/v1/auth/signup", {
             headers: { "Content-Type": "application/json" },
             method: "POST",
             body: JSON.stringify(request),
@@ -69,26 +72,28 @@ class RegisterVet extends Component {
             password: request.password,
         };
         if (state === "200") {
-            await fetch("/api/auth/signin", {
+            await fetch("/api/v1/auth/signin", {
                 headers: { "Content-Type": "application/json" },
                 method: "POST",
                 body: JSON.stringify(loginRequest),
             }).then(function (response) {
                 if (response.status === 200) {
                     state = "200"
-                    return response.json();
                 }
                 else {
-                    state = "";
-                    return response.json();
+                    state = ""
+                    // return Promise.reject("Invalid login attempt");
                 }
+                return response.json();
             }).then(function (data) {
                 if (state !== "200") alert(data.message);
-                window.localStorage.setItem("jwt", JSON.stringify(data.token));
+                else {
+                    tokenService.updateLocalAccessToken(data.token)
+                    window.location.href = "dashboard";
+                }
             }).catch((message) => {
                 alert(message);
             });
-            window.location.href = '/dashboard';
         }
     }
 
@@ -121,6 +126,11 @@ class RegisterVet extends Component {
                                 <Label for="lastName">Last Name</Label>
                                 <Input type="text" required name="lastName" id="lastName" value={request.lastName || ''}
                                     onChange={this.handleChange} autoComplete="lastName" />
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="city">City</Label>
+                                <Input type="text" required name="city" id="city" value={request.city || ''}
+                                    onChange={this.handleChange} autoComplete="city" />
                             </FormGroup>
                             <br></br>
                             <FormGroup>

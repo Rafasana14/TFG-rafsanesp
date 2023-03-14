@@ -4,66 +4,102 @@ import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
 
 class VisitEdit extends Component {
 
-    emptyItem = {
+    emptyVisit = {
         id: '',
         date: '',
         description: '',
-        pet: [],
+        vet: {},
+        pet: {},
     };
 
     constructor(props) {
         super(props);
         this.state = {
-            item: this.emptyItem,
+            visit: this.emptyVisit,
+            pet: {},
+            vets: [],
         };
         this.handleChange = this.handleChange.bind(this);
+        this.handleVetChange = this.handleVetChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
 
         var pathArray = window.location.pathname.split('/');
-        this.petId = pathArray[4];
-        this.visitId = pathArray[6];
+        this.petId = pathArray[2];
+        this.visitId = pathArray[4];
     }
 
     async componentDidMount() {
-        if (this.id !== 'new') {
+        const pet = await (await fetch(`/api/v1/pets/${this.petId}`, {
+            headers: {
+                "Authorization": `Bearer ${this.jwt}`,
+            },
+        })).json();
+        this.setState({ pet: pet });
+
+        const vets = await (await fetch(`/api/v1/vets/`, {
+            headers: {
+                "Authorization": `Bearer ${this.jwt}`,
+            },
+        })).json();
+        this.setState({ vets: vets });
+
+        if (this.visitId !== 'new') {
             const visit = await (await fetch(`/api/v1/pets/${this.petId}/visits/${this.visitId}`, {
                 headers: {
                     "Authorization": `Bearer ${this.jwt}`,
                 },
             })).json();
-            this.setState({ item: visit });
+            this.setState({ visit: visit });
         }
+
+
     }
 
     handleChange(event) {
         const target = event.target;
         const value = target.value;
         const name = target.name;
-        let item = { ...this.state.item };
-        item[name] = value;
-        this.setState({ item });
+        let visit = { ...this.state.visit };
+        visit[name] = value;
+        this.setState({ visit });
+    }
+
+    handleVetChange(event) {
+        const target = event.target;
+        const value = Number(target.value);
+        const vets = [...this.state.vets]
+        let selectedVet = null;
+        selectedVet = vets.filter((vet) => vet.id === value)[0];
+        let visit = { ...this.state.visit };
+        visit["vet"] = selectedVet;
+        this.setState({ visit });
+
     }
 
     async handleSubmit(event) {
         event.preventDefault();
-        const { item } = this.state;
+        let visit = { ...this.state.visit };
+        const pet = { ...this.state.pet };
+        visit["pet"] = pet;
 
-        await fetch(`/api/v1/pets/${this.petId}/visits` + (item.id ? '/' + item.id : ''), {
-            method: (item.id) ? 'PUT' : 'POST',
+        await fetch(`/api/v1/pets/${this.petId}/visits` + (visit.id ? '/' + visit.id : ''), {
+            method: (visit.id) ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${this.jwt}`,
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(item),
+            body: JSON.stringify(visit),
         });
-        window.location.href = `/api/v1/pets/${this.petId}/visits`;
+        window.location.href = `/pets/${this.petId}/visits`;
     }
 
     render() {
-        const { item } = this.state;
-        const title = <h2>{item.id ? 'Edit Visit' : 'Add Visit'}</h2>;
+        const { visit, pet, vets } = this.state;
+        const title = <h2>{visit.id ? 'Edit Visit' : 'Add Visit'}</h2>;
+
+        const vetOptions = vets.map(vet => <option key={vet.id} value={vet.id}>{vet.firstName} {vet.lastName}</option>);
 
         return <div>
             {/* <AppNavbar /> */}
@@ -72,24 +108,29 @@ class VisitEdit extends Component {
                 <Form onSubmit={this.handleSubmit}>
                     <FormGroup>
                         <Label for="date">Date</Label>
-                        <Input type="date" name="date" id="date" value={item.date || ''}
+                        <Input type="date" required name="date" id="date" value={visit.date || ''}
                             onChange={this.handleChange} autoComplete="date" />
                     </FormGroup>
                     <FormGroup>
                         <Label for="description">Description</Label>
-                        <Input type="text" name="description" id="description" value={item.description || ''}
+                        <Input type="text" required name="description" id="description" value={visit.description || ''}
                             onChange={this.handleChange} autoComplete="description" />
                     </FormGroup>
-
                     <FormGroup>
-                        {item.id ?
-                            <Input type="text" readOnly>{item.pet.name || ''}</Input> : <></>}
-
+                        <Label for="vet">Vet</Label>
+                        <Input type="select" required name="vet" id="vet" value={visit.vet.id}
+                            onChange={this.handleVetChange} autoComplete="vet">
+                            <option value="">None</option>
+                            {vetOptions}
+                        </Input>
                     </FormGroup>
-                    <br></br>
+                    <FormGroup>
+                        <Label for="pet">Pet</Label>
+                        <p>{pet.name || ''}</p>
+                    </FormGroup>
                     <FormGroup>
                         <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="secondary" tag={Link} to={`/api/v1/pets/${this.petId}/visits`}>Cancel</Button>
+                        <Button color="secondary" tag={Link} to={`/pets/${this.petId}/visits`}>Cancel</Button>
                     </FormGroup>
                 </Form>
             </Container>

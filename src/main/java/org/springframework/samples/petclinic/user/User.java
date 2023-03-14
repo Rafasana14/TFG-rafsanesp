@@ -1,5 +1,6 @@
 package org.springframework.samples.petclinic.user;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -20,19 +21,15 @@ public class User extends BaseEntity{
 	@Column(unique=true)
 	String username;
 	
-	String password;
+	String password;	
 	
-	//private String token;
-	
-	//boolean enabled;
-	
-//	@NotNull
-//	PricingPlan plan;
-	
-	
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "authority")
 	Authorities authority;
+	
+	public Boolean hasAuthority(String auth) {
+		return authority.getAuthority().equals(auth);
+	}
 	
 //	@ManyToMany(fetch = FetchType.LAZY)
 //	@JoinTable(	name = "user_roles", 
