@@ -25,6 +25,7 @@ import javax.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.exceptions.LimitReachedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
@@ -84,10 +85,19 @@ public class VisitRestController {
 	public ResponseEntity<Visit> create(@PathVariable("petId") int petId, @RequestBody @Valid Visit visit)
 			throws URISyntaxException {
 		Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId), "Pet", "ID", petId);
+		User user = userService.findCurrentUser();
 		Visit newVisit = new Visit();
+		Visit savedVisit;
 		BeanUtils.copyProperties(visit, newVisit, "id");
 		visit.setPet(pet);
-		Visit savedVisit = this.visitService.saveVisit(newVisit);
+		if (user.hasAuthority("OWNER")) {
+			Owner owner = pet.getOwner();
+			if (this.visitService.underLimit(visit)) {
+				savedVisit = this.visitService.saveVisit(newVisit);
+			} else
+				throw new LimitReachedException("Visits per month for your Pet " + pet.getName(), owner.getPlan());
+		} else
+			savedVisit = this.visitService.saveVisit(newVisit);
 
 //			return ResponseEntity.created(new URI("/api/v1/pets/" + petId + "/visits/" + savedVisit.getId()))
 //					.body(savedVisit);
@@ -143,13 +153,15 @@ public class VisitRestController {
 				List<Visit> res = StreamSupport.stream(visitService.findVisitsByOwnerId(ownerId).spliterator(), false)
 						.collect(Collectors.toList());
 				return new ResponseEntity<List<Visit>>(res, HttpStatus.OK);
-			}else {
-				return new ResponseEntity<MessageResponse>(new MessageResponse("You can only see your own visits!"), HttpStatus.OK);
+			} else {
+				return new ResponseEntity<MessageResponse>(new MessageResponse("You can only see your own visits!"),
+						HttpStatus.OK);
 			}
 		} else {
 			if (user.hasAuthority("OWNER")) {
 				Owner logged = ownerService.findOwnerByUser(user.getId());
-				List<Visit> res = StreamSupport.stream(visitService.findVisitsByOwnerId(logged.getId()).spliterator(), false)
+				List<Visit> res = StreamSupport
+						.stream(visitService.findVisitsByOwnerId(logged.getId()).spliterator(), false)
 						.collect(Collectors.toList());
 				return new ResponseEntity<List<Visit>>(res, HttpStatus.OK);
 			} else {

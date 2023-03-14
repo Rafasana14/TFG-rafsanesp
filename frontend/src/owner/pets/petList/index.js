@@ -72,8 +72,11 @@ class PetOwnerList extends Component {
                 this.setState({ pets: updatedPets });
             }
             return response.json();
-        }).then(function (data) {
-            this.setState({ message: data.message });
+        }).then(data => {
+            this.setState({
+                message: data.message,
+                modalShow: true
+            });
         });
     }
 
@@ -134,7 +137,7 @@ class PetOwnerList extends Component {
             modal = <div>
                 <Modal isOpen={show} toggle={this.handleShow}
                     keyboard={false}>
-                    <ModalHeader toggle={this.handleShow} close={closeBtn}>Error!</ModalHeader>
+                    <ModalHeader toggle={this.handleShow} close={closeBtn}>Alert!</ModalHeader>
                     <ModalBody>
                         {this.state.message || ""}
                     </ModalBody>

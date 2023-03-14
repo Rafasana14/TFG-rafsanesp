@@ -72,9 +72,7 @@ public class OwnerService {
 	public Owner updateOwner(Owner owner, int id) throws DataAccessException {
 		Owner toUpdate = findOwnerById(id);
 		BeanUtils.copyProperties(owner, toUpdate, "id","user");
-		ownerRepository.save(toUpdate);
-		
-		return toUpdate;
+		return saveOwner(toUpdate);
 	}
 	
 	@Transactional
@@ -89,8 +87,7 @@ public class OwnerService {
 	@Transactional
 	public void deleteOwner(int id) throws DataAccessException {
 		Owner toDelete=findOwnerById(id);
-		for(Pet pet: petService.findAllPetsByOwnerId(id)) petService.deleteVisitsOfPet(pet.getId());
-		ownerRepository.deletePetsOfOwner(id);
+		for(Pet pet: petService.findAllPetsByOwnerId(id)) petService.deletePet(pet.getId());
 		ownerRepository.delete(toDelete);
 	}
 

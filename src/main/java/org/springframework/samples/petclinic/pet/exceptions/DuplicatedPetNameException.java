@@ -5,11 +5,15 @@
  */
 package org.springframework.samples.petclinic.pet.exceptions;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
 /**
  *
  * @author japarejo
  */
-public class DuplicatedPetNameException extends Exception{
+@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+public class DuplicatedPetNameException extends RuntimeException{
 
 	/**
 	 * 

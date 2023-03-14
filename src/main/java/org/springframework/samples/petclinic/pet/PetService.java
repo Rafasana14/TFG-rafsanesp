@@ -17,24 +17,22 @@ package org.springframework.samples.petclinic.pet;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
+import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.owner.PricingPlan;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
-/**
- * Mostly used as a facade for all Petclinic controllers Also a placeholder
- * for @Transactional and @Cacheable annotations
- *
- * @author Michael Isvy
- */
 @Service
 public class PetService {
+
+	private final Integer BASIC_LIMIT = 2;
+	private final Integer GOLD_LIMIT = 4;
+	private final Integer PLATINUM_LIMIT = 7;
 
 	private PetRepository petRepository;
 
@@ -60,11 +58,7 @@ public class PetService {
 
 	@Transactional(readOnly = true)
 	public Pet findPetById(int id) throws DataAccessException {
-		Optional<Pet> opt = petRepository.findById(id);
-		if (opt.isPresent())
-			return opt.get();
-		else
-			return null;
+		return petRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Pet", "ID", id));
 	}
 
 	@Transactional(readOnly = true)
@@ -74,14 +68,14 @@ public class PetService {
 
 	@Transactional(rollbackFor = DuplicatedPetNameException.class)
 	public Pet savePet(Pet pet) throws DataAccessException, DuplicatedPetNameException {
-		if (pet.getOwner() != null) {
-			Pet otherPet = getPetWithNameAndIdDifferent(pet);
-			if (StringUtils.hasLength(pet.getName()) && (otherPet != null && otherPet.getId() != pet.getId())) {
-				throw new DuplicatedPetNameException();
-			} else
-				petRepository.save(pet);
+//		if (pet.getOwner() != null) {
+		Pet otherPet = getPetWithNameAndIdDifferent(pet);
+		if (otherPet != null && otherPet.getId() != pet.getId()) {
+			throw new DuplicatedPetNameException();
 		} else
 			petRepository.save(pet);
+//		} else
+//			petRepository.save(pet);
 
 		return pet;
 	}
@@ -98,18 +92,10 @@ public class PetService {
 	}
 
 	@Transactional
-	public Pet updatePet(Pet pet, int id) throws DataAccessException {
+	public Pet updatePet(Pet pet, int id) {
 		Pet toUpdate = findPetById(id);
 		BeanUtils.copyProperties(pet, toUpdate, "id");
-		petRepository.save(toUpdate);
-
-		return toUpdate;
-	}
-
-	@Transactional
-	public void deletePet(Pet pet) throws DataAccessException {
-		petRepository.deleteVisitsOfPet(pet.getId());
-		petRepository.delete(pet);
+		return savePet(toUpdate);
 	}
 
 	@Transactional
@@ -118,11 +104,24 @@ public class PetService {
 		petRepository.deleteVisitsOfPet(toDelete.getId());
 		petRepository.delete(toDelete);
 	}
-	
-	@Transactional
-	public void deleteVisitsOfPet(int petId) {
-		Pet pet = findPetById(petId);
-		petRepository.deleteVisitsOfPet(petId);
-		petRepository.save(pet);
+
+	public boolean underLimit(Owner owner) {
+		Integer petCount = this.petRepository.countPetsOfOwner(owner.getId());
+		PricingPlan plan = owner.getPlan();
+		switch (plan) {
+		case BASIC:
+			if (petCount < BASIC_LIMIT)
+				return true;
+			break;
+		case GOLD:
+			if (petCount < GOLD_LIMIT)
+				return true;
+			break;
+		case PLATINUM:
+			if (petCount < PLATINUM_LIMIT)
+				return true;
+			break;
+		}
+		return false;
 	}
 }

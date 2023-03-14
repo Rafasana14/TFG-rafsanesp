@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Container, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
+import { Button, Col, Container, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
 
 class VisitOwnerEdit extends Component {
 
@@ -118,13 +118,13 @@ class VisitOwnerEdit extends Component {
             },
             body: JSON.stringify(visit),
         })).json();
-        if (submit.message) this.setState({ message: visit.message });
+        if (submit.message) this.setState({ message: submit.message, modalShow: true });
         else window.location.href = `/myPets`;
     }
 
     render() {
         const { visit, pet, city, vets } = this.state;
-        const title = <h2>{visit.id ? 'Edit Visit' : 'Add Visit'}</h2>;
+        const title = <h2 className='text-center'>{visit.id ? 'Edit Visit' : 'Add Visit'}</h2>;
 
         const date = new Date(visit.date);
         let dateInput;
@@ -207,7 +207,7 @@ class VisitOwnerEdit extends Component {
                 <Modal isOpen={show} toggle={this.handleShow}
                     backdrop="static" keyboard={false}>
                     {/* <ModalHeader toggle={this.handleShow} close={closeBtn}>Error!</ModalHeader> */}
-                    <ModalHeader>Error!</ModalHeader>
+                    <ModalHeader>Alert!</ModalHeader>
                     <ModalBody>
                         {this.state.message || ""}
                     </ModalBody>
@@ -220,42 +220,44 @@ class VisitOwnerEdit extends Component {
         return <div>
             <Container>
                 {title}
-                <Form onSubmit={this.handleSubmit}>
-                    <FormGroup>
-                        <Label for="date">Date</Label>
-                        {dateInput}
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="description">Description</Label>
-                        {/* poner required tras reunión */}
-                        <Input type="text" name="description" id="description" value={visit.description || ''}
-                            onChange={this.handleChange} />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="city">Select City for the Visit</Label><br></br>
-                        {citiesOptions}
-                    </FormGroup>
-                    <FormGroup>
-                        {plan === "BASIC" ? <Label for="vet">Vet (As you have BASIC Plan, Vet will be selected randomly from the ones in the city)</Label> :
-                            <Label for="vet">Vet</Label>}
-                        {vetSelection}
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="pet">Pet</Label>
-                        <p>{pet.name || ''}</p>
-                    </FormGroup>
-                    <FormGroup>
-                        <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="secondary" onClick={() => window.history.back()}>Back</Button>
-                    </FormGroup>
-                </Form>
+                <Row>
+                    <Col sm="4"></Col>
+                    <Col sm="4">
+                        <Form onSubmit={this.handleSubmit}>
+                            <FormGroup>
+                                <Label for="date">Date</Label>
+                                {dateInput}
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="description">Description</Label>
+                                {/* poner required tras reunión */}
+                                <Input type="text" name="description" id="description" value={visit.description || ''}
+                                    onChange={this.handleChange} />
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="city">Select City for the Visit</Label><br></br>
+                                {citiesOptions}
+                            </FormGroup>
+                            <FormGroup>
+                                {plan === "BASIC" ? <Label for="vet">Vet (As you have BASIC Plan, Vet will be selected randomly from the ones in the city)</Label> :
+                                    <Label for="vet">Vet</Label>}
+                                {vetSelection}
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="pet">Pet</Label>
+                                <p>{pet.name || ''}</p>
+                            </FormGroup>
+                            <FormGroup>
+                                <Button color="primary" type="submit">Save</Button>{' '}
+                                <Button color="secondary" onClick={() => window.history.back()}>Back</Button>
+                            </FormGroup>
+                        </Form>
+                    </Col>
+                    <Col sm="4"></Col>
+                </Row>
             </Container>
             {modal}
-
-
         </div >
-
-
     }
 }
 export default VisitOwnerEdit;

@@ -38,6 +38,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import petclinic.payload.response.MessageResponse;
+
 @RestController
 @RequestMapping("/api/v1/owners")
 public class OwnerRestController {
@@ -83,9 +85,10 @@ public class OwnerRestController {
 	
 	@DeleteMapping(value = "{ownerId}")
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable("ownerId") int id) {
+    public ResponseEntity<MessageResponse> delete(@PathVariable("ownerId") int id) {
 		RestPreconditions.checkNotNull(ownerService.findOwnerById(id), "Owner", "ID", id);
         ownerService.deleteOwner(id);
+        return new ResponseEntity<MessageResponse>(new MessageResponse("Owner deleted!"), HttpStatus.OK);
     }
 
 }

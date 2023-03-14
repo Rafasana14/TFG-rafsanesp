@@ -24,9 +24,12 @@ import org.springframework.data.repository.CrudRepository;
 public interface VisitRepository extends CrudRepository<Visit, Integer> {
 
 	@Query("SELECT v FROM Visit v WHERE v.pet.id = :petId ORDER BY v.date DESC")
-	List<Visit> findByPetId(Integer petId);
-	
+	public List<Visit> findByPetId(Integer petId);
+
 	@Query("SELECT v FROM Visit v WHERE v.pet.owner.id = :ownerId ORDER BY v.date DESC")
-	Collection<Visit> findByOwnerId(int ownerId);
+	public Collection<Visit> findByOwnerId(int ownerId);
+
+	@Query("SELECT COUNT(v) FROM Visit v WHERE v.pet.id = :id AND MONTH(v.date) = :month AND YEAR(v.date) = :year")
+	public Integer countVisitsOfPetInMonth(int id, Integer month, Integer year);
 
 }

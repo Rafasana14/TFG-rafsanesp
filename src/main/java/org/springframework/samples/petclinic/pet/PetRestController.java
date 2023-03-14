@@ -26,6 +26,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.exceptions.LimitReachedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
@@ -60,6 +61,7 @@ public class PetRestController {
 	}
 
 	@GetMapping
+//	@RequestParam(required = false) String ownerId
 	public List<Pet> findAll() {
 		User user = userService.findCurrentUser();
 		if (user.hasAuthority("ADMIN") || user.hasAuthority("VET")) {
@@ -72,19 +74,24 @@ public class PetRestController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Pet> create(@RequestBody Pet pet)
+	public ResponseEntity<?> create(@RequestBody Pet pet)
 			throws URISyntaxException, DataAccessException, DuplicatedPetNameException {
 		User user = userService.findCurrentUser();
 		Pet newPet = new Pet();
+		Pet savedPet;
 		BeanUtils.copyProperties(pet, newPet, "id");
 		if (user.hasAuthority("OWNER")) {
 			Owner owner = ownerService.findOwnerByUser(user.getId());
-			newPet.setOwner(owner);
+			if(this.petService.underLimit(owner)) {
+				newPet.setOwner(owner);
+				savedPet = this.petService.savePet(newPet);
+			}
+			else throw new LimitReachedException("Pets", owner.getPlan());
 		} else {
 			Owner owner = ownerService.findOwnerById(pet.getId());
 			newPet.setOwner(owner);
+			savedPet = this.petService.savePet(newPet);
 		}
-		Pet savedPet = this.petService.savePet(newPet);
 
 //		return ResponseEntity.created(new URI("/api/v1/pets/" + savedPet.getId())).body(savedPet);
 		return new ResponseEntity<Pet>(savedPet, HttpStatus.CREATED);
@@ -103,7 +110,8 @@ public class PetRestController {
 				cond = true;
 		}
 		if (!user.hasAuthority("OWNER") || cond) {
-			return new ResponseEntity<Pet>(this.petService.updatePet(pet, petId), HttpStatus.OK);
+			Pet res = this.petService.updatePet(pet, petId);
+			return new ResponseEntity<Pet>(res, HttpStatus.OK);
 		} else
 			throw new ResourceNotOwnedException(Pet.class.getName());
 	}

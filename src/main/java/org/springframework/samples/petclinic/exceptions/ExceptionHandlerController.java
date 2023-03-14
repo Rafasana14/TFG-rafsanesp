@@ -4,6 +4,7 @@ import java.util.Date;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -18,7 +19,7 @@ public class ExceptionHandlerController {
 		ErrorMessage message = new ErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(), new Date(), ex.getMessage(),
 				request.getDescription(false));
 		
-		return new ResponseEntity<ErrorMessage>(message, HttpStatus.NOT_FOUND);
+		return new ResponseEntity<ErrorMessage>(message, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	@ExceptionHandler(ResourceNotFoundException.class)
@@ -33,10 +34,10 @@ public class ExceptionHandlerController {
 	@ExceptionHandler(ResourceNotOwnedException.class)
 	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
 	public ResponseEntity<ErrorMessage> resourceNotOwnedException(ResourceNotFoundException ex, WebRequest request) {
-		ErrorMessage message = new ErrorMessage(HttpStatus.NOT_FOUND.value(), new Date(), ex.getMessage(),
+		ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST.value(), new Date(), ex.getMessage(),
 				request.getDescription(false));
 
-		return new ResponseEntity<ErrorMessage>(message, HttpStatus.NOT_FOUND);
+		return new ResponseEntity<ErrorMessage>(message, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(value = TokenRefreshException.class)
@@ -45,7 +46,25 @@ public class ExceptionHandlerController {
 		ErrorMessage message = new ErrorMessage(HttpStatus.FORBIDDEN.value(), new Date(), ex.getMessage(),
 				request.getDescription(false));
 
-		return new ResponseEntity<ErrorMessage>(message, HttpStatus.NOT_FOUND);
+		return new ResponseEntity<ErrorMessage>(message, HttpStatus.FORBIDDEN);
+	}
+	
+	@ExceptionHandler(value = LimitReachedException.class)
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	public ResponseEntity<ErrorMessage> handleLimitReachedException(LimitReachedException ex, WebRequest request) {
+		ErrorMessage message = new ErrorMessage(HttpStatus.FORBIDDEN.value(), new Date(), ex.getMessage(),
+				request.getDescription(false));
+
+		return new ResponseEntity<ErrorMessage>(message, HttpStatus.FORBIDDEN);
+	}
+	
+	@ExceptionHandler(value = DuplicatedPetNameException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public ResponseEntity<ErrorMessage> handleDuplicatedPetNameExceptionException(DuplicatedPetNameException ex, WebRequest request) {
+		ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST.value(), new Date(), ex.getMessage(),
+				request.getDescription(false));
+
+		return new ResponseEntity<ErrorMessage>(message, HttpStatus.BAD_REQUEST);
 	}
 
 }

@@ -24,12 +24,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-/**
- * Spring Data JPA specialization of the {@link PetRepository} interface
- *
- * @author Michael Isvy
- * @since 15.1.2013
- */
 public interface PetRepository extends CrudRepository<Pet, Integer> {
 
 	@Query("SELECT ptype FROM PetType ptype ORDER BY ptype.name")
@@ -44,5 +38,8 @@ public interface PetRepository extends CrudRepository<Pet, Integer> {
 	@Modifying
 	@Query("DELETE FROM Visit v WHERE v.pet.id = :petId")
 	public void deleteVisitsOfPet(@Param("petId") int petId);
+	
+	@Query(("SELECT COUNT(p) FROM Pet p WHERE p.owner.id = :id"))
+	public Integer countPetsOfOwner(int id);
 	
 }

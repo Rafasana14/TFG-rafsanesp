@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
+import { Button, Col, Container, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
 
 class PetOwnerEdit extends Component {
 
@@ -18,6 +18,7 @@ class PetOwnerEdit extends Component {
             pet: this.emptyItem,
             types: [],
             message: null,
+            modalShow: false,
         };
         this.handleChange = this.handleChange.bind(this);
         // this.handleTypeChange = this.handleTypeChange.bind(this);
@@ -35,7 +36,7 @@ class PetOwnerEdit extends Component {
                     "Authorization": `Bearer ${this.jwt}`,
                 },
             })).json();
-            if (pet.message) this.setState({ message: pet.message });
+            if (pet.message) this.setState({ message: pet.message, modalShow: true });
             else {
                 this.setState({
                     pet: pet,
@@ -49,7 +50,7 @@ class PetOwnerEdit extends Component {
                     "Authorization": `Bearer ${this.jwt}`,
                 },
             })).json();
-            if (types.message) this.setState({ message: types.message });
+            if (types.message) this.setState({ message: types.message, modalShow: true });
             else this.setState({ types: types });
         }
     }
@@ -80,7 +81,7 @@ class PetOwnerEdit extends Component {
         event.preventDefault();
         const { pet, } = this.state;
 
-        await fetch('/api/v1/pets' + (pet.id ? '/' + this.petId : ''), {
+        const submit = await (await fetch('/api/v1/pets' + (pet.id ? '/' + this.petId : ''), {
             method: pet.id ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${this.jwt}`,
@@ -88,8 +89,9 @@ class PetOwnerEdit extends Component {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(pet),
-        });
-        window.location.href = '/myPets';
+        })).json();
+        if (submit.message) this.setState({ message: submit.message, modalShow: true });
+        else window.location.href = `/myPets`;
         // .then(function (response) {
         //     if (response.status === 201) window.location.href = '';
         //     else return response.json();
@@ -102,49 +104,76 @@ class PetOwnerEdit extends Component {
     }
 
     render() {
-        if (this.state.message) {
-            return <div className="text-center">
-                <h2>{this.state.message}</h2>
-            </div>
-        } else {
-            const { pet, types } = this.state;
-            const title = <h2>{pet.id ? 'Edit Pet' : 'Add Pet'}</h2>;
 
-            const typeOptions = types.map(type => {
-                return <option key={type.id} value={type.id} > {type.name}</option>
-            });
+        const { pet, types, message } = this.state;
+        const title = <h2 className='text-center'>{pet.id ? 'Edit Pet' : 'Add Pet'}</h2>;
 
-            return <div>
-                {/* <AppNavbar /> */}
-                <Container>
-                    {title}
-                    <Form onSubmit={this.handleSubmit}>
-                        <FormGroup>
-                            <Label for="name">Name</Label>
-                            <Input type="text" required name="name" id="name" value={pet.name || ''}
-                                onChange={this.handleChange} autoComplete="name" />
-                        </FormGroup>
-                        <FormGroup>
-                            <Label for="birthDate">Birth Date</Label>
-                            <Input type="date" required name="birthDate" id="birthDate" value={pet.birthDate || ''}
-                                onChange={this.handleChange} autoComplete="birthDate" />
-                        </FormGroup>
-                        <FormGroup>
-                            <Label for="type">Type</Label>
-                            <Input type="select" required name="type" id="type" value={pet.type.id || ""}
-                                onChange={this.handleChange} autoComplete="type">
-                                < option value="">None</option >
-                                {typeOptions}
-                            </Input>
-                        </FormGroup>
-                        <FormGroup>
-                            <Button color="primary" type="submit">Save</Button>{' '}
-                            <Button color="secondary" tag={Link} to="/myPets">Cancel</Button>
-                        </FormGroup>
-                    </Form>
-                </Container>
-            </div>
+        const typeOptions = types.map(type => {
+            return <option key={type.id} value={type.id} > {type.name}</option>
+        });
+
+        let modal = <></>;
+        if (message) {
+            const show = this.state.modalShow;
+            const closeBtn = (
+                <button className="close" onClick={this.handleShow} type="button">
+                    &times;
+                </button>
+            );
+            const cond = message.includes("limit");
+            modal = <div>
+                <Modal isOpen={show} toggle={this.handleShow}
+                    backdrop="static" keyboard={false}>
+                    {cond ? <></> : <ModalHeader toggle={this.handleShow} close={closeBtn}>Error!</ModalHeader>}
+                    <ModalHeader>Error!</ModalHeader>
+                    <ModalBody>
+                        {this.state.message || ""}
+                    </ModalBody>
+                    <ModalFooter>
+                        {cond ? <Button color="info" tag={Link} to={`/plan`}>Check Plan</Button> : <></>}
+                        <Button color="primary" tag={Link} to={`/myPets`}>Back</Button>
+                    </ModalFooter>
+                </Modal></div>
         }
+
+        return <div>
+            {/* <AppNavbar /> */}
+            <Container>
+                {title}
+                <Row>
+                    <Col sm="4"></Col>
+                    <Col className='justify-content-center' sm="4">
+                        <Form onSubmit={this.handleSubmit}>
+                            <FormGroup>
+                                <Label for="name">Name</Label>
+                                <Input type="text" required name="name" id="name" value={pet.name || ''}
+                                    onChange={this.handleChange} autoComplete="name" />
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="birthDate">Birth Date</Label>
+                                <Input type="date" required name="birthDate" id="birthDate" value={pet.birthDate || ''}
+                                    onChange={this.handleChange} autoComplete="birthDate" />
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="type">Type</Label>
+                                <Input type="select" required name="type" id="type" value={pet.type.id || ""}
+                                    onChange={this.handleChange} autoComplete="type">
+                                    < option value="">None</option >
+                                    {typeOptions}
+                                </Input>
+                            </FormGroup>
+                            <FormGroup>
+                                <Button color="primary" type="submit">Save</Button>{' '}
+                                <Button color="secondary" tag={Link} to="/myPets">Cancel</Button>
+                            </FormGroup>
+                        </Form>
+                    </Col>
+                </Row>
+                <Col sm="4"></Col>
+                {modal}
+            </Container>
+        </div>
+
     }
 }
 export default PetOwnerEdit;

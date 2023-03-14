@@ -8,9 +8,7 @@ import lombok.Getter;
 @ResponseStatus(value = HttpStatus.BAD_REQUEST)
 @Getter
 public class ResourceNotOwnedException extends RuntimeException {
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -3906338266891937036L;
 
 	private String resourceName;
