@@ -17,6 +17,7 @@ package org.springframework.samples.petclinic.owner;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.user.User;
@@ -35,6 +36,7 @@ public class OwnerPlanController {
 	private final OwnerService ownerService;
 	private final UserService userService;
 
+	@Autowired
 	public OwnerPlanController(OwnerService ownerService, UserService userService) {
 		this.ownerService = ownerService;
 		this.userService = userService;

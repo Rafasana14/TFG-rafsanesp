@@ -55,11 +55,14 @@ class OwnerDashboard extends Component {
         else {
             this.setState({ visits: visits });
             const events = visits.map((visit) => {
+                const start = new Date(visit.datetime);
+                var end = new Date(visit.datetime);
+                end.setMinutes(start.getMinutes() + 30);
                 return {
                     visitId: Number(visit.id),
                     petId: Number(visit.pet.id),
-                    start: new Date(visit.date),
-                    end: new Date(visit.date),
+                    start: start,
+                    end: end,
                     title: `Visit for ${visit.pet.name} with Vet ${visit.vet.firstName} ${visit.vet.lastName}`,
                     description: visit.description,
                 }
@@ -127,7 +130,7 @@ class OwnerDashboard extends Component {
 
         let calendar = <></>;
         if (plan === "GOLD" || plan === "PLATINUM") {
-            calendar = <div style={{ height: `${400}px` }} className="calendar-container">
+            calendar = <div style={{ height: `${600}px` }} className="calendar-container">
                 <Calendar
                     localizer={localizer}
                     events={events}
@@ -141,10 +144,10 @@ class OwnerDashboard extends Component {
                     //     week: "Semana",
                     //     day: "Día"
                     // }}
-                    views={{
-                        month: true,
-                        agenda: true,
-                    }}
+                    // views={{
+                    //     month: true,
+                    //     agenda: true,
+                    // }}
                     onSelectEvent={(e) => window.location.href = `/myPets/${e.petId}/visits/${e.visitId}`}
                 />
             </div>;

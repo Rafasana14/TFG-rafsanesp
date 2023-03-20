@@ -8,8 +8,8 @@ class PetEdit extends Component {
         id: null,
         name: '',
         birthDate: '',
-        type: {},
-        owner: {},
+        type: null,
+        owner: null,
     };
 
     constructor(props) {
@@ -65,9 +65,9 @@ class PetEdit extends Component {
         const name = target.name;
         let pet = { ...this.state.pet };
         if (name === "type") {
-            pet.type.id = Number(value);
+            pet.type = Number(value);
         } else if (name === "owner") {
-            pet.owner.id = Number(value);
+            pet.owner = Number(value);
         }
         else pet[name] = value;
         this.setState({ pet });
@@ -141,7 +141,7 @@ class PetEdit extends Component {
                     </FormGroup>
                     <FormGroup>
                         <Label for="type">Type</Label>
-                        <Input type="select" required name="type" id="type" value={pet.type.id}
+                        <Input type="select" required name="type" id="type" value={pet.type}
                             onChange={this.handleChange}>
                             <option value="">None</option>
                             {typeOptions}
@@ -151,7 +151,7 @@ class PetEdit extends Component {
                         <Label for="owner">Owner</Label>
                         {pet.id ?
                             <p>{pet.owner.user?.username}</p> :
-                            <Input type="select" required name="owner" id="owner" value={pet.owner.id || ""}
+                            <Input type="select" required name="owner" id="owner" value={pet.owner || ""}
                                 onChange={this.handleChange} >
                                 <option value="">None</option>
                                 {ownerOptions}

@@ -149,11 +149,11 @@ class PetOwnerList extends Component {
         const petList = pets.map((pet) => {
             const visits = pet["visits"];
             let visitTable = (
-                <Table key={pet.id} className="mt-4 table-primary" hover striped>
+                <Table key={pet.id} className="mt-3 table-primary" hover striped>
                     <thead>
                         <tr>
                             <th>Visits</th>
-                            <th /><th />
+                            {/* <th /><th /> */}
                             <th><Button color="info" tag={Link} to={`/myPets/${pet.id}/visits/new`}>
                                 Add Visit
                             </Button></th>
@@ -162,8 +162,8 @@ class PetOwnerList extends Component {
                     <tbody>
                         <tr className="table-info" >
                             <td>There are no visits for this pet.</td>
-                            <td></td>
-                            <td></td>
+                            {/* <td></td> */}
+                            {/* <td></td> */}
                             <td></td>
                         </tr >
                     </tbody>
@@ -173,8 +173,10 @@ class PetOwnerList extends Component {
             if (visits.length > 0) {
                 const tableBody = visits.map((visit) => {
                     let buttons;
-                    const date = new Date(visit.date);
-                    if (date > Date.now()) {
+                    const datetime = new Date(visit.datetime);
+                    console.log(datetime)
+                    console.log(visit.datetime);
+                    if (datetime > Date.now()) {
                         buttons = (
                             <ButtonGroup>
                                 <Button size="sm" color="primary" tag={Link}
@@ -198,8 +200,10 @@ class PetOwnerList extends Component {
                     }
                     return (
                         <tr className="table-info" key={visit["id"]}>
-                            <td>{visit["date"]}</td>
-                            <td>{visit.description}</td>
+                            {/* <td>{`${datetime.getFullYear()}/${datetime.getMonth()}/${datetime.getDate()} ${datetime.getHours()}:${datetime.getMinutes()}`}</td> */}
+                            <td>{datetime.toLocaleString()}</td>
+                            <td></td>
+                            {/* <td>{visit.description}</td> */}
                             <td>{visit.vet.firstName} {visit.vet.lastName}</td>
                             <td>
                                 {buttons}
@@ -207,7 +211,7 @@ class PetOwnerList extends Component {
                         </tr>)
                 });
                 visitTable = (
-                    <Table key={pet.id} className="mt-4 table-primary" hover striped>
+                    <Table key={pet.id} className="mt-3 table-primary" hover striped>
                         <thead>
                             <tr>
                                 <th>Visits</th>
@@ -219,8 +223,9 @@ class PetOwnerList extends Component {
                                 </th>
                             </tr>
                             <tr>
-                                <th>Date</th>
-                                <th>Description</th>
+                                <th>Date and Time</th>
+                                <th></th>
+                                {/* <th>Description</th> */}
                                 <th>Vet</th>
                                 <th>Actions</th>
                             </tr>
@@ -262,11 +267,13 @@ class PetOwnerList extends Component {
                                 </CardFooter>
                             </Card>
                         </Col>
-                        <Col xs="5">
+                        <Col xs="4">
                             {visitTable}
                         </Col>
                     </Row>
-                    <br></br>
+                    <div className="mb-4">
+                        <hr className="solid" />
+                    </div>
                 </div>
             );
         });

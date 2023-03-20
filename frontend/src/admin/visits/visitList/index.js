@@ -53,8 +53,8 @@ class VisitList extends Component {
         const visitList = visits.map((visit) => {
             return (
                 <tr key={visit.id}>
-                    <td>{visit.date}</td>
-                    <td>{visit.description}</td>
+                    <td>{(new Date(visit.datetime)).toLocaleString()}</td>
+                    <td>{visit.description ? visit.description : "No description provided"}</td>
                     <td>{visit.vet.firstName} {visit.vet.lastName}</td>
                     <td>
                         <ButtonGroup>
@@ -85,7 +85,7 @@ class VisitList extends Component {
                     <Table className="mt-4">
                         <thead>
                             <tr>
-                                <th>Date</th>
+                                <th>Date and Time</th>
                                 <th>Description</th>
                                 <th>Vet</th>
                                 <th>Actions</th>

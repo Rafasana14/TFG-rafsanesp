@@ -71,6 +71,9 @@ export default function AppNavbar() {
         publicLinks = (
             <>
                 <NavItem>
+                    <NavLink style={{ color: "white" }} id="docs" tag={Link} to="/docs">Docs</NavLink>
+                </NavItem>
+                <NavItem>
                     <NavLink style={{ color: "white" }} id="plans" tag={Link} to="/plans">Pricing Plans</NavLink>
                 </NavItem>
                 <NavItem className="ms-auto">
@@ -91,6 +94,9 @@ export default function AppNavbar() {
         )
         userLogout = (
             <>
+                <NavItem>
+                    <NavLink style={{ color: "white" }} id="docs" tag={Link} to="/docs">Docs</NavLink>
+                </NavItem>
                 <NavItem>
                     <NavLink style={{ color: "white" }} id="plans" tag={Link} to="/plans">Pricing Plans</NavLink>
                 </NavItem>

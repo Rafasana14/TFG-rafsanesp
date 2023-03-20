@@ -15,14 +15,13 @@
  */
 package org.springframework.samples.petclinic.visit;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.NotEmpty;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.samples.petclinic.model.BaseEntity;
@@ -38,11 +37,12 @@ import lombok.Setter;
 @Setter
 public class Visit extends BaseEntity {
 
-	@Column(name = "visit_date")
-	@DateTimeFormat(pattern = "yyyy/MM/dd")
-	private LocalDate date;
+	@Column(name = "visit_date_time")
+	@DateTimeFormat(pattern = "yyyy/MM/dd HH/mm")
+//	@NotNull
+	private LocalDateTime datetime;
 
-	@NotEmpty
+//	@NotEmpty
 	@Column(name = "description")
 	private String description;
 
@@ -55,7 +55,7 @@ public class Visit extends BaseEntity {
 	private Vet vet;
 
 	public Visit() {
-		this.date = LocalDate.now();
+		this.datetime = LocalDateTime.now();
 	}
 
 }

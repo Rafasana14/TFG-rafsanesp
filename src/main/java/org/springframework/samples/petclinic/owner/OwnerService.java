@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.pet.Pet;
@@ -32,6 +33,7 @@ public class OwnerService {
 	private OwnerRepository ownerRepository;	
 	private PetService petService;
 
+	@Autowired
 	public OwnerService(OwnerRepository ownerRepository, PetService petService) {
 		this.ownerRepository = ownerRepository;
 		this.petService = petService;

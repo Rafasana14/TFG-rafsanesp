@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 import javax.transaction.Transactional;
@@ -95,7 +95,7 @@ public class VisitServiceTests {
 		int initialCount = ((Collection<Visit>) this.visitService.findAll()).size();
 
 		Visit visit = new Visit();
-		visit.setDate(LocalDate.now());
+		visit.setDatetime(LocalDateTime.now());
 		visit.setDescription("prueba");
 		visit.setPet(this.petService.findPetById(1));
 		visit.setVet(this.vetService.findVetById(1));
@@ -113,7 +113,7 @@ public class VisitServiceTests {
 		int initialCount = ((Collection<Visit>) this.visitService.findAll()).size();
 
 		Visit visit = new Visit();
-		visit.setDate(LocalDate.now());
+		visit.setDatetime(LocalDateTime.now());
 		visit.setDescription("prueba");
 		visit.setPet(this.petService.findPetById(1));
 		visit.setVet(this.vetService.findVetById(1));
@@ -172,7 +172,7 @@ public class VisitServiceTests {
 
 	private Visit createVisit(int pet) {
 		Visit visit = new Visit();
-		visit.setDate(LocalDate.now());
+		visit.setDatetime(LocalDateTime.now());
 		visit.setDescription("prueba");
 		visit.setPet(this.petService.findPetById(pet));
 		visit.setVet(this.vetService.findVetById(1));

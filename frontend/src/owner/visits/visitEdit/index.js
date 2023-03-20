@@ -6,7 +6,7 @@ class VisitOwnerEdit extends Component {
 
     emptyVisit = {
         id: '',
-        date: '',
+        datetime: '',
         description: '',
         pet: {},
         vet: {
@@ -126,13 +126,13 @@ class VisitOwnerEdit extends Component {
         const { visit, pet, city, vets } = this.state;
         const title = <h2 className='text-center'>{visit.id ? 'Edit Visit' : 'Add Visit'}</h2>;
 
-        const date = new Date(visit.date);
-        let dateInput;
-        if (visit.id && date < Date.now()) {
-            dateInput = <Input type="date" readOnly name="date" id="date" value={visit.date || ''}
+        const datetime = new Date(visit.datetime);
+        let datetimeInput;
+        if (visit.id && datetime < Date.now()) {
+            datetimeInput = <Input type="datetime-local" readOnly name="datetime" id="datetime" value={visit.datetime || ''}
                 onChange={this.handleChange} />
         } else {
-            dateInput = <Input type="date" required name="date" id="date" value={visit.date || ''}
+            datetimeInput = <Input type="datetime-local" required name="datetime" id="datetime" value={visit.datetime || ''}
                 onChange={this.handleChange} />
         }
         var cities = [];
@@ -142,7 +142,7 @@ class VisitOwnerEdit extends Component {
         let i = 0;
         const citiesOptions = cities.map(city => {
             i++;
-            if (visit.id && date < Date.now()) {
+            if (visit.id && datetime < Date.now()) {
                 if (visit.vet.city === city) {
                     return (<div key={city} className="form-check form-check-inline">
                         <Input className="form-check-input" required type="radio" defaultChecked name="city" id={`city${i}`} value={city}
@@ -176,7 +176,7 @@ class VisitOwnerEdit extends Component {
         const plan = pet.owner.plan;
 
         let vetSelection = null;
-        if (visit.id && date < Date.now()) {
+        if (visit.id && datetime < Date.now()) {
             vetSelection = <Input type="text" readOnly name="vet" id="vet" value={visit.vet.id ? (visit.vet.firstName + " " + visit.vet.lastName) : ''}
                 onChange={this.handleChange} />
         } else {
@@ -198,20 +198,21 @@ class VisitOwnerEdit extends Component {
         let modal = <></>;
         if (this.state.message) {
             const show = this.state.modalShow;
-            // const closeBtn = (
-            //     <button className="close" onClick={this.handleShow} type="button">
-            //         &times;
-            //     </button>
-            // );
+            const closeBtn = (
+                <button className="close" onClick={this.handleShow} type="button">
+                    &times;
+                </button>
+            );
+            const cond = this.state.message.includes("limit");
             modal = <div>
                 <Modal isOpen={show} toggle={this.handleShow}
-                    backdrop="static" keyboard={false}>
-                    {/* <ModalHeader toggle={this.handleShow} close={closeBtn}>Error!</ModalHeader> */}
-                    <ModalHeader>Alert!</ModalHeader>
+                    keyboard={false}>
+                    {cond ? <ModalHeader>Warning!</ModalHeader> : <ModalHeader toggle={this.handleShow} close={closeBtn}>Error!</ModalHeader>}
                     <ModalBody>
                         {this.state.message || ""}
                     </ModalBody>
                     <ModalFooter>
+                        <Button color="info" onClick={this.handleShow} type="button">Close</Button>
                         <Button color="primary" tag={Link} to={`/myPets`}>Back</Button>
                     </ModalFooter>
                 </Modal></div>
@@ -225,8 +226,8 @@ class VisitOwnerEdit extends Component {
                     <Col sm="4">
                         <Form onSubmit={this.handleSubmit}>
                             <FormGroup>
-                                <Label for="date">Date</Label>
-                                {dateInput}
+                                <Label for="date">Date and Time</Label>
+                                {datetimeInput}
                             </FormGroup>
                             <FormGroup>
                                 <Label for="description">Description</Label>

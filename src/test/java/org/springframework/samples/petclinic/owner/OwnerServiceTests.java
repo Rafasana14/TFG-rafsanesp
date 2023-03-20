@@ -40,7 +40,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 @RunWith(SpringRunner.class)
-//@DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
+//@DataJpaTest(includeFilters = {@ComponentScan.Filter(Service.class),@ComponentScan.Filter(PasswordEncoder.class)})
 @SpringBootTest
 @AutoConfigureTestDatabase
 class OwnerServiceTests {
