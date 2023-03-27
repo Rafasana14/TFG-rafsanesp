@@ -36,7 +36,7 @@
   		<sonar.organization>rafasana14</sonar.organization>
   		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
   		<sonar.projectName>PetClinic - TFG - Rafael Sanabria Espárrago</sonar.projectName>
-
+		<sonar.sources>frontend/src</sonar.sources>
 	</properties>
 
 	<dependencies>
