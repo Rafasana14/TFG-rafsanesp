@@ -2,8 +2,7 @@ name: SonarCloud
 on:
   push:
     branches:
-      - master
-      - develop
+      ["master", "develop"]
   pull_request:
     types: [opened, synchronize, reopened]
 jobs:
@@ -36,4 +35,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.SONAR_GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Rafasana14_TFG:rafsanesp
+        run: mvn verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=Rafasana14_TFG:rafsanesp
