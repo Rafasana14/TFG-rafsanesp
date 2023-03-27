@@ -32,6 +32,9 @@
 		<node.version>v18.12.1</node.version>
 		<yarn.version>v1.22.19</yarn.version>
 		<frontend-src-dir>${project.basedir}/frontend</frontend-src-dir>
+		
+  		<sonar.organization>rafasana14</sonar.organization>
+  		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
 	</properties>
 
@@ -172,6 +175,12 @@
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>2.9.2</version>
 		</dependency>
+		
+		<dependency>
+    		<groupId>org.sonarsource.scanner.maven</groupId>
+    		<artifactId>sonar-maven-plugin</artifactId>
+    		<version>3.9.1.2184</version>
+		</dependency>
 
 		<!--<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -189,8 +198,17 @@
 			<scope>runtime</scope>
 		</dependency>-->
 	</dependencies>
-
+	
 	<build>
+		<!--<pluginManagement>
+	        <plugins>
+	            <plugin>
+	                <groupId>org.sonarsource.scanner.maven</groupId>
+	                <artifactId>sonar-maven-plugin</artifactId>
+	                <version>3.9.1.2184</version>
+	            </plugin>
+	        </plugins>
+	    </pluginManagement>-->
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
@@ -202,6 +220,7 @@
 						<goals>
 							<goal>build-info</goal>
 						</goals>
+						
 						<configuration>
 							<additionalProperties>
 								<encoding.source>${project.build.sourceEncoding}</encoding.source>
@@ -294,7 +313,7 @@
 							<goal>report</goal>
 						</goals>
 						<configuration>
-							<outputDirectory>${project.basedir}/jacoco</outputDirectory> 
+							<outputDirectory>${project.basedir}/jacoco</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
