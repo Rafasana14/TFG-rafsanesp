@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserDetailsImpl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">petclinic</a> &gt; <a href="index.source.html" class="el_package">org.springframework.samples.petclinic.configuration.services</a> &gt; <span class="el_source">UserDetailsImpl.java</span></div><h1>UserDetailsImpl.java</h1><pre class="source lang-java linenums">package org.springframework.samples.petclinic.configuration.services;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+
+import org.springframework.samples.petclinic.user.User;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+public class UserDetailsImpl implements UserDetails{
+
+	private static final long serialVersionUID = 1L;
+	
+	private Integer id;
+
+	private String username;
+
+	//private String email;
+	
+//	private PricingPlan plan;
+
+	@JsonIgnore
+	private String password;
+
+	private Collection&lt;? extends GrantedAuthority&gt; authorities;
+
+	public UserDetailsImpl(Integer id, String username, String password,
+<span class="nc" id="L32">			Collection&lt;? extends GrantedAuthority&gt; authorities) {</span>
+<span class="nc" id="L33">		this.id = id;</span>
+<span class="nc" id="L34">		this.username = username;</span>
+//		this.plan = plan;
+		//this.email = email;
+<span class="nc" id="L37">		this.password = password;</span>
+<span class="nc" id="L38">		this.authorities = authorities;</span>
+<span class="nc" id="L39">	}</span>
+	
+
+
+	public static UserDetailsImpl build(User user) {
+//		List&lt;GrantedAuthority&gt; authorities = user.getRoles().stream()
+//				.map(role -&gt; new SimpleGrantedAuthority(role.getName().name()))
+//				.collect(Collectors.toList());
+<span class="nc" id="L47">		List&lt;GrantedAuthority&gt; authorities = List.of(new SimpleGrantedAuthority(user.getAuthority().getAuthority()));</span>
+
+<span class="nc" id="L49">		return new UserDetailsImpl(</span>
+<span class="nc" id="L50">				user.getId(),</span>
+<span class="nc" id="L51">				user.getUsername(),</span>
+				//user.getEmail(),
+<span class="nc" id="L53">				user.getPassword(), </span>
+//				user.getPlan(),
+				authorities);
+	}
+
+	@Override
+	public Collection&lt;? extends GrantedAuthority&gt; getAuthorities() {
+<span class="nc" id="L60">		return authorities;</span>
+	}
+
+//	public String getEmail() {
+//		return email;
+//	}
+	
+	public Integer getId() {
+<span class="nc" id="L68">		return id;</span>
+	}
+
+	@Override
+	public String getPassword() {
+<span class="nc" id="L73">		return password;</span>
+	}
+
+	@Override
+	public String getUsername() {
+<span class="nc" id="L78">		return username;</span>
+	}
+	
+//	public PricingPlan getPlan() {
+//		return plan;
+//	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+<span class="nc" id="L87">		return true;</span>
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+<span class="nc" id="L92">		return true;</span>
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+<span class="nc" id="L97">		return true;</span>
+	}
+
+	@Override
+	public boolean isEnabled() {
+<span class="nc" id="L102">		return true;</span>
+	}
+
+	@Override
+	public boolean equals(Object o) {
+<span class="nc bnc" id="L107" title="All 2 branches missed.">		if (this == o)</span>
+<span class="nc" id="L108">			return true;</span>
+<span class="nc bnc" id="L109" title="All 4 branches missed.">		if (o == null || getClass() != o.getClass())</span>
+<span class="nc" id="L110">			return false;</span>
+<span class="nc" id="L111">		UserDetailsImpl user = (UserDetailsImpl) o;</span>
+<span class="nc" id="L112">		return Objects.equals(id, user.id);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

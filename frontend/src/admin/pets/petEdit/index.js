@@ -65,9 +65,9 @@ class PetEdit extends Component {
         const name = target.name;
         let pet = { ...this.state.pet };
         if (name === "type") {
-            pet.type = Number(value);
+            pet.type = this.state.types.filter((type) => type.id === value)[0];
         } else if (name === "owner") {
-            pet.owner = Number(value);
+            pet.owner = this.state.owners.filter((owner) => owner.id === value)[0];
         }
         else pet[name] = value;
         this.setState({ pet });
@@ -95,7 +95,6 @@ class PetEdit extends Component {
     //     let pet = { ...this.state.pet };
     //     pet["owner"] = selectedOwner;
     //     this.setState({ pet });
-
     // }
 
     async handleSubmit(event) {

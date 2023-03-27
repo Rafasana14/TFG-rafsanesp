@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JwtUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">petclinic</a> &gt; <a href="index.source.html" class="el_package">org.springframework.samples.petclinic.configuration.jwt</a> &gt; <span class="el_source">JwtUtils.java</span></div><h1>JwtUtils.java</h1><pre class="source lang-java linenums">package org.springframework.samples.petclinic.configuration.jwt;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.samples.petclinic.configuration.services.UserDetailsImpl;
+import org.springframework.samples.petclinic.user.Authorities;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
+
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
+
+@Component
+<span class="fc" id="L24">public class JwtUtils {</span>
+<span class="fc" id="L25">	private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);</span>
+
+	@Value(&quot;${petclinic.app.jwtSecret}&quot;)
+	private String jwtSecret;
+
+	@Value(&quot;${petclinic.app.jwtExpirationMs}&quot;)
+	private int jwtExpirationMs;
+
+	public String generateJwtToken(Authentication authentication) {
+
+<span class="nc" id="L35">		UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();</span>
+<span class="nc" id="L36">		Map&lt;String, Object&gt; claims = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L37">		claims.put(&quot;authorities&quot;,</span>
+<span class="nc" id="L38">				userPrincipal.getAuthorities().stream().map(auth -&gt; auth.getAuthority()).collect(Collectors.toList()));</span>
+
+<span class="nc" id="L40">		return Jwts.builder().setClaims(claims).setSubject((userPrincipal.getUsername())).setIssuedAt(new Date())</span>
+<span class="nc" id="L41">				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))</span>
+<span class="nc" id="L42">				.signWith(SignatureAlgorithm.HS512, jwtSecret).compact();</span>
+	}
+
+	public String generateTokenFromUsername(String username, Authorities authority) {
+<span class="nc" id="L46">		Map&lt;String, Object&gt; claims = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L47">		claims.put(&quot;authorities&quot;, authority.getAuthority());</span>
+<span class="nc" id="L48">		return Jwts.builder().setClaims(claims).setSubject(username).setIssuedAt(new Date())</span>
+<span class="nc" id="L49">				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))</span>
+<span class="nc" id="L50">				.signWith(SignatureAlgorithm.HS512, jwtSecret).compact();</span>
+	}
+
+	public String getUserNameFromJwtToken(String token) {
+<span class="nc" id="L54">		return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody().getSubject();</span>
+	}
+
+	public boolean validateJwtToken(String authToken) {
+		try {
+<span class="nc" id="L59">			Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(authToken);</span>
+<span class="nc" id="L60">			return true;</span>
+<span class="nc" id="L61">		} catch (SignatureException e) {</span>
+<span class="nc" id="L62">			logger.error(&quot;Invalid JWT signature: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L63">		} catch (MalformedJwtException e) {</span>
+<span class="nc" id="L64">			logger.error(&quot;Invalid JWT token: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L65">		} catch (ExpiredJwtException e) {</span>
+<span class="nc" id="L66">			logger.error(&quot;JWT token is expired: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L67">		} catch (UnsupportedJwtException e) {</span>
+<span class="nc" id="L68">			logger.error(&quot;JWT token is unsupported: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L69">		} catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L70">			logger.error(&quot;JWT claims string is empty: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L71">		}</span>
+
+<span class="nc" id="L73">		return false;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
