@@ -158,6 +158,9 @@ class PlanList extends Component {
                     </Col>
                 </Row>
                 <br></br>
+                <div className="mb-4">
+                    <hr className="solid" />
+                </div>
                 <Row>
                     <Col md="3"></Col>
                     <Col md="6">
