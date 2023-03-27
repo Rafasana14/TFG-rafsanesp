@@ -30,13 +30,13 @@
 
 		<frontend-maven-plugin.version>1.6</frontend-maven-plugin.version>
 		<node.version>v18.12.1</node.version>
-		<yarn.version>v1.22.19</yarn.version>
+		<npm.version>8.19.2</npm.version>
 		<frontend-src-dir>${project.basedir}/frontend</frontend-src-dir>
 		
   		<sonar.organization>rafasana14</sonar.organization>
   		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
   		<sonar.projectName>PetClinic - TFG - Rafael Sanabria Espárrago</sonar.projectName>
-		<sonar.sources>frontend/src</sonar.sources>
+		<sonar.sources>src/main/java,frontend/src</sonar.sources>
 	</properties>
 
 	<dependencies>
@@ -240,7 +240,7 @@
 
 				<configuration>
 					<nodeVersion>${node.version}</nodeVersion>
-					<yarnVersion>${yarn.version}</yarnVersion>
+					<npmVersion>${npm.version}</npmVersion>
 					<workingDirectory>${frontend-src-dir}</workingDirectory>
 					<installDirectory>${project.build.directory}</installDirectory>
 				</configuration>
@@ -249,14 +249,14 @@
 					<execution>
 						<id>install-frontend-tools</id>
 						<goals>
-							<goal>install-node-and-yarn</goal>
+							<goal>install-node-and-npm</goal>
 						</goals>
 					</execution>
 
 					<execution>
-						<id>yarn-install</id>
+						<id>npm-install</id>
 						<goals>
-							<goal>yarn</goal>
+							<goal>npm</goal>
 						</goals>
 						<configuration>
 							<arguments>install</arguments>
@@ -266,12 +266,34 @@
 					<execution>
 						<id>build-frontend</id>
 						<goals>
-							<goal>yarn</goal>
+							<goal>npm</goal>
 						</goals>
 						<phase>prepare-package</phase>
 						<configuration>
-							<arguments>build</arguments>
+							<arguments>run build</arguments>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>${jacoco.version}</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+<!-- 					<configuration>
+							<outputDirectory>${project.basedir}/jacoco</outputDirectory>
+						</configuration>-->
 					</execution>
 				</executions>
 			</plugin>
@@ -295,26 +317,24 @@
 							</resources>
 						</configuration>
 					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${jacoco.version}</version>
-				<executions>
 					<execution>
+						<id>coverage-move</id>
 						<goals>
-							<goal>prepare-agent</goal>
+							<goal>copy-resources</goal>
 						</goals>
-					</execution>
-					<execution>
-						<id>report</id>
 						<phase>prepare-package</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
 						<configuration>
-							<outputDirectory>${project.basedir}/jacoco</outputDirectory>
+							<outputDirectory>${project.basedir}/coverage</outputDirectory> 
+							<!--<outputDirectory>${project.basedir}/src/main/resources/static</outputDirectory>	-->
+							<resources>
+								<resource>
+									<directory>${project.build.directory}/site/jacoco</directory>
+										<includes>
+          									<include>jacoco.xml</include>
+          								</includes>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
 						</configuration>
 					</execution>
 				</executions>
