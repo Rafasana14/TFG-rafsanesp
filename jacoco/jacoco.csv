@@ -1,61 +1,61 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-petclinic,org.springframework.samples.petclinic,PetclinicApplication,5,3,0,0,2,1,1,1,1,1
-petclinic,org.springframework.samples.petclinic,PetclinicInitializer,12,0,0,0,2,0,2,0,2,0
-petclinic,org.springframework.samples.petclinic.configuration,SwaggerConfig,0,59,0,0,0,11,0,4,0,4
-petclinic,org.springframework.samples.petclinic.configuration,SpaWebFilter,14,0,0,0,4,0,2,0,2,0
-petclinic,org.springframework.samples.petclinic.configuration,WebConfig,8,0,0,0,3,0,2,0,2,0
-petclinic,org.springframework.samples.petclinic.configuration,GenericIdToEntityConverter,54,34,10,0,11,7,7,3,2,3
-petclinic,org.springframework.samples.petclinic.configuration,SecurityConfiguration,0,227,0,0,0,27,0,7,0,7
-petclinic,org.springframework.samples.petclinic.configuration,ExceptionHandlerConfiguration,19,0,0,0,5,0,2,0,2,0
-petclinic,org.springframework.samples.petclinic.model,NamedEntity,3,10,0,0,1,4,1,3,1,3
-petclinic,org.springframework.samples.petclinic.model,BaseEntity,11,6,2,0,3,2,3,2,2,2
-petclinic,org.springframework.samples.petclinic.model,Person,0,17,0,0,0,7,0,5,0,5
-petclinic,petclinic.payload.response,MessageResponse,13,0,0,0,5,0,3,0,3,0
-petclinic,petclinic.payload.response,JwtResponse,65,0,0,0,13,0,12,0,12,0
-petclinic,org.springframework.samples.petclinic.exceptions,ResourceNotFoundException,21,32,0,0,8,7,6,2,6,2
-petclinic,org.springframework.samples.petclinic.exceptions,ExceptionHandlerController,161,3,0,0,24,1,8,1,8,1
-petclinic,org.springframework.samples.petclinic.exceptions,ResourceNotOwnedException,26,0,0,0,9,0,5,0,5,0
-petclinic,org.springframework.samples.petclinic.exceptions,LimitReachedException,43,0,0,0,14,0,7,0,7,0
-petclinic,org.springframework.samples.petclinic.exceptions,ErrorMessage,27,0,0,0,10,0,5,0,5,0
-petclinic,org.springframework.samples.petclinic.exceptions,TokenRefreshException,15,0,0,0,2,0,1,0,1,0
-petclinic,org.springframework.samples.petclinic.configuration.services,UserDetailsServiceImpl,18,3,0,0,3,1,2,1,2,1
-petclinic,org.springframework.samples.petclinic.configuration.services,UserDetailsImpl,77,0,6,0,25,0,14,0,11,0
-petclinic,petclinic.payload.request,LoginRequest,17,0,0,0,4,0,5,0,5,0
-petclinic,petclinic.payload.request,SignupRequest,0,59,0,0,0,10,0,17,0,17
-petclinic,org.springframework.samples.petclinic.web,DicesOnSessionController,62,0,4,0,13,0,6,0,4,0
-petclinic,org.springframework.samples.petclinic.web,CrashController,8,0,0,0,2,0,2,0,2,0
-petclinic,org.springframework.samples.petclinic.configuration.jwt,AuthEntryPointJwt,48,7,0,0,11,2,1,2,1,2
-petclinic,org.springframework.samples.petclinic.configuration.jwt,JwtUtils,142,7,0,0,27,2,5,2,5,2
-petclinic,org.springframework.samples.petclinic.configuration.jwt,AuthTokenFilter,69,7,8,0,17,2,6,2,2,2
-petclinic,org.springframework.samples.petclinic.user,Role,24,0,0,0,2,0,1,0,1,0
-petclinic,org.springframework.samples.petclinic.user,UserRestController,105,9,4,0,15,4,9,1,7,1
-petclinic,org.springframework.samples.petclinic.user,UserService,0,168,1,10,0,34,1,18,0,13
-petclinic,org.springframework.samples.petclinic.user,Authorities,4,6,0,0,1,2,1,2,1,2
-petclinic,org.springframework.samples.petclinic.user,AuthoritiesService,42,18,0,0,10,5,4,2,4,2
-petclinic,org.springframework.samples.petclinic.user,User,7,24,0,0,1,5,1,7,1,7
-petclinic,org.springframework.samples.petclinic.owner,OwnerPlanController,38,9,0,0,5,4,2,1,2,1
-petclinic,org.springframework.samples.petclinic.owner,PricingPlan,0,34,0,0,0,2,0,1,0,1
-petclinic,org.springframework.samples.petclinic.owner,OwnerService,0,129,0,2,0,22,0,13,0,12
-petclinic,org.springframework.samples.petclinic.owner,Owner,37,35,0,0,5,6,2,10,2,10
-petclinic,org.springframework.samples.petclinic.owner,OwnerRestController,93,9,0,0,14,4,5,1,5,1
-petclinic,org.springframework.samples.petclinic.pet,PetService,0,198,2,18,0,41,2,22,0,13
-petclinic,org.springframework.samples.petclinic.pet,Pet,0,24,0,0,0,5,0,7,0,7
-petclinic,org.springframework.samples.petclinic.pet,PetRestController,325,12,32,0,57,5,23,1,7,1
-petclinic,org.springframework.samples.petclinic.pet,PetValidator,49,0,12,0,11,0,9,0,3,0
-petclinic,org.springframework.samples.petclinic.pet,PetTypeFormatter,0,38,0,4,0,10,0,5,0,3
-petclinic,org.springframework.samples.petclinic.pet,PetType,0,3,0,0,0,1,0,1,0,1
-petclinic,org.springframework.samples.petclinic.pet.exceptions,DuplicatedPetNameException,0,4,0,0,0,2,0,1,0,1
-petclinic,org.springframework.samples.petclinic.vet,VetService,0,167,0,2,0,29,0,17,0,16
-petclinic,org.springframework.samples.petclinic.vet,Specialty,0,3,0,0,0,1,0,1,0,1
-petclinic,org.springframework.samples.petclinic.vet,VetRestController,85,9,0,0,13,4,5,1,5,1
-petclinic,org.springframework.samples.petclinic.vet,SpecialtyRestController,88,6,0,0,14,3,5,1,5,1
-petclinic,org.springframework.samples.petclinic.vet,Vet,3,27,0,0,1,6,1,7,1,7
-petclinic,org.springframework.samples.petclinic.util,RestPreconditions,32,0,6,0,11,0,7,0,4,0
-petclinic,org.springframework.samples.petclinic.util,EntityUtils,10,22,2,4,2,4,3,2,1,1
-petclinic,org.springframework.samples.petclinic.util,CallMonitoringAspect,83,0,4,0,24,0,9,0,7,0
-petclinic,org.springframework.samples.petclinic.auth,AuthController,71,15,2,0,13,6,4,1,3,1
-petclinic,org.springframework.samples.petclinic.auth,AuthService,0,148,0,3,0,40,0,4,0,2
-petclinic,org.springframework.samples.petclinic.visit,Visit,0,34,0,0,0,8,0,9,0,9
-petclinic,org.springframework.samples.petclinic.visit,VisitValidator,37,0,8,0,9,0,7,0,3,0
-petclinic,org.springframework.samples.petclinic.visit,VisitRestController,400,15,30,0,63,6,22,1,7,1
-petclinic,org.springframework.samples.petclinic.visit,VisitService,0,139,1,9,0,30,1,15,0,10
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic,PetclinicApplication,5,3,0,0,2,1,1,1,1,1
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic,PetclinicInitializer,12,0,0,0,2,0,2,0,2,0
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.configuration,SwaggerConfig,0,59,0,0,0,11,0,4,0,4
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.configuration,SpaWebFilter,14,0,0,0,4,0,2,0,2,0
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.configuration,WebConfig,8,0,0,0,3,0,2,0,2,0
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.configuration,GenericIdToEntityConverter,54,34,10,0,11,7,7,3,2,3
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.configuration,SecurityConfiguration,0,227,0,0,0,27,0,7,0,7
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.configuration,ExceptionHandlerConfiguration,19,0,0,0,5,0,2,0,2,0
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.model,NamedEntity,3,10,0,0,1,4,1,3,1,3
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.model,BaseEntity,11,6,2,0,3,2,3,2,2,2
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.model,Person,0,17,0,0,0,7,0,5,0,5
+PetClinic - TFG - Rafael Sanabria Espárrago,petclinic.payload.response,MessageResponse,13,0,0,0,5,0,3,0,3,0
+PetClinic - TFG - Rafael Sanabria Espárrago,petclinic.payload.response,JwtResponse,65,0,0,0,13,0,12,0,12,0
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.exceptions,ResourceNotFoundException,21,32,0,0,8,7,6,2,6,2
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.exceptions,ExceptionHandlerController,161,3,0,0,24,1,8,1,8,1
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.exceptions,ResourceNotOwnedException,26,0,0,0,9,0,5,0,5,0
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.exceptions,LimitReachedException,43,0,0,0,14,0,7,0,7,0
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.exceptions,ErrorMessage,27,0,0,0,10,0,5,0,5,0
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.exceptions,TokenRefreshException,15,0,0,0,2,0,1,0,1,0
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.configuration.services,UserDetailsServiceImpl,18,3,0,0,3,1,2,1,2,1
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.configuration.services,UserDetailsImpl,77,0,6,0,25,0,14,0,11,0
+PetClinic - TFG - Rafael Sanabria Espárrago,petclinic.payload.request,LoginRequest,17,0,0,0,4,0,5,0,5,0
+PetClinic - TFG - Rafael Sanabria Espárrago,petclinic.payload.request,SignupRequest,0,59,0,0,0,10,0,17,0,17
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.web,DicesOnSessionController,62,0,4,0,13,0,6,0,4,0
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.web,CrashController,8,0,0,0,2,0,2,0,2,0
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.configuration.jwt,AuthEntryPointJwt,48,7,0,0,11,2,1,2,1,2
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.configuration.jwt,JwtUtils,142,7,0,0,27,2,5,2,5,2
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.configuration.jwt,AuthTokenFilter,69,7,8,0,17,2,6,2,2,2
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.user,Role,24,0,0,0,2,0,1,0,1,0
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.user,UserRestController,105,9,4,0,15,4,9,1,7,1
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.user,UserService,0,168,1,10,0,34,1,18,0,13
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.user,Authorities,4,6,0,0,1,2,1,2,1,2
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.user,AuthoritiesService,42,18,0,0,10,5,4,2,4,2
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.user,User,7,24,0,0,1,5,1,7,1,7
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.owner,OwnerPlanController,38,9,0,0,5,4,2,1,2,1
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.owner,PricingPlan,0,34,0,0,0,2,0,1,0,1
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.owner,OwnerService,0,129,0,2,0,22,0,13,0,12
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.owner,Owner,37,35,0,0,5,6,2,10,2,10
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.owner,OwnerRestController,93,9,0,0,14,4,5,1,5,1
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.pet,PetService,0,198,2,18,0,41,2,22,0,13
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.pet,Pet,0,24,0,0,0,5,0,7,0,7
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.pet,PetRestController,325,12,32,0,57,5,23,1,7,1
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.pet,PetValidator,49,0,12,0,11,0,9,0,3,0
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.pet,PetTypeFormatter,0,38,0,4,0,10,0,5,0,3
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.pet,PetType,0,3,0,0,0,1,0,1,0,1
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.pet.exceptions,DuplicatedPetNameException,0,4,0,0,0,2,0,1,0,1
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.vet,VetService,0,167,0,2,0,29,0,17,0,16
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.vet,Specialty,0,3,0,0,0,1,0,1,0,1
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.vet,VetRestController,85,9,0,0,13,4,5,1,5,1
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.vet,SpecialtyRestController,88,6,0,0,14,3,5,1,5,1
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.vet,Vet,3,27,0,0,1,6,1,7,1,7
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.util,RestPreconditions,32,0,6,0,11,0,7,0,4,0
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.util,EntityUtils,10,22,2,4,2,4,3,2,1,1
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.util,CallMonitoringAspect,83,0,4,0,24,0,9,0,7,0
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.auth,AuthController,71,15,2,0,13,6,4,1,3,1
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.auth,AuthService,0,148,0,3,0,40,0,4,0,2
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.visit,Visit,0,34,0,0,0,8,0,9,0,9
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.visit,VisitValidator,37,0,8,0,9,0,7,0,3,0
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.visit,VisitRestController,400,15,30,0,63,6,22,1,7,1
+PetClinic - TFG - Rafael Sanabria Espárrago,org.springframework.samples.petclinic.visit,VisitService,0,139,1,9,0,30,1,15,0,10
