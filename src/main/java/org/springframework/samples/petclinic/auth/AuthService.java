@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.owner.PricingPlan;
@@ -29,6 +30,7 @@ public class AuthService {
 	private final OwnerService ownerService;
 	private final VetService vetService;
 
+	@Autowired
 	public AuthService(PasswordEncoder encoder, AuthoritiesService authoritiesService, UserService userService,
 			OwnerService ownerService, VetService vetService) {
 		this.encoder = encoder;

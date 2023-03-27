@@ -16,6 +16,7 @@
 package org.springframework.samples.petclinic.user;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class AuthoritiesService {
 	private AuthoritiesRepository authoritiesRepository;
 	private UserService userService;
 
+	@Autowired
 	public AuthoritiesService(AuthoritiesRepository authoritiesRepository,UserService userService) {
 		this.authoritiesRepository = authoritiesRepository;
 		this.userService = userService;

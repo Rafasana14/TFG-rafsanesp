@@ -23,6 +23,7 @@ import java.util.stream.StreamSupport;
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.user.User;
@@ -47,6 +48,7 @@ public class OwnerRestController {
 	private final OwnerService ownerService;
 	private final UserService userService;
 
+	@Autowired
 	public OwnerRestController(OwnerService ownerService, UserService userService) {
 		this.ownerService = ownerService;
 		this.userService = userService;

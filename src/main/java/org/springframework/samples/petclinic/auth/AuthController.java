@@ -5,10 +5,10 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.configuration.jwt.JwtUtils;
 import org.springframework.samples.petclinic.configuration.services.UserDetailsImpl;
-import org.springframework.samples.petclinic.exceptions.TokenRefreshException;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,10 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import petclinic.payload.request.LoginRequest;
 import petclinic.payload.request.SignupRequest;
-import petclinic.payload.request.TokenRefreshRequest;
 import petclinic.payload.response.JwtResponse;
 import petclinic.payload.response.MessageResponse;
-import petclinic.payload.response.TokenRefreshResponse;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -34,14 +32,13 @@ public class AuthController {
 
 	private final AuthenticationManager authenticationManager;
 	private final UserService userService;
-	private final RefreshTokenService refreshTokenService;
 	private final JwtUtils jwtUtils;
 	private final AuthService authService;
 
+	@Autowired
 	public AuthController(AuthenticationManager authenticationManager, UserService userService, JwtUtils jwtUtils,
-			RefreshTokenService refreshTokenService, AuthService authService) {
+			AuthService authService) {
 		this.userService = userService;
-		this.refreshTokenService = refreshTokenService;
 		this.jwtUtils = jwtUtils;
 		this.authenticationManager = authenticationManager;
 		this.authService = authService;
@@ -60,23 +57,23 @@ public class AuthController {
 		List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
 				.collect(Collectors.toList());
 
-		RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+
 
 		return ResponseEntity.ok().body(
-				new JwtResponse(jwt, refreshToken.getToken(), userDetails.getId(), userDetails.getUsername(), roles));
+				new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), roles));
 	}
 
-	@PostMapping("/refreshtoken")
-	public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request) {
-		String requestRefreshToken = request.getRefreshToken();
-
-		return refreshTokenService.findByToken(requestRefreshToken).map(refreshTokenService::verifyExpiration)
-				.map(RefreshToken::getUser).map(user -> {
-					String token = jwtUtils.generateTokenFromUsername(user.getUsername(), user.getAuthority());
-					return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
-				})
-				.orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
-	}
+//	@PostMapping("/validate")
+//	public ResponseEntity<?> validateToken(@Valid @RequestBody TokenRefreshRequest request) {
+//		String requestRefreshToken = request.getRefreshToken();
+//
+//		return refreshTokenService.findByToken(requestRefreshToken).map(refreshTokenService::verifyExpiration)
+//				.map(RefreshToken::getUser).map(user -> {
+//					String token = jwtUtils.generateTokenFromUsername(user.getUsername(), user.getAuthority());
+//					return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
+//				})
+//				.orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
+//	}
 
 	@PostMapping("/signup")
 	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {

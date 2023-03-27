@@ -21,6 +21,7 @@ import java.util.stream.StreamSupport;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.util.RestPreconditions;
@@ -44,6 +45,7 @@ class UserRestController {
 	private final UserService userService;
 	private final AuthoritiesService authService;
 
+	@Autowired
 	public UserRestController(UserService userService, AuthoritiesService authService) {
 		this.userService = userService;
 		this.authService = authService;

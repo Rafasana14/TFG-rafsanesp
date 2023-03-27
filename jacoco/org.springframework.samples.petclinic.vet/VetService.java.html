@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VetService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">petclinic</a> &gt; <a href="index.source.html" class="el_package">org.springframework.samples.petclinic.vet</a> &gt; <span class="el_source">VetService.java</span></div><h1>VetService.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2002-2013 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.springframework.samples.petclinic.vet;
+
+import java.util.Optional;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class VetService {
+
+	private VetRepository vetRepository;
+	private SpecialtyRepository specialtyRepository;
+	
+	@Autowired
+<span class="fc" id="L34">	public VetService(VetRepository vetRepository, SpecialtyRepository specialtyRepository) {</span>
+<span class="fc" id="L35">		this.vetRepository = vetRepository;</span>
+<span class="fc" id="L36">		this.specialtyRepository = specialtyRepository;</span>
+<span class="fc" id="L37">	}		</span>
+
+	@Transactional(readOnly = true)	
+	public Iterable&lt;Vet&gt; findAll() throws DataAccessException {
+<span class="fc" id="L41">		return vetRepository.findAll();</span>
+	}
+	
+	@Transactional(readOnly = true)	
+	public Vet findVetById(int id) throws DataAccessException {
+<span class="fc" id="L46">		return vetRepository.findById(id).orElseThrow(()-&gt;new ResourceNotFoundException(&quot;Vet&quot;,&quot;ID&quot;,id));</span>
+	}
+	
+	@Transactional(readOnly = true)	
+	public Vet findVetByUser(int userId) throws DataAccessException {
+<span class="fc" id="L51">		return vetRepository.findVetByUser(userId).orElseThrow(()-&gt;new ResourceNotFoundException(&quot;Vet&quot;,&quot;User&quot;,userId));</span>
+	}
+	
+	public Optional&lt;Vet&gt; optFindVetByUser(Integer userId) {
+<span class="fc" id="L55">		return vetRepository.findVetByUser(userId);</span>
+	}
+
+	
+	@Transactional
+	public Vet saveVet(Vet vet) throws DataAccessException {
+<span class="fc" id="L61">		vetRepository.save(vet);		</span>
+<span class="fc" id="L62">		return vet;</span>
+	}
+	
+	@Transactional
+	public Vet updateVet(Vet vet, int id) throws DataAccessException {
+<span class="fc" id="L67">		Vet toUpdate = findVetById(id);</span>
+<span class="fc" id="L68">		BeanUtils.copyProperties(vet, toUpdate, &quot;id&quot;,&quot;user&quot;);</span>
+<span class="fc" id="L69">		vetRepository.save(toUpdate);</span>
+		
+<span class="fc" id="L71">		return toUpdate;</span>
+	}
+	
+	@Transactional
+	public void deleteVet(int id) throws DataAccessException {
+<span class="fc" id="L76">		Vet toDelete=findVetById(id);</span>
+<span class="fc" id="L77">		vetRepository.delete(toDelete);</span>
+<span class="fc" id="L78">	}</span>
+	
+	@Transactional(readOnly = true)	
+	public Iterable&lt;Specialty&gt; findSpecialties() throws DataAccessException {
+<span class="fc" id="L82">		return specialtyRepository.findAll();</span>
+	}
+	
+	@Transactional(readOnly = true)	
+	public Specialty findSpecialtyById(int id) throws DataAccessException {
+<span class="fc" id="L87">		return specialtyRepository.findById(id).orElseThrow(()-&gt;new ResourceNotFoundException(&quot;Specialty&quot;,&quot;ID&quot;,id));</span>
+	}
+	
+	@Transactional
+	public Specialty saveSpecialty(Specialty specialty) throws DataAccessException {
+<span class="fc" id="L92">		specialtyRepository.save(specialty);		</span>
+		
+<span class="fc" id="L94">		return specialty;</span>
+	}
+	
+	@Transactional
+	public Specialty updateSpecialty(Specialty specialty, int id) throws DataAccessException {
+<span class="fc" id="L99">		Specialty toUpdate = findSpecialtyById(id);</span>
+<span class="fc" id="L100">		BeanUtils.copyProperties(specialty, toUpdate, &quot;id&quot;);</span>
+<span class="fc" id="L101">		specialtyRepository.save(toUpdate);</span>
+		
+<span class="fc" id="L103">		return toUpdate;</span>
+	}
+	
+	@Transactional
+	public void deleteSpecialty(int id) throws DataAccessException {
+<span class="fc" id="L108">		Specialty toDelete=findSpecialtyById(id);</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">		for(Vet v: findAll()) v.removeSpecialty(toDelete);</span>
+<span class="fc" id="L110">		specialtyRepository.delete(toDelete);</span>
+<span class="fc" id="L111">	}</span>
+	
+//	@Transactional
+//	public Vet addSpecialty(Vet vet, Specialty specialty) {
+//		List&lt;Specialty&gt; specialties = vet.getSpecialties();
+//		if(!specialties.contains(specialty)) {
+//			specialties.add(specialty);
+//			vet.setSpecialties(specialties);
+//			vetRepository.save(vet);
+//		}
+//		return vet;
+//	}
+//
+//	public Vet removeSpecialty(Vet vet, Specialty specialty) {
+////		List&lt;Specialty&gt; specialties = vet.getSpecialties();
+////		if(specialties.contains(specialty)) {
+////			specialties.remove(specialty);
+////			vet.setSpecialties(specialties);
+////			vetRepository.save(vet);
+////		}
+//		vet.removeSpecialty(specialty);
+//		return vet;
+//	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

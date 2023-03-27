@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OwnerPlanController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">petclinic</a> &gt; <a href="index.source.html" class="el_package">org.springframework.samples.petclinic.owner</a> &gt; <span class="el_source">OwnerPlanController.java</span></div><h1>OwnerPlanController.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2002-2013 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.springframework.samples.petclinic.owner;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.user.User;
+import org.springframework.samples.petclinic.user.UserService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping(&quot;/api/v1/plan&quot;)
+public class OwnerPlanController {
+
+	private final OwnerService ownerService;
+	private final UserService userService;
+
+	@Autowired
+<span class="fc" id="L40">	public OwnerPlanController(OwnerService ownerService, UserService userService) {</span>
+<span class="fc" id="L41">		this.ownerService = ownerService;</span>
+<span class="fc" id="L42">		this.userService = userService;</span>
+<span class="fc" id="L43">	}</span>
+
+	
+	@GetMapping
+    public ResponseEntity&lt;Owner&gt; getPlan() {
+<span class="nc" id="L48">		User user = userService.findCurrentUser();</span>
+<span class="nc" id="L49">		return new ResponseEntity&lt;Owner&gt;(ownerService.findOwnerByUser(user.getId()),HttpStatus.OK);</span>
+    }
+
+	@PutMapping
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity&lt;Owner&gt; updatePlan(@RequestBody @Valid PricingPlan plan ) {
+<span class="nc" id="L55">		 User user = userService.findCurrentUser();</span>
+<span class="nc" id="L56">		 Owner owner = ownerService.findOwnerByUser(user.getId());</span>
+<span class="nc" id="L57">	     return new ResponseEntity&lt;Owner&gt;(this.ownerService.updatePlan(plan,owner.getId()),HttpStatus.OK);</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

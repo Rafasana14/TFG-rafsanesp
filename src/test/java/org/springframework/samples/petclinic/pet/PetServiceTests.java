@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 import javax.transaction.Transactional;
@@ -162,7 +163,7 @@ class PetServiceTests {
 		pet.setOwner(owner6);
 		petService.savePet(pet);
 		Visit visit = new Visit();
-		visit.setDate(LocalDate.now());
+		visit.setDatetime(LocalDateTime.now());
 		visit.setDescription("prueba");
 		visit.setPet(pet);
 		visitService.saveVisit(visit);

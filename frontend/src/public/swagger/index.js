@@ -1,29 +1,29 @@
 import { Component } from "react";
+import SwaggerUI from "swagger-ui-react";
+import "swagger-ui-react/swagger-ui.css"
 
-class SwaggerDocs extends Component() {
+class SwaggerDocs extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            pet: this.emptyItem,
-            types: [],
-            message: null,
+            docs: {},
         };
-        this.handleChange = this.handleChange.bind(this);
-        // this.handleTypeChange = this.handleTypeChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
-
-        var pathArray = window.location.pathname.split('/');
-        this.petId = pathArray[2];
     }
 
     async componentDidMount() {
-
+        const docs = await (await fetch(`/v2/api-docs`, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })).json();
+        this.setState({ docs: docs });
     }
 
     render() {
-
+        const docs = this.state.docs;
+        return (
+            <SwaggerUI spec={docs} url="" />
+        )
     }
 }
-
 export default SwaggerDocs;

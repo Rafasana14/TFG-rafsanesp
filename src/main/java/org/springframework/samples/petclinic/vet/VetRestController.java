@@ -8,6 +8,7 @@ import java.util.stream.StreamSupport;
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.user.User;
@@ -29,7 +30,8 @@ public class VetRestController {
 
 	private final VetService vetService;
 	private final UserService userService;
-
+	
+	@Autowired
 	public VetRestController(VetService clinicService, UserService userService) {
 		this.vetService = clinicService;
 		this.userService = userService;

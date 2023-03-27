@@ -30,6 +30,7 @@ import tokenService from "./services/token.service";
 import SpecialtiesList from "./admin/vets/specialtiesList";
 import SpecialtyEdit from "./admin/vets/specialtyEdit";
 import OwnerDashboard from "./owner/dashboard";
+import SwaggerDocs from "./public/swagger";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -114,6 +115,7 @@ function App() {
         <Routes>
           <Route path="/" exact={true} element={<Home />} />
           <Route path="/plans" element={<PlanList />} />
+          <Route path="/docs" element={<SwaggerDocs />} />
           {publicRoutes}
           {userRoutes}
           {adminRoutes}

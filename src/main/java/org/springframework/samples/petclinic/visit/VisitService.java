@@ -3,6 +3,7 @@ package org.springframework.samples.petclinic.visit;
 import java.util.Collection;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.owner.PricingPlan;
@@ -17,7 +18,8 @@ public class VisitService {
 	private final Integer PLATINUM_LIMIT = 6;
 
 	private final VisitRepository visitRepository;
-
+	
+	@Autowired
 	public VisitService(VisitRepository visitRepository) {
 		this.visitRepository = visitRepository;
 	}
@@ -65,7 +67,7 @@ public class VisitService {
 
 	public boolean underLimit(Visit visit) {
 		Integer petCount = this.visitRepository.countVisitsOfPetInMonth(visit.getPet().getId(),
-				visit.getDate().getMonthValue(), visit.getDate().getYear());
+				visit.getDatetime().getMonthValue(), visit.getDatetime().getYear());
 		PricingPlan plan = visit.getPet().getOwner().getPlan();
 		switch (plan) {
 		case BASIC:

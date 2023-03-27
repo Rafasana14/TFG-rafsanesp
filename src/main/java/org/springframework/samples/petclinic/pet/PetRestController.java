@@ -23,6 +23,7 @@ import java.util.stream.StreamSupport;
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +35,10 @@ import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameExc
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.RestPreconditions;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -54,10 +57,16 @@ public class PetRestController {
 	private final OwnerService ownerService;
 	private final UserService userService;
 
+	@Autowired
 	public PetRestController(PetService petService, OwnerService ownerService, UserService userService) {
 		this.petService = petService;
 		this.ownerService = ownerService;
 		this.userService = userService;
+	}
+	
+	@InitBinder("pet")
+	public void initPetBinder(WebDataBinder dataBinder) {
+		dataBinder.setValidator(new PetValidator());
 	}
 
 	@GetMapping
@@ -74,7 +83,7 @@ public class PetRestController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<?> create(@RequestBody Pet pet)
+	public ResponseEntity<?> create(@RequestBody @Valid Pet pet)
 			throws URISyntaxException, DataAccessException, DuplicatedPetNameException {
 		User user = userService.findCurrentUser();
 		Pet newPet = new Pet();

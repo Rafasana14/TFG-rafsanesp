@@ -21,6 +21,7 @@ class PetOwnerEdit extends Component {
             modalShow: false,
         };
         this.handleChange = this.handleChange.bind(this);
+        this.handleShow = this.handleShow.bind(this);
         // this.handleTypeChange = this.handleTypeChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
@@ -77,6 +78,11 @@ class PetOwnerEdit extends Component {
 
     }
 
+    handleShow() {
+        let modalShow = this.state.modalShow;
+        this.setState({ modalShow: !modalShow })
+    }
+
     async handleSubmit(event) {
         event.preventDefault();
         const { pet, } = this.state;
@@ -123,9 +129,8 @@ class PetOwnerEdit extends Component {
             const cond = message.includes("limit");
             modal = <div>
                 <Modal isOpen={show} toggle={this.handleShow}
-                    backdrop="static" keyboard={false}>
-                    {cond ? <></> : <ModalHeader toggle={this.handleShow} close={closeBtn}>Error!</ModalHeader>}
-                    <ModalHeader>Error!</ModalHeader>
+                    keyboard={false}>
+                    {cond ? <ModalHeader>Warning!</ModalHeader> : <ModalHeader toggle={this.handleShow} close={closeBtn}>Error!</ModalHeader>}
                     <ModalBody>
                         {this.state.message || ""}
                     </ModalBody>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VisitRestController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">petclinic</a> &gt; <a href="index.source.html" class="el_package">org.springframework.samples.petclinic.visit</a> &gt; <span class="el_source">VisitRestController.java</span></div><h1>VisitRestController.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2002-2013 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.springframework.samples.petclinic.visit;
+
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.exceptions.LimitReachedException;
+import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
+import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.owner.OwnerService;
+import org.springframework.samples.petclinic.pet.Pet;
+import org.springframework.samples.petclinic.pet.PetService;
+import org.springframework.samples.petclinic.user.User;
+import org.springframework.samples.petclinic.user.UserService;
+import org.springframework.samples.petclinic.util.RestPreconditions;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+import petclinic.payload.response.MessageResponse;
+
+@RestController
+public class VisitRestController {
+
+	private final PetService petService;
+	private final VisitService visitService;
+	private final UserService userService;
+	private final OwnerService ownerService;
+	
+	@Autowired
+	public VisitRestController(PetService petService, UserService userService, OwnerService ownerService,
+<span class="fc" id="L62">			VisitService visitService) {</span>
+<span class="fc" id="L63">		this.petService = petService;</span>
+<span class="fc" id="L64">		this.userService = userService;</span>
+<span class="fc" id="L65">		this.ownerService = ownerService;</span>
+<span class="fc" id="L66">		this.visitService = visitService;</span>
+<span class="fc" id="L67">	}</span>
+	
+	@InitBinder(&quot;visit&quot;)
+	public void initVisitBinder(WebDataBinder dataBinder) {
+<span class="nc" id="L71">		dataBinder.setValidator(new VisitValidator());</span>
+<span class="nc" id="L72">	}</span>
+
+	@GetMapping(&quot;/api/v1/pets/{petId}/visits&quot;)
+	public ResponseEntity&lt;List&lt;Visit&gt;&gt; findAll(@PathVariable(&quot;petId&quot;) int petId) {
+<span class="nc" id="L76">		Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId), &quot;Pet&quot;, &quot;ID&quot;, petId);</span>
+<span class="nc" id="L77">		User user = userService.findCurrentUser();</span>
+<span class="nc" id="L78">		Owner logged = null, owner = null;</span>
+<span class="nc bnc" id="L79" title="All 2 branches missed.">		if (user.hasAuthority(&quot;OWNER&quot;)) {</span>
+<span class="nc" id="L80">			logged = ownerService.findOwnerByUser(user.getId());</span>
+<span class="nc" id="L81">			owner = pet.getOwner();</span>
+		}
+<span class="nc bnc" id="L83" title="All 6 branches missed.">		if (user.hasAuthority(&quot;ADMIN&quot;) || user.hasAuthority(&quot;VET&quot;) || logged.getId() == owner.getId()) {</span>
+<span class="nc" id="L84">			List&lt;Visit&gt; res = StreamSupport.stream(visitService.findVisitsByPetId(petId).spliterator(), false)</span>
+<span class="nc" id="L85">					.collect(Collectors.toList());</span>
+<span class="nc" id="L86">			return new ResponseEntity&lt;List&lt;Visit&gt;&gt;(res, HttpStatus.OK);</span>
+		} else {
+<span class="nc" id="L88">			throw new ResourceNotOwnedException(Pet.class.getName());</span>
+		}
+	}
+
+	@PostMapping(&quot;/api/v1/pets/{petId}/visits&quot;)
+	@ResponseStatus(HttpStatus.CREATED)
+	public ResponseEntity&lt;Visit&gt; create(@PathVariable(&quot;petId&quot;) int petId, @RequestBody @Valid Visit visit)
+			throws URISyntaxException {
+<span class="nc" id="L96">		Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId), &quot;Pet&quot;, &quot;ID&quot;, petId);</span>
+<span class="nc" id="L97">		User user = userService.findCurrentUser();</span>
+<span class="nc" id="L98">		Visit newVisit = new Visit();</span>
+		Visit savedVisit;
+<span class="nc" id="L100">		BeanUtils.copyProperties(visit, newVisit, &quot;id&quot;);</span>
+<span class="nc" id="L101">		visit.setPet(pet);</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">		if (user.hasAuthority(&quot;OWNER&quot;)) {</span>
+<span class="nc" id="L103">			Owner owner = pet.getOwner();</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">			if (this.visitService.underLimit(visit)) {</span>
+<span class="nc" id="L105">				savedVisit = this.visitService.saveVisit(newVisit);</span>
+			} else
+<span class="nc" id="L107">				throw new LimitReachedException(&quot;Visits per month for your Pet &quot; + pet.getName(), owner.getPlan());</span>
+<span class="nc" id="L108">		} else</span>
+<span class="nc" id="L109">			savedVisit = this.visitService.saveVisit(newVisit);</span>
+
+//			return ResponseEntity.created(new URI(&quot;/api/v1/pets/&quot; + petId + &quot;/visits/&quot; + savedVisit.getId()))
+//					.body(savedVisit);
+<span class="nc" id="L113">		return new ResponseEntity&lt;Visit&gt;(savedVisit, HttpStatus.CREATED);</span>
+	}
+
+	@PutMapping(&quot;/api/v1/pets/{petId}/visits/{visitId}&quot;)
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity&lt;Visit&gt; update(@PathVariable(&quot;petId&quot;) int petId, @PathVariable(&quot;visitId&quot;) int visitId,
+			@RequestBody @Valid Visit visit) {
+<span class="nc" id="L120">		RestPreconditions.checkNotNull(visitService.findVisitById(visitId), &quot;Visit&quot;, &quot;ID&quot;, visitId);</span>
+<span class="nc" id="L121">		RestPreconditions.checkNotNull(petService.findPetById(petId), &quot;Pet&quot;, &quot;ID&quot;, petId);</span>
+<span class="nc" id="L122">		return new ResponseEntity&lt;Visit&gt;(this.visitService.updateVisit(visit, visitId), HttpStatus.OK);</span>
+	}
+
+	@GetMapping(&quot;/api/v1/pets/{petId}/visits/{visitId}&quot;)
+	public ResponseEntity&lt;Visit&gt; findById(@PathVariable(&quot;visitId&quot;) int visitId) {
+<span class="nc" id="L127">		RestPreconditions.checkNotNull(visitService.findVisitById(visitId), &quot;Visit&quot;, &quot;ID&quot;, visitId);</span>
+<span class="nc" id="L128">		Visit visit = visitService.findVisitById(visitId);</span>
+<span class="nc" id="L129">		User user = userService.findCurrentUser();</span>
+<span class="nc bnc" id="L130" title="All 4 branches missed.">		if (user.hasAuthority(&quot;VET&quot;) || user.hasAuthority(&quot;VET&quot;)) {</span>
+<span class="nc" id="L131">			return new ResponseEntity&lt;Visit&gt;(visit, HttpStatus.OK);</span>
+		} else {
+<span class="nc" id="L133">			Owner owner = ownerService.findOwnerByUser(user.getId());</span>
+<span class="nc bnc" id="L134" title="All 2 branches missed.">			if (owner.getId() == visit.getPet().getOwner().getId())</span>
+<span class="nc" id="L135">				return new ResponseEntity&lt;Visit&gt;(visit, HttpStatus.OK);</span>
+			else
+<span class="nc" id="L137">				throw new ResourceNotOwnedException(Visit.class.getSimpleName());</span>
+		}
+	}
+
+	@DeleteMapping(&quot;/api/v1/pets/{petId}/visits/{visitId}&quot;)
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity&lt;MessageResponse&gt; delete(@PathVariable(&quot;petId&quot;) int petId,
+			@PathVariable(&quot;visitId&quot;) int visitId) {
+<span class="nc" id="L145">		Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId), &quot;Pet&quot;, &quot;ID&quot;, petId);</span>
+<span class="nc" id="L146">		RestPreconditions.checkNotNull(visitService.findVisitById(visitId), &quot;Visit&quot;, &quot;ID&quot;, visitId);</span>
+<span class="nc" id="L147">		User user = userService.findCurrentUser();</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">		if (user.hasAuthority(&quot;ADMIN&quot;)</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">				|| ownerService.findOwnerByUser(user.getId()).getId() == pet.getOwner().getId()) {</span>
+<span class="nc" id="L150">			visitService.deleteVisit(visitId);</span>
+<span class="nc" id="L151">			return new ResponseEntity&lt;MessageResponse&gt;(new MessageResponse(&quot;Visit deleted!&quot;), HttpStatus.OK);</span>
+		} else
+<span class="nc" id="L153">			throw new ResourceNotOwnedException(Visit.class.getSimpleName());</span>
+	}
+
+	@GetMapping(&quot;/api/v1/visits&quot;)
+	public ResponseEntity&lt;?&gt; findAllByOwner(@RequestParam(required = false) Integer ownerId) {
+<span class="nc" id="L158">		User user = userService.findCurrentUser();</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">		if (ownerId != null) {</span>
+<span class="nc" id="L160">			RestPreconditions.checkNotNull(ownerService.findOwnerById(ownerId), &quot;Owner&quot;, &quot;ID&quot;, ownerId);</span>
+<span class="nc bnc" id="L161" title="All 4 branches missed.">			if (user.hasAuthority(&quot;ADMIN&quot;) || user.hasAuthority(&quot;VET&quot;)) {</span>
+<span class="nc" id="L162">				List&lt;Visit&gt; res = StreamSupport.stream(visitService.findVisitsByOwnerId(ownerId).spliterator(), false)</span>
+<span class="nc" id="L163">						.collect(Collectors.toList());</span>
+<span class="nc" id="L164">				return new ResponseEntity&lt;List&lt;Visit&gt;&gt;(res, HttpStatus.OK);</span>
+			} else {
+<span class="nc" id="L166">				return new ResponseEntity&lt;MessageResponse&gt;(new MessageResponse(&quot;You can only see your own visits!&quot;),</span>
+						HttpStatus.OK);
+			}
+		} else {
+<span class="nc bnc" id="L170" title="All 2 branches missed.">			if (user.hasAuthority(&quot;OWNER&quot;)) {</span>
+<span class="nc" id="L171">				Owner logged = ownerService.findOwnerByUser(user.getId());</span>
+<span class="nc" id="L172">				List&lt;Visit&gt; res = StreamSupport</span>
+<span class="nc" id="L173">						.stream(visitService.findVisitsByOwnerId(logged.getId()).spliterator(), false)</span>
+<span class="nc" id="L174">						.collect(Collectors.toList());</span>
+<span class="nc" id="L175">				return new ResponseEntity&lt;List&lt;Visit&gt;&gt;(res, HttpStatus.OK);</span>
+			} else {
+<span class="nc" id="L177">				List&lt;Visit&gt; res = StreamSupport.stream(visitService.findAll().spliterator(), false)</span>
+<span class="nc" id="L178">						.collect(Collectors.toList());</span>
+<span class="nc" id="L179">				return new ResponseEntity&lt;List&lt;Visit&gt;&gt;(res, HttpStatus.OK);</span>
+			}
+
+		}
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

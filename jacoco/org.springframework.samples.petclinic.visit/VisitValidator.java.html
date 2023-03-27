@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>VisitValidator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">petclinic</a> &gt; <a href="index.source.html" class="el_package">org.springframework.samples.petclinic.visit</a> &gt; <span class="el_source">VisitValidator.java</span></div><h1>VisitValidator.java</h1><pre class="source lang-java linenums">package org.springframework.samples.petclinic.visit;
+
+import java.time.LocalDateTime;
+
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
+
+<span class="nc" id="L8">public class VisitValidator implements Validator {</span>
+
+	private static final String REQUIRED = &quot;required&quot;;
+
+	@Override
+	public void validate(Object obj, Errors errors) {
+<span class="nc" id="L14">		Visit visit = (Visit) obj;</span>
+<span class="nc" id="L15">		LocalDateTime datetime = visit.getDatetime();</span>
+		// date validation
+<span class="nc bnc" id="L17" title="All 6 branches missed.">		if (datetime == null || datetime.getHour() &lt; 9 || datetime.getHour() &gt;= 20) {</span>
+<span class="nc" id="L18">			errors.rejectValue(&quot;datetime&quot;, REQUIRED + &quot; and between 9:00 and 20:00&quot;,</span>
+					REQUIRED + &quot; and between 9:00 and 20:00&quot;);
+		}
+
+//		// description validation
+//		ValidationUtils.rejectIfEmptyOrWhitespace(errors, &quot;description&quot;, &quot;description.required&quot;, &quot;Description must not be empty&quot;);
+
+		// birth date validation
+<span class="nc bnc" id="L26" title="All 2 branches missed.">		if (visit.getPet() == null) {</span>
+<span class="nc" id="L27">			errors.rejectValue(&quot;pet&quot;, REQUIRED, REQUIRED);</span>
+		}
+<span class="nc" id="L29">	}</span>
+
+	/**
+	 * This Validator validates *just* Visit instances
+	 */
+	@Override
+	public boolean supports(Class&lt;?&gt; clazz) {
+<span class="nc" id="L36">		return Visit.class.isAssignableFrom(clazz);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -122,8 +122,8 @@ INSERT INTO owners_pets(owner_id,pets_id) VALUES (9,11);
 INSERT INTO owners_pets(owner_id,pets_id) VALUES (10,12);
 INSERT INTO owners_pets(owner_id,pets_id) VALUES (10,13);*/
 
-INSERT INTO visits(id,pet_id,visit_date,description,vet_id) VALUES (1, 7, '2013-01-01', 'rabies shot',4);
-INSERT INTO visits(id,pet_id,visit_date,description,vet_id) VALUES (2, 8, '2013-01-02', 'rabies shot',5);
-INSERT INTO visits(id,pet_id,visit_date,description,vet_id) VALUES (3, 8, '2013-01-03', 'neutered',5);
-INSERT INTO visits(id,pet_id,visit_date,description,vet_id) VALUES (4, 7, '2013-01-04', 'spayed',4);
+INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (1, 7, '2013-01-01 13:00', 'rabies shot',4);
+INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (2, 8, '2013-01-02 15:30', 'rabies shot',5);
+INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (3, 8, '2013-01-03 9:45', 'neutered',5);
+INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (4, 7, '2013-01-04 17:30', 'spayed',4);
 
