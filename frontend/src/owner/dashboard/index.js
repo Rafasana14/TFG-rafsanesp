@@ -144,10 +144,12 @@ class OwnerDashboard extends Component {
                     //     week: "Semana",
                     //     day: "Día"
                     // }}
-                    // views={{
-                    //     month: true,
-                    //     agenda: true,
-                    // }}
+                    views={{
+                        month: true,
+                        work_week: true,
+                        day: true,
+                        agenda: true,
+                    }}
                     onSelectEvent={(e) => window.location.href = `/myPets/${e.petId}/visits/${e.visitId}`}
                 />
             </div>;

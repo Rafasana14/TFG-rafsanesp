@@ -23,9 +23,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 public class SwaggerConfig {
 
 	private List<Parameter> globalParameterList() {
-		val authTokenHeader = new ParameterBuilder().name("Authorization") 
-				.modelRef(new ModelRef("string"))
-				.parameterType("header") 
+		val authTokenHeader = new ParameterBuilder().name("Authorization").modelRef(new ModelRef("string"))
+				.parameterType("header")
 				.description("JWT Token -> Bearer [jwt]\nTo access the data you have to be authenticated.").build();
 
 		return Collections.singletonList(authTokenHeader);
