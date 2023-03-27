@@ -14,6 +14,6 @@ jobs:
         with:
           # api-token: ${{ secrets.CODACY_API_TOKEN }}
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          coverage-reports: jacoco/jacoco.xml
+          coverage-reports: coverage/jacoco.xml
           # or a comma-separated list for multiple reports
           # coverage-reports: <PATH_TO_REPORT>, <PATH_TO_REPORT>
