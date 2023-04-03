@@ -6,7 +6,6 @@ import { ErrorBoundary } from "react-error-boundary";
 import AppNavbar from "./AppNavbar";
 import Home from "./home";
 import PrivateRoute from "./privateRoute";
-import RegisterOwner from "./auth/register/owner";
 import PetEdit from "./admin/pets/petEdit";
 import UserList from "./admin/users/userList";
 import UserEdit from "./admin/users/userEdit";
@@ -17,7 +16,6 @@ import VetList from "./admin/vets/vetList";
 import VetEdit from "./admin/vets/vetEdit";
 import PricingPlan from "./owner/plan";
 import Register from "./auth/register";
-import RegisterVet from "./auth/register/vet";
 import Login from "./auth/login";
 import Logout from "./auth/logout";
 import VisitList from "./admin/visits/visitList";
@@ -94,8 +92,6 @@ function App() {
     publicRoutes = (
       <>
         <Route path="/register" element={<Register />} />
-        <Route path="/register/owner" element={<RegisterOwner />} />
-        <Route path="/register/vet" element={<RegisterVet />} />
         <Route path="/login" element={<Login />} />
       </>
     )

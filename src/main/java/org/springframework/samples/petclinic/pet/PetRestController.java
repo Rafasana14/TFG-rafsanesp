@@ -63,7 +63,7 @@ public class PetRestController {
 		this.ownerService = ownerService;
 		this.userService = userService;
 	}
-	
+
 	@InitBinder("pet")
 	public void initPetBinder(WebDataBinder dataBinder) {
 		dataBinder.setValidator(new PetValidator());
@@ -91,11 +91,11 @@ public class PetRestController {
 		BeanUtils.copyProperties(pet, newPet, "id");
 		if (user.hasAuthority("OWNER")) {
 			Owner owner = ownerService.findOwnerByUser(user.getId());
-			if(this.petService.underLimit(owner)) {
+			if (this.petService.underLimit(owner)) {
 				newPet.setOwner(owner);
 				savedPet = this.petService.savePet(newPet);
-			}
-			else throw new LimitReachedException("Pets", owner.getPlan());
+			} else
+				throw new LimitReachedException("Pets", owner.getPlan());
 		} else {
 			Owner owner = ownerService.findOwnerById(pet.getId());
 			newPet.setOwner(owner);
@@ -115,7 +115,7 @@ public class PetRestController {
 		if (user.hasAuthority("OWNER")) {
 			Owner loggedOwner = ownerService.findOwnerByUser(user.getId());
 			Owner petOwner = aux.getOwner();
-			if (loggedOwner.getId() == petOwner.getId())
+			if (loggedOwner.getId().equals(petOwner.getId()))
 				cond = true;
 		}
 		if (!user.hasAuthority("OWNER") || cond) {
@@ -133,7 +133,7 @@ public class PetRestController {
 		if (user.hasAuthority("OWNER")) {
 			Owner loggedOwner = ownerService.findOwnerByUser(user.getId());
 			Owner petOwner = pet.getOwner();
-			if (loggedOwner.getId() == petOwner.getId())
+			if (loggedOwner.getId().equals(petOwner.getId()))
 				cond = true;
 		}
 		if (!user.hasAuthority("OWNER") || cond) {
@@ -151,7 +151,7 @@ public class PetRestController {
 		if (user.hasAuthority("OWNER")) {
 			Owner loggedOwner = ownerService.findOwnerByUser(user.getId());
 			Owner petOwner = pet.getOwner();
-			if (loggedOwner.getId() == petOwner.getId())
+			if (loggedOwner.getId().equals(petOwner.getId()))
 				cond = true;
 		}
 		if (user.hasAuthority("ADMIN") || cond) {
@@ -167,8 +167,8 @@ public class PetRestController {
 		return StreamSupport.stream(petService.findPetTypes().spliterator(), false).collect(Collectors.toList());
 	}
 
-	//Cambiar por QueryParam ownerId
-	
+	// Cambiar por QueryParam ownerId
+
 //	@GetMapping("/api/v1/owners/{ownerId}/pets")
 //	public List<Pet> findAllPetsOfOwner(@PathVariable("ownerId") int ownerId) {
 //		User user = userService.findCurrentUser();

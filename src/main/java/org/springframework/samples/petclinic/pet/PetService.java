@@ -72,7 +72,7 @@ public class PetService {
 	public Pet savePet(Pet pet) throws DataAccessException, DuplicatedPetNameException {
 //		if (pet.getOwner() != null) {
 		Pet otherPet = getPetWithNameAndIdDifferent(pet);
-		if (otherPet != null && otherPet.getId() != pet.getId()) {
+		if (otherPet != null && !otherPet.getId().equals(pet.getId())) {
 			throw new DuplicatedPetNameException();
 		} else
 			petRepository.save(pet);
@@ -86,7 +86,7 @@ public class PetService {
 		String name = pet.getName().toLowerCase();
 		for (Pet p : findAllPetsByOwnerId(pet.getOwner().getId())) {
 			String compName = p.getName().toLowerCase();
-			if (compName.equals(name) && p.getId() != pet.getId()) {
+			if (compName.equals(name) && !p.getId().equals(pet.getId())) {
 				return p;
 			}
 		}

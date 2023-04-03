@@ -56,7 +56,7 @@ public class VisitRestController {
 	private final VisitService visitService;
 	private final UserService userService;
 	private final OwnerService ownerService;
-	
+
 	@Autowired
 	public VisitRestController(PetService petService, UserService userService, OwnerService ownerService,
 			VisitService visitService) {
@@ -65,7 +65,7 @@ public class VisitRestController {
 		this.ownerService = ownerService;
 		this.visitService = visitService;
 	}
-	
+
 	@InitBinder("visit")
 	public void initVisitBinder(WebDataBinder dataBinder) {
 		dataBinder.setValidator(new VisitValidator());
@@ -75,17 +75,17 @@ public class VisitRestController {
 	public ResponseEntity<List<Visit>> findAll(@PathVariable("petId") int petId) {
 		Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId), "Pet", "ID", petId);
 		User user = userService.findCurrentUser();
-		Owner logged = null, owner = null;
-		if (user.hasAuthority("OWNER")) {
-			logged = ownerService.findOwnerByUser(user.getId());
-			owner = pet.getOwner();
-		}
-		if (user.hasAuthority("ADMIN") || user.hasAuthority("VET") || logged.getId() == owner.getId()) {
+		if (user.hasAuthority("ADMIN") || user.hasAuthority("VET")) {
 			List<Visit> res = StreamSupport.stream(visitService.findVisitsByPetId(petId).spliterator(), false)
 					.collect(Collectors.toList());
 			return new ResponseEntity<List<Visit>>(res, HttpStatus.OK);
 		} else {
-			throw new ResourceNotOwnedException(Pet.class.getName());
+			Owner owner = ownerService.findOwnerByUser(user.getId());
+			if (owner.getId().equals(pet.getOwner().getId())) {
+				List<Visit> res = StreamSupport.stream(visitService.findVisitsByPetId(petId).spliterator(), false)
+						.collect(Collectors.toList());
+				return new ResponseEntity<List<Visit>>(res, HttpStatus.OK);
+			}else throw new ResourceNotOwnedException(Pet.class.getName());
 		}
 	}
 
@@ -127,7 +127,7 @@ public class VisitRestController {
 		RestPreconditions.checkNotNull(visitService.findVisitById(visitId), "Visit", "ID", visitId);
 		Visit visit = visitService.findVisitById(visitId);
 		User user = userService.findCurrentUser();
-		if (user.hasAuthority("VET") || user.hasAuthority("VET")) {
+		if (user.hasAuthority("ADMIN") || user.hasAuthority("VET")) {
 			return new ResponseEntity<Visit>(visit, HttpStatus.OK);
 		} else {
 			Owner owner = ownerService.findOwnerByUser(user.getId());

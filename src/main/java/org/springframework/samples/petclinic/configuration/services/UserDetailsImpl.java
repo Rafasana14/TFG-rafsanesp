@@ -11,16 +11,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class UserDetailsImpl implements UserDetails{
+public class UserDetailsImpl implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private Integer id;
 
 	private String username;
 
-	//private String email;
-	
+	// private String email;
+
 //	private PricingPlan plan;
 
 	@JsonIgnore
@@ -33,12 +33,10 @@ public class UserDetailsImpl implements UserDetails{
 		this.id = id;
 		this.username = username;
 //		this.plan = plan;
-		//this.email = email;
+		// this.email = email;
 		this.password = password;
 		this.authorities = authorities;
 	}
-	
-
 
 	public static UserDetailsImpl build(User user) {
 //		List<GrantedAuthority> authorities = user.getRoles().stream()
@@ -46,11 +44,9 @@ public class UserDetailsImpl implements UserDetails{
 //				.collect(Collectors.toList());
 		List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(user.getAuthority().getAuthority()));
 
-		return new UserDetailsImpl(
-				user.getId(),
-				user.getUsername(),
-				//user.getEmail(),
-				user.getPassword(), 
+		return new UserDetailsImpl(user.getId(), user.getUsername(),
+				// user.getEmail(),
+				user.getPassword(),
 //				user.getPlan(),
 				authorities);
 	}
@@ -63,7 +59,7 @@ public class UserDetailsImpl implements UserDetails{
 //	public String getEmail() {
 //		return email;
 //	}
-	
+
 	public Integer getId() {
 		return id;
 	}
@@ -77,10 +73,6 @@ public class UserDetailsImpl implements UserDetails{
 	public String getUsername() {
 		return username;
 	}
-	
-//	public PricingPlan getPlan() {
-//		return plan;
-//	}
 
 	@Override
 	public boolean isAccountNonExpired() {
@@ -103,13 +95,20 @@ public class UserDetailsImpl implements UserDetails{
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (this == o)
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
 			return true;
-		if (o == null || getClass() != o.getClass())
+		if (obj == null)
 			return false;
-		UserDetailsImpl user = (UserDetailsImpl) o;
-		return Objects.equals(id, user.id);
+		if (getClass() != obj.getClass())
+			return false;
+		UserDetailsImpl other = (UserDetailsImpl) obj;
+		return Objects.equals(id, other.id);
 	}
 
 }

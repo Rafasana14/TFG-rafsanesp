@@ -20,7 +20,7 @@ class UserEdit extends Component {
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
-        var pathArray = window.location.pathname.split("/");
+        let pathArray = window.location.pathname.split("/");
         this.id = pathArray[2];
     }
 

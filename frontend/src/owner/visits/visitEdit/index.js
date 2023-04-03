@@ -31,7 +31,7 @@ class VisitOwnerEdit extends Component {
         this.handleSubmit = this.handleSubmit.bind(this);
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
 
-        var pathArray = window.location.pathname.split('/');
+        let pathArray = window.location.pathname.split('/');
         this.petId = pathArray[2];
         this.visitId = pathArray[4];
     }
@@ -84,9 +84,7 @@ class VisitOwnerEdit extends Component {
     handleCityChange(event) {
         const target = event.target;
         const value = target.value;
-        let city = this.state.city;
-        city = value;
-        this.setState({ city });
+        this.setState({ city: value });
 
         let visit = { ...this.state.visit };
         let vets = [...this.state.vets];
@@ -122,30 +120,24 @@ class VisitOwnerEdit extends Component {
         else window.location.href = `/myPets`;
     }
 
-    render() {
-        const { visit, pet, city, vets } = this.state;
-        const title = <h2 className='text-center'>{visit.id ? 'Edit Visit' : 'Add Visit'}</h2>;
-
-        const datetime = new Date(visit.datetime);
-        let datetimeInput;
+    getDateTimeInput(visit, datetime) {
         if (visit.id && datetime < Date.now()) {
-            datetimeInput = <Input type="datetime-local" readOnly name="datetime" id="datetime" value={visit.datetime || ''}
+            return <Input type="datetime-local" disabled name="datetime" id="datetime" value={visit.datetime || ''}
                 onChange={this.handleChange} />
         } else {
-            datetimeInput = <Input type="datetime-local" required name="datetime" id="datetime" value={visit.datetime || ''}
+            return <Input type="datetime-local" required name="datetime" id="datetime" value={visit.datetime || ''}
                 onChange={this.handleChange} />
         }
-        var cities = [];
-        vets.forEach(vet => {
-            if (!cities.includes(vet.city)) cities.push(vet.city);
-        });
+    }
+
+    getCitiesInput(cities, visit, datetime) {
         let i = 0;
-        const citiesOptions = cities.map(city => {
+        return cities.map(city => {
             i++;
             if (visit.id && datetime < Date.now()) {
                 if (visit.vet.city === city) {
                     return (<div key={city} className="form-check form-check-inline">
-                        <Input className="form-check-input" required type="radio" defaultChecked name="city" id={`city${i}`} value={city}
+                        <Input className="form-check-input" readOnly type="radio" defaultChecked name="city" id={`city${i}`} value={city}
                             onChange={this.handleCityChange} ></Input>
                         <Label className="form-check-label" for={`city${i}`}>{city}</Label>
                     </div>)
@@ -172,29 +164,51 @@ class VisitOwnerEdit extends Component {
             }
 
         });
+    }
 
-        const plan = pet.owner.plan;
-
-        let vetSelection = null;
+    getVetSelectionInput(visit, datetime, vets, city, plan) {
         if (visit.id && datetime < Date.now()) {
-            vetSelection = <Input type="text" readOnly name="vet" id="vet" value={visit.vet.id ? (visit.vet.firstName + " " + visit.vet.lastName) : ''}
+            return <Input type="text" disabled name="vet" id="vet" value={visit.vet.id ? (visit.vet.firstName + " " + visit.vet.lastName) : ''}
                 onChange={this.handleChange} />
         } else {
             if (plan !== "BASIC") {
                 const vetsAux = vets.filter(vet => vet.city === city);
-                const vetsOptions = vetsAux.map(vet => {
-                    let spAux = vet.specialties.map(s => s.name).toString().replace(",", ", ");
-                    return <option key={vet.id} value={vet.id}>{vet.firstName} {vet.lastName + " "}{spAux !== "" ? "- " + spAux : ""}</option>
-                })
-                vetSelection = <Input type="select" required name="vet" id="vet" value={visit.vet.id ? visit.vet.id : ''}
+                const vetsOptions = this.getVetOptions(vetsAux);
+                return <Input type="select" required name="vet" id="vet" value={visit.vet.id ? visit.vet.id : ''}
                     onChange={this.handleChange} >
                     <option value="">None</option>
                     {vetsOptions}</Input>
             } else {
-                vetSelection = <Input type="text" readOnly name="vet" id="vet" value={visit.vet.id ? (visit.vet.firstName + " " + visit.vet.lastName) : ''}
+                return <Input type="text" readOnly name="vet" id="vet" value={visit.vet.id ? (visit.vet.firstName + " " + visit.vet.lastName) : ''}
                     onChange={this.handleChange} />
             }
         }
+    }
+
+    getVetOptions(vets) {
+        return vets.map(vet => {
+            let spAux = vet.specialties.map(s => s.name).toString().replace(",", ", ");
+            return <option key={vet.id} value={vet.id}>{vet.firstName} {vet.lastName + " "}{spAux !== "" ? "- " + spAux : ""}</option>
+        })
+    }
+
+    render() {
+        const { visit, pet, city, vets } = this.state;
+        const title = <h2 className='text-center'>{visit.id ? 'Edit Visit' : 'Add Visit'}</h2>;
+
+        const datetime = new Date(visit.datetime);
+        const datetimeInput = this.getDateTimeInput(visit, datetime);
+
+        let cities = [];
+        vets.forEach(vet => {
+            if (!cities.includes(vet.city)) cities.push(vet.city);
+        });
+        const citiesOptions = this.getCitiesInput(cities, visit, datetime);
+
+        const plan = pet.owner.plan;
+
+        let vetSelection = this.getVetSelectionInput(visit, datetime, vets, city, plan);
+
         let modal = <></>;
         if (this.state.message) {
             const show = this.state.modalShow;
