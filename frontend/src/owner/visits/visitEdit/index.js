@@ -84,9 +84,7 @@ class VisitOwnerEdit extends Component {
     handleCityChange(event) {
         const target = event.target;
         const value = target.value;
-        let city = this.state.city;
-        city = value;
-        this.setState({ city });
+        this.setState({ city: value });
 
         let visit = { ...this.state.visit };
         let vets = [...this.state.vets];

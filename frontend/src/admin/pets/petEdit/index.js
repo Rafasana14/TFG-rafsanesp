@@ -73,30 +73,6 @@ class PetEdit extends Component {
         this.setState({ pet });
     }
 
-    // handleTypeChange(event) {
-    //     const target = event.target;
-    //     const value = target.value;
-    //     const types = [...this.state.types];
-    //     console.log(types);
-    //     let selectedType = null;
-    //     selectedType = types.filter((type) => type.name === value)[0];
-    //     let pet = { ...this.state.pet };
-    //     pet["type"] = selectedType;
-    //     this.setState({ pet });
-
-    // }
-
-    // handleOwnerChange(event) {
-    //     const target = event.target;
-    //     const value = target.value;
-    //     const owners = [...this.state.owners]
-    //     let selectedOwner = null;
-    //     selectedOwner = owners.filter((owner) => owner.user.username === value)[0];
-    //     let pet = { ...this.state.pet };
-    //     pet["owner"] = selectedOwner;
-    //     this.setState({ pet });
-    // }
-
     async handleSubmit(event) {
         event.preventDefault();
         const { pet, } = this.state;
