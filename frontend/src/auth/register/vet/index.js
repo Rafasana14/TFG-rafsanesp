@@ -50,7 +50,7 @@ class RegisterVet extends Component {
         const { request } = this.state;
         let state = "";
 
-        await (await fetch("/api/v1/auth/signup", {
+        await fetch("/api/v1/auth/signup", {
             headers: { "Content-Type": "application/json" },
             method: "POST",
             body: JSON.stringify(request),
@@ -65,7 +65,7 @@ class RegisterVet extends Component {
             }
         }).then(function (data) {
             if (state !== "200") alert(data.message);
-        }));
+        });
 
         const loginRequest = {
             username: request.username,

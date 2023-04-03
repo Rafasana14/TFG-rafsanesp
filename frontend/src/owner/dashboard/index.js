@@ -27,7 +27,7 @@ class OwnerDashboard extends Component {
         /*         this.handleSubmit = this.handleSubmit.bind(this); */
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
 
-        /*         // var pathArray = window.location.pathname.split('/');
+        /*         // let pathArray = window.location.pathname.split('/');
                 // this.petId = pathArray[2];
                 // this.visitId = pathArray[4]; */
     }

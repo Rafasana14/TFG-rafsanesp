@@ -11,7 +11,6 @@ class PetOwnerList extends Component {
             pets: [],
             message: null,
             modalShow: false,
-            // visits: [[]],
         };
         this.removePet = this.removePet.bind(this);
         this.handleShow = this.handleShow.bind(this);
@@ -28,34 +27,19 @@ class PetOwnerList extends Component {
         })).json();
         if (pets.message) this.setState({ message: pets.message })
         else {
-            for (let i = 0; i < pets.length; i++) {
-                await (await fetch(`/api/v1/pets/${pets[i].id}/visits`, {
+            for (let pet of pets) {
+                let index = pets.findIndex((obj => obj.id === pet.id));
+                const visits = await (await fetch(`/api/v1/pets/${pet.id}/visits`, {
                     headers: {
                         "Authorization": `Bearer ${this.jwt}`,
                         "Content-Type": "application/json",
                     },
-                }).then((response) => response.json())
-                    .then((data) => {
-                        if (data.message) this.setState({ message: data.message })
-                        else pets[i]["visits"] = data;
-                    }));
+                })).json()
+                if (visits.message) this.setState({ message: visits.message })
+                else pets[index]["visits"] = visits;
             }
             this.setState({ pets: pets });
         }
-        // let pets = api(`/api/v1/pets/`).data;
-        // if (pets.message) this.setState({ message: pets.message })
-        // else {
-        //     for (let i = 0; i < pets.length; i++) {
-        //         // let visits = [];
-        //         api(`/api/v1/pets/${pets[i].id}/visits`)
-        //             .then((data) => {
-        //                 if (data.message) this.setState({ message: data.message })
-        //                 else pets[i]["visits"] = data;
-        //             });
-        //     }
-        //     this.setState({ pets: pets });
-
-        // }
     }
 
     async removePet(id) {
@@ -97,7 +81,6 @@ class PetOwnerList extends Component {
                 message: data.message,
                 modalShow: true
             });
-            // alert(data.message);
         });
 
         if (status === "200") {
@@ -123,9 +106,7 @@ class PetOwnerList extends Component {
         if (isLoading) {
             return <p>Loading...</p>;
         }
-        // if (this.state.message) {
-        //     return <h2 className='text-center'>{this.state.message}</h2>
-        // }
+
         let modal = <></>;
         if (this.state.message) {
             const show = this.state.modalShow;
@@ -174,8 +155,6 @@ class PetOwnerList extends Component {
                 const tableBody = visits.map((visit) => {
                     let buttons;
                     const datetime = new Date(visit.datetime);
-                    console.log(datetime)
-                    console.log(visit.datetime);
                     if (datetime > Date.now()) {
                         buttons = (
                             <ButtonGroup>

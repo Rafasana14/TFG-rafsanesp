@@ -10,7 +10,7 @@ class VisitList extends Component {
         this.remove = this.remove.bind(this);
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
 
-        var pathArray = window.location.pathname.split('/');
+        let pathArray = window.location.pathname.split('/');
         this.petId = pathArray[2];
     }
 
