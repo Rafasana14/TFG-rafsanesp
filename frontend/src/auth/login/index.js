@@ -1,94 +1,89 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { Form, Button, Container, FormGroup, Input, Label, Col } from "reactstrap";
+import React, { Component } from "react";
+import { Link, Navigate } from "react-router-dom";
+import { Form, Button, Container, FormGroup, Input, Label, Col, Alert } from "reactstrap";
 import tokenService from "../../services/token.service";
-// import tokenService from "../../services/token.service";
-// import { useLocalState } from "../../util/useLocalStorage";
-// import api from '../../services/api';
 
-const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  // const [, setJwt] = useLocalState("jwt", "");
-  // const jwt = tokenService.getLocalAccessToken();
+class Login extends Component {
 
-  function sendLoginRequest() {
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: "",
+      password: "",
+      navigation: props.navigation ? props.navigation : false,
+      children: props.children ? props.children : null,
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    const target = event.target;
+    const value = target.value;
+    const name = target.name;
+    this.setState({
+      [name]: value
+    });
+  }
+
+  async handleSubmit(event) {
+    event.preventDefault();
     const reqBody = {
-      username: username,
-      password: password,
+      username: this.state.username,
+      password: this.state.password,
     };
 
-    fetch("/api/v1/auth/signin", {
+    await (fetch("/api/v1/auth/signin", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       body: JSON.stringify(reqBody),
+    }).then(function (response) {
+      if (response.status === 200)
+        return response.json();
+      else
+        return Promise.reject("Invalid login attempt");
     })
-      .then(function (response) {
-        if (response.status === 200)
-          return response.json();
-        else
-          return Promise.reject("Invalid login attempt");
-      })
       .then(function (data) {
-        // setJwt(data.token);
         tokenService.updateLocalAccessToken(data.token)
-        window.location.href = "dashboard";
       }).catch((message) => {
         alert(message);
-      });
-    // api.post("/auth/signin", {
-    //   username, password
-    // }).then(response => {
-    //   if (response.data.token) {
-    //     // setJwt(response.data.token);
-    //     tokenService.setUser(response.data);
-    //     window.location.href = "dashboard";
-    //   }
-
-    //   return response.data;
-    // }).catch((message) => {
-    //   alert(message);
-    // });
+      }));
+    if (this.state.navigation === true) {
+      return window.location.reload();
+    }
+    else window.location.href = "/dashboard";
   }
 
-  return (
-    <>
-      <Container className="d-flex justify-content-center">
-        <Form>
-          <Col>
-            <FormGroup>
-              <Label for="username">Username</Label>
-              <Input type="text" required name="username" id="username" value={username || ''}
-                onChange={(e) => setUsername(e.target.value)} autoComplete="username" />
-            </FormGroup>
-            <FormGroup>
-              <Label for="password">Password</Label>
-              <Input type="password" required name="password" id="password" value={password || ''}
-                onChange={(e) => setPassword(e.target.value)} autoComplete="lastName" />
-            </FormGroup>
-            <br />
-            <FormGroup>
-              <Button color="primary" onClick={() => sendLoginRequest()}>Login</Button>{' '}
-              <Button color="secondary" tag={Link} to="/">Cancel</Button>
-            </FormGroup>
-          </Col>
-        </Form>
-      </Container>
-      {/* <div>
-        <label htmlFor="username">Username</label>
-        <input type="text" id="username" value={username} onChange={(e) => setUsername(e.target.value)} />
-      </div>
+  render() {
+    return (
       <div>
-        <label htmlFor="password">Password</label>
-        <input type="password" id="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+        {this.state.message ? <Alert color="primary">
+          {this.state.message}
+        </Alert> : <></>}
+        <Container className="d-flex justify-content-center">
+          <Form onSubmit={this.handleSubmit}>
+            <Col>
+              <FormGroup>
+                <Label for="username">Username</Label>
+                <Input type="text" required name="username" id="username" value={this.state.username || ''}
+                  onChange={this.handleChange} autoComplete="username" />
+              </FormGroup>
+              <FormGroup>
+                <Label for="password">Password</Label>
+                <Input type="password" required name="password" id="password" value={this.state.password || ''}
+                  onChange={this.handleChange} autoComplete="lastName" />
+              </FormGroup>
+              <br />
+              <FormGroup>
+                <Button color="primary" type="submit">Login</Button>{' '}
+                <Button color="secondary" tag={Link} to="/">Cancel</Button>
+              </FormGroup>
+            </Col>
+          </Form>
+        </Container>
       </div>
-      <div>
-        <button id="submit" onClick={() => sendLoginRequest()}>
-          Login
-        </button>
-      </div> */}
-    </>
-  );
-};
+    );
+  };
+}
 
 export default Login;

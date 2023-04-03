@@ -15,9 +15,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import petclinic.payload.request.LoginRequest;
@@ -45,7 +47,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/signin")
-	public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<JwtResponse> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -63,20 +65,14 @@ public class AuthController {
 				new JwtResponse(jwt, userDetails.getId(), userDetails.getUsername(), roles));
 	}
 
-//	@PostMapping("/validate")
-//	public ResponseEntity<?> validateToken(@Valid @RequestBody TokenRefreshRequest request) {
-//		String requestRefreshToken = request.getRefreshToken();
-//
-//		return refreshTokenService.findByToken(requestRefreshToken).map(refreshTokenService::verifyExpiration)
-//				.map(RefreshToken::getUser).map(user -> {
-//					String token = jwtUtils.generateTokenFromUsername(user.getUsername(), user.getAuthority());
-//					return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
-//				})
-//				.orElseThrow(() -> new TokenRefreshException(requestRefreshToken, "Refresh token is not in database!"));
-//	}
+	@GetMapping("/validate")
+	public ResponseEntity<Boolean> validateToken(@RequestParam String token) {
+		Boolean isValid = jwtUtils.validateJwtToken(token);
+		return ResponseEntity.ok(isValid);
+	}
 
 	@PostMapping("/signup")
-	public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+	public ResponseEntity<MessageResponse> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
 		if (userService.existsUser(signUpRequest.getUsername())) {
 			return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
 		}

@@ -64,15 +64,15 @@ class PetOwnerEdit extends Component {
         if (name === "type") {
             pet.type.id = Number(value);
         }
-        // if (name === "type" || !pet.type.name) {
-        //     const types = { ...this.state.types }
-        //     let selectedType = null;
-        //     for (let i = 0; i < Object.keys(types).length; i++) {
-        //         if (types[i].name === value) selectedType = types[i];
-        //         if (!pet.type.name && types[i].name === "bird") selectedType = types[i];
-        //     }
-        //     pet["type"] = selectedType;
-        // }
+        if (name === "type") {
+            const types = { ...this.state.types }
+            let selectedType = null;
+            for (let i = 0; i < Object.keys(types).length; i++) {
+                if (types[i].name === value) selectedType = types[i];
+                if (!pet.type.name && types[i].name === "bird") selectedType = types[i];
+            }
+            pet["type"] = selectedType;
+        }
         else pet[name] = value
         this.setState({ pet });
 
