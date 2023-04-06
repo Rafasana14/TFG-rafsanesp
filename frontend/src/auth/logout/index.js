@@ -1,16 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Form, Button, Container, FormGroup, Col } from "reactstrap";
-// import tokenService from "../../services/token.service";
-// import { useLocalState } from "../../util/useLocalStorage";
+import tokenService from "../../services/token.service";
 
 const Logout = () => {
 
     function sendLogoutRequest() {
         const jwt = window.localStorage.getItem("jwt");
         if (jwt || typeof jwt === 'undefined') {
-            window.localStorage.removeItem("jwt");
-            // tokenService.removeUser();
+            tokenService.removeUser();
             window.location.href = '/';
         } else {
             alert("There is no user logged in")

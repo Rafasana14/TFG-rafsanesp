@@ -102,6 +102,7 @@ public class ConsultationService {
 		this.ticketRepository.delete(toDelete);
 	}
 
+	@Transactional(readOnly = true)
 	public void checkLastTicketAndStatus(Consultation consultation, Ticket ticket) {
 		List<Ticket> tickets = (List<Ticket>) findAllTicketsByConsultation(consultation.getId());
 		if (!tickets.get(tickets.size() - 1).getId().equals(ticket.getId()))
@@ -110,6 +111,7 @@ public class ConsultationService {
 			throw new RuntimeException("This consultation is closed!");
 	}
 
+	@Transactional
 	public ResponseEntity<Ticket> updateOwnerTicket(@Valid Ticket ticket, Ticket target, Consultation consultation,
 			User currentUser, Owner owner) {
 		if (owner.getPlan().equals(PricingPlan.PLATINUM)) {
@@ -124,6 +126,7 @@ public class ConsultationService {
 			throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getPlan());
 	}
 
+	@Transactional
 	public ResponseEntity<Ticket> updateVetTicket(@Valid Ticket ticket, Ticket target, Consultation consultation,
 			User user) {
 		if (target.getUser().getId().equals(user.getId())) {
@@ -132,6 +135,7 @@ public class ConsultationService {
 			throw new ResourceNotOwnedException("Ticket");
 	}
 
+	@Transactional
 	public void deleteOwnerTicket(Ticket ticket, Consultation consultation, User user, Owner owner) {
 		if (owner.getPlan().equals(PricingPlan.PLATINUM)) {
 			if (owner.getId().equals(consultation.getOwner().getId())) {
@@ -145,6 +149,7 @@ public class ConsultationService {
 			throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getPlan());
 	}
 
+	@Transactional
 	public void deleteVetTicket(Ticket ticket, Consultation consultation, User user) {
 		if (ticket.getUser().getId().equals(user.getId())) {
 			deleteTicket(ticket.getId());
@@ -153,6 +158,7 @@ public class ConsultationService {
 			throw new ResourceNotOwnedException("Ticket");
 	}
 
+	@Transactional
 	private void updateConsultationStatus(Consultation consultation) {
 		List<Ticket> tickets = (List<Ticket>) findAllTicketsByConsultation(consultation.getId());
 		if (tickets.get(tickets.size() - 1).getUser().getAuthority().getAuthority().equals("OWNER"))

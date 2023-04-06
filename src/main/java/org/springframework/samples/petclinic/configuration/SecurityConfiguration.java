@@ -39,6 +39,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	DataSource dataSource;
+	
+	private final String ADMIN = "ADMIN";
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
@@ -73,13 +75,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/v2/api-docs").permitAll()
 				.antMatchers("/swagger-ui.html/**").permitAll()
 				.antMatchers("/api/v1/plan").hasAuthority("OWNER")
-				.antMatchers("/api/v1/users/**").hasAuthority("ADMIN")
-				.antMatchers(HttpMethod.DELETE, "/api/v1/consultations/{consultationId:[0-9]\\d+}").hasAuthority("ADMIN")
+				.antMatchers("/api/v1/users/**").hasAuthority(ADMIN)
+				.antMatchers(HttpMethod.DELETE, "/api/v1/consultations/{consultationId:[0-9]\\d+}").hasAuthority(ADMIN)
 				.antMatchers("/api/v1/owners/**/pets/**").authenticated()
-				.antMatchers("/api/v1/owners/**").hasAuthority("ADMIN")
+				.antMatchers("/api/v1/owners/**").hasAuthority(ADMIN)
 //				.antMatchers("/api/v1/pets/**").hasAuthority("ADMIN")
 				.antMatchers(HttpMethod.GET,"/api/v1/vets/**").authenticated()
-				.antMatchers("/api/v1/vets/**").hasAnyAuthority("ADMIN","VET")
+				.antMatchers("/api/v1/vets/**").hasAnyAuthority(ADMIN,"VET")
 				// .antMatchers("/api/v1/**").authenticated();
 
 				.anyRequest().authenticated();

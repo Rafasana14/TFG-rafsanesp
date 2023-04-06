@@ -12,7 +12,6 @@ class Home extends Component {
             dog: {},
             panda: {},
         };
-        this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
     }
 
     async componentDidMount() {
