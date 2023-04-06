@@ -27,7 +27,7 @@ public class Ticket extends BaseEntity {
 	@Column(name = "description")
 	@NotEmpty
 	private String description;
-	
+
 	@Column(name = "creation_date")
 	@CreationTimestamp
 	private LocalDateTime creationDate;

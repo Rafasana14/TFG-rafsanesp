@@ -35,6 +35,7 @@ public class ConsultationController {
 	private final ConsultationService consultationService;
 	private final UserService userService;
 	private final String ACCESS_DENIED = "Access denied!";
+	private final String OWNER = "OWNER";
 
 	@Autowired
 	public ConsultationController(ConsultationService consultationService, UserService userService) {
@@ -75,7 +76,7 @@ public class ConsultationController {
 		Consultation newConsultation = new Consultation();
 		Consultation savedConsultation;
 		BeanUtils.copyProperties(consultation, newConsultation, "id");
-		if (user.hasAuthority("OWNER")) {
+		if (user.hasAuthority(OWNER)) {
 			Owner owner = userService.findOwnerByUser(user.getUsername());
 			if (owner.getPlan().equals(PricingPlan.PLATINUM)) {
 				newConsultation.setOwner(owner);
@@ -97,7 +98,7 @@ public class ConsultationController {
 			@RequestBody @Valid Consultation consultation) {
 		Consultation aux = consultationService.findConsultationById(consultationId);
 		User user = userService.findCurrentUser();
-		if (user.hasAuthority("OWNER")) {
+		if (user.hasAuthority(OWNER)) {
 			Owner owner = userService.findOwnerByUser(user.getUsername());
 			if (owner.getPlan().equals(PricingPlan.PLATINUM)) {
 				if (owner.getId().equals(aux.getOwner().getId()))
@@ -124,7 +125,7 @@ public class ConsultationController {
 	public List<Ticket> findAllTicketsByConsultation(@PathVariable("consultationId") int id) {
 		Consultation cons = consultationService.findConsultationById(id);
 		User user = userService.findCurrentUser();
-		if (user.hasAuthority("OWNER")) {
+		if (user.hasAuthority(OWNER)) {
 			Owner owner = userService.findOwnerByUser(user.getId());
 			if (cons.getOwner().getId().equals(owner.getId()))
 				return (List<Ticket>) consultationService.findAllTicketsByConsultation(id);
@@ -141,7 +142,7 @@ public class ConsultationController {
 		Consultation cons = consultationService.findConsultationById(consultationId);
 		User user = userService.findCurrentUser();
 		Ticket ticket = this.consultationService.findTicketById(ticketId);
-		if (user.hasAuthority("OWNER")) {
+		if (user.hasAuthority(OWNER)) {
 			Owner owner = userService.findOwnerByUser(user.getId());
 			if (cons.getOwner().getId().equals(owner.getId()))
 				return new ResponseEntity<Ticket>(ticket, HttpStatus.OK);
@@ -161,7 +162,7 @@ public class ConsultationController {
 		Ticket newTicket = new Ticket();
 		Ticket savedTicket;
 		BeanUtils.copyProperties(ticket, newTicket, "id");
-		if (user.hasAuthority("OWNER")) {
+		if (user.hasAuthority(OWNER)) {
 			Owner owner = userService.findOwnerByUser(user.getUsername());
 			if (owner.getPlan().equals(PricingPlan.PLATINUM)) {
 				if (owner.getId().equals(cons.getOwner().getId())) {
@@ -196,7 +197,7 @@ public class ConsultationController {
 		Ticket aux = consultationService.findTicketById(ticketId);
 		this.consultationService.checkLastTicketAndStatus(consultation, aux);
 		User user = userService.findCurrentUser();
-		if (user.hasAuthority("OWNER")) {
+		if (user.hasAuthority(OWNER)) {
 			Owner owner = userService.findOwnerByUser(user.getUsername());
 			return this.consultationService.updateOwnerTicket(ticket, aux, consultation, user, owner);
 		} else if (user.hasAuthority("VET")) {
@@ -214,7 +215,7 @@ public class ConsultationController {
 		Ticket ticket = this.consultationService.findTicketById(ticketId);
 		this.consultationService.checkLastTicketAndStatus(consultation, ticket);
 		User user = userService.findCurrentUser();
-		if (user.hasAuthority("OWNER")) {
+		if (user.hasAuthority(OWNER)) {
 			Owner owner = userService.findOwnerByUser(user.getUsername());
 			this.consultationService.deleteOwnerTicket(ticket, consultation, user, owner);
 		} else if (user.hasAuthority("VET")) {
