@@ -73,32 +73,33 @@ class OwnerEdit extends Component {
                 <Form onSubmit={this.handleSubmit}>
                     <FormGroup>
                         <Label for="firstName">First Name</Label>
-                        <Input type="text" name="firstName" id="firstName" value={item.firstName || ''}
-                            onChange={this.handleChange} autoComplete="firstName" />
+                        <Input type="text" required name="firstName" id="firstName" value={item.firstName || ''}
+                            onChange={this.handleChange} />
                     </FormGroup>
                     <FormGroup>
                         <Label for="lastName">Last Name</Label>
-                        <Input type="text" name="lastName" id="lastName" value={item.lastName || ''}
-                            onChange={this.handleChange} autoComplete="lastName" />
+                        <Input type="text" required name="lastName" id="lastName" value={item.lastName || ''}
+                            onChange={this.handleChange} />
                     </FormGroup>
                     <FormGroup>
                         <Label for="address">Address</Label>
-                        <Input type="text" name="address" id="address" value={item.address || ''}
-                            onChange={this.handleChange} autoComplete="address" />
+                        <Input type="text" required name="address" id="address" value={item.address || ''}
+                            onChange={this.handleChange} />
                     </FormGroup>
                     <FormGroup>
                         <Label for="city">City</Label>
-                        <Input type="text" name="city" id="city" value={item.city || ''}
-                            onChange={this.handleChange} autoComplete="city" />
+                        <Input type="text" required name="city" id="city" value={item.city || ''}
+                            onChange={this.handleChange} />
                     </FormGroup>
                     <FormGroup>
                         <Label for="telephone">Telephone</Label>
-                        <Input type="tel" pattern="[0-9]{9}" name="telephone" id="telephone" value={item.telephone || ''}
-                            onChange={this.handleChange} autoComplete="telephone" />
+                        <Input type="tel" required pattern="[0-9]{9}" name="telephone" id="telephone" value={item.telephone || ''}
+                            onChange={this.handleChange} />
                     </FormGroup>
                     <FormGroup>
                         <Label for="plan">Plan</Label>
-                        <Input id="plan" name="plan" type="select" value={item.plan || ''} onChange={this.handleChange} autoComplete="plan">
+                        <Input id="plan" name="plan" required type="select" value={item.plan || ''} onChange={this.handleChange}>
+                            <option value="">None</option>
                             <option value="BASIC">BASIC</option>
                             <option value="GOLD">GOLD</option>
                             <option value="PLATINUM">PLATINUM</option>

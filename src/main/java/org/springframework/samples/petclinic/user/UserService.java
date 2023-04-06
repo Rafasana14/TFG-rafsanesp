@@ -63,6 +63,16 @@ public class UserService {
 	public User findUser(Integer id) {
 		return userRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("User", "id", id));
 	}
+	
+	@Transactional(readOnly = true)
+	public Owner findOwnerByUser(String username) {
+		return userRepository.findOwnerByUser(username).orElseThrow(() -> new ResourceNotFoundException("Owner", "username", username));
+	}
+	
+	@Transactional(readOnly = true)
+	public Owner findOwnerByUser(int id) {
+		return userRepository.findOwnerByUser(id).orElseThrow(() -> new ResourceNotFoundException("Owner", "ID", id));
+	}
 
 	@Transactional(readOnly = true)
 	public User findCurrentUser() {

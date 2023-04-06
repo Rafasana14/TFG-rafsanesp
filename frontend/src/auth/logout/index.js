@@ -20,7 +20,7 @@ const Logout = () => {
     return (
 
         <>
-            <Container className="d-flex justify-content-center">
+            <Container style={{ marginTop: "15px" }} className="d-flex justify-content-center">
                 <Form>
                     <Col>
                         <h2>Are you sure you want to log out?</h2>

@@ -67,6 +67,11 @@ public class PetService {
 	public List<Pet> findAllPetsByOwnerId(int id) throws DataAccessException {
 		return petRepository.findAllPetsByOwnerId(id);
 	}
+	
+	@Transactional(readOnly = true)
+	public List<Pet> findAllPetsByUserId(int id) throws DataAccessException {
+		return petRepository.findAllPetsByUserId(id);
+	}
 
 	@Transactional(rollbackFor = DuplicatedPetNameException.class)
 	public Pet savePet(Pet pet) throws DataAccessException, DuplicatedPetNameException {
@@ -103,12 +108,12 @@ public class PetService {
 	@Transactional
 	public void deletePet(int id) throws DataAccessException {
 		Pet toDelete = findPetById(id);
-		petRepository.deleteVisitsOfPet(toDelete.getId());
+		petRepository.deleteVisitsByPet(toDelete.getId());
 		petRepository.delete(toDelete);
 	}
 
 	public boolean underLimit(Owner owner) {
-		Integer petCount = this.petRepository.countPetsOfOwner(owner.getId());
+		Integer petCount = this.petRepository.countPetsByOwner(owner.getId());
 		PricingPlan plan = owner.getPlan();
 		switch (plan) {
 		case BASIC:

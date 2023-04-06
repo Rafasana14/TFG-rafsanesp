@@ -52,7 +52,7 @@ class PetList extends Component {
                 <tr key={pet.id}>
                     <td>{pet.name}</td>
                     <td>{pet.birthDate}</td>
-                    <td>{pet.type.name}</td>
+                    <td>{pet.type?.name}</td>
                     <td>{pet.owner.user.username}</td>
                     <td>
                         <Button size="sm" color="info" tag={Link}

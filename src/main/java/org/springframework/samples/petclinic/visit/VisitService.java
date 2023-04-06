@@ -66,7 +66,7 @@ public class VisitService {
 	}
 
 	public boolean underLimit(Visit visit) {
-		Integer petCount = this.visitRepository.countVisitsOfPetInMonth(visit.getPet().getId(),
+		Integer petCount = this.visitRepository.countVisitsByPetInMonth(visit.getPet().getId(),
 				visit.getDatetime().getMonthValue(), visit.getDatetime().getYear());
 		PricingPlan plan = visit.getPet().getOwner().getPlan();
 		switch (plan) {

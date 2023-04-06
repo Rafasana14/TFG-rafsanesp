@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -70,15 +71,14 @@ public class PetRestController {
 	}
 
 	@GetMapping
-//	@RequestParam(required = false) String ownerId
-	public List<Pet> findAll() {
+	public List<Pet> findAll(@RequestParam(required = false) Integer userId) {
 		User user = userService.findCurrentUser();
-		if (user.hasAuthority("ADMIN") || user.hasAuthority("VET")) {
-			return StreamSupport.stream(petService.findAll().spliterator(), false).collect(Collectors.toList());
+		if (userId != null) {
+			if(user.getId().equals(userId) || user.hasAnyAuthority("VET", "ADMIN")) return petService.findAllPetsByUserId(userId);
 		} else {
-			Owner owner = ownerService.findOwnerByUser(user.getId());
-			return petService.findAllPetsByOwnerId(owner.getId());
+			if(user.hasAnyAuthority("VET", "ADMIN")) return (List<Pet>) this.petService.findAll();
 		}
+		throw new RuntimeException("Access denied!");
 	}
 
 	@PostMapping
@@ -97,8 +97,8 @@ public class PetRestController {
 			} else
 				throw new LimitReachedException("Pets", owner.getPlan());
 		} else {
-			Owner owner = ownerService.findOwnerById(pet.getId());
-			newPet.setOwner(owner);
+//			Owner owner = ownerService.findOwnerById(pet.getId());
+//			newPet.setOwner(owner);
 			savedPet = this.petService.savePet(newPet);
 		}
 

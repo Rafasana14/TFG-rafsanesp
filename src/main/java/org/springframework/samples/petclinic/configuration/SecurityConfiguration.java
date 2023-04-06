@@ -74,6 +74,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/swagger-ui.html/**").permitAll()
 				.antMatchers("/api/v1/plan").hasAuthority("OWNER")
 				.antMatchers("/api/v1/users/**").hasAuthority("ADMIN")
+				.antMatchers(HttpMethod.DELETE, "/api/v1/consultations/{consultationId:[0-9]\\d+}").hasAuthority("ADMIN")
 				.antMatchers("/api/v1/owners/**/pets/**").authenticated()
 				.antMatchers("/api/v1/owners/**").hasAuthority("ADMIN")
 //				.antMatchers("/api/v1/pets/**").hasAuthority("ADMIN")

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-// import { Link } from 'react-router-dom';
 import { Button, Col, Container, Row, Table } from 'reactstrap';
 
 import { BsCheckLg, BsXLg } from 'react-icons/bs';
@@ -93,7 +92,7 @@ class PricingPlan extends Component {
 
         return <div>
             {/* <AppNavbar /> */}
-            <Container>
+            <Container style={{ marginTop: "15px" }}>
                 <h1 className="text-center">My Plan - {plan}</h1>
                 <Row>
                     <Col md="3"></Col>

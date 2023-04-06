@@ -18,6 +18,9 @@ public interface UserRepository extends  CrudRepository<User, String>{
 	
 	@Query("SELECT o FROM Owner o WHERE o.user.username = :username")
 	Optional<Owner> findOwnerByUser(String username);
+	
+	@Query("SELECT o FROM Owner o WHERE o.user.id = :id")
+	Optional<Owner> findOwnerByUser(int id);
 
 	Optional<User> findByUsername(String username);
 

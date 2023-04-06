@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Col, Container, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
 
-class VisitOwnerEdit extends Component {
+class OwnerVisitEdit extends Component {
 
     emptyVisit = {
         id: '',
@@ -233,7 +233,7 @@ class VisitOwnerEdit extends Component {
         }
 
         return <div>
-            <Container>
+            <Container style={{ marginTop: "15px" }}>
                 {title}
                 <Row>
                     <Col sm="4"></Col>
@@ -275,4 +275,4 @@ class VisitOwnerEdit extends Component {
         </div >
     }
 }
-export default VisitOwnerEdit;
+export default OwnerVisitEdit;
