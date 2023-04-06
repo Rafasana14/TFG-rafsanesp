@@ -42,22 +42,20 @@ import lombok.Setter;
 public class Vet extends Person {
 
 	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-	@JoinTable(name = "vet_specialties", joinColumns = @JoinColumn(name = "vet_id"),
-			inverseJoinColumns = @JoinColumn(name = "specialty_id"),uniqueConstraints={
-				    @UniqueConstraint(columnNames = {"vet_id", "specialty_id"})
-			})
+	@JoinTable(name = "vet_specialties", joinColumns = @JoinColumn(name = "vet_id"), inverseJoinColumns = @JoinColumn(name = "specialty_id"),
+		uniqueConstraints = {@UniqueConstraint(columnNames = { "vet_id", "specialty_id" }) })
 	private List<Specialty> specialties;
-	
-	@OneToOne(cascade = {CascadeType.DETACH,CascadeType.REFRESH,CascadeType.PERSIST})
-    @JoinColumn(name = "user", referencedColumnName = "id")
+
+	@OneToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST })
+	@JoinColumn(name = "user", referencedColumnName = "id")
 	private User user;
-	
+
 	@Column(name = "city")
 	@NotEmpty
 	private String city;
 
 	public void removeSpecialty(Specialty s) {
 		specialties.remove(s);
-    }
+	}
 
 }

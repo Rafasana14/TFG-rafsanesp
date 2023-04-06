@@ -30,6 +30,6 @@ public interface VisitRepository extends CrudRepository<Visit, Integer> {
 	public Collection<Visit> findByOwnerId(int ownerId);
 
 	@Query("SELECT COUNT(v) FROM Visit v WHERE v.pet.id = :id AND MONTH(v.datetime) = :month AND YEAR(v.datetime) = :year")
-	public Integer countVisitsOfPetInMonth(int id, Integer month, Integer year);
+	public Integer countVisitsByPetInMonth(int id, Integer month, Integer year);
 
 }

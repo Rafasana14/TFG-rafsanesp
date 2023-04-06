@@ -44,6 +44,7 @@ class Login extends Component {
         return Promise.reject("Invalid login attempt");
     })
       .then(function (data) {
+        tokenService.setUser(data);
         tokenService.updateLocalAccessToken(data.token)
       }).catch((message) => {
         alert(message);
@@ -60,7 +61,7 @@ class Login extends Component {
         {this.state.message ? <Alert color="primary">
           {this.state.message}
         </Alert> : <></>}
-        <Container className="d-flex justify-content-center">
+        <Container style={{ marginTop: "15px" }} className="d-flex justify-content-center">
           <Form onSubmit={this.handleSubmit}>
             <Col>
               <FormGroup>

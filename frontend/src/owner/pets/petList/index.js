@@ -1,10 +1,13 @@
 import React, { Component } from "react";
-import { Button, ButtonGroup, Card, CardBody, CardFooter, CardTitle, Col, Container, ListGroup, ListGroupItem, Modal, ModalBody, ModalFooter, ModalHeader, Row, Table } from "reactstrap";
-// import AppNavbar from "../AppNavbar";
+import {
+    Button, ButtonGroup, Card, CardBody, CardFooter,
+    CardTitle, Col, Container, ListGroup, ListGroupItem,
+    Modal, ModalBody, ModalFooter, ModalHeader, Row, Table
+} from "reactstrap";
 import { Link } from "react-router-dom";
-// import api from "../../../services/api"
+import tokenService from "../../../services/token.service";
 
-class PetOwnerList extends Component {
+class OwnerPetList extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -15,11 +18,12 @@ class PetOwnerList extends Component {
         this.removePet = this.removePet.bind(this);
         this.handleShow = this.handleShow.bind(this);
         this.removeVisit = this.removeVisit.bind(this);
-        this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
+        this.jwt = tokenService.getLocalAccessToken();
+        this.user = tokenService.getUser();
     }
 
     async componentDidMount() {
-        let pets = await (await fetch(`/api/v1/pets/`, {
+        let pets = await (await fetch(`/api/v1/pets?userId=${this.user.id}`, {
             headers: {
                 "Authorization": `Bearer ${this.jwt}`,
                 "Content-Type": "application/json",
@@ -275,4 +279,4 @@ class PetOwnerList extends Component {
     }
 }
 
-export default PetOwnerList;
+export default OwnerPetList;

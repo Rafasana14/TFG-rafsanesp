@@ -75,7 +75,7 @@ public class VisitRestController {
 	public ResponseEntity<List<Visit>> findAll(@PathVariable("petId") int petId) {
 		Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId), "Pet", "ID", petId);
 		User user = userService.findCurrentUser();
-		if (user.hasAuthority("ADMIN") || user.hasAuthority("VET")) {
+		if (user.hasAnyAuthority("ADMIN", "VET")) {
 			List<Visit> res = StreamSupport.stream(visitService.findVisitsByPetId(petId).spliterator(), false)
 					.collect(Collectors.toList());
 			return new ResponseEntity<List<Visit>>(res, HttpStatus.OK);
@@ -127,7 +127,7 @@ public class VisitRestController {
 		RestPreconditions.checkNotNull(visitService.findVisitById(visitId), "Visit", "ID", visitId);
 		Visit visit = visitService.findVisitById(visitId);
 		User user = userService.findCurrentUser();
-		if (user.hasAuthority("ADMIN") || user.hasAuthority("VET")) {
+		if (user.hasAnyAuthority("ADMIN", "VET")){
 			return new ResponseEntity<Visit>(visit, HttpStatus.OK);
 		} else {
 			Owner owner = ownerService.findOwnerByUser(user.getId());
@@ -158,7 +158,7 @@ public class VisitRestController {
 		User user = userService.findCurrentUser();
 		if (ownerId != null) {
 			RestPreconditions.checkNotNull(ownerService.findOwnerById(ownerId), "Owner", "ID", ownerId);
-			if (user.hasAuthority("ADMIN") || user.hasAuthority("VET")) {
+			if (user.hasAnyAuthority("ADMIN", "VET")) {
 				List<Visit> res = StreamSupport.stream(visitService.findVisitsByOwnerId(ownerId).spliterator(), false)
 						.collect(Collectors.toList());
 				return new ResponseEntity<List<Visit>>(res, HttpStatus.OK);

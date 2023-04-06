@@ -37,9 +37,12 @@ public interface PetRepository extends CrudRepository<Pet, Integer> {
 	
 	@Modifying
 	@Query("DELETE FROM Visit v WHERE v.pet.id = :petId")
-	public void deleteVisitsOfPet(@Param("petId") int petId);
+	public void deleteVisitsByPet(@Param("petId") int petId);
 	
 	@Query(("SELECT COUNT(p) FROM Pet p WHERE p.owner.id = :id"))
-	public Integer countPetsOfOwner(int id);
+	public Integer countPetsByOwner(int id);
+	
+	@Query(("SELECT p FROM Pet p WHERE p.owner.user.id = :id"))
+	List<Pet> findAllPetsByUserId(int id);
 	
 }

@@ -58,14 +58,9 @@ class Register extends Component {
             method: "POST",
             body: JSON.stringify(request),
         }).then(function (response) {
-            if (response.status === 200) {
-                state = "200"
-                return response.json();
-            }
-            else {
-                state = "";
-                return response.json();
-            }
+            if (response.status === 200) state = "200"
+            else state = "";
+            return response.json();
         }).then(function (data) {
             if (state !== "200") alert(data.message);
         });
@@ -105,7 +100,7 @@ class Register extends Component {
         const { request, type } = this.state;
         if (type) {
             return <div>
-                <Container className="d-flex justify-content-center">
+                <Container style={{ marginTop: "15px" }} className="d-flex justify-content-center">
                     <Form onSubmit={this.handleSubmit}>
                         <h2>Register {type}</h2>
                         <Col>

@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Navbar, NavbarBrand, NavLink, NavItem, Nav, NavbarText, NavbarToggler, Collapse } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import jwt_decode from "jwt-decode";
-// import { useLocalState } from './util/useLocalStorage';
 import tokenService from './services/token.service';
 
 export default function AppNavbar() {
-    // const [jwt,] = useLocalState("jwt", "");
     const [roles, setRoles] = useState([]);
     const [username, setUsername] = useState("");
     const jwt = tokenService.getLocalAccessToken();
@@ -48,6 +46,9 @@ export default function AppNavbar() {
                         <NavLink style={{ color: "white" }} tag={Link} to="/vets">Vets</NavLink>
                     </NavItem>
                     <NavItem>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/consultations">Consultations</NavLink>
+                    </NavItem>
+                    <NavItem>
                         <NavLink style={{ color: "white" }} tag={Link} to="/users">Users</NavLink>
                     </NavItem>
                 </>
@@ -60,7 +61,19 @@ export default function AppNavbar() {
                         <NavLink style={{ color: "white" }} tag={Link} to="/myPets">My Pets</NavLink>
                     </NavItem>
                     <NavItem>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/consultations">Consultations</NavLink>
+                    </NavItem>
+                    <NavItem>
                         <NavLink style={{ color: "white" }} tag={Link} to="/plan">Plan</NavLink>
+                    </NavItem>
+                </>
+            )
+        }
+        if (role === "VET") {
+            ownerLinks = (
+                <>
+                    <NavItem>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/consultations">Consultations</NavLink>
                     </NavItem>
                 </>
             )

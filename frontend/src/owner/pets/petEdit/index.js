@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Col, Container, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Row } from 'reactstrap';
 
-class PetOwnerEdit extends Component {
+class OwnerPetEdit extends Component {
 
     emptyItem = {
         id: null,
@@ -22,7 +22,6 @@ class PetOwnerEdit extends Component {
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleShow = this.handleShow.bind(this);
-        // this.handleTypeChange = this.handleTypeChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
 
@@ -61,19 +60,9 @@ class PetOwnerEdit extends Component {
         const value = target.value;
         const name = target.name;
         let pet = { ...this.state.pet };
-        if (name === "type") {
-            pet.type.id = Number(value);
-        }
-        if (name === "type") {
-            const types = { ...this.state.types }
-            let selectedType = null;
-            for (let i = 0; i < Object.keys(types).length; i++) {
-                if (types[i].name === value) selectedType = types[i];
-                if (!pet.type.name && types[i].name === "bird") selectedType = types[i];
-            }
-            pet["type"] = selectedType;
-        }
-        else pet[name] = value
+        if (name === "type")
+            pet.type = this.state.types.filter((type) => type.id === Number(value))[0];
+        else pet[name] = value;
         this.setState({ pet });
 
     }
@@ -181,4 +170,4 @@ class PetOwnerEdit extends Component {
 
     }
 }
-export default PetOwnerEdit;
+export default OwnerPetEdit;

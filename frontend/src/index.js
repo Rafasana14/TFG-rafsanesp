@@ -7,41 +7,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter } from 'react-router-dom';
 
 
-
-
-/* const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Home />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: "dashboard",
-        element: <Dashboard />,
-      },
-      {
-        path: "api/v1/owners",
-        element: <OwnerList />,
-      },
-      {
-        path: "api/v1/vets",
-        element: <VetList />,
-      },
-    ],
-  },
-   {
-    path: "dashboard",
-        element: <Dashboard />,
-  },
-]);
-
-ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
-); */
-
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>

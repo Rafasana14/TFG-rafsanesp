@@ -29,7 +29,6 @@ class TokenService {
     }
 
     setUser(user) {
-        console.log(JSON.stringify(user));
         window.localStorage.setItem("user", JSON.stringify(user));
     }
 

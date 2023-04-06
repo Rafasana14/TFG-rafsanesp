@@ -44,6 +44,15 @@ public class ExceptionHandlerController {
 
 		return new ResponseEntity<ErrorMessage>(message, HttpStatus.BAD_REQUEST);
 	}
+	
+	@ExceptionHandler(UpperPlanFeatureException.class)
+	@ResponseStatus(value = HttpStatus.BAD_REQUEST)
+	public ResponseEntity<ErrorMessage> upperPlanFeatureException(UpperPlanFeatureException ex, WebRequest request) {
+		ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST.value(), new Date(), ex.getMessage(),
+				request.getDescription(false));
+
+		return new ResponseEntity<ErrorMessage>(message, HttpStatus.BAD_REQUEST);
+	}
 
 	@ExceptionHandler(value = TokenRefreshException.class)
 	@ResponseStatus(HttpStatus.FORBIDDEN)

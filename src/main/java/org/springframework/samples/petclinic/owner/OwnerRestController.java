@@ -17,8 +17,6 @@ package org.springframework.samples.petclinic.owner;
 
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import javax.validation.Valid;
 
@@ -56,8 +54,7 @@ public class OwnerRestController {
 
 	@GetMapping
 	public List<Owner> findAll() {
-		return StreamSupport.stream(ownerService.findAll().spliterator(), false)
-				.collect(Collectors.toList());
+		return (List<Owner>) ownerService.findAll();
 	}
 	
 	@GetMapping(value = "{ownerId}")
