@@ -22,7 +22,7 @@ public class VisitValidator implements Validator {
 //		// description validation
 //		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "description.required", "Description must not be empty");
 
-		// birth date validation
+		// pet validation
 		if (visit.getPet() == null) {
 			errors.rejectValue("pet", REQUIRED, REQUIRED);
 		}

@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.LimitReachedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
 import org.springframework.samples.petclinic.owner.Owner;
@@ -78,7 +79,7 @@ public class PetRestController {
 		} else {
 			if(user.hasAnyAuthority("VET", "ADMIN")) return (List<Pet>) this.petService.findAll();
 		}
-		throw new RuntimeException("Access denied!");
+		throw new AccessDeniedException();
 	}
 
 	@PostMapping
@@ -97,8 +98,6 @@ public class PetRestController {
 			} else
 				throw new LimitReachedException("Pets", owner.getPlan());
 		} else {
-//			Owner owner = ownerService.findOwnerById(pet.getId());
-//			newPet.setOwner(owner);
 			savedPet = this.petService.savePet(newPet);
 		}
 
@@ -111,35 +110,37 @@ public class PetRestController {
 	public ResponseEntity<Pet> update(@PathVariable("petId") int petId, @RequestBody @Valid Pet pet) {
 		Pet aux = RestPreconditions.checkNotNull(petService.findPetById(petId), "Pet", "ID", petId);
 		User user = userService.findCurrentUser();
-		Boolean cond = false;
 		if (user.hasAuthority("OWNER")) {
 			Owner loggedOwner = ownerService.findOwnerByUser(user.getId());
 			Owner petOwner = aux.getOwner();
-			if (loggedOwner.getId().equals(petOwner.getId()))
-				cond = true;
+			if (loggedOwner.getId().equals(petOwner.getId())) {
+				Pet res = this.petService.updatePet(pet, petId);
+				return new ResponseEntity<Pet>(res, HttpStatus.OK);
+			}else
+				throw new ResourceNotOwnedException("Pet");
 		}
-		if (!user.hasAuthority("OWNER") || cond) {
+		else {
 			Pet res = this.petService.updatePet(pet, petId);
 			return new ResponseEntity<Pet>(res, HttpStatus.OK);
-		} else
-			throw new ResourceNotOwnedException(Pet.class.getName());
+		}
+			
 	}
 
 	@GetMapping("{petId}")
 	public ResponseEntity<Pet> findById(@PathVariable("petId") int petId) {
 		Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId), "Pet", "ID", petId);
 		User user = userService.findCurrentUser();
-		Boolean cond = false;
 		if (user.hasAuthority("OWNER")) {
 			Owner loggedOwner = ownerService.findOwnerByUser(user.getId());
 			Owner petOwner = pet.getOwner();
 			if (loggedOwner.getId().equals(petOwner.getId()))
-				cond = true;
+				return new ResponseEntity<Pet>(this.petService.findPetById(petId), HttpStatus.OK);
+			else
+				throw new ResourceNotOwnedException(Pet.class.getSimpleName());
 		}
-		if (!user.hasAuthority("OWNER") || cond) {
+		else {
 			return new ResponseEntity<Pet>(this.petService.findPetById(petId), HttpStatus.OK);
-		} else
-			throw new ResourceNotOwnedException(Pet.class.getSimpleName());
+		}
 	}
 
 	@DeleteMapping("{petId}")
@@ -147,18 +148,18 @@ public class PetRestController {
 	public ResponseEntity<MessageResponse> delete(@PathVariable("petId") int petId) {
 		Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId), "Pet", "ID", petId);
 		User user = userService.findCurrentUser();
-		Boolean cond = false;
 		if (user.hasAuthority("OWNER")) {
 			Owner loggedOwner = ownerService.findOwnerByUser(user.getId());
 			Owner petOwner = pet.getOwner();
-			if (loggedOwner.getId().equals(petOwner.getId()))
-				cond = true;
+			if (loggedOwner.getId().equals(petOwner.getId())) {
+				petService.deletePet(petId);
+				return new ResponseEntity<MessageResponse>(new MessageResponse("Pet deleted!"), HttpStatus.OK);
+			}else
+				throw new ResourceNotOwnedException("Pet");
 		}
-		if (user.hasAuthority("ADMIN") || cond) {
+		else{
 			petService.deletePet(petId);
 			return new ResponseEntity<MessageResponse>(new MessageResponse("Pet deleted!"), HttpStatus.OK);
-		} else {
-			throw new ResourceNotOwnedException(Pet.class.getName());
 		}
 	}
 
@@ -166,67 +167,4 @@ public class PetRestController {
 	public List<PetType> findAllTypes() {
 		return StreamSupport.stream(petService.findPetTypes().spliterator(), false).collect(Collectors.toList());
 	}
-
-	// Cambiar por QueryParam ownerId
-
-//	@GetMapping("/api/v1/owners/{ownerId}/pets")
-//	public List<Pet> findAllPetsOfOwner(@PathVariable("ownerId") int ownerId) {
-//		User user = userService.findCurrentUser();
-//		if (user.hasAuthority("ADMIN") || user.hasAuthority("VET")) {
-//			return petService.findAllPetsByOwnerId(ownerId);
-//		} else {
-//			Owner owner = ownerService.findOwnerByUser(user.getId());
-//			return petService.findAllPetsByOwnerId(owner.getId());
-//		}
-//	}
-//
-//	@PostMapping("/api/v1/owners/{ownerId}/pets")
-//	@ResponseStatus(HttpStatus.CREATED)
-//	public ResponseEntity<?> create(@RequestBody @Valid Pet pet, @PathVariable("ownerId") int ownerId)
-//			throws URISyntaxException, DataAccessException, DuplicatedPetNameException {
-//		User user = userService.findCurrentUser();
-//		Owner owner;
-//		Pet savedPet;
-//		if (user.hasAuthority("ADMIN")) {
-//			owner = ownerService.findOwnerById(ownerId);
-//			Pet newPet = new Pet();
-//			BeanUtils.copyProperties(pet, newPet, "id");
-//			newPet.setOwner(owner);
-//			savedPet = this.petService.savePet(newPet);
-//		} else {
-//			owner = ownerService.findOwnerByUser(user.getId());
-//			Pet newPet = new Pet();
-//			BeanUtils.copyProperties(pet, newPet, "id");
-//			newPet.setOwner(owner);
-//			savedPet = this.petService.savePet(newPet);
-//		}
-//		return ResponseEntity.created(new URI("/api/v1/owners/" + owner.getId() + "/pets/" + savedPet.getId()))
-//				.body(savedPet);
-////		 return new ResponseEntity<Pet>(savedPet,HttpStatus.CREATED);
-//	}
-//
-//	@PutMapping(value = "/api/v1/owners/{ownerId}/pets/{petId}")
-//	@ResponseStatus(HttpStatus.OK)
-//	public ResponseEntity<?> update(@PathVariable("petId") int petId, @PathVariable("ownerId") int ownerId,
-//			@RequestBody @Valid Pet pet) {
-//		User user = userService.findCurrentUser();
-//		if (user.getAuthority().getAuthority().equals("ADMIN")) {
-//			return new ResponseEntity<Pet>(this.petService.updatePet(pet, petId), HttpStatus.OK);
-//		} else
-//			throw new ResourceNotOwnedException(pet.getClass().getName());
-//
-//	}
-//
-//	@DeleteMapping(value = "/api/v1/owners/{ownerId}/pets/{petId}")
-//	@ResponseStatus(HttpStatus.OK)
-//	public ResponseEntity<MessageResponse> delete(@PathVariable("petId") int id, @PathVariable("ownerId") int ownerId) {
-//		Pet pet = RestPreconditions.checkNotNull(petService.findPetById(id), "Pet", "ID", id);
-//		User user = userService.findCurrentUser();
-//		if (user.hasAuthority("ADMIN") || ownerService.findOwnerByUser(user.getId()).getId() == ownerId) {
-//			petService.deletePet(id);
-//			return new ResponseEntity<MessageResponse>(new MessageResponse("Pet deleted!"), HttpStatus.BAD_REQUEST);
-//		} else
-//			throw new ResourceNotOwnedException(pet.getClass().getName());
-//	}
-
 }

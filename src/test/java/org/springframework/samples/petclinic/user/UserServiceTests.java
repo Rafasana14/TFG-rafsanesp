@@ -66,10 +66,35 @@ class UserServiceTests {
 	void shouldFindUserByUsername() {
 		User user = this.userService.findUser("owner1");
 		assertEquals("owner1", user.getUsername());
-
+	}
+	
+	@Test
+	void shouldNotFindUserByIncorrectUsername() {
 		assertThrows(ResourceNotFoundException.class, () -> this.userService.findUser("usernotexists"));
 	}
 
+	@Test
+	void shouldFindSingleOwnerByUsername() {
+		Owner owner = this.userService.findOwnerByUser("owner1");
+		assertEquals("owner1", owner.getUser().getUsername());
+	}
+
+	@Test
+	void shouldNotFindSingleOwnerWithBadUsername() {
+		assertThrows(ResourceNotFoundException.class, () -> this.userService.findOwnerByUser("badusername"));
+	}
+	
+	@Test
+	void shouldFindSingleOwnerByUserId() {
+		Owner owner= this.userService.findOwnerByUser(2);
+		assertEquals("owner1", owner.getUser().getUsername());
+	}
+
+	@Test
+	void shouldNotFindSingleUserOwnerWithBadUserId() {
+		assertThrows(ResourceNotFoundException.class, () -> this.userService.findOwnerByUser(100));
+	}
+	
 	@Test
 	void shouldFindSingleUser() {
 		User user = this.userService.findUser(2);

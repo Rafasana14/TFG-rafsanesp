@@ -58,8 +58,6 @@ class UserRestController {
 					.filter(user -> user.getAuthority().getAuthority().equals(auth)).collect(Collectors.toList());
 		} else
 			return (List<User>) userService.findAll();
-//			return StreamSupport.stream(userService.findAll().spliterator(), false)
-//				.collect(Collectors.toList());
 	}
 
 	@GetMapping("authorities")

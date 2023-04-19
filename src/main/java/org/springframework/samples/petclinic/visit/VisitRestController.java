@@ -17,8 +17,6 @@ package org.springframework.samples.petclinic.visit;
 
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import javax.validation.Valid;
 
@@ -26,6 +24,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.LimitReachedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
 import org.springframework.samples.petclinic.owner.Owner;
@@ -76,16 +75,15 @@ public class VisitRestController {
 		Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId), "Pet", "ID", petId);
 		User user = userService.findCurrentUser();
 		if (user.hasAnyAuthority("ADMIN", "VET")) {
-			List<Visit> res = StreamSupport.stream(visitService.findVisitsByPetId(petId).spliterator(), false)
-					.collect(Collectors.toList());
+			List<Visit> res = (List<Visit>) visitService.findVisitsByPetId(petId);
 			return new ResponseEntity<List<Visit>>(res, HttpStatus.OK);
 		} else {
 			Owner owner = ownerService.findOwnerByUser(user.getId());
 			if (owner.getId().equals(pet.getOwner().getId())) {
-				List<Visit> res = StreamSupport.stream(visitService.findVisitsByPetId(petId).spliterator(), false)
-						.collect(Collectors.toList());
+				List<Visit> res = (List<Visit>) visitService.findVisitsByPetId(petId);
 				return new ResponseEntity<List<Visit>>(res, HttpStatus.OK);
-			}else throw new ResourceNotOwnedException(Pet.class.getName());
+			} else
+				throw new ResourceNotOwnedException("Pet");
 		}
 	}
 
@@ -98,19 +96,21 @@ public class VisitRestController {
 		Visit newVisit = new Visit();
 		Visit savedVisit;
 		BeanUtils.copyProperties(visit, newVisit, "id");
-		visit.setPet(pet);
+		newVisit.setPet(pet);
 		if (user.hasAuthority("OWNER")) {
-			Owner owner = pet.getOwner();
-			if (this.visitService.underLimit(visit)) {
-				savedVisit = this.visitService.saveVisit(newVisit);
+			Owner owner = ownerService.findOwnerByUser(user.getId());
+			if (owner.getId().equals(pet.getOwner().getId())) {
+				if (this.visitService.underLimit(newVisit)) {
+					savedVisit = this.visitService.saveVisit(newVisit);
+				} else
+					throw new LimitReachedException("Visits per month for your Pet " + pet.getName(), owner.getPlan());
 			} else
-				throw new LimitReachedException("Visits per month for your Pet " + pet.getName(), owner.getPlan());
+				throw new ResourceNotOwnedException("Pet");
 		} else
 			savedVisit = this.visitService.saveVisit(newVisit);
 
-//			return ResponseEntity.created(new URI("/api/v1/pets/" + petId + "/visits/" + savedVisit.getId()))
-//					.body(savedVisit);
 		return new ResponseEntity<Visit>(savedVisit, HttpStatus.CREATED);
+
 	}
 
 	@PutMapping("/api/v1/pets/{petId}/visits/{visitId}")
@@ -118,8 +118,16 @@ public class VisitRestController {
 	public ResponseEntity<Visit> update(@PathVariable("petId") int petId, @PathVariable("visitId") int visitId,
 			@RequestBody @Valid Visit visit) {
 		RestPreconditions.checkNotNull(visitService.findVisitById(visitId), "Visit", "ID", visitId);
-		RestPreconditions.checkNotNull(petService.findPetById(petId), "Pet", "ID", petId);
-		return new ResponseEntity<Visit>(this.visitService.updateVisit(visit, visitId), HttpStatus.OK);
+		Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId), "Pet", "ID", petId);
+		User user = userService.findCurrentUser();
+		if (user.hasAuthority("OWNER")) {
+			Owner owner = ownerService.findOwnerByUser(user.getId());
+			if (owner.getId().equals(pet.getOwner().getId())) {
+				return new ResponseEntity<Visit>(this.visitService.updateVisit(visit, visitId), HttpStatus.OK);
+			} else
+				throw new ResourceNotOwnedException("Pet");
+		} else
+			return new ResponseEntity<Visit>(this.visitService.updateVisit(visit, visitId), HttpStatus.OK);
 	}
 
 	@GetMapping("/api/v1/pets/{petId}/visits/{visitId}")
@@ -127,14 +135,14 @@ public class VisitRestController {
 		RestPreconditions.checkNotNull(visitService.findVisitById(visitId), "Visit", "ID", visitId);
 		Visit visit = visitService.findVisitById(visitId);
 		User user = userService.findCurrentUser();
-		if (user.hasAnyAuthority("ADMIN", "VET")){
+		if (user.hasAnyAuthority("ADMIN", "VET")) {
 			return new ResponseEntity<Visit>(visit, HttpStatus.OK);
 		} else {
 			Owner owner = ownerService.findOwnerByUser(user.getId());
 			if (owner.getId() == visit.getPet().getOwner().getId())
 				return new ResponseEntity<Visit>(visit, HttpStatus.OK);
 			else
-				throw new ResourceNotOwnedException(Visit.class.getSimpleName());
+				throw new ResourceNotOwnedException("Pet");
 		}
 	}
 
@@ -145,12 +153,17 @@ public class VisitRestController {
 		Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId), "Pet", "ID", petId);
 		RestPreconditions.checkNotNull(visitService.findVisitById(visitId), "Visit", "ID", visitId);
 		User user = userService.findCurrentUser();
-		if (user.hasAuthority("ADMIN")
-				|| ownerService.findOwnerByUser(user.getId()).getId() == pet.getOwner().getId()) {
+		if (user.hasAnyAuthority("ADMIN", "Vet")) {
 			visitService.deleteVisit(visitId);
 			return new ResponseEntity<MessageResponse>(new MessageResponse("Visit deleted!"), HttpStatus.OK);
-		} else
-			throw new ResourceNotOwnedException(Visit.class.getSimpleName());
+		} else {
+			Owner owner = ownerService.findOwnerByUser(user.getId());
+			if (owner.getId() == pet.getOwner().getId()) {
+				visitService.deleteVisit(visitId);
+				return new ResponseEntity<MessageResponse>(new MessageResponse("Visit deleted!"), HttpStatus.OK);
+			} else
+				throw new ResourceNotOwnedException("Pet");
+		}
 	}
 
 	@GetMapping("/api/v1/visits")
@@ -159,23 +172,20 @@ public class VisitRestController {
 		if (ownerId != null) {
 			RestPreconditions.checkNotNull(ownerService.findOwnerById(ownerId), "Owner", "ID", ownerId);
 			if (user.hasAnyAuthority("ADMIN", "VET")) {
-				List<Visit> res = StreamSupport.stream(visitService.findVisitsByOwnerId(ownerId).spliterator(), false)
-						.collect(Collectors.toList());
+				List<Visit> res = (List<Visit>) visitService.findVisitsByOwnerId(ownerId);
 				return new ResponseEntity<List<Visit>>(res, HttpStatus.OK);
 			} else {
-				return new ResponseEntity<MessageResponse>(new MessageResponse("You can only see your own visits!"),
-						HttpStatus.OK);
+//				return new ResponseEntity<MessageResponse>(new MessageResponse("You can only see your own visits!"),
+//						HttpStatus.OK);
+				throw new AccessDeniedException();
 			}
 		} else {
 			if (user.hasAuthority("OWNER")) {
 				Owner logged = ownerService.findOwnerByUser(user.getId());
-				List<Visit> res = StreamSupport
-						.stream(visitService.findVisitsByOwnerId(logged.getId()).spliterator(), false)
-						.collect(Collectors.toList());
+				List<Visit> res = (List<Visit>) visitService.findVisitsByOwnerId(logged.getId());
 				return new ResponseEntity<List<Visit>>(res, HttpStatus.OK);
 			} else {
-				List<Visit> res = StreamSupport.stream(visitService.findAll().spliterator(), false)
-						.collect(Collectors.toList());
+				List<Visit> res = (List<Visit>) visitService.findAll();
 				return new ResponseEntity<List<Visit>>(res, HttpStatus.OK);
 			}
 

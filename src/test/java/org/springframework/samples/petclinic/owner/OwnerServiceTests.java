@@ -88,6 +88,10 @@ class OwnerServiceTests {
 	void shouldFindOwnerByUser() {
 		Owner owner = this.ownerService.findOwnerByUser(2);
 		assertEquals("Franklin", owner.getLastName());
+	}
+	
+	@Test
+	void shouldNotFindOwnerByIncorrectUser() {
 		assertThrows(ResourceNotFoundException.class, () -> this.ownerService.findOwnerByUser(34));
 	}
 
@@ -95,6 +99,10 @@ class OwnerServiceTests {
 	void shouldFindOptOwnerByUser() {
 		Optional<Owner> owner = this.ownerService.optFindOwnerByUser(2);
 		assertEquals("Franklin", owner.get().getLastName());
+	}
+	
+	@Test
+	void shouldNotFindOptOwnerByIncorrectUser() {
 		assertThat(this.ownerService.optFindOwnerByUser(25)).isEmpty();
 	}
 
@@ -102,9 +110,9 @@ class OwnerServiceTests {
 	@Transactional
 	void shouldUpdatePlan() {
 		Owner owner = this.ownerService.findOwnerById(1);
-		assertEquals(PricingPlan.BASIC, owner.getPlan());
-		ownerService.updatePlan(PricingPlan.PLATINUM, 1);
 		assertEquals(PricingPlan.PLATINUM, owner.getPlan());
+		ownerService.updatePlan(PricingPlan.GOLD, 1);
+		assertEquals(PricingPlan.GOLD, owner.getPlan());
 	}
 
 	@Test

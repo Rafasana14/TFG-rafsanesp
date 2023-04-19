@@ -116,7 +116,7 @@ public class PetService {
 		Integer petCount = this.petRepository.countPetsByOwner(owner.getId());
 		PricingPlan plan = owner.getPlan();
 		switch (plan) {
-		case BASIC:
+		default:
 			if (petCount < BASIC_LIMIT)
 				return true;
 			break;

@@ -11,8 +11,8 @@ public interface ConsultationRepository extends CrudRepository<Consultation, Int
 	@Query("SELECT c FROM Consultation c WHERE c.owner.id = :ownerId ORDER BY c.creationDate DESC")
 	public List<Consultation> findConsultationsByOwner(@Param("ownerId") int ownerId);
 
-	@Query("SELECT c FROM Consultation c JOIN Ticket t WHERE t.consultation.id = c.id AND t.user.id = :userId ORDER BY c.creationDate DESC")
-	public List<Consultation> findConsultationsByUser(@Param("userId") int userId);
+//	@Query("SELECT c FROM Consultation c JOIN Ticket t WHERE t.consultation.id = c.id AND t.user.id = :userId ORDER BY c.creationDate DESC")
+//	public List<Consultation> findConsultationsByUser(@Param("userId") int userId);
 
 	public Iterable<Consultation> findAllByOrderByCreationDateDesc();
 
