@@ -70,7 +70,7 @@ public class VisitService {
 				visit.getDatetime().getMonthValue(), visit.getDatetime().getYear());
 		PricingPlan plan = visit.getPet().getOwner().getPlan();
 		switch (plan) {
-		case BASIC:
+		default:
 			if (petCount < BASIC_LIMIT)
 				return true;
 			break;

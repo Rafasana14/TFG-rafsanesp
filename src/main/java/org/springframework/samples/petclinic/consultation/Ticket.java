@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "consultation_ticket")
+@Table(name = "consultation_tickets")
 @Getter
 @Setter
 public class Ticket extends BaseEntity {

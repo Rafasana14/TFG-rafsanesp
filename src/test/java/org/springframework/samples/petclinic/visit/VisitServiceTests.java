@@ -75,7 +75,7 @@ public class VisitServiceTests {
 	}
 
 	@Test
-	void shouldNotFindVisitWithInorrectId() {
+	void shouldNotFindVisitWithIncorrectId() {
 		assertThrows(ResourceNotFoundException.class, () -> this.visitService.findVisitById(700));
 	}
 
@@ -91,7 +91,7 @@ public class VisitServiceTests {
 
 	@Test
 	@Transactional
-	void shouldInsertOwner() {
+	void shouldInsertVisit() {
 		int initialCount = ((Collection<Visit>) this.visitService.findAll()).size();
 
 		Visit visit = new Visit();
@@ -128,10 +128,10 @@ public class VisitServiceTests {
 
 	@Test
 	void shouldCheckLimitForBasic() {
-		Visit v = createVisit(1);
+		Visit v = createVisit(5); // pet of Owner4 BASIC
 		assertEquals(true, this.visitService.underLimit(v));
 		this.visitService.saveVisit(v);
-		v = createVisit(1);
+		v = createVisit(5);
 		assertEquals(false, this.visitService.underLimit(v));
 	}
 

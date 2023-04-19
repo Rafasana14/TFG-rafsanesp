@@ -73,6 +73,22 @@ class PetServiceTests {
 		Pet pet4 = EntityUtils.getById(pets, Pet.class, 4);
 		assertEquals("Jewel", pet4.getName());
 	}
+	
+	@Test
+	void shouldFindAllPetsByUserId() {
+		Collection<Pet> pets = this.petService.findAllPetsByUserId(2);
+
+		Pet pet1 = EntityUtils.getById(pets, Pet.class, 1);
+		assertEquals("Leo", pet1.getName());
+	}
+	
+	@Test
+	void shouldFindAllPetsByOwnerId() {
+		Collection<Pet> pets = this.petService.findAllPetsByOwnerId(1);
+
+		Pet pet1 = EntityUtils.getById(pets, Pet.class, 1);
+		assertEquals("Leo", pet1.getName());
+	}
 
 	@Test
 	void shouldFindAllPetTypes() {
@@ -177,7 +193,7 @@ class PetServiceTests {
 
 	@Test
 	void shouldCheckLimitForBasic() {
-		Owner owner = this.ownerService.findOwnerById(1);
+		Owner owner = this.ownerService.findOwnerById(4);
 		assertEquals(true, this.petService.underLimit(owner));
 		createPet("wario", owner);
 		assertEquals(false, this.petService.underLimit(owner));

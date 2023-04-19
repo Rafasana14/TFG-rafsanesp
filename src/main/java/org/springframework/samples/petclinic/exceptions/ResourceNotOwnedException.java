@@ -11,7 +11,7 @@ public class ResourceNotOwnedException extends RuntimeException {
 
 	private static final long serialVersionUID = -3906338266891937036L;
 
-	private String resourceName;
+//	private String resourceName;
 
 //	public ResourceNotOwnedException(String resourceName) {
 //		super(String.format("You can't create or change %s for another person.", resourceName));
@@ -19,19 +19,8 @@ public class ResourceNotOwnedException extends RuntimeException {
 //
 //	}
 
-	public ResourceNotOwnedException() {
-		super();
-	}
-
-	public ResourceNotOwnedException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
-
 	public ResourceNotOwnedException(final String classname) {
-		super(String.format("You can't create or change %s for another person.", classname));
+		super(String.format("%s not owned.", classname));
 	}
 
-	public ResourceNotOwnedException(final Throwable cause) {
-		super(cause);
-	}
 }

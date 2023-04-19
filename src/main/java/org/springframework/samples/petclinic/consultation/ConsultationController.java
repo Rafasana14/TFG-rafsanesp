@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
 import org.springframework.samples.petclinic.exceptions.UpperPlanFeatureException;
 import org.springframework.samples.petclinic.owner.Owner;
@@ -34,7 +35,6 @@ public class ConsultationController {
 
 	private final ConsultationService consultationService;
 	private final UserService userService;
-	private final String ACCESS_DENIED = "Access denied!";
 	private final String OWNER = "OWNER";
 
 	@Autowired
@@ -65,7 +65,7 @@ public class ConsultationController {
 			if (cons.getOwner().getId().equals(owner.getId()))
 				return new ResponseEntity<Consultation>(cons, HttpStatus.OK);
 		}
-		throw new RuntimeException(ACCESS_DENIED);
+		throw new AccessDeniedException();
 	}
 
 	@PostMapping()
@@ -130,7 +130,7 @@ public class ConsultationController {
 			if (cons.getOwner().getId().equals(owner.getId()))
 				return (List<Ticket>) consultationService.findAllTicketsByConsultation(id);
 			else
-				throw new RuntimeException(ACCESS_DENIED);
+				throw new AccessDeniedException();
 		} else {
 			return (List<Ticket>) consultationService.findAllTicketsByConsultation(id);
 		}
@@ -147,7 +147,7 @@ public class ConsultationController {
 			if (cons.getOwner().getId().equals(owner.getId()))
 				return new ResponseEntity<Ticket>(ticket, HttpStatus.OK);
 			else
-				throw new RuntimeException(ACCESS_DENIED);
+				throw new AccessDeniedException();
 		} else {
 			return new ResponseEntity<Ticket>(ticket, HttpStatus.OK);
 		}
@@ -173,7 +173,7 @@ public class ConsultationController {
 					savedTicket = this.consultationService.saveTicket(newTicket);
 
 				} else
-					throw new RuntimeException(ACCESS_DENIED);
+					throw new AccessDeniedException();
 			} else
 				throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getPlan());
 		} else {

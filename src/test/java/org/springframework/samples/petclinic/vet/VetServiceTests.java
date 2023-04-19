@@ -70,6 +70,10 @@ class VetServiceTests {
 	void shouldFindVetByUser() {
 		Vet vet = this.vetService.findVetByUser(12);
 		assertThat(vet.getLastName()).startsWith("Carter");
+	}
+	
+	@Test
+	void shouldNotFindVetByIncorrectUser() {
 		assertThrows(ResourceNotFoundException.class, () -> this.vetService.findVetByUser(34));
 	}
 
@@ -77,6 +81,10 @@ class VetServiceTests {
 	void shouldFindOptVetByUser() {
 		Optional<Vet> vet = this.vetService.optFindVetByUser(12);
 		assertThat(vet.get().getLastName()).startsWith("Carter");
+	}
+	
+	@Test
+	void shouldNotFindOptVetByIncorrectUser() {
 		assertThat(this.vetService.optFindVetByUser(25)).isEmpty();
 	}
 

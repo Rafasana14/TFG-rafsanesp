@@ -25,7 +25,6 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.core.style.ToStringCreator;
 import org.springframework.samples.petclinic.model.Person;
 import org.springframework.samples.petclinic.user.User;
 
@@ -61,22 +60,25 @@ public class Owner extends Person {
 	
 	@NotNull
 	private PricingPlan plan;
-
-//	@OneToMany(cascade = CascadeType.ALL)
-//	//@JoinColumn(name="owner_id")
-//	private Set<Pet> pets;
 	
 	@OneToOne(cascade = {CascadeType.DETACH,CascadeType.REFRESH,CascadeType.PERSIST})
     @JoinColumn(name = "user", referencedColumnName = "id")
 	private User user;
 
-	@Override
-	public String toString() {
-		return new ToStringCreator(this)
+//	@Override
+//	public String toString() {
+//		return "Owner [address=" + address + ", city=" + city + ", telephone=" + telephone + ", plan=" + plan
+//				+ ", user=" + user + "]";
+//	}
 
-				.append("id", this.getId()).append("new", this.isNew()).append("lastName", this.getLastName())
-				.append("firstName", this.getFirstName()).append("address", this.address).append("city", this.city)
-				.append("telephone", this.telephone).toString();
-	}
+//	@Override
+//	public String toString() {
+//		return new ToStringCreator(this)
+//
+//				.append("id", this.getId()).append("new", this.isNew()).append("lastName", this.getLastName())
+//				.append("firstName", this.getFirstName()).append("address", this.address).append("city", this.city)
+//				.append("telephone", this.telephone).toString();
+//	}
+	
 
 }

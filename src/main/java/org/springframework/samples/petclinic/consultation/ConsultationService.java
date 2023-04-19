@@ -37,29 +37,19 @@ public class ConsultationService {
 	}
 
 	@Transactional(readOnly = true)
-	public Iterable<Ticket> findAllTicketsByConsultation(int consultationId) throws DataAccessException {
-		return ticketRepository.findTicketsByConsultation(consultationId);
-	}
-
-	@Transactional(readOnly = true)
 	public Iterable<Consultation> findAllConsultationsByOwner(int ownerId) throws DataAccessException {
 		return consultationRepository.findConsultationsByOwner(ownerId);
 	}
 
-	@Transactional(readOnly = true)
-	public Iterable<Consultation> findAllConsultationsByUser(int userId) throws DataAccessException {
-		return consultationRepository.findConsultationsByUser(userId);
-	}
+//	@Transactional(readOnly = true)
+//	public Iterable<Consultation> findAllConsultationsByUser(int userId) throws DataAccessException {
+//		return consultationRepository.findConsultationsByUser(userId);
+//	}
 
 	@Transactional(readOnly = true)
 	public Consultation findConsultationById(int id) throws DataAccessException {
 		return this.consultationRepository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("Consultation", "ID", id));
-	}
-
-	@Transactional(readOnly = true)
-	public Ticket findTicketById(int id) throws DataAccessException {
-		return this.ticketRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Ticket", "ID", id));
 	}
 
 	@Transactional
@@ -81,6 +71,16 @@ public class ConsultationService {
 		for (Ticket ticket : findAllTicketsByConsultation(id))
 			deleteTicket(ticket.getId());
 		this.consultationRepository.delete(toDelete);
+	}
+	
+	@Transactional(readOnly = true)
+	public Iterable<Ticket> findAllTicketsByConsultation(int consultationId) throws DataAccessException {
+		return ticketRepository.findTicketsByConsultation(consultationId);
+	}
+	
+	@Transactional(readOnly = true)
+	public Ticket findTicketById(int id) throws DataAccessException {
+		return this.ticketRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Ticket", "ID", id));
 	}
 
 	@Transactional

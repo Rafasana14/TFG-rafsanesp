@@ -35,8 +35,6 @@ public class SpecialtyRestController {
 	
 	@GetMapping
 	public List<Specialty> findAll() {
-		System.out.println(StreamSupport.stream(vetService.findSpecialties().spliterator(), false)
-				.collect(Collectors.toList()));
 		return StreamSupport.stream(vetService.findSpecialties().spliterator(), false)
 				.collect(Collectors.toList());
 	}

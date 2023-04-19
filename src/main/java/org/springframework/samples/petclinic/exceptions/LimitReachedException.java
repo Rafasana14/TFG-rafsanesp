@@ -23,19 +23,4 @@ public class LimitReachedException extends RuntimeException {
 		this.plan = plan;
 	}
 
-	public LimitReachedException() {
-		super();
-	}
-
-	public LimitReachedException(final String message, final Throwable cause) {
-		super(message, cause);
-	}
-
-	public LimitReachedException(final String message) {
-		super(message);
-	}
-
-	public LimitReachedException(final Throwable cause) {
-		super(cause);
-	}
 }
