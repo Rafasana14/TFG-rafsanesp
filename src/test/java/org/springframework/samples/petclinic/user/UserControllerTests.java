@@ -125,7 +125,7 @@ class UserControllerTests {
 		juan.setUsername("Juan");
 		juan.setAuthority(auth);
 
-		when(this.userService.findAll()).thenReturn(List.of(user, sara, juan));
+		when(this.userService.findAllByAuthority(auth.getAuthority())).thenReturn(List.of(user, juan));
 
 		mockMvc.perform(get(BASE_URL).param("auth", "VET")).andExpect(status().isOk())
 				.andExpect(jsonPath("$.size()").value(2)).andExpect(jsonPath("$[?(@.id == 1)].username").value("user"))

@@ -18,7 +18,7 @@ public class VisitService {
 	private final Integer PLATINUM_LIMIT = 6;
 
 	private final VisitRepository visitRepository;
-	
+
 	@Autowired
 	public VisitService(VisitRepository visitRepository) {
 		this.visitRepository = visitRepository;
@@ -70,18 +70,19 @@ public class VisitService {
 				visit.getDatetime().getMonthValue(), visit.getDatetime().getYear());
 		PricingPlan plan = visit.getPet().getOwner().getPlan();
 		switch (plan) {
-		default:
-			if (petCount < BASIC_LIMIT)
+		case PLATINUM:
+			if (petCount < PLATINUM_LIMIT)
 				return true;
 			break;
 		case GOLD:
 			if (petCount < GOLD_LIMIT)
 				return true;
 			break;
-		case PLATINUM:
-			if (petCount < PLATINUM_LIMIT)
+		default:
+			if (petCount < BASIC_LIMIT)
 				return true;
 			break;
+
 		}
 		return false;
 	}

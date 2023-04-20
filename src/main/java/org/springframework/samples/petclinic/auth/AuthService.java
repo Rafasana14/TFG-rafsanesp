@@ -82,36 +82,6 @@ public class AuthService {
 			ownerService.saveOwner(owner);
 
 		}
-
-		// SI EN ALGÚN MOMENTO QUIERO MULTIPLES ROLES
-		// Set<String> strRoles = signUpRequest.getRole();
-		// Set<Authorities> roles = new HashSet<>();
-		//
-		// if (strRoles == null) {
-		// Authorities userRole = authoritiesService.findByAuthority(Role.USER);
-		// roles.add(userRole);
-		// } else {
-		// strRoles.forEach(role -> {
-		// switch (role) {
-		// case "admin":
-		// Authorities adminRole = authoritiesService.findByAuthority(Role.ADMIN);
-		// roles.add(adminRole);
-		//
-		// break;
-		// case "mod":
-		// Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
-		// .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-		// roles.add(modRole);
-		//
-		// break;
-		// default:
-		// Authorities userRole = authoritiesService.findByAuthority(Role.USER);
-		// roles.add(userRole);
-		// }
-		// });
-		// }
-
-		// user.setRoles(roles);
 	}
 
 }

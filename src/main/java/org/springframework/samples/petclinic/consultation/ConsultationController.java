@@ -35,7 +35,7 @@ public class ConsultationController {
 
 	private final ConsultationService consultationService;
 	private final UserService userService;
-	private final String OWNER = "OWNER";
+	private static final String OWNER = "OWNER";
 
 	@Autowired
 	public ConsultationController(ConsultationService consultationService, UserService userService) {
@@ -44,26 +44,28 @@ public class ConsultationController {
 	}
 
 	@GetMapping
-	public List<Consultation> findAllConsultations() {
+	public ResponseEntity<List<Consultation>> findAllConsultations() {
 		User user = userService.findCurrentUser();
-		if (user.hasAnyAuthority("VET", "ADMIN")) {
-			return (List<Consultation>) consultationService.findAll();
+		List<Consultation> res;
+		if (user.hasAnyAuthority("VET", "ADMIN").equals(true)) {
+			res = (List<Consultation>) consultationService.findAll();
 		} else {
 			Owner owner = userService.findOwnerByUser(user.getId());
-			return (List<Consultation>) consultationService.findAllConsultationsByOwner(owner.getId());
+			res = (List<Consultation>) consultationService.findAllConsultationsByOwner(owner.getId());
 		}
+		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "{consultationId}")
 	public ResponseEntity<Consultation> findConsultationById(@PathVariable("consultationId") int id) {
 		User user = userService.findCurrentUser();
 		Consultation cons = this.consultationService.findConsultationById(id);
-		if (user.hasAnyAuthority("ADMIN", "VET"))
+		if (user.hasAnyAuthority("ADMIN", "VET").equals(true))
 			return new ResponseEntity<Consultation>(cons, HttpStatus.OK);
 		else {
 			Owner owner = userService.findOwnerByUser(user.getId());
 			if (cons.getOwner().getId().equals(owner.getId()))
-				return new ResponseEntity<Consultation>(cons, HttpStatus.OK);
+				return new ResponseEntity<>(cons, HttpStatus.OK);
 		}
 		throw new AccessDeniedException();
 	}
@@ -76,7 +78,7 @@ public class ConsultationController {
 		Consultation newConsultation = new Consultation();
 		Consultation savedConsultation;
 		BeanUtils.copyProperties(consultation, newConsultation, "id");
-		if (user.hasAuthority(OWNER)) {
+		if (user.hasAuthority(OWNER).equals(true)) {
 			Owner owner = userService.findOwnerByUser(user.getUsername());
 			if (owner.getPlan().equals(PricingPlan.PLATINUM)) {
 				newConsultation.setOwner(owner);
@@ -88,8 +90,7 @@ public class ConsultationController {
 			savedConsultation = this.consultationService.saveConsultation(newConsultation);
 		}
 
-//		return ResponseEntity.created(new URI("/api/v1/pets/" + savedPet.getId())).body(savedPet);
-		return new ResponseEntity<Consultation>(savedConsultation, HttpStatus.CREATED);
+		return new ResponseEntity<>(savedConsultation, HttpStatus.CREATED);
 	}
 
 	@PutMapping(value = "{consultationId}")
@@ -98,19 +99,19 @@ public class ConsultationController {
 			@RequestBody @Valid Consultation consultation) {
 		Consultation aux = consultationService.findConsultationById(consultationId);
 		User user = userService.findCurrentUser();
-		if (user.hasAuthority(OWNER)) {
+		if (user.hasAuthority(OWNER).equals(true)) {
 			Owner owner = userService.findOwnerByUser(user.getUsername());
 			if (owner.getPlan().equals(PricingPlan.PLATINUM)) {
 				if (owner.getId().equals(aux.getOwner().getId()))
-					return new ResponseEntity<Consultation>(
+					return new ResponseEntity<>(
 							this.consultationService.updateConsultation(consultation, consultationId), HttpStatus.OK);
 				else
-					throw new ResourceNotOwnedException("Consultation");
+					throw new ResourceNotOwnedException(aux);
 			} else
 				throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getPlan());
 		} else {
-			return new ResponseEntity<Consultation>(
-					this.consultationService.updateConsultation(consultation, consultationId), HttpStatus.OK);
+			return new ResponseEntity<>(this.consultationService.updateConsultation(consultation, consultationId),
+					HttpStatus.OK);
 		}
 	}
 
@@ -118,22 +119,24 @@ public class ConsultationController {
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<MessageResponse> deleteConsultation(@PathVariable("consultationId") int id) {
 		consultationService.deleteConsultation(id);
-		return new ResponseEntity<MessageResponse>(new MessageResponse("Consultation deleted!"), HttpStatus.OK);
+		return new ResponseEntity<>(new MessageResponse("Consultation deleted!"), HttpStatus.OK);
 	}
 
 	@GetMapping(value = "{consultationId}/tickets")
-	public List<Ticket> findAllTicketsByConsultation(@PathVariable("consultationId") int id) {
+	public ResponseEntity<List<Ticket>> findAllTicketsByConsultation(@PathVariable("consultationId") int id) {
 		Consultation cons = consultationService.findConsultationById(id);
 		User user = userService.findCurrentUser();
-		if (user.hasAuthority(OWNER)) {
+		List<Ticket> res;
+		if (user.hasAuthority(OWNER).equals(true)) {
 			Owner owner = userService.findOwnerByUser(user.getId());
 			if (cons.getOwner().getId().equals(owner.getId()))
-				return (List<Ticket>) consultationService.findAllTicketsByConsultation(id);
+				res = (List<Ticket>) consultationService.findAllTicketsByConsultation(id);
 			else
 				throw new AccessDeniedException();
 		} else {
-			return (List<Ticket>) consultationService.findAllTicketsByConsultation(id);
+			res = (List<Ticket>) consultationService.findAllTicketsByConsultation(id);
 		}
+		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "{consultationId}/tickets/{ticketId}")
@@ -142,14 +145,15 @@ public class ConsultationController {
 		Consultation cons = consultationService.findConsultationById(consultationId);
 		User user = userService.findCurrentUser();
 		Ticket ticket = this.consultationService.findTicketById(ticketId);
-		if (user.hasAuthority(OWNER)) {
+		this.consultationService.checkIfTicketInConsultation(cons, ticket);
+		if (user.hasAuthority(OWNER).equals(true)) {
 			Owner owner = userService.findOwnerByUser(user.getId());
 			if (cons.getOwner().getId().equals(owner.getId()))
-				return new ResponseEntity<Ticket>(ticket, HttpStatus.OK);
+				return new ResponseEntity<>(ticket, HttpStatus.OK);
 			else
 				throw new AccessDeniedException();
 		} else {
-			return new ResponseEntity<Ticket>(ticket, HttpStatus.OK);
+			return new ResponseEntity<>(ticket, HttpStatus.OK);
 		}
 	}
 
@@ -162,7 +166,7 @@ public class ConsultationController {
 		Ticket newTicket = new Ticket();
 		Ticket savedTicket;
 		BeanUtils.copyProperties(ticket, newTicket, "id");
-		if (user.hasAuthority(OWNER)) {
+		if (user.hasAuthority(OWNER).equals(true)) {
 			Owner owner = userService.findOwnerByUser(user.getUsername());
 			if (owner.getPlan().equals(PricingPlan.PLATINUM)) {
 				if (owner.getId().equals(cons.getOwner().getId())) {
@@ -184,9 +188,7 @@ public class ConsultationController {
 			savedTicket = this.consultationService.saveTicket(newTicket);
 		}
 
-		// return ResponseEntity.created(new URI("/api/v1/pets/" +
-		// savedPet.getId())).body(savedPet);
-		return new ResponseEntity<Ticket>(savedTicket, HttpStatus.CREATED);
+		return new ResponseEntity<>(savedTicket, HttpStatus.CREATED);
 	}
 
 	@PutMapping(value = "{consultationId}/tickets/{ticketId}")
@@ -195,15 +197,16 @@ public class ConsultationController {
 			@PathVariable("ticketId") int ticketId, @RequestBody @Valid Ticket ticket) {
 		Consultation consultation = consultationService.findConsultationById(consultationId);
 		Ticket aux = consultationService.findTicketById(ticketId);
+		this.consultationService.checkIfTicketInConsultation(consultation, aux);
 		this.consultationService.checkLastTicketAndStatus(consultation, aux);
 		User user = userService.findCurrentUser();
-		if (user.hasAuthority(OWNER)) {
+		if (user.hasAuthority(OWNER).equals(true)) {
 			Owner owner = userService.findOwnerByUser(user.getUsername());
 			return this.consultationService.updateOwnerTicket(ticket, aux, consultation, user, owner);
 		} else if (user.hasAuthority("VET")) {
 			return this.consultationService.updateVetTicket(ticket, aux, consultation, user);
 		} else {
-			return new ResponseEntity<Ticket>(this.consultationService.updateTicket(ticket, ticketId), HttpStatus.OK);
+			return new ResponseEntity<>(this.consultationService.updateTicket(ticket, ticketId), HttpStatus.OK);
 		}
 	}
 
@@ -213,9 +216,10 @@ public class ConsultationController {
 			@PathVariable("ticketId") int ticketId) {
 		Consultation consultation = consultationService.findConsultationById(consultationId);
 		Ticket ticket = this.consultationService.findTicketById(ticketId);
+		this.consultationService.checkIfTicketInConsultation(consultation, ticket);
 		this.consultationService.checkLastTicketAndStatus(consultation, ticket);
 		User user = userService.findCurrentUser();
-		if (user.hasAuthority(OWNER)) {
+		if (user.hasAuthority(OWNER).equals(true)) {
 			Owner owner = userService.findOwnerByUser(user.getUsername());
 			this.consultationService.deleteOwnerTicket(ticket, consultation, user, owner);
 		} else if (user.hasAuthority("VET")) {
@@ -223,7 +227,7 @@ public class ConsultationController {
 		} else {
 			this.consultationService.deleteTicket(ticketId);
 		}
-		return new ResponseEntity<MessageResponse>(new MessageResponse("Ticket deleted!"), HttpStatus.OK);
+		return new ResponseEntity<>(new MessageResponse("Ticket deleted!"), HttpStatus.OK);
 	}
 
 }

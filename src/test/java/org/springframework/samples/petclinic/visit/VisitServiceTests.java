@@ -127,6 +127,7 @@ public class VisitServiceTests {
 	}
 
 	@Test
+	@Transactional
 	void shouldCheckLimitForBasic() {
 		Visit v = createVisit(5); // pet of Owner4 BASIC
 		assertEquals(true, this.visitService.underLimit(v));
@@ -136,6 +137,7 @@ public class VisitServiceTests {
 	}
 
 	@Test
+	@Transactional
 	void shouldCheckLimitForGold() {
 		Visit v = createVisit(9);
 		assertEquals(true, this.visitService.underLimit(v));
@@ -151,6 +153,7 @@ public class VisitServiceTests {
 	}
 
 	@Test
+	@Transactional
 	void shouldCheckLimitForPlatinum() {
 		Visit v = createVisit(10);
 		assertEquals(true, this.visitService.underLimit(v));
