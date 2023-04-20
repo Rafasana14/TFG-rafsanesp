@@ -40,7 +40,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Autowired
 	DataSource dataSource;
 	
-	private final String ADMIN = "ADMIN";
+	private static final String ADMIN = "ADMIN";
 
     @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {

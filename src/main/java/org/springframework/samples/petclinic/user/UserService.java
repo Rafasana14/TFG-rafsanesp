@@ -49,8 +49,9 @@ public class UserService {
 	}
 
 	@Transactional
-	public void saveUser(User user) throws DataAccessException {
+	public User saveUser(User user) throws DataAccessException {
 		userRepository.save(user);
+		return user;
 	}
 
 	@Transactional(readOnly = true)
@@ -92,6 +93,10 @@ public class UserService {
 	public Iterable<User> findAll() {
 		return userRepository.findAll();
 	}
+	
+	public Iterable<User> findAllByAuthority(String auth) {
+		return userRepository.findAllByAuthority(auth);
+	}
 
 	@Transactional
 	public User updateUser(@Valid User user, Integer idToUpdate) {
@@ -121,6 +126,9 @@ public class UserService {
 			Optional<Vet> vet = vetService.optFindVetByUser(id);
 			if (vet.isPresent())
 				vetService.deleteVet(vet.get().getId());
+			break;
+		default:
+			// The only relations that have user are Owner and Vet
 			break;
 		}
 

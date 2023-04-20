@@ -63,9 +63,21 @@ class UserServiceTests {
 	}
 
 	@Test
-	void shouldFindUserByUsername() {
+	void shouldFindUsersByUsername() {
 		User user = this.userService.findUser("owner1");
 		assertEquals("owner1", user.getUsername());
+	}
+	
+	@Test
+	void shouldFindUsersByAuthority() {
+		List<User> owners = (List<User>) this.userService.findAllByAuthority("OWNER");
+		assertEquals(10, owners.size());
+		
+		List<User> admins = (List<User>) this.userService.findAllByAuthority("ADMIN");
+		assertEquals(1, admins.size());
+		
+		List<User> vets = (List<User>) this.userService.findAllByAuthority("VET");
+		assertEquals(6, vets.size());
 	}
 	
 	@Test

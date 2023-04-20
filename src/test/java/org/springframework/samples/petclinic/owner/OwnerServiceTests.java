@@ -157,7 +157,7 @@ class OwnerServiceTests {
 		Integer lastCount = ((Collection<Owner>) ownerService.findAll()).size();
 		assertEquals(firstCount, lastCount);
 	}
-
+	
 	private Owner createOwnerUser() {
 		Owner owner = new Owner();
 		owner.setFirstName("Sam");

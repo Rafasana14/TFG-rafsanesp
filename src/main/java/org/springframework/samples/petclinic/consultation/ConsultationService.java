@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
 import org.springframework.samples.petclinic.exceptions.UpperPlanFeatureException;
@@ -72,12 +73,12 @@ public class ConsultationService {
 			deleteTicket(ticket.getId());
 		this.consultationRepository.delete(toDelete);
 	}
-	
+
 	@Transactional(readOnly = true)
 	public Iterable<Ticket> findAllTicketsByConsultation(int consultationId) throws DataAccessException {
 		return ticketRepository.findTicketsByConsultation(consultationId);
 	}
-	
+
 	@Transactional(readOnly = true)
 	public Ticket findTicketById(int id) throws DataAccessException {
 		return this.ticketRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Ticket", "ID", id));
@@ -100,15 +101,16 @@ public class ConsultationService {
 	public void deleteTicket(int id) throws DataAccessException {
 		Ticket toDelete = findTicketById(id);
 		this.ticketRepository.delete(toDelete);
+		updateConsultationStatus(toDelete.getConsultation());
 	}
 
 	@Transactional(readOnly = true)
 	public void checkLastTicketAndStatus(Consultation consultation, Ticket ticket) {
 		List<Ticket> tickets = (List<Ticket>) findAllTicketsByConsultation(consultation.getId());
 		if (!tickets.get(tickets.size() - 1).getId().equals(ticket.getId()))
-			throw new RuntimeException("You can only update or delete the last ticket in a consultation!");
+			throw new AccessDeniedException("You can only update or delete the last ticket in a consultation!");
 		if (consultation.getStatus().equals(TicketStatus.CLOSED))
-			throw new RuntimeException("This consultation is closed!");
+			throw new AccessDeniedException("This consultation is closed!");
 	}
 
 	@Transactional
@@ -117,11 +119,11 @@ public class ConsultationService {
 		if (owner.getPlan().equals(PricingPlan.PLATINUM)) {
 			if (owner.getId().equals(consultation.getOwner().getId())) {
 				if (target.getUser().getId().equals(currentUser.getId())) {
-					return new ResponseEntity<Ticket>(updateTicket(ticket, target.getId()), HttpStatus.OK);
+					return new ResponseEntity<>(updateTicket(ticket, target.getId()), HttpStatus.OK);
 				} else
-					throw new ResourceNotOwnedException("Ticket");
+					throw new ResourceNotOwnedException(target);
 			} else
-				throw new ResourceNotOwnedException("Consultation");
+				throw new ResourceNotOwnedException(consultation);
 		} else
 			throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getPlan());
 	}
@@ -130,9 +132,9 @@ public class ConsultationService {
 	public ResponseEntity<Ticket> updateVetTicket(@Valid Ticket ticket, Ticket target, Consultation consultation,
 			User user) {
 		if (target.getUser().getId().equals(user.getId())) {
-			return new ResponseEntity<Ticket>(updateTicket(ticket, target.getId()), HttpStatus.OK);
+			return new ResponseEntity<>(updateTicket(ticket, target.getId()), HttpStatus.OK);
 		} else
-			throw new ResourceNotOwnedException("Ticket");
+			throw new ResourceNotOwnedException(target);
 	}
 
 	@Transactional
@@ -141,10 +143,11 @@ public class ConsultationService {
 			if (owner.getId().equals(consultation.getOwner().getId())) {
 				if (ticket.getUser().getId().equals(user.getId())) {
 					deleteTicket(ticket.getId());
+					updateConsultationStatus(consultation);
 				} else
-					throw new ResourceNotOwnedException("Ticket");
+					throw new ResourceNotOwnedException(ticket);
 			} else
-				throw new ResourceNotOwnedException("Consultation");
+				throw new ResourceNotOwnedException(consultation);
 		} else
 			throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getPlan());
 	}
@@ -155,16 +158,25 @@ public class ConsultationService {
 			deleteTicket(ticket.getId());
 			updateConsultationStatus(consultation);
 		} else
-			throw new ResourceNotOwnedException("Ticket");
+			throw new ResourceNotOwnedException(ticket);
 	}
 
-	@Transactional
 	private void updateConsultationStatus(Consultation consultation) {
 		List<Ticket> tickets = (List<Ticket>) findAllTicketsByConsultation(consultation.getId());
-		if (tickets.get(tickets.size() - 1).getUser().getAuthority().getAuthority().equals("OWNER"))
+		if (tickets.size() != 0) {
+			if (tickets.get(tickets.size() - 1).getUser().getAuthority().getAuthority().equals("OWNER"))
+				consultation.setStatus(TicketStatus.PENDING);
+			else
+				consultation.setStatus(TicketStatus.ANSWERED);
+			saveConsultation(consultation);
+		} else
 			consultation.setStatus(TicketStatus.PENDING);
-		else
-			consultation.setStatus(TicketStatus.ANSWERED);
-		saveConsultation(consultation);
+	}
+
+	public void checkIfTicketInConsultation(Consultation consultation, Ticket ticket) {
+		List<Ticket> tickets = this.ticketRepository.findTicketsByConsultation(consultation.getId());
+		if (!tickets.contains(ticket))
+			throw new AccessDeniedException("The ticket " + ticket.getId() + " doesn't belong to the consultation "
+					+ consultation.getId() + ".");
 	}
 }

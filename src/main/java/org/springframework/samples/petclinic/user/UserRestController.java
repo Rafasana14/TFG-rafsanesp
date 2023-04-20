@@ -16,8 +16,6 @@
 package org.springframework.samples.petclinic.user;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import javax.validation.Valid;
 
@@ -52,17 +50,19 @@ class UserRestController {
 	}
 
 	@GetMapping
-	public List<User> findAll(@RequestParam(required = false) String auth) {
+	public ResponseEntity<List<User>> findAll(@RequestParam(required = false) String auth) {
+		List<User> res;
 		if (auth != null) {
-			return StreamSupport.stream(userService.findAll().spliterator(), false)
-					.filter(user -> user.getAuthority().getAuthority().equals(auth)).collect(Collectors.toList());
+			res = (List<User>) userService.findAllByAuthority(auth);
 		} else
-			return (List<User>) userService.findAll();
+			res = (List<User>) userService.findAll();
+		return new ResponseEntity<List<User>>(res, HttpStatus.OK);
 	}
 
 	@GetMapping("authorities")
-	public List<Authorities> findAllAuths() {
-		return (List<Authorities>) authService.findAll();
+	public ResponseEntity<List<Authorities>> findAllAuths() {
+		List<Authorities> res = (List<Authorities>) authService.findAll();
+		return new ResponseEntity<List<Authorities>>(res, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "{id}")
@@ -72,8 +72,9 @@ class UserRestController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public void create(@RequestBody @Valid User user) {
-		userService.saveUser(user);
+	public ResponseEntity<User> create(@RequestBody @Valid User user) {
+		User savedUser = userService.saveUser(user);
+		return new ResponseEntity<User>(savedUser, HttpStatus.CREATED);
 	}
 
 	@PutMapping(value = "{userId}")
@@ -93,7 +94,6 @@ class UserRestController {
 		} else
 			return new ResponseEntity<MessageResponse>(new MessageResponse("You can't delete yourself!"),
 					HttpStatus.BAD_REQUEST);
-
 	}
 
 }

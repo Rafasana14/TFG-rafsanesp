@@ -53,41 +53,40 @@ public class OwnerRestController {
 	}
 
 	@GetMapping
-	public List<Owner> findAll() {
-		return (List<Owner>) ownerService.findAll();
+	public ResponseEntity<List<Owner>> findAll() {
+		return new ResponseEntity<>((List<Owner>) ownerService.findAll(), HttpStatus.OK);
 	}
-	
+
 	@GetMapping(value = "{ownerId}")
-    public ResponseEntity<Owner> findById(@PathVariable("ownerId") int id) {
-		return new ResponseEntity<Owner>(ownerService.findOwnerById(id),HttpStatus.OK);
-    }
-	
+	public ResponseEntity<Owner> findById(@PathVariable("ownerId") int id) {
+		return new ResponseEntity<>(ownerService.findOwnerById(id), HttpStatus.OK);
+	}
+
 	@PostMapping()
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Owner> create(@RequestBody @Valid Owner owner) throws URISyntaxException{
+	public ResponseEntity<Owner> create(@RequestBody @Valid Owner owner) throws URISyntaxException {
 		Owner newOwner = new Owner();
-		BeanUtils.copyProperties(owner, newOwner,"id");
+		BeanUtils.copyProperties(owner, newOwner, "id");
 		User user = userService.findCurrentUser();
 		newOwner.setUser(user);
 		Owner savedOwner = this.ownerService.saveOwner(newOwner);
-		
-		//return ResponseEntity.created(new URI("/clients/" + savedOwner.getId())).body(savedOwner);
-		return new ResponseEntity<Owner>(savedOwner,HttpStatus.CREATED);
+
+		return new ResponseEntity<>(savedOwner, HttpStatus.CREATED);
 	}
 
 	@PutMapping(value = "{ownerId}")
 	@ResponseStatus(HttpStatus.OK)
-	public ResponseEntity<Owner> update(@PathVariable("ownerId") int ownerId, @RequestBody @Valid Owner owner ) {
-	     RestPreconditions.checkNotNull(ownerService.findOwnerById(ownerId), "Owner", "ID", ownerId);
-	     return new ResponseEntity<Owner>(this.ownerService.updateOwner(owner,ownerId),HttpStatus.OK);
+	public ResponseEntity<Owner> update(@PathVariable("ownerId") int ownerId, @RequestBody @Valid Owner owner) {
+		RestPreconditions.checkNotNull(ownerService.findOwnerById(ownerId), "Owner", "ID", ownerId);
+		return new ResponseEntity<>(this.ownerService.updateOwner(owner, ownerId), HttpStatus.OK);
 	}
-	
+
 	@DeleteMapping(value = "{ownerId}")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<MessageResponse> delete(@PathVariable("ownerId") int id) {
+	@ResponseStatus(HttpStatus.OK)
+	public ResponseEntity<MessageResponse> delete(@PathVariable("ownerId") int id) {
 		RestPreconditions.checkNotNull(ownerService.findOwnerById(id), "Owner", "ID", id);
-        ownerService.deleteOwner(id);
-        return new ResponseEntity<MessageResponse>(new MessageResponse("Owner deleted!"), HttpStatus.OK);
-    }
+		ownerService.deleteOwner(id);
+		return new ResponseEntity<>(new MessageResponse("Owner deleted!"), HttpStatus.OK);
+	}
 
 }

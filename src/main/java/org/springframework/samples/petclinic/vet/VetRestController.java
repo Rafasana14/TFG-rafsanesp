@@ -2,8 +2,6 @@ package org.springframework.samples.petclinic.vet;
 
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 import javax.validation.Valid;
 
@@ -24,13 +22,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import petclinic.payload.response.MessageResponse;
+
 @RestController
 @RequestMapping("/api/v1/vets")
 public class VetRestController {
 
 	private final VetService vetService;
 	private final UserService userService;
-	
+
 	@Autowired
 	public VetRestController(VetService clinicService, UserService userService) {
 		this.vetService = clinicService;
@@ -38,8 +38,9 @@ public class VetRestController {
 	}
 
 	@GetMapping
-	public List<Vet> findAll() {
-		return StreamSupport.stream(vetService.findAll().spliterator(), false).collect(Collectors.toList());
+	public ResponseEntity<List<Vet>> findAll() {
+		List<Vet> res = (List<Vet>) this.vetService.findAll();
+		return new ResponseEntity<List<Vet>>(res, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "{vetId}")
@@ -49,7 +50,7 @@ public class VetRestController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<?> create(@RequestBody @Valid Vet vet) throws URISyntaxException {
+	public ResponseEntity<Vet> create(@RequestBody @Valid Vet vet) throws URISyntaxException {
 		Vet newVet = new Vet();
 		BeanUtils.copyProperties(vet, newVet, "id");
 		User user = userService.findCurrentUser();
@@ -57,7 +58,6 @@ public class VetRestController {
 		Vet savedVet = this.vetService.saveVet(newVet);
 
 		return new ResponseEntity<Vet>(savedVet, HttpStatus.CREATED);
-
 	}
 
 	@PutMapping(value = "{vetId}")
@@ -69,9 +69,10 @@ public class VetRestController {
 
 	@DeleteMapping(value = "{vetId}")
 	@ResponseStatus(HttpStatus.OK)
-	public void delete(@PathVariable("vetId") int id) {
+	public ResponseEntity<MessageResponse> delete(@PathVariable("vetId") int id) {
 		RestPreconditions.checkNotNull(vetService.findVetById(id), "Vet", "ID", id);
 		vetService.deleteVet(id);
+		return new ResponseEntity<MessageResponse>(new MessageResponse("Vet deleted!"), HttpStatus.OK);
 	}
 
 }

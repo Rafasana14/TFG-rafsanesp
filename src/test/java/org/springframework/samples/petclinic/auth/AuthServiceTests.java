@@ -13,6 +13,7 @@ import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.samples.petclinic.vet.VetService;
+import org.springframework.transaction.annotation.Transactional;
 
 import petclinic.payload.request.SignupRequest;
 
@@ -30,6 +31,7 @@ public class AuthServiceTests {
 	protected OwnerService ownerService;
 
 	@Test
+	@Transactional
 	public void shouldCreateAdminUser() {
 		SignupRequest request = createRequest("ADMIN", "admin2");
 		int userFirstCount = ((Collection<User>) this.userService.findAll()).size();
@@ -39,6 +41,7 @@ public class AuthServiceTests {
 	}
 	
 	@Test
+	@Transactional
 	public void shouldCreateVetUser() {
 		SignupRequest request = createRequest("VET", "vettest");
 		int userFirstCount = ((Collection<User>) this.userService.findAll()).size();
@@ -51,6 +54,7 @@ public class AuthServiceTests {
 	}
 	
 	@Test
+	@Transactional
 	public void shouldCreateOwnerUser() {
 		SignupRequest request = createRequest("OWNER", "ownertest");
 		int userFirstCount = ((Collection<User>) this.userService.findAll()).size();

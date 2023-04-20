@@ -113,7 +113,7 @@ class PetServiceTests {
 
 	@Test
 	@Transactional
-	public void shouldInsertPetIntoDatabaseAndGenerateId() {
+	void shouldInsertPetIntoDatabaseAndGenerateId() {
 		Owner owner6 = this.ownerService.findOwnerById(6);
 		int initialCount = petService.findAllPetsByOwnerId(owner6.getId()).size();
 
@@ -133,7 +133,7 @@ class PetServiceTests {
 
 	@Test
 	@Transactional
-	public void shouldThrowExceptionInsertingPetsWithTheSameName() {
+	void shouldThrowExceptionInsertingPetsWithTheSameName() {
 		Owner owner6 = this.ownerService.findOwnerById(6);
 		Pet pet = new Pet();
 		pet.setName("wario");
@@ -153,7 +153,7 @@ class PetServiceTests {
 
 	@Test
 	@Transactional
-	public void shouldUpdatePet() {
+	void shouldUpdatePet() {
 		Pet pet7 = this.petService.findPetById(7);
 		String oldName = pet7.getName();
 
@@ -192,6 +192,7 @@ class PetServiceTests {
 	}
 
 	@Test
+	@Transactional
 	void shouldCheckLimitForBasic() {
 		Owner owner = this.ownerService.findOwnerById(4);
 		assertEquals(true, this.petService.underLimit(owner));
@@ -200,6 +201,7 @@ class PetServiceTests {
 	}
 
 	@Test
+	@Transactional
 	void shouldCheckLimitForGold() {
 		Owner owner = this.ownerService.findOwnerById(7);
 		assertEquals(true, this.petService.underLimit(owner));
@@ -210,6 +212,7 @@ class PetServiceTests {
 	}
 
 	@Test
+	@Transactional
 	void shouldCheckLimitForPlatinum() {
 		Owner owner = this.ownerService.findOwnerById(8);
 		assertEquals(true, this.petService.underLimit(owner));

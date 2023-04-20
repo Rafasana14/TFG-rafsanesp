@@ -27,7 +27,7 @@ public final class GenericIdToEntityConverter implements ConditionalGenericConve
         
 
     public Set<ConvertiblePair> getConvertibleTypes() {
-    	Set<ConvertiblePair> result=new HashSet<ConvertiblePair>();
+    	Set<ConvertiblePair> result=new HashSet<>();
         result.add(new ConvertiblePair(Number.class, BaseEntity.class));
         result.add(new ConvertiblePair(CharSequence.class, BaseEntity.class));
         return result;
@@ -39,7 +39,6 @@ public final class GenericIdToEntityConverter implements ConditionalGenericConve
     }
 
     public Object convert(Object source, TypeDescriptor sourceType, TypeDescriptor targetType) {
-    	System.out.println("AQUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
         if (source == null || entityManager==null) {
             return null;
         }
