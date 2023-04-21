@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.samples.petclinic.model.BaseEntity;
 import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.pet.Pet;
 import org.springframework.samples.petclinic.util.TicketStatus;
 
 import lombok.Getter;
@@ -35,6 +36,10 @@ public class Consultation extends BaseEntity{
 	@JoinColumn(name = "owner_id", nullable = false)
 	private Owner owner;
 	
+	@OneToOne
+	@JoinColumn(name = "pet_id", nullable = false)
+	private Pet pet;
+	
 //	@OneToOne
 //	@JoinColumn(name = "vet_id", nullable = false)
 //	private Vet vet;
@@ -42,10 +47,6 @@ public class Consultation extends BaseEntity{
 	@Column(name = "creation_date")
 	@CreationTimestamp
 	private LocalDateTime creationDate;
-	
-//	@OneToMany(orphanRemoval=true)
-//    @JoinColumn(name="consultation_id") 
-//    private Set<Vet> vets;
 
 
 }

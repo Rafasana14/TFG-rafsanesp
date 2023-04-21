@@ -15,6 +15,7 @@ class OwnerConsultationList extends Component {
         // this.remove = this.remove.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleFilter = this.handleFilter.bind(this);
+        this.handleClear = this.handleClear.bind(this);
         this.jwt = JSON.parse(window.localStorage.getItem("jwt"));
     }
 
@@ -68,9 +69,9 @@ class OwnerConsultationList extends Component {
                 filteredConsultations = [...this.state.consultations];
         } else {
             if (filter !== "")
-                filteredConsultations = [...this.state.consultations].filter((i) => i.status === filter && i.owner.user.username.includes(value));
+                filteredConsultations = [...this.state.consultations].filter((i) => i.status === filter && i.pet.name.toLowerCase().includes(value));
             else
-                filteredConsultations = [...this.state.consultations].filter((i) => i.owner.user.username.includes(value));
+                filteredConsultations = [...this.state.consultations].filter((i) => i.pet.name.toLowerCase().includes(value));
         }
         this.setState({ filtered: filteredConsultations, search: value });
     }
@@ -82,16 +83,23 @@ class OwnerConsultationList extends Component {
 
         if (value === "") {
             if (search !== "")
-                filteredConsultations = [...this.state.consultations].filter((i) => i.owner.user.username.includes(search));
+                filteredConsultations = [...this.state.consultations].filter((i) => i.pet.name.toLowerCase().includes(search));
             else
                 filteredConsultations = [...this.state.consultations];
         } else {
             if (search !== "")
-                filteredConsultations = [...this.state.consultations].filter((i) => i.status === value && i.owner.user.username.includes(search));
+                filteredConsultations = [...this.state.consultations].filter((i) => i.status === value && i.pet.name.toLowerCase().includes(search));
             else
                 filteredConsultations = [...this.state.consultations].filter((i) => i.status === value);
         }
         this.setState({ filtered: filteredConsultations, filter: value });
+    }
+
+    handleClear(event) {
+        let filteredConsultations;
+        filteredConsultations = [...this.state.consultations];
+
+        this.setState({ filtered: filteredConsultations, filter: "", search: "" });
     }
 
     getConsultationList(consultations, plan) {
@@ -100,6 +108,7 @@ class OwnerConsultationList extends Component {
                 <tr key={c.id}>
                     <td>{c.title}</td>
                     <td>{c.status}</td>
+                    <td>{c.pet?.name}</td>
                     <td>{(new Date(c.creationDate)).toLocaleString()}</td>
                     <td>
                         <ButtonGroup>
@@ -146,11 +155,14 @@ class OwnerConsultationList extends Component {
                             <Button color="link" onClick={this.handleFilter} value="PENDING">Pending</Button>
                             <Button color="link" onClick={this.handleFilter} value="ANSWERED">Answered</Button>
                             <Button color="link" onClick={this.handleFilter} value="CLOSED">Closed</Button>
-                            <Button color="link" onClick={this.handleFilter} value="">Clear Filters</Button>
+                            <Button color="link" onClick={this.handleFilter} value="">All</Button>
                         </Col>
                         <Col className="col-sm-3">
-                            <Input type="search" placeholder="Introduce an owner name to search by it" value={search || ''}
+                            <Input type="search" placeholder="Introduce a pet name to search by it" value={search || ''}
                                 onChange={this.handleChange} />
+                        </Col>
+                        <Col className="col-sm-3">
+                            <Button color="link" onClick={this.handleClear} >Clear All</Button>
                         </Col>
                     </Row>
                     <Table className="mt-4">
@@ -158,6 +170,7 @@ class OwnerConsultationList extends Component {
                             <tr>
                                 <th>Title</th>
                                 <th>Status</th>
+                                <th>Pet</th>
                                 <th>Creation Date</th>
                                 <th>Actions</th>
                             </tr>

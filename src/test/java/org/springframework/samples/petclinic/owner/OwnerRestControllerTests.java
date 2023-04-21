@@ -194,7 +194,7 @@ class OwnerRestControllerTests {
 	@WithMockUser("owner")
 	void shouldReturnPlan() throws Exception {
 		when(this.userService.findCurrentUser()).thenReturn(user);
-		when(this.ownerService.findOwnerByUser(any(Integer.class))).thenReturn(george);
+		when(this.userService.findOwnerByUser(any(Integer.class))).thenReturn(george);
 		
 		mockMvc.perform(get("/api/v1/plan")).andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").value(TEST_OWNER_ID))
@@ -207,7 +207,7 @@ class OwnerRestControllerTests {
 	@WithMockUser("owner")
 	void shouldUpdatePlan() throws Exception {
 		when(this.userService.findCurrentUser()).thenReturn(user);
-		when(this.ownerService.findOwnerByUser(any(Integer.class))).thenReturn(george);
+		when(this.userService.findOwnerByUser(any(Integer.class))).thenReturn(george);
 		when(this.ownerService.updatePlan(PricingPlan.GOLD, TEST_OWNER_ID)).thenReturn(george);
 		
 		mockMvc.perform(put("/api/v1/plan").with(csrf()).contentType(MediaType.APPLICATION_JSON)

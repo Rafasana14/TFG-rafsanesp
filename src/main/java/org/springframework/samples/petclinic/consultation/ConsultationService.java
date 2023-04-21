@@ -2,20 +2,14 @@ package org.springframework.samples.petclinic.consultation;
 
 import java.util.List;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
-import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
 import org.springframework.samples.petclinic.exceptions.UpperPlanFeatureException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.PricingPlan;
-import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.util.TicketStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +56,7 @@ public class ConsultationService {
 	@Transactional
 	public Consultation updateConsultation(Consultation consultation, int id) throws DataAccessException {
 		Consultation toUpdate = findConsultationById(id);
-		BeanUtils.copyProperties(consultation, toUpdate, "id", "creationDate");
+		BeanUtils.copyProperties(consultation, toUpdate, "id", "creationDate", "owner", "pet");
 		return saveConsultation(toUpdate);
 	}
 
@@ -114,51 +108,31 @@ public class ConsultationService {
 	}
 
 	@Transactional
-	public ResponseEntity<Ticket> updateOwnerTicket(@Valid Ticket ticket, Ticket target, Consultation consultation,
-			User currentUser, Owner owner) {
+	public Ticket updateOwnerTicket(Ticket ticket, Integer targetId, Owner owner) {
 		if (owner.getPlan().equals(PricingPlan.PLATINUM)) {
-			if (owner.getId().equals(consultation.getOwner().getId())) {
-				if (target.getUser().getId().equals(currentUser.getId())) {
-					return new ResponseEntity<>(updateTicket(ticket, target.getId()), HttpStatus.OK);
-				} else
-					throw new ResourceNotOwnedException(target);
-			} else
-				throw new ResourceNotOwnedException(consultation);
+			return updateTicket(ticket, targetId);
 		} else
 			throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getPlan());
 	}
 
 	@Transactional
-	public ResponseEntity<Ticket> updateVetTicket(@Valid Ticket ticket, Ticket target, Consultation consultation,
-			User user) {
-		if (target.getUser().getId().equals(user.getId())) {
-			return new ResponseEntity<>(updateTicket(ticket, target.getId()), HttpStatus.OK);
-		} else
-			throw new ResourceNotOwnedException(target);
-	}
-
-	@Transactional
-	public void deleteOwnerTicket(Ticket ticket, Consultation consultation, User user, Owner owner) {
+	public void deleteOwnerTicket(Ticket ticket, Owner owner) {
 		if (owner.getPlan().equals(PricingPlan.PLATINUM)) {
-			if (owner.getId().equals(consultation.getOwner().getId())) {
-				if (ticket.getUser().getId().equals(user.getId())) {
-					deleteTicket(ticket.getId());
-					updateConsultationStatus(consultation);
-				} else
-					throw new ResourceNotOwnedException(ticket);
-			} else
-				throw new ResourceNotOwnedException(consultation);
-		} else
-			throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getPlan());
-	}
-
-	@Transactional
-	public void deleteVetTicket(Ticket ticket, Consultation consultation, User user) {
-		if (ticket.getUser().getId().equals(user.getId())) {
 			deleteTicket(ticket.getId());
-			updateConsultationStatus(consultation);
 		} else
-			throw new ResourceNotOwnedException(ticket);
+			throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getPlan());
+	}
+
+	@Transactional
+	public void deleteAdminTicket(Ticket ticket, Consultation consultation) {
+		List<Ticket> tickets = (List<Ticket>) findAllTicketsByConsultation(consultation.getId());
+		for (Ticket t : tickets) {
+			if (t.getCreationDate().isAfter(ticket.getCreationDate()))
+				this.ticketRepository.delete(t);
+		}
+		this.ticketRepository.delete(ticket);
+		updateConsultationStatus(consultation);
+
 	}
 
 	private void updateConsultationStatus(Consultation consultation) {

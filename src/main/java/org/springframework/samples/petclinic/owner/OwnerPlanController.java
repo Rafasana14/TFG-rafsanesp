@@ -46,14 +46,14 @@ public class OwnerPlanController {
 	@GetMapping
     public ResponseEntity<Owner> getPlan() {
 		User user = userService.findCurrentUser();
-		return new ResponseEntity<>(ownerService.findOwnerByUser(user.getId()),HttpStatus.OK);
+		return new ResponseEntity<>(userService.findOwnerByUser(user.getId()),HttpStatus.OK);
     }
 
 	@PutMapping
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Owner> updatePlan(@RequestBody @Valid PricingPlan plan ) {
 		 User user = userService.findCurrentUser();
-		 Owner owner = ownerService.findOwnerByUser(user.getId());
+		 Owner owner = userService.findOwnerByUser(user.getId());
 	     return new ResponseEntity<>(this.ownerService.updatePlan(plan,owner.getId()),HttpStatus.OK);
 	}
 }

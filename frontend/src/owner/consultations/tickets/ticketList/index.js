@@ -166,7 +166,7 @@ class OwnerConsultationTickets extends Component {
 
     render() {
         const { consultation, tickets, newTicket, plan } = this.state;
-        const title = <h2 className="text-center">Consultation Number {consultation.id}</h2>;
+        const title = <h2 className="text-center">Consultation Number {consultation.id} - Pet {consultation.pet?.name}</h2>;
 
         if (this.state.message) return <h2 className="text-center">{this.state.message}</h2>
 

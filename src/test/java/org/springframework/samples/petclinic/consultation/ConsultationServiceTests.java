@@ -14,11 +14,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
-import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
 import org.springframework.samples.petclinic.exceptions.UpperPlanFeatureException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
-import org.springframework.samples.petclinic.user.User;
+import org.springframework.samples.petclinic.pet.PetService;
 import org.springframework.samples.petclinic.util.EntityUtils;
 import org.springframework.samples.petclinic.util.TicketStatus;
 import org.springframework.samples.petclinic.vet.VetService;
@@ -37,6 +36,9 @@ public class ConsultationServiceTests {
 
 	@Autowired
 	protected VetService vetService;
+
+	@Autowired
+	protected PetService petService;
 
 	@Test
 	void shouldFindAllConsultations() {
@@ -79,6 +81,7 @@ public class ConsultationServiceTests {
 		cons.setTitle("Consulta de prueba");
 		cons.setStatus(TicketStatus.PENDING);
 		cons.setOwner(this.ownerService.findOwnerById(2));
+		cons.setPet(this.petService.findPetById(2));
 
 		this.consultationService.saveConsultation(cons);
 		Assertions.assertThat(cons.getId().longValue()).isNotEqualTo(0);
@@ -108,6 +111,7 @@ public class ConsultationServiceTests {
 		cons.setTitle("Consulta de prueba");
 		cons.setStatus(TicketStatus.PENDING);
 		cons.setOwner(this.ownerService.findOwnerById(2));
+		cons.setPet(this.petService.findPetById(2));
 		this.consultationService.saveConsultation(cons);
 
 		Ticket ticket = new Ticket();
@@ -219,40 +223,9 @@ public class ConsultationServiceTests {
 	void shouldUpdateOwnerTicket() {
 		Ticket ticket = this.consultationService.findTicketById(4);
 		ticket.setDescription("Updated");
-		Consultation c = this.consultationService.findConsultationById(2);
 		Owner o = this.ownerService.findOwnerById(1);
-		User currentUser = o.getUser();
-		Ticket response = this.consultationService
-				.updateOwnerTicket(ticket, this.consultationService.findTicketById(4), c, currentUser, o).getBody();
+		Ticket response = this.consultationService.updateOwnerTicket(ticket, ticket.getId(), o);
 		assertEquals("Updated", response.getDescription());
-	}
-
-	@Test
-	@Transactional
-	void shouldNotUpdateOwnerTicketTicketNotOwned() {
-		Ticket ticket = this.consultationService.findTicketById(4);
-		ticket.setDescription("Updated");
-		Consultation c = this.consultationService.findConsultationById(2);
-		Owner o = this.ownerService.findOwnerById(1);
-		User currentUser = this.ownerService.findOwnerById(2).getUser();
-		ResourceNotOwnedException response = assertThrows(ResourceNotOwnedException.class,
-				() -> this.consultationService.updateOwnerTicket(ticket, this.consultationService.findTicketById(4), c,
-						currentUser, o));
-		assertEquals("Ticket not owned.", response.getMessage());
-	}
-
-	@Test
-	@Transactional
-	void shouldNotUpdateOwnerTicketConsultationNotOwned() {
-		Ticket ticket = this.consultationService.findTicketById(4);
-		ticket.setDescription("Updated");
-		Consultation c = this.consultationService.findConsultationById(2);
-		Owner o = this.ownerService.findOwnerById(2);
-		User currentUser = o.getUser();
-		ResourceNotOwnedException response = assertThrows(ResourceNotOwnedException.class,
-				() -> this.consultationService.updateOwnerTicket(ticket, this.consultationService.findTicketById(4), c,
-						currentUser, o));
-		assertEquals("Consultation not owned.", response.getMessage());
 	}
 
 	@Test
@@ -260,39 +233,46 @@ public class ConsultationServiceTests {
 	void shouldNotUpdateOwnerTicketNotPlatinum() {
 		Ticket ticket = this.consultationService.findTicketById(4);
 		ticket.setDescription("Updated");
-		Consultation c = this.consultationService.findConsultationById(2);
-		User currentUser = this.ownerService.findOwnerById(2).getUser();
 		Owner o = this.ownerService.findOwnerById(4);
 		UpperPlanFeatureException response = assertThrows(UpperPlanFeatureException.class,
-				() -> this.consultationService.updateOwnerTicket(ticket, this.consultationService.findTicketById(4), c,
-						currentUser, o));
+				() -> this.consultationService.updateOwnerTicket(ticket, ticket.getId(), o));
 		assertEquals("You need to be subscribed to plan PLATINUM to access this feature and you have plan BASIC.",
 				response.getMessage());
 	}
-
+	
 	@Test
 	@Transactional
-	void shouldUpdateVetTicket() {
-		Ticket ticket = this.consultationService.findTicketById(2);
-		ticket.setDescription("Updated");
-		Consultation c = this.consultationService.findConsultationById(1);
-		User currentUser = this.vetService.findVetById(1).getUser();
-		Ticket response = this.consultationService
-				.updateVetTicket(ticket, this.consultationService.findTicketById(2), c, currentUser).getBody();
-		assertEquals("Updated", response.getDescription());
-	}
+	void shouldDeleteAdminTicket() {
+		final int CONSULTATION_ID = 2;
+		Integer initialCount = ((Collection<Ticket>) this.consultationService
+				.findAllTicketsByConsultation(CONSULTATION_ID)).size();
+		Consultation c = this.consultationService.findConsultationById(CONSULTATION_ID);
+		Ticket t1 = new Ticket();
+		t1.setDescription("Consulta de prueba");
+		t1.setConsultation(c);
+		t1.setUser(this.ownerService.findOwnerById(1).getUser());
+		this.consultationService.saveTicket(t1);
+		
+		Ticket t2 = new Ticket();
+		t2.setDescription("Consulta de prueba");
+		t2.setConsultation(c);
+		t2.setUser(this.ownerService.findOwnerById(1).getUser());
+		this.consultationService.saveTicket(t2);
+		
+		Ticket t3 = new Ticket();
+		t3.setDescription("Consulta de prueba");
+		t3.setConsultation(c);
+		t3.setUser(this.ownerService.findOwnerById(1).getUser());
+		this.consultationService.saveTicket(t3);
 
-	@Test
-	@Transactional
-	void shouldNotUpdateVetTicketTicketNotOwned() {
-		Ticket ticket = this.consultationService.findTicketById(2);
-		ticket.setDescription("Updated");
-		Consultation c = this.consultationService.findConsultationById(1);
-		User currentUser = this.vetService.findVetById(2).getUser();
-		ResourceNotOwnedException response = assertThrows(ResourceNotOwnedException.class,
-				() -> this.consultationService.updateVetTicket(ticket, this.consultationService.findTicketById(2), c,
-						currentUser));
-		assertEquals("Ticket not owned.", response.getMessage());
+		Integer secondCount = ((Collection<Ticket>) this.consultationService
+				.findAllTicketsByConsultation(CONSULTATION_ID)).size();
+		assertEquals(initialCount + 3, secondCount);
+
+		this.consultationService.deleteAdminTicket(t1, c); // If you delete t1, t2 and t3 should also be deleted
+		Integer lastCount = ((Collection<Ticket>) this.consultationService
+				.findAllTicketsByConsultation(CONSULTATION_ID)).size();
+		assertEquals(initialCount, lastCount);
 	}
 
 	@Test
@@ -303,7 +283,6 @@ public class ConsultationServiceTests {
 				.findAllTicketsByConsultation(CONSULTATION_ID)).size();
 		Consultation c = this.consultationService.findConsultationById(CONSULTATION_ID);
 		Owner o = this.ownerService.findOwnerById(1);
-		User currentUser = o.getUser();
 		Ticket t = new Ticket();
 		t.setDescription("Consulta de prueba");
 		t.setConsultation(c);
@@ -314,44 +293,10 @@ public class ConsultationServiceTests {
 				.findAllTicketsByConsultation(CONSULTATION_ID)).size();
 		assertEquals(initialCount + 1, secondCount);
 
-		this.consultationService.deleteOwnerTicket(t, c, currentUser, o);
+		this.consultationService.deleteOwnerTicket(t, o);
 		Integer lastCount = ((Collection<Ticket>) this.consultationService
 				.findAllTicketsByConsultation(CONSULTATION_ID)).size();
 		assertEquals(initialCount, lastCount);
-	}
-
-	@Test
-	@Transactional
-	void shouldNotDeleteOwnerTicketTicketNotOwned() {
-		Consultation c = this.consultationService.findConsultationById(1);
-		Owner o = this.ownerService.findOwnerById(1);
-		User currentUser = o.getUser();
-		Ticket t = new Ticket();
-		t.setDescription("Consulta de prueba");
-		t.setConsultation(c);
-		t.setUser(this.vetService.findVetById(1).getUser());
-		this.consultationService.saveTicket(t);
-
-		ResourceNotOwnedException response = assertThrows(ResourceNotOwnedException.class,
-				() -> this.consultationService.deleteOwnerTicket(t, c, currentUser, o));
-		assertEquals("Ticket not owned.", response.getMessage());
-	}
-
-	@Test
-	@Transactional
-	void shouldNotDeleteOwnerTicketConsultationNotOwned() {
-		Consultation c = this.consultationService.findConsultationById(1);
-		Owner o = this.ownerService.findOwnerById(2);
-		User currentUser = o.getUser();
-		Ticket t = new Ticket();
-		t.setDescription("Consulta de prueba");
-		t.setConsultation(c);
-		t.setUser(this.vetService.findVetById(1).getUser());
-		this.consultationService.saveTicket(t);
-
-		ResourceNotOwnedException response = assertThrows(ResourceNotOwnedException.class,
-				() -> this.consultationService.deleteOwnerTicket(t, c, currentUser, o));
-		assertEquals("Consultation not owned.", response.getMessage());
 	}
 
 	@Test
@@ -359,7 +304,6 @@ public class ConsultationServiceTests {
 	void shouldNotDeleteOwnerTicketNotPlatinum() {
 		Consultation c = this.consultationService.findConsultationById(1);
 		Owner o = this.ownerService.findOwnerById(4);
-		User currentUser = o.getUser();
 		Ticket t = new Ticket();
 		t.setDescription("Consulta de prueba");
 		t.setConsultation(c);
@@ -367,49 +311,9 @@ public class ConsultationServiceTests {
 		this.consultationService.saveTicket(t);
 
 		UpperPlanFeatureException response = assertThrows(UpperPlanFeatureException.class,
-				() -> this.consultationService.deleteOwnerTicket(t, c, currentUser, o));
+				() -> this.consultationService.deleteOwnerTicket(t, o));
 		assertEquals("You need to be subscribed to plan PLATINUM to access this feature and you have plan BASIC.",
 				response.getMessage());
-	}
-
-	@Test
-	@Transactional
-	void shouldDeleteVetTicket() {
-		final int CONSULTATION_ID = 1;
-		Integer initialCount = ((Collection<Ticket>) this.consultationService
-				.findAllTicketsByConsultation(CONSULTATION_ID)).size();
-		Consultation c = this.consultationService.findConsultationById(CONSULTATION_ID);
-		User currentUser = this.vetService.findVetById(1).getUser();
-		Ticket t = new Ticket();
-		t.setDescription("Consulta de prueba");
-		t.setConsultation(c);
-		t.setUser(currentUser);
-		this.consultationService.saveTicket(t);
-
-		Integer secondCount = ((Collection<Ticket>) this.consultationService
-				.findAllTicketsByConsultation(CONSULTATION_ID)).size();
-		assertEquals(initialCount + 1, secondCount);
-
-		this.consultationService.deleteVetTicket(t, c, currentUser);
-		Integer lastCount = ((Collection<Ticket>) this.consultationService
-				.findAllTicketsByConsultation(CONSULTATION_ID)).size();
-		assertEquals(initialCount, lastCount);
-	}
-
-	@Test
-	@Transactional
-	void shouldNotDeleteVetTicketTicketNotOwned() {
-		Consultation c = this.consultationService.findConsultationById(1);
-		User currentUser = this.vetService.findVetById(1).getUser();
-		Ticket t = new Ticket();
-		t.setDescription("Consulta de prueba");
-		t.setConsultation(c);
-		t.setUser(this.vetService.findVetById(2).getUser());
-		this.consultationService.saveTicket(t);
-
-		ResourceNotOwnedException response = assertThrows(ResourceNotOwnedException.class,
-				() -> this.consultationService.deleteVetTicket(t, c, currentUser));
-		assertEquals("Ticket not owned.", response.getMessage());
 	}
 
 	@Test
