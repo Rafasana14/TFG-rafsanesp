@@ -82,7 +82,7 @@ public class VisitRestController {
 			List<Visit> res = (List<Visit>) visitService.findVisitsByPetId(petId);
 			return new ResponseEntity<List<Visit>>(res, HttpStatus.OK);
 		} else {
-			Owner owner = ownerService.findOwnerByUser(user.getId());
+			Owner owner = userService.findOwnerByUser(user.getId());
 			if (owner.getId().equals(pet.getOwner().getId())) {
 				List<Visit> res = (List<Visit>) visitService.findVisitsByPetId(petId);
 				return new ResponseEntity<List<Visit>>(res, HttpStatus.OK);
@@ -102,7 +102,7 @@ public class VisitRestController {
 		BeanUtils.copyProperties(visit, newVisit, "id");
 		newVisit.setPet(pet);
 		if (user.hasAuthority(OWNER_AUTH)) {
-			Owner owner = ownerService.findOwnerByUser(user.getId());
+			Owner owner = userService.findOwnerByUser(user.getId());
 			if (owner.getId().equals(pet.getOwner().getId())) {
 				if (this.visitService.underLimit(newVisit)) {
 					savedVisit = this.visitService.saveVisit(newVisit);
@@ -125,7 +125,7 @@ public class VisitRestController {
 		Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId), "Pet", "ID", petId);
 		User user = userService.findCurrentUser();
 		if (user.hasAuthority(OWNER_AUTH)) {
-			Owner owner = ownerService.findOwnerByUser(user.getId());
+			Owner owner = userService.findOwnerByUser(user.getId());
 			if (owner.getId().equals(pet.getOwner().getId())) {
 				return new ResponseEntity<Visit>(this.visitService.updateVisit(visit, visitId), HttpStatus.OK);
 			} else
@@ -142,7 +142,7 @@ public class VisitRestController {
 		if (user.hasAnyAuthority(ADMIN_AUTH, VET_AUTH)) {
 			return new ResponseEntity<Visit>(visit, HttpStatus.OK);
 		} else {
-			Owner owner = ownerService.findOwnerByUser(user.getId());
+			Owner owner = userService.findOwnerByUser(user.getId());
 			if (owner.getId() == visit.getPet().getOwner().getId())
 				return new ResponseEntity<Visit>(visit, HttpStatus.OK);
 			else
@@ -161,7 +161,7 @@ public class VisitRestController {
 			visitService.deleteVisit(visitId);
 			return new ResponseEntity<MessageResponse>(new MessageResponse("Visit deleted!"), HttpStatus.OK);
 		} else {
-			Owner owner = ownerService.findOwnerByUser(user.getId());
+			Owner owner = userService.findOwnerByUser(user.getId());
 			if (owner.getId() == pet.getOwner().getId()) {
 				visitService.deleteVisit(visitId);
 				return new ResponseEntity<MessageResponse>(new MessageResponse("Visit deleted!"), HttpStatus.OK);
@@ -183,7 +183,7 @@ public class VisitRestController {
 			}
 		} else {
 			if (user.hasAuthority(OWNER_AUTH)) {
-				Owner logged = ownerService.findOwnerByUser(user.getId());
+				Owner logged = userService.findOwnerByUser(user.getId());
 				List<Visit> res = (List<Visit>) visitService.findVisitsByOwnerId(logged.getId());
 				return new ResponseEntity<List<Visit>>(res, HttpStatus.OK);
 			} else {

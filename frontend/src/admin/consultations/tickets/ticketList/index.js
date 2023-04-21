@@ -76,7 +76,7 @@ class AdminConsultationTickets extends Component {
         else this.setState({ tickets: [...this.state.tickets, response], newTicket: "" })
     }
 
-    async remove(ticketId) {
+    async remove(ticketId, date) {
         await fetch(`/api/v1/consultations/${this.id}/tickets/${ticketId}`, {
             method: "DELETE",
             headers: {
@@ -86,7 +86,7 @@ class AdminConsultationTickets extends Component {
             },
         }).then((response) => {
             if (response.status === 200) {
-                let updatedTickets = [...this.state.tickets].filter((i) => i.id !== ticketId);
+                let updatedTickets = [...this.state.tickets].filter((i) => i.id !== ticketId && i.creationDate < date);
                 this.setState({ tickets: updatedTickets });
             }
             return response.json();
@@ -104,7 +104,7 @@ class AdminConsultationTickets extends Component {
                         to={`consultations/${t.consultation.id}/tickets/${t.id}`}>
                         Edit
                     </Button>
-                    <Button size="sm" color="danger" onClick={() => this.remove(t.id)}>
+                    <Button size="sm" color="danger" onClick={() => this.remove(t.id, t.creationDate)}>
                         Delete
                     </Button>
                 </ButtonGroup>;

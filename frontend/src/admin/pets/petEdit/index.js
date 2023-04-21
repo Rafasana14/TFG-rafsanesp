@@ -122,7 +122,11 @@ class PetEdit extends Component {
                     <FormGroup>
                         <Label for="owner">Owner</Label>
                         {pet.id ?
-                            <p>{pet.owner.user?.username}</p> :
+                            <Input type="select" disabled name="owner" id="owner" value={pet.owner?.id || ""}
+                                onChange={this.handleChange} >
+                                <option value="">None</option>
+                                {ownerOptions}
+                            </Input> :
                             <Input type="select" required name="owner" id="owner" value={pet.owner?.id || ""}
                                 onChange={this.handleChange} >
                                 <option value="">None</option>

@@ -54,10 +54,10 @@ public class OwnerService {
 		return this.ownerRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Owner","ID",id));
 	}
 	
-	@Transactional(readOnly = true)
-	public Owner findOwnerByUser(int userId) throws DataAccessException {
-		return this.ownerRepository.findByUser(userId).orElseThrow(()->new ResourceNotFoundException("Owner","User ID",userId));
-	}
+//	@Transactional(readOnly = true)
+//	public Owner findOwnerByUser(int userId) throws DataAccessException {
+//		return this.ownerRepository.findByUser(userId).orElseThrow(()->new ResourceNotFoundException("Owner","User ID",userId));
+//	}
 	
 	@Transactional(readOnly = true)
 	public Optional<Owner> optFindOwnerByUser(int userId) throws DataAccessException {

@@ -84,16 +84,16 @@ class OwnerServiceTests {
 		assertThrows(ResourceNotFoundException.class, () -> this.ownerService.findOwnerById(100));
 	}
 
-	@Test
-	void shouldFindOwnerByUser() {
-		Owner owner = this.ownerService.findOwnerByUser(2);
-		assertEquals("Franklin", owner.getLastName());
-	}
-	
-	@Test
-	void shouldNotFindOwnerByIncorrectUser() {
-		assertThrows(ResourceNotFoundException.class, () -> this.ownerService.findOwnerByUser(34));
-	}
+//	@Test
+//	void shouldFindOwnerByUser() {
+//		Owner owner = this.ownerService.findOwnerByUser(2);
+//		assertEquals("Franklin", owner.getLastName());
+//	}
+//	
+//	@Test
+//	void shouldNotFindOwnerByIncorrectUser() {
+//		assertThrows(ResourceNotFoundException.class, () -> this.ownerService.findOwnerByUser(34));
+//	}
 
 	@Test
 	void shouldFindOptOwnerByUser() {

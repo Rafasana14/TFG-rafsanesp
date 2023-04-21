@@ -29,7 +29,6 @@ import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.LimitReachedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
 import org.springframework.samples.petclinic.owner.Owner;
-import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
@@ -54,14 +53,12 @@ import petclinic.payload.response.MessageResponse;
 public class PetRestController {
 
 	private final PetService petService;
-	private final OwnerService ownerService;
 	private final UserService userService;
 	private static final String OWNER_AUTH = "OWNER";
 
 	@Autowired
-	public PetRestController(PetService petService, OwnerService ownerService, UserService userService) {
+	public PetRestController(PetService petService, UserService userService) {
 		this.petService = petService;
-		this.ownerService = ownerService;
 		this.userService = userService;
 	}
 
@@ -98,7 +95,7 @@ public class PetRestController {
 		Pet savedPet;
 		BeanUtils.copyProperties(pet, newPet, "id");
 		if (user.hasAuthority(OWNER_AUTH)) {
-			Owner owner = ownerService.findOwnerByUser(user.getId());
+			Owner owner = userService.findOwnerByUser(user.getId());
 			if (this.petService.underLimit(owner)) {
 				newPet.setOwner(owner);
 				savedPet = this.petService.savePet(newPet);
@@ -117,7 +114,7 @@ public class PetRestController {
 		Pet aux = RestPreconditions.checkNotNull(petService.findPetById(petId), "Pet", "ID", petId);
 		User user = userService.findCurrentUser();
 		if (user.hasAuthority(OWNER_AUTH)) {
-			Owner loggedOwner = ownerService.findOwnerByUser(user.getId());
+			Owner loggedOwner = userService.findOwnerByUser(user.getId());
 			Owner petOwner = aux.getOwner();
 			if (loggedOwner.getId().equals(petOwner.getId())) {
 				Pet res = this.petService.updatePet(pet, petId);
@@ -136,7 +133,7 @@ public class PetRestController {
 		Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId), "Pet", "ID", petId);
 		User user = userService.findCurrentUser();
 		if (user.hasAuthority(OWNER_AUTH)) {
-			Owner loggedOwner = ownerService.findOwnerByUser(user.getId());
+			Owner loggedOwner = userService.findOwnerByUser(user.getId());
 			Owner petOwner = pet.getOwner();
 			if (loggedOwner.getId().equals(petOwner.getId()))
 				return new ResponseEntity<Pet>(this.petService.findPetById(petId), HttpStatus.OK);
@@ -153,7 +150,7 @@ public class PetRestController {
 		Pet pet = RestPreconditions.checkNotNull(petService.findPetById(petId), "Pet", "ID", petId);
 		User user = userService.findCurrentUser();
 		if (user.hasAuthority(OWNER_AUTH)) {
-			Owner loggedOwner = ownerService.findOwnerByUser(user.getId());
+			Owner loggedOwner = userService.findOwnerByUser(user.getId());
 			Owner petOwner = pet.getOwner();
 			if (loggedOwner.getId().equals(petOwner.getId())) {
 				petService.deletePet(petId);

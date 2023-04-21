@@ -30,7 +30,6 @@ import org.springframework.samples.petclinic.exceptions.ResourceNotFoundExceptio
 import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerRestController;
-import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.owner.PricingPlan;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
 import org.springframework.samples.petclinic.user.Authorities;
@@ -65,9 +64,6 @@ class PetRestControllerTests {
 
 	@MockBean
 	private PetService petService;
-
-	@MockBean
-	private OwnerService ownerService;
 
 	@MockBean
 	private UserService userService;
@@ -271,7 +267,7 @@ class PetRestControllerTests {
 		logged.setId(TEST_USER_ID);
 
 		when(this.petService.findPetById(TEST_PET_ID)).thenReturn(simba);
-		when(this.ownerService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
+		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 
 		mockMvc.perform(get(BASE_URL + "/{id}", TEST_PET_ID)).andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").value(TEST_PET_ID)).andExpect(jsonPath("$.name").value(simba.getName()))
@@ -288,7 +284,7 @@ class PetRestControllerTests {
 		other.setId(2);
 
 		when(this.petService.findPetById(TEST_PET_ID)).thenReturn(simba);
-		when(this.ownerService.findOwnerByUser(logged.getId())).thenReturn(other);
+		when(this.userService.findOwnerByUser(logged.getId())).thenReturn(other);
 
 		mockMvc.perform(get(BASE_URL + "/{id}", TEST_PET_ID)).andExpect(status().isBadRequest())
 				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException))
@@ -351,7 +347,7 @@ class PetRestControllerTests {
 		pet.setOwner(george);
 		pet.setType(lion);
 
-		when(this.ownerService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
+		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.petService.underLimit(george)).thenReturn(true);
 
 		mockMvc.perform(post(BASE_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
@@ -369,7 +365,7 @@ class PetRestControllerTests {
 		pet.setOwner(george);
 		pet.setType(lion);
 
-		when(this.ownerService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
+		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.petService.underLimit(george)).thenReturn(false);
 
 		mockMvc.perform(post(BASE_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
@@ -391,7 +387,7 @@ class PetRestControllerTests {
 		pet.setOwner(george);
 		pet.setType(lion);
 
-		when(this.ownerService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
+		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.petService.underLimit(george)).thenReturn(true);
 		when(this.petService.savePet(any(Pet.class))).thenThrow(DuplicatedPetNameException.class);
 
@@ -435,7 +431,7 @@ class PetRestControllerTests {
 
 		when(this.petService.findPetById(TEST_PET_ID)).thenReturn(simba);
 		when(this.petService.updatePet(any(Pet.class), any(Integer.class))).thenReturn(simba);
-		when(this.ownerService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
+		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 
 		mockMvc.perform(put(BASE_URL + "/{id}", TEST_PET_ID).with(csrf()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(simba))).andExpect(status().isOk())
@@ -453,7 +449,7 @@ class PetRestControllerTests {
 
 		when(this.petService.findPetById(TEST_PET_ID)).thenReturn(simba);
 		when(this.petService.updatePet(any(Pet.class), any(Integer.class))).thenReturn(simba);
-		when(this.ownerService.findOwnerByUser(2)).thenReturn(other);
+		when(this.userService.findOwnerByUser(2)).thenReturn(other);
 
 		mockMvc.perform(put(BASE_URL + "/{id}", TEST_PET_ID).with(csrf()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(simba))).andExpect(status().isBadRequest())
@@ -478,7 +474,7 @@ class PetRestControllerTests {
 
 		when(this.petService.findPetById(TEST_PET_ID)).thenReturn(simba);
 		doNothing().when(this.petService).deletePet(TEST_PET_ID);
-		when(this.ownerService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
+		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 
 		mockMvc.perform(delete(BASE_URL + "/{id}", TEST_PET_ID).with(csrf())).andExpect(status().isOk());
 	}
@@ -493,7 +489,7 @@ class PetRestControllerTests {
 
 		when(this.petService.findPetById(TEST_PET_ID)).thenReturn(simba);
 		doNothing().when(this.petService).deletePet(TEST_PET_ID);
-		when(this.ownerService.findOwnerByUser(2)).thenReturn(other);
+		when(this.userService.findOwnerByUser(2)).thenReturn(other);
 
 		mockMvc.perform(delete(BASE_URL + "/{id}", TEST_PET_ID).with(csrf())).andExpect(status().isBadRequest())
 				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException))

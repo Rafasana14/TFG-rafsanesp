@@ -2,11 +2,13 @@ package org.springframework.samples.petclinic.exceptions;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -84,8 +86,8 @@ public class ExceptionHandlerController {
 	public final ResponseEntity<ErrorMessage> handleMethodArgumentException(MethodArgumentNotValidException ex,
 			WebRequest request) {
 		Map<String, Object> fieldError = new HashMap<>();
-//		List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
-//		fieldErrors.stream().forEach(error -> fieldError.put(error.getField(), error.getDefaultMessage()));
+		List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
+		fieldErrors.stream().forEach(error -> fieldError.put(error.getField(), error.getDefaultMessage()));
 		ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST.value(), new Date(), fieldError.toString(),
 				request.getDescription(false));
 

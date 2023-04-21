@@ -205,7 +205,7 @@ class VisitControllerTests {
 		leg.setVet(vet);
 
 		when(this.petService.findPetById(TEST_PET_ID)).thenReturn(simba);
-		when(this.ownerService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
+		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.visitService.findVisitsByPetId(TEST_PET_ID)).thenReturn(List.of(visit, stomach, leg));
 
 		mockMvc.perform(get(BASE_URL)).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(3))
@@ -237,7 +237,7 @@ class VisitControllerTests {
 		other.setId(2);
 
 		when(this.petService.findPetById(TEST_PET_ID)).thenReturn(simba);
-		when(this.ownerService.findOwnerByUser(2)).thenReturn(other);
+		when(this.userService.findOwnerByUser(2)).thenReturn(other);
 		when(this.visitService.findVisitsByPetId(TEST_PET_ID)).thenReturn(List.of(visit, stomach, leg));
 
 		mockMvc.perform(get(BASE_URL)).andExpect(status().isBadRequest())
@@ -265,7 +265,7 @@ class VisitControllerTests {
 		logged.setId(TEST_USER_ID);
 
 		when(this.visitService.findVisitById(TEST_VISIT_ID)).thenReturn(visit);
-		when(this.ownerService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
+		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 
 		mockMvc.perform(get(BASE_URL + "/{id}", TEST_PET_ID)).andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").value(TEST_PET_ID)).andExpect(jsonPath("$.id").value(TEST_VISIT_ID))
@@ -283,7 +283,7 @@ class VisitControllerTests {
 		other.setId(2);
 
 		when(this.visitService.findVisitById(TEST_VISIT_ID)).thenReturn(visit);
-		when(this.ownerService.findOwnerByUser(2)).thenReturn(other);
+		when(this.userService.findOwnerByUser(2)).thenReturn(other);
 
 		mockMvc.perform(get(BASE_URL + "/{id}", TEST_PET_ID)).andExpect(status().isBadRequest())
 				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException))
@@ -369,7 +369,7 @@ class VisitControllerTests {
 		aux.setPet(simba);
 
 		when(this.petService.findPetById(TEST_PET_ID)).thenReturn(simba);
-		when(this.ownerService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
+		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.visitService.underLimit(any(Visit.class))).thenReturn(true);
 
 		mockMvc.perform(post(BASE_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
@@ -390,7 +390,7 @@ class VisitControllerTests {
 		other.setId(2);
 
 		when(this.petService.findPetById(TEST_PET_ID)).thenReturn(simba);
-		when(this.ownerService.findOwnerByUser(2)).thenReturn(other);
+		when(this.userService.findOwnerByUser(2)).thenReturn(other);
 		when(this.visitService.underLimit(any(Visit.class))).thenReturn(false);
 
 		mockMvc.perform(post(BASE_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
@@ -410,7 +410,7 @@ class VisitControllerTests {
 		aux.setPet(simba);
 
 		when(this.petService.findPetById(TEST_PET_ID)).thenReturn(simba);
-		when(this.ownerService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
+		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.visitService.underLimit(any(Visit.class))).thenReturn(false);
 
 		mockMvc.perform(post(BASE_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
@@ -444,7 +444,7 @@ class VisitControllerTests {
 
 		when(this.visitService.findVisitById(TEST_VISIT_ID)).thenReturn(visit);
 		when(this.petService.findPetById(TEST_PET_ID)).thenReturn(simba);
-		when(this.ownerService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
+		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.visitService.updateVisit(any(Visit.class), any(Integer.class))).thenReturn(visit);
 
 		mockMvc.perform(put(BASE_URL + "/{id}", TEST_USER_ID).with(csrf()).contentType(MediaType.APPLICATION_JSON)
@@ -463,7 +463,7 @@ class VisitControllerTests {
 
 		when(this.visitService.findVisitById(TEST_VISIT_ID)).thenReturn(visit);
 		when(this.petService.findPetById(TEST_PET_ID)).thenReturn(simba);
-		when(this.ownerService.findOwnerByUser(2)).thenReturn(other);
+		when(this.userService.findOwnerByUser(2)).thenReturn(other);
 		when(this.visitService.updateVisit(any(Visit.class), any(Integer.class))).thenReturn(visit);
 
 		mockMvc.perform(put(BASE_URL + "/{id}", TEST_PET_ID).with(csrf()).contentType(MediaType.APPLICATION_JSON)
@@ -489,7 +489,7 @@ class VisitControllerTests {
 		logged.setId(TEST_USER_ID);
 		when(this.petService.findPetById(TEST_PET_ID)).thenReturn(simba);
 		when(this.visitService.findVisitById(TEST_VISIT_ID)).thenReturn(visit);
-		when(this.ownerService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
+		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		doNothing().when(this.visitService).deleteVisit(TEST_VISIT_ID);
 
 		mockMvc.perform(delete(BASE_URL + "/{id}", TEST_VISIT_ID).with(csrf())).andExpect(status().isOk());
@@ -505,7 +505,7 @@ class VisitControllerTests {
 
 		when(this.petService.findPetById(TEST_PET_ID)).thenReturn(simba);
 		when(this.visitService.findVisitById(TEST_VISIT_ID)).thenReturn(visit);
-		when(this.ownerService.findOwnerByUser(2)).thenReturn(other);
+		when(this.userService.findOwnerByUser(2)).thenReturn(other);
 		doNothing().when(this.visitService).deleteVisit(TEST_VISIT_ID);
 
 		mockMvc.perform(delete(BASE_URL + "/{id}", TEST_VISIT_ID).with(csrf())).andExpect(status().isBadRequest())
@@ -555,7 +555,7 @@ class VisitControllerTests {
 		stomach.setVet(vet);
 
 		when(this.petService.findPetById(TEST_PET_ID)).thenReturn(simba);
-		when(this.ownerService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
+		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.visitService.findVisitsByOwnerId(TEST_OWNER_ID)).thenReturn(List.of(visit, stomach));
 
 		mockMvc.perform(get(VISITS_URL)).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(2))
