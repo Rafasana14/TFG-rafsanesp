@@ -18,6 +18,8 @@ package org.springframework.samples.petclinic.owner;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -25,6 +27,8 @@ import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.samples.petclinic.model.Person;
 import org.springframework.samples.petclinic.user.User;
 
@@ -57,28 +61,14 @@ public class Owner extends Person {
 	@NotEmpty
 	@Digits(fraction = 0, integer = 10)
 	private String telephone;
-	
+
+	@Enumerated(EnumType.STRING)
 	@NotNull
 	private PricingPlan plan;
-	
-	@OneToOne(cascade = {CascadeType.DETACH,CascadeType.REFRESH,CascadeType.PERSIST})
-    @JoinColumn(name = "user", referencedColumnName = "id")
+
+	@OneToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST })
+	@JoinColumn(name = "user", referencedColumnName = "id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private User user;
-
-//	@Override
-//	public String toString() {
-//		return "Owner [address=" + address + ", city=" + city + ", telephone=" + telephone + ", plan=" + plan
-//				+ ", user=" + user + "]";
-//	}
-
-//	@Override
-//	public String toString() {
-//		return new ToStringCreator(this)
-//
-//				.append("id", this.getId()).append("new", this.isNew()).append("lastName", this.getLastName())
-//				.append("firstName", this.getFirstName()).append("address", this.address).append("city", this.city)
-//				.append("telephone", this.telephone).toString();
-//	}
-	
 
 }

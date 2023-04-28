@@ -2,6 +2,7 @@ package org.springframework.samples.petclinic.vet;
 
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -40,12 +41,12 @@ public class VetRestController {
 	@GetMapping
 	public ResponseEntity<List<Vet>> findAll() {
 		List<Vet> res = (List<Vet>) this.vetService.findAll();
-		return new ResponseEntity<List<Vet>>(res, HttpStatus.OK);
+		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "{vetId}")
 	public ResponseEntity<Vet> findById(@PathVariable("vetId") int id) {
-		return new ResponseEntity<Vet>(vetService.findVetById(id), HttpStatus.OK);
+		return new ResponseEntity<>(vetService.findVetById(id), HttpStatus.OK);
 	}
 
 	@PostMapping
@@ -57,14 +58,14 @@ public class VetRestController {
 		newVet.setUser(user);
 		Vet savedVet = this.vetService.saveVet(newVet);
 
-		return new ResponseEntity<Vet>(savedVet, HttpStatus.CREATED);
+		return new ResponseEntity<>(savedVet, HttpStatus.CREATED);
 	}
 
 	@PutMapping(value = "{vetId}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<Vet> update(@PathVariable("vetId") int vetId, @RequestBody @Valid Vet vet) {
 		RestPreconditions.checkNotNull(vetService.findVetById(vetId), "Vet", "ID", vetId);
-		return new ResponseEntity<Vet>(this.vetService.updateVet(vet, vetId), HttpStatus.OK);
+		return new ResponseEntity<>(this.vetService.updateVet(vet, vetId), HttpStatus.OK);
 	}
 
 	@DeleteMapping(value = "{vetId}")
@@ -72,7 +73,12 @@ public class VetRestController {
 	public ResponseEntity<MessageResponse> delete(@PathVariable("vetId") int id) {
 		RestPreconditions.checkNotNull(vetService.findVetById(id), "Vet", "ID", id);
 		vetService.deleteVet(id);
-		return new ResponseEntity<MessageResponse>(new MessageResponse("Vet deleted!"), HttpStatus.OK);
+		return new ResponseEntity<>(new MessageResponse("Vet deleted!"), HttpStatus.OK);
+	}
+
+	@GetMapping(value = "stats")
+	public ResponseEntity<Map<String, Object>> getStats() {
+		return new ResponseEntity<>(this.vetService.getVetsStats(), HttpStatus.OK);
 	}
 
 }

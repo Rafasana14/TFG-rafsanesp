@@ -69,16 +69,16 @@ INSERT INTO types VALUES (5, 'bird');
 INSERT INTO types VALUES (6, 'hamster');
 INSERT INTO types VALUES (7, 'turtle');
 
-INSERT INTO	owners VALUES (1, 'George', 'Franklin', '110 W. Liberty St.', 'Sevilla', 2, '6085551023', 2);
-INSERT INTO owners VALUES (2, 'Betty', 'Davis', '638 Cardinal Ave.', 'Sevilla',2, '6085551749', 3);
-INSERT INTO owners VALUES (3, 'Eduardo', 'Rodriquez', '2693 Commerce St.', 'Sevilla',0, '6085558763', 4);
-INSERT INTO owners VALUES (4, 'Harold', 'Davis', '563 Friendly St.', 'Sevilla',0, '6085553198', 5);
-INSERT INTO owners VALUES (5, 'Peter', 'McTavish', '2387 S. Fair Way', 'Sevilla',0, '6085552765', 6);
-INSERT INTO owners VALUES (6, 'Jean', 'Coleman', '105 N. Lake St.', 'Badajoz',0, '6085552654', 7);
-INSERT INTO owners VALUES (7, 'Jeff', 'Black', '1450 Oak Blvd.', 'Badajoz',1, '6085555387', 8);
-INSERT INTO owners VALUES (8, 'Maria', 'Escobito', '345 Maple St.', 'Badajoz',2, '6085557683', 9);
-INSERT INTO owners VALUES (9, 'David', 'Schroeder', '2749 Blackhawk Trail','Cádiz',1, '6085559435', 10);
-INSERT INTO owners VALUES (10, 'Carlos', 'Estaban', '2335 Independence La.', 'Cádiz',1, '6085555487', 11);
+INSERT INTO	owners VALUES (1, 'George', 'Franklin', '110 W. Liberty St.', 'Sevilla', 'PLATINUM', '6085551023', 2);
+INSERT INTO owners VALUES (2, 'Betty', 'Davis', '638 Cardinal Ave.', 'Sevilla','PLATINUM', '6085551749', 3);
+INSERT INTO owners VALUES (3, 'Eduardo', 'Rodriquez', '2693 Commerce St.', 'Sevilla','BASIC', '6085558763', 4);
+INSERT INTO owners VALUES (4, 'Harold', 'Davis', '563 Friendly St.', 'Sevilla','BASIC', '6085553198', 5);
+INSERT INTO owners VALUES (5, 'Peter', 'McTavish', '2387 S. Fair Way', 'Sevilla','BASIC', '6085552765', 6);
+INSERT INTO owners VALUES (6, 'Jean', 'Coleman', '105 N. Lake St.', 'Badajoz','BASIC', '6085552654', 7);
+INSERT INTO owners VALUES (7, 'Jeff', 'Black', '1450 Oak Blvd.', 'Badajoz','GOLD', '6085555387', 8);
+INSERT INTO owners VALUES (8, 'Maria', 'Escobito', '345 Maple St.', 'Badajoz','GOLD', '6085557683', 9);
+INSERT INTO owners VALUES (9, 'David', 'Schroeder', '2749 Blackhawk Trail','Cádiz','GOLD', '6085559435', 10);
+INSERT INTO owners VALUES (10, 'Carlos', 'Estaban', '2335 Independence La.', 'Cádiz','PLATINUM', '6085555487', 11);
 
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (1, 'Leo', '2010-09-07', 1, 1);
 INSERT INTO pets(id,name,birth_date,type_id,owner_id) VALUES (2, 'Basil', '2012-08-06', 6, 2);
@@ -126,16 +126,22 @@ INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (1, 7, '
 INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (2, 8, '2013-01-02 15:30', 'rabies shot', 5);
 INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (3, 8, '2013-01-03 9:45', 'neutered', 5);
 INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (4, 7, '2013-01-04 17:30', 'spayed', 4);
+INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (5, 1, '2013-01-01 13:00', 'rabies shot', 1);
+INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (6, 1, '2020-01-02 15:30', 'rabies shot', 1);
+INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (7, 1, '2020-01-02 15:30', 'rabies shot', 1);
+INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (8, 2, '2013-01-03 9:45', 'neutered', 2);
+INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (9, 3, '2013-01-04 17:30', 'spayed', 3);
 
 INSERT INTO consultations(id,title,status,owner_id,pet_id,creation_date) VALUES (1, 'Consulta sobre vacunas', 1, 1, 1, '2023-01-04 17:30');
-INSERT INTO consultations(id,title,status,owner_id,pet_id,creation_date) VALUES (2, 'Mi perro se pone nervioso', 0, 1, 1, '2023-01-02 19:30');
+INSERT INTO consultations(id,title,status,owner_id,pet_id,creation_date) VALUES (2, 'Mi perro se pone nervioso', 0, 1, 1, '2022-01-02 19:30');
 INSERT INTO consultations(id,title,status,owner_id,pet_id,creation_date) VALUES (3, 'Mi gato no come', 1, 2, 2, '2023-11-04 11:20');
 INSERT INTO consultations(id,title,status,owner_id,pet_id,creation_date) VALUES (4, 'Mi agaporni no canta', 2, 2, 2, '2023-02-24 10:30');
+INSERT INTO consultations(id,title,status,owner_id,pet_id,creation_date) VALUES (5, 'Mi serpiente ha puesto un huevo', 1, 10, 12, '2023-11-04 11:20');
 
 INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (1, '¿Qué vacuna le pongo?', '2023-01-04 17:32', 2, 1);
 INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (2, 'La de la rabia.', '2023-01-04 17:36', 12, 1);
-INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (3, 'Mi perro se pone muy nervioso con el fútbol. ¿Qué hago?', '2023-01-02 19:31', 2, 2);
-INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (4, 'También le pasa con el tenis.', '2023-01-02 19:33', 2, 2);
+INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (3, 'Mi perro se pone muy nervioso con el fútbol. ¿Qué hago?', '2022-01-02 19:31', 2, 2);
+INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (4, 'También le pasa con el tenis.', '2022-01-02 19:33', 2, 2);
 INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (5, 'Mi gato lleva unos días sin comer el pienso.', '2023-04-11 11:30', 3, 3);
 INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (6, 'Prueba a darle atún para ver si así come.', '2023-04-11 15:20', 14, 3);
 INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (7, 'Mi agaporni no canta como el pájaro de mi vecino.', '2023-02-24 12:30', 3, 4);

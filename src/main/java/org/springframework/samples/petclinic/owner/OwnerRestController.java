@@ -17,6 +17,7 @@ package org.springframework.samples.petclinic.owner;
 
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -87,6 +88,11 @@ public class OwnerRestController {
 		RestPreconditions.checkNotNull(ownerService.findOwnerById(id), "Owner", "ID", id);
 		ownerService.deleteOwner(id);
 		return new ResponseEntity<>(new MessageResponse("Owner deleted!"), HttpStatus.OK);
+	}
+
+	@GetMapping(value = "stats")
+	public ResponseEntity<Map<String, Object>> getStats() {
+		return new ResponseEntity<>(ownerService.getOwnersStats(), HttpStatus.OK);
 	}
 
 }

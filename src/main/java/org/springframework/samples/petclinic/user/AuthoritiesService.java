@@ -15,7 +15,6 @@
  */
 package org.springframework.samples.petclinic.user;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
@@ -26,40 +25,36 @@ import org.springframework.transaction.annotation.Transactional;
 public class AuthoritiesService {
 
 	private AuthoritiesRepository authoritiesRepository;
-	private UserService userService;
+//	private UserService userService;
 
 	@Autowired
-	public AuthoritiesService(AuthoritiesRepository authoritiesRepository,UserService userService) {
+	public AuthoritiesService(AuthoritiesRepository authoritiesRepository) {
 		this.authoritiesRepository = authoritiesRepository;
-		this.userService = userService;
+//		this.userService = userService;
 	}
-	
+
 	@Transactional(readOnly = true)
 	public Iterable<Authorities> findAll() {
 		return this.authoritiesRepository.findAll();
 	}
-	
+
 	@Transactional(readOnly = true)
 	public Authorities findByAuthority(String authority) {
-		return this.authoritiesRepository.findByName(authority).orElseThrow(()->new ResourceNotFoundException("Authority","Name",authority));
+		return this.authoritiesRepository.findByName(authority)
+				.orElseThrow(() -> new ResourceNotFoundException("Authority", "Name", authority));
 	}
 
 	@Transactional
 	public void saveAuthorities(Authorities authorities) throws DataAccessException {
 		authoritiesRepository.save(authorities);
 	}
-	
-	@Transactional
-	public void saveAuthorities(String username, String role) throws ResourceNotFoundException {
-		Authorities authority = new Authorities();
-		User user = userService.findUser(username);
-		//authority.setUser(user);
-		authority.setAuthority(role);
-		//user.get().getAuthorities().add(authority);
-		authoritiesRepository.save(authority);
-		user.setAuthority(authority);
-		userService.saveUser(user);
-	}
 
+//	@Transactional
+//	public void saveAuthorities(String role) throws ResourceNotFoundException {
+//		Authorities authority = new Authorities();
+//		authority.setAuthority(role);
+//		//user.get().getAuthorities().add(authority);
+//		authoritiesRepository.save(authority);
+//	}
 
 }

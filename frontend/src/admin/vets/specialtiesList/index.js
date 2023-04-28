@@ -60,7 +60,7 @@ class SpecialtiesList extends Component {
             <div>
                 <Container style={{ marginTop: "15px" }} fluid>
                     <h1 className='text-center'>Vets</h1>
-                    <Button color="success" tag={Link} to="/vets/new">Add Specialty</Button>
+                    <Button color="success" tag={Link} to="/vets/specialties/new">Add Specialty</Button>
                     {" "}
                     <Button color="info" tag={Link} to="/vets">Back</Button>
                     <Table className="mt-4">

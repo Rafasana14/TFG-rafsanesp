@@ -20,9 +20,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -100,7 +102,7 @@ class OwnerServiceTests {
 		Optional<Owner> owner = this.ownerService.optFindOwnerByUser(2);
 		assertEquals("Franklin", owner.get().getLastName());
 	}
-	
+
 	@Test
 	void shouldNotFindOptOwnerByIncorrectUser() {
 		assertThat(this.ownerService.optFindOwnerByUser(25)).isEmpty();
@@ -157,7 +159,7 @@ class OwnerServiceTests {
 		Integer lastCount = ((Collection<Owner>) ownerService.findAll()).size();
 		assertEquals(firstCount, lastCount);
 	}
-	
+
 	private Owner createOwnerUser() {
 		Owner owner = new Owner();
 		owner.setFirstName("Sam");
@@ -171,6 +173,21 @@ class OwnerServiceTests {
 		user.setPassword("supersecretpassword");
 		owner.setUser(user);
 		return this.ownerService.saveOwner(owner);
+	}
+
+	@Test
+	@Transactional
+	void shouldReturnStatsForAdmin() {
+		Map<String, Object> stats = this.ownerService.getOwnersStats();
+		assertTrue(stats.containsKey("totalOwners"));
+		assertEquals(((Collection<Owner>) ownerService.findAll()).size(), stats.get("totalOwners"));
+		assertTrue(stats.containsKey("basicOwners"));
+		assertEquals(4, stats.get("basicOwners"));
+		assertTrue(stats.containsKey("goldOwners"));
+		assertEquals(3, stats.get("goldOwners"));
+		assertTrue(stats.containsKey("platinumOwners"));
+		assertEquals(3, stats.get("platinumOwners"));
+		assertTrue(stats.containsKey("ownersVisits"));
 	}
 
 }

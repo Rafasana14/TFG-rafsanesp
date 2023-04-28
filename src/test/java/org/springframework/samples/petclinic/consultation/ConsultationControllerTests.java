@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +27,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
+import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
 import org.springframework.samples.petclinic.exceptions.UpperPlanFeatureException;
@@ -36,7 +38,6 @@ import org.springframework.samples.petclinic.pet.PetType;
 import org.springframework.samples.petclinic.user.Authorities;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
-import org.springframework.samples.petclinic.util.TicketStatus;
 import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.core.GrantedAuthority;
@@ -131,7 +132,7 @@ class ConsultationControllerTests {
 		consultation.setTitle("Checking Simba's teeth.");
 		consultation.setPet(simba);
 		consultation.setOwner(george);
-		consultation.setStatus(TicketStatus.PENDING);
+		consultation.setStatus(ConsultationStatus.PENDING);
 
 		ticket = new Ticket();
 		ticket.setConsultation(consultation);
@@ -165,7 +166,7 @@ class ConsultationControllerTests {
 		stomach.setTitle("Checking Simba's stomach.");
 		stomach.setPet(simba);
 		stomach.setOwner(george);
-		stomach.setStatus(TicketStatus.PENDING);
+		stomach.setStatus(ConsultationStatus.PENDING);
 
 		Consultation leg = new Consultation();
 		leg.setId(3);
@@ -173,7 +174,7 @@ class ConsultationControllerTests {
 		leg.setTitle("Checking Simba's leg.");
 		leg.setPet(simba);
 		leg.setOwner(george);
-		leg.setStatus(TicketStatus.PENDING);
+		leg.setStatus(ConsultationStatus.PENDING);
 
 		when(this.consultationService.findAll()).thenReturn(List.of(consultation, stomach, leg));
 
@@ -194,7 +195,7 @@ class ConsultationControllerTests {
 		stomach.setTitle("Checking Simba's stomach.");
 		stomach.setPet(simba);
 		stomach.setOwner(george);
-		stomach.setStatus(TicketStatus.PENDING);
+		stomach.setStatus(ConsultationStatus.PENDING);
 
 		Consultation leg = new Consultation();
 		leg.setId(3);
@@ -202,7 +203,7 @@ class ConsultationControllerTests {
 		leg.setTitle("Checking Simba's leg.");
 		leg.setPet(simba);
 		leg.setOwner(george);
-		leg.setStatus(TicketStatus.PENDING);
+		leg.setStatus(ConsultationStatus.PENDING);
 
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.consultationService.findAllConsultationsByOwner(TEST_OWNER_ID))
@@ -278,7 +279,7 @@ class ConsultationControllerTests {
 		aux.setTitle("Checking Simba's leg.");
 		aux.setPet(simba);
 		aux.setOwner(george);
-		aux.setStatus(TicketStatus.PENDING);
+		aux.setStatus(ConsultationStatus.PENDING);
 
 		mockMvc.perform(post(BASE_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(aux))).andExpect(status().isCreated());
@@ -296,7 +297,7 @@ class ConsultationControllerTests {
 		aux.setTitle("Checking Simba's leg.");
 		aux.setPet(simba);
 		aux.setOwner(owner);
-		aux.setStatus(TicketStatus.PENDING);
+		aux.setStatus(ConsultationStatus.PENDING);
 
 		mockMvc.perform(post(BASE_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(aux))).andExpect(status().isBadRequest()).andExpect(
@@ -649,7 +650,8 @@ class ConsultationControllerTests {
 		when(this.consultationService.findConsultationById(TEST_CONSULTATION_ID)).thenReturn(consultation);
 		when(this.consultationService.findTicketById(TEST_TICKET_ID)).thenReturn(ticket);
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
-		when(this.consultationService.updateOwnerTicket(any(Ticket.class), any(Integer.class), any(Owner.class))).thenReturn(ticket);
+		when(this.consultationService.updateOwnerTicket(any(Ticket.class), any(Integer.class), any(Owner.class)))
+				.thenReturn(ticket);
 
 		mockMvc.perform(put(TICKET_URL + "/{id}", TEST_TICKET_ID).with(csrf()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(ticket))).andExpect(status().isOk())
@@ -723,6 +725,49 @@ class ConsultationControllerTests {
 
 		mockMvc.perform(delete(TICKET_URL + "/{id}", TEST_TICKET_ID).with(csrf())).andExpect(status().isBadRequest())
 				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException));
+	}
+
+	@Test
+	@WithMockUser(username = "owner", authorities = "OWNER")
+	void shouldReturnOwnerStats() throws Exception {
+		logged.setId(TEST_USER_ID);
+
+		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
+		when(this.consultationService.getOwnerConsultationsStats(george.getId())).thenReturn(new HashMap<>());
+
+		mockMvc.perform(get(BASE_URL + "/stats")).andExpect(status().isOk());
+	}
+
+	@Test
+	@WithMockUser(username = "owner", authorities = "OWNER")
+	void shouldNotReturnOwnerStatsNotPlatinum() throws Exception {
+		logged.setId(TEST_USER_ID);
+		george.setPlan(PricingPlan.BASIC);
+
+		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
+		when(this.consultationService.getOwnerConsultationsStats(george.getId())).thenReturn(new HashMap<>());
+
+		mockMvc.perform(get(BASE_URL + "/stats")).andExpect(status().isForbidden())
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof AccessDeniedException));
+	}
+
+	@Test
+	@WithMockUser(username = "admin", authorities = "ADMIN")
+	void shouldReturnAdminStats() throws Exception {
+		logged.setId(TEST_USER_ID);
+
+		when(this.consultationService.getAdminConsultationsStats()).thenReturn(new HashMap<>());
+
+		mockMvc.perform(get(BASE_URL + "/stats")).andExpect(status().isOk());
+	}
+
+	@Test
+	@WithMockUser(username = "vet", authorities = "VET")
+	void shouldNotReturnVetStats() throws Exception {
+		logged.setId(TEST_USER_ID);
+
+		mockMvc.perform(get(BASE_URL + "/stats")).andExpect(status().isForbidden())
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof AccessDeniedException));
 	}
 
 }

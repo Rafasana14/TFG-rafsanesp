@@ -6,12 +6,13 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.samples.petclinic.model.BaseEntity;
 import org.springframework.samples.petclinic.user.User;
 
@@ -32,12 +33,14 @@ public class Ticket extends BaseEntity {
 	@CreationTimestamp
 	private LocalDateTime creationDate;
 
-	@OneToOne
-	@JoinColumn(name = "user_id", nullable = false)
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "user_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private User user;
 
 	@Valid
-	@ManyToOne()
+	@ManyToOne(optional = false)
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	protected Consultation consultation;
 
 }

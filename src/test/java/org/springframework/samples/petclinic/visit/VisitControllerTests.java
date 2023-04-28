@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -602,6 +603,50 @@ class VisitControllerTests {
 		mockMvc.perform(get(VISITS_URL).param("ownerId", TEST_OWNER_ID.toString())).andExpect(status().isForbidden())
 				.andExpect(result -> assertTrue(result.getResolvedException() instanceof AccessDeniedException))
 				.andExpect(result -> assertEquals("Access denied!", result.getResolvedException().getMessage()));
+	}
+
+	@Test
+	@WithMockUser(username = "owner", authorities = "OWNER")
+	void shouldReturnOwnerStats() throws Exception {
+		logged.setId(TEST_USER_ID);
+		george.setPlan(PricingPlan.PLATINUM);
+
+		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
+		when(this.visitService.getVisitsOwnerStats(george.getId())).thenReturn(new HashMap<>());
+
+		mockMvc.perform(get(VISITS_URL + "/stats")).andExpect(status().isOk());
+	}
+
+	@Test
+	@WithMockUser(username = "owner", authorities = "OWNER")
+	void shouldNotReturnOwnerStatsNotPlatinum() throws Exception {
+		logged.setId(TEST_USER_ID);
+		george.setPlan(PricingPlan.BASIC);
+
+		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
+		when(this.visitService.getVisitsOwnerStats(george.getId())).thenReturn(new HashMap<>());
+
+		mockMvc.perform(get(VISITS_URL + "/stats")).andExpect(status().isForbidden())
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof AccessDeniedException));
+	}
+
+	@Test
+	@WithMockUser(username = "admin", authorities = "ADMIN")
+	void shouldReturnAdminStats() throws Exception {
+		logged.setId(TEST_USER_ID);
+
+		when(this.visitService.getVisitsAdminStats()).thenReturn(new HashMap<>());
+
+		mockMvc.perform(get(VISITS_URL + "/stats")).andExpect(status().isOk());
+	}
+
+	@Test
+	@WithMockUser(username = "vet", authorities = "VET")
+	void shouldNotReturnVetStats() throws Exception {
+		logged.setId(TEST_USER_ID);
+
+		mockMvc.perform(get(VISITS_URL + "/stats")).andExpect(status().isForbidden())
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof AccessDeniedException));
 	}
 
 }

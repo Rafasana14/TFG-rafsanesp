@@ -16,7 +16,9 @@
 package org.springframework.samples.petclinic.pet;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +69,7 @@ public class PetService {
 	public List<Pet> findAllPetsByOwnerId(int id) throws DataAccessException {
 		return petRepository.findAllPetsByOwnerId(id);
 	}
-	
+
 	@Transactional(readOnly = true)
 	public List<Pet> findAllPetsByUserId(int id) throws DataAccessException {
 		return petRepository.findAllPetsByUserId(id);
@@ -130,5 +132,29 @@ public class PetService {
 			break;
 		}
 		return false;
+	}
+
+	public Map<String, Object> getPetsStats() {
+		Map<String, Object> res = new HashMap<>();
+		Integer countAll = this.petRepository.countAll();
+		int owners = this.petRepository.countAllOwners();
+		Double avgPetsByOwner = (double) countAll / owners;
+		Map<String, Integer> petsByType = getPetsByType();
+
+		res.put("totalPets", countAll);
+		res.put("avgPetsByOwner", avgPetsByOwner);
+		res.put("petsByType", petsByType);
+
+		return res;
+	}
+
+	private Map<String, Integer> getPetsByType() {
+		Map<String, Integer> unsortedPetsByType = new HashMap<>();
+		this.petRepository.countPetsGroupedByType().forEach(m -> {
+			String key = m.get("type");
+			Integer value = Integer.parseInt(m.get("pets"));
+			unsortedPetsByType.put(key, value);
+		});
+		return unsortedPetsByType;
 	}
 }

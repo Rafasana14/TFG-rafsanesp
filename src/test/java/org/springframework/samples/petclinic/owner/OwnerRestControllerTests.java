@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -216,6 +217,14 @@ class OwnerRestControllerTests {
 				.andExpect(jsonPath("$.firstName").value(george.getFirstName()))
 				.andExpect(jsonPath("$.lastName").value(george.getLastName()))
 				.andExpect(jsonPath("$.plan").value(george.getPlan().toString()));
+	}
+
+	@Test
+	@WithMockUser(username = "owner", authorities = "OWNER")
+	void shouldReturnStats() throws Exception {
+		when(this.ownerService.getOwnersStats()).thenReturn(new HashMap<>());
+
+		mockMvc.perform(get(BASE_URL + "/stats")).andExpect(status().isOk());
 	}
 
 }

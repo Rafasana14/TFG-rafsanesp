@@ -19,8 +19,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -71,7 +73,7 @@ class VetServiceTests {
 		Vet vet = this.vetService.findVetByUser(12);
 		assertThat(vet.getLastName()).startsWith("Carter");
 	}
-	
+
 	@Test
 	void shouldNotFindVetByIncorrectUser() {
 		assertThrows(ResourceNotFoundException.class, () -> this.vetService.findVetByUser(34));
@@ -82,7 +84,7 @@ class VetServiceTests {
 		Optional<Vet> vet = this.vetService.optFindVetByUser(12);
 		assertThat(vet.get().getLastName()).startsWith("Carter");
 	}
-	
+
 	@Test
 	void shouldNotFindOptVetByIncorrectUser() {
 		assertThat(this.vetService.optFindVetByUser(25)).isEmpty();
@@ -202,6 +204,21 @@ class VetServiceTests {
 		vetService.deleteSpecialty(specialty.getId());
 		Integer lastCount = ((Collection<Specialty>) this.vetService.findSpecialties()).size();
 		assertEquals(firstCount, lastCount);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	@Transactional
+	void shouldReturnStatsForAdmin() {
+		Map<String, Object> stats = this.vetService.getVetsStats();
+		assertTrue(stats.containsKey("totalVets"));
+		assertEquals(6, stats.get("totalVets"));
+		assertTrue(stats.containsKey("vetsBySpecialty"));
+		assertEquals(2, ((Map<String, Integer>) stats.get("vetsBySpecialty")).get("surgery"));
+		assertTrue(stats.containsKey("vetsByCity"));
+		assertEquals(3, ((Map<String, Integer>) stats.get("vetsByCity")).get("Sevilla"));
+		assertTrue(stats.containsKey("visitsByVet"));
+		assertEquals(3, ((Map<String, Integer>) stats.get("visitsByVet")).get("James Carter"));
 	}
 
 }

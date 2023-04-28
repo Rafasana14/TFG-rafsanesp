@@ -24,6 +24,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.samples.petclinic.model.NamedEntity;
 import org.springframework.samples.petclinic.owner.Owner;
@@ -44,16 +46,17 @@ import lombok.Setter;
 @Setter
 public class Pet extends NamedEntity {
 
-	@Column(name = "birth_date")        
+	@Column(name = "birth_date")
 	@DateTimeFormat(pattern = "yyyy/MM/dd")
 	private LocalDate birthDate;
 
-	@ManyToOne
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "type_id")
 	private PetType type;
-	
+
 	@Valid
-	@ManyToOne(optional=true)
+	@ManyToOne(optional = true)
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	protected Owner owner;
 
 }

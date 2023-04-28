@@ -14,6 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -318,20 +319,20 @@ class PetRestControllerTests {
 		Pet pet = new Pet();
 		pet.setName("");
 		pet.setOwner(george);
-		
+
 		// blank name
 		mockMvc.perform(post(BASE_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(pet))).andExpect(status().isBadRequest());
-		
+
 		// name too long
 		pet.setName("A".repeat(51));
-		
+
 		mockMvc.perform(post(BASE_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(pet))).andExpect(status().isBadRequest());
-		
+
 		// null name
 		pet.setName(null);
-		
+
 		mockMvc.perform(post(BASE_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(pet))).andExpect(status().isBadRequest());
 	}
@@ -494,6 +495,14 @@ class PetRestControllerTests {
 		mockMvc.perform(delete(BASE_URL + "/{id}", TEST_PET_ID).with(csrf())).andExpect(status().isBadRequest())
 				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException))
 				.andExpect(result -> assertEquals("Pet not owned.", result.getResolvedException().getMessage()));
+	}
+
+	@Test
+	@WithMockUser(username = "owner", authorities = "OWNER")
+	void shouldReturnStats() throws Exception {
+		when(this.petService.getPetsStats()).thenReturn(new HashMap<>());
+
+		mockMvc.perform(get(BASE_URL + "/stats")).andExpect(status().isOk());
 	}
 
 }
