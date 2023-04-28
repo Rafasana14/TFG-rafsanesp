@@ -16,32 +16,28 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "users")
-public class User extends BaseEntity{
-	
-	@Column(unique=true)
+public class User extends BaseEntity {
+
+	@Column(unique = true)
 	String username;
-	
-	String password;	
-	
+
+	String password;
+
 	@ManyToOne(cascade = CascadeType.PERSIST)
 	@JoinColumn(name = "authority")
 	Authorities authority;
-	
+
 	public Boolean hasAuthority(String auth) {
 		return authority.getAuthority().equals(auth);
 	}
-	
+
 	public Boolean hasAnyAuthority(String... authorities) {
 		Boolean cond = false;
-		for(String auth: authorities) {
-			if(auth.equals(authority.getAuthority())) cond = true;
+		for (String auth : authorities) {
+			if (auth.equals(authority.getAuthority()))
+				cond = true;
 		}
 		return cond;
 	}
-	
-//	@ManyToMany(fetch = FetchType.LAZY)
-//	@JoinTable(	name = "user_roles", 
-//				joinColumns = @JoinColumn(name = "user_id"), 
-//				inverseJoinColumns = @JoinColumn(name = "role_id"))
-//	private Set<Role> roles = new HashSet<>();
+
 }

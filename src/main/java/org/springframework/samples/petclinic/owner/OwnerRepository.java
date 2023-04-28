@@ -16,11 +16,14 @@
 package org.springframework.samples.petclinic.owner;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.samples.petclinic.pet.Pet;
 
 /**
  * Spring Data JPA OwnerRepository interface
@@ -30,30 +33,36 @@ import org.springframework.data.repository.query.Param;
  */
 public interface OwnerRepository extends CrudRepository<Owner, Integer> {
 
-
-
 	/**
-	 * Retrieve <code>Owner</code>s from the data store by last name, returning all owners
-	 * whose last name <i>starts</i> with the given name.
+	 * Retrieve <code>Owner</code>s from the data store by last name, returning all
+	 * owners whose last name <i>starts</i> with the given name.
+	 * 
 	 * @param lastName Value to search for
-	 * @return a <code>Collection</code> of matching <code>Owner</code>s (or an empty
-	 * <code>Collection</code> if none found)
-	 */	
+	 * @return a <code>Collection</code> of matching <code>Owner</code>s (or an
+	 *         empty <code>Collection</code> if none found)
+	 */
 	@Query("SELECT DISTINCT owner FROM Owner owner WHERE owner.lastName LIKE :lastName%")
 	public Collection<Owner> findByLastName(@Param("lastName") String lastName);
-	
-//	@Query("SELECT p FROM Pet p WHERE p.owner.id = :ownerId")
-//	public List<Pet> findPetsByOwner(@Param("ownerId") int ownerId);
+
+	@Query("SELECT p FROM Pet p WHERE p.owner.id = :ownerId")
+	public List<Pet> findPetsByOwner(@Param("ownerId") int ownerId);
 //	
 //	@Modifying
 //	@Query("DELETE FROM Pet p WHERE p.owner.id = :ownerId")
 //	public void deletePetsByOwner(@Param("ownerId") int ownerId);
-	
+
 	@Query("SELECT DISTINCT owner FROM Owner owner WHERE owner.user.id = :userId")
 	public Optional<Owner> findByUser(int userId);
-	
-	
 
-	
+	// STATS
+
+	@Query("SELECT COUNT(o) FROM Owner o WHERE o.plan = :plan")
+	public Integer countByPlan(PricingPlan plan);
+
+	@Query("SELECT COUNT(o) FROM Owner o")
+	public Integer countAll();
+
+	@Query("SELECT NEW MAP(v.pet.owner.id as userId, cast(COUNT(v) as integer) as visits) FROM  Visit v GROUP BY v.pet.owner")
+	public List<Map<String, Integer>> getOwnersWithMostVisits();
 
 }

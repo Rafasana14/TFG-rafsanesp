@@ -15,14 +15,28 @@
  */
 package org.springframework.samples.petclinic.vet;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
-public interface VetRepository extends CrudRepository<Vet, Integer>{
-	
+public interface VetRepository extends CrudRepository<Vet, Integer> {
+
 	@Query("SELECT DISTINCT vet FROM Vet vet WHERE vet.user.id = :userId")
 	public Optional<Vet> findVetByUser(int userId);
+
+	// STATS
+	// ADMIN
+	@Query("SELECT COUNT(v) FROM Vet v")
+	public Integer countAll();
+
+	@Query("SELECT NEW MAP(v.city as city, cast(COUNT(v) as string) as vets)" + " FROM Vet v GROUP BY v.city")
+	public List<Map<String, String>> countVetsGroupedByCity();
+
+	@Query("SELECT NEW MAP(v.vet.firstName as firstName, v.vet.lastName as lastName, cast(COUNT(v) as string) as visits)"
+			+ " FROM Visit v GROUP BY v.vet")
+	public List<Map<String, String>> countVisitsGroupedByVet();
 
 }

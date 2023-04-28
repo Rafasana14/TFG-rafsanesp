@@ -17,6 +17,7 @@ package org.springframework.samples.petclinic.visit;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -31,5 +32,28 @@ public interface VisitRepository extends CrudRepository<Visit, Integer> {
 
 	@Query("SELECT COUNT(v) FROM Visit v WHERE v.pet.id = :id AND MONTH(v.datetime) = :month AND YEAR(v.datetime) = :year")
 	public Integer countVisitsByPetInMonth(int id, Integer month, Integer year);
+
+	// STATS
+	// ADMIN
+	@Query("SELECT COUNT(v) FROM Visit v")
+	public Integer countAll();
+
+	@Query("SELECT COUNT(p) FROM Pet p")
+	public Integer countAllPets();
+
+	// OWNER
+	@Query("SELECT COUNT(v) FROM Visit v WHERE v.pet.owner.id = :ownerId")
+	public Integer countAllByOwner(int ownerId);
+
+	@Query("SELECT NEW MAP(YEAR(v.datetime) as year, cast(COUNT(v) as integer) as visits)"
+			+ " FROM  Visit v WHERE v.pet.owner.id = :ownerId GROUP BY YEAR(v.datetime)")
+	public List<Map<String, Integer>> countVisitsGroupedByYear(int ownerId);
+
+	@Query("SELECT MIN(YEAR(v.datetime)) FROM Visit v WHERE v.pet.owner.id = :ownerId")
+	public Integer getYearOfFirstVisit(int ownerId);
+
+	@Query("SELECT NEW MAP(v.pet.name as pet, cast(COUNT(v) as string) as visits)"
+			+ " FROM  Visit v WHERE v.pet.owner.id = :ownerId GROUP BY v.pet")
+	public List<Map<String, String>> countVisitsGroupedByPet(int ownerId);
 
 }

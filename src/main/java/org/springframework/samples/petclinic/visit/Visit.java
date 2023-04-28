@@ -23,6 +23,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.samples.petclinic.model.BaseEntity;
 import org.springframework.samples.petclinic.pet.Pet;
@@ -48,10 +50,12 @@ public class Visit extends BaseEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "pet_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Pet pet;
 
 	@ManyToOne()
 	@JoinColumn(name = "vet_id")
+	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Vet vet;
 
 	public Visit() {

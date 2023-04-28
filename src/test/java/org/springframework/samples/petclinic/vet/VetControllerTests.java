@@ -11,6 +11,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -169,5 +170,13 @@ class VetControllerTests {
 	    mockMvc.perform(delete(BASE_URL + "/{id}", TEST_VET_ID).with(csrf()))
 	         .andExpect(status().isOk());
 	  }
+
+	@Test
+	@WithMockUser(username = "owner", authorities = "OWNER")
+	void shouldReturnStats() throws Exception {
+		when(this.vetService.getVetsStats()).thenReturn(new HashMap<>());
+
+		mockMvc.perform(get(BASE_URL + "/stats")).andExpect(status().isOk());
+	}
 
 }

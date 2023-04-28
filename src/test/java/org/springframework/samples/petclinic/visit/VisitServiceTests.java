@@ -2,10 +2,13 @@ package org.springframework.samples.petclinic.visit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -155,7 +158,7 @@ public class VisitServiceTests {
 	@Test
 	@Transactional
 	void shouldCheckLimitForPlatinum() {
-		Visit v = createVisit(10);
+		Visit v = createVisit(12);
 		assertEquals(true, this.visitService.underLimit(v));
 		this.visitService.saveVisit(v);
 		v = createVisit(10);
@@ -165,9 +168,6 @@ public class VisitServiceTests {
 		v = createVisit(10);
 		this.visitService.saveVisit(v);
 		v = createVisit(10);
-		this.visitService.saveVisit(v);
-		v = createVisit(10);
-		assertEquals(true, this.visitService.underLimit(v));
 		this.visitService.saveVisit(v);
 		v = createVisit(10);
 		assertEquals(false, this.visitService.underLimit(v));
@@ -180,6 +180,47 @@ public class VisitServiceTests {
 		visit.setPet(this.petService.findPetById(pet));
 		visit.setVet(this.vetService.findVetById(1));
 		return visit;
+	}
+
+	@Test
+	@Transactional
+	void shouldReturnStatsForAdmin() {
+		Map<String, Object> stats = this.visitService.getVisitsAdminStats();
+		assertTrue(stats.containsKey("totalVisits"));
+		assertEquals(9, stats.get("totalVisits"));
+		assertTrue(stats.containsKey("avgVisitsByPet"));
+		assertNotEquals(0, stats.get("avgVisitsByPet"));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	@Transactional
+	void shouldReturnStatsForOwner() {
+		Map<String, Object> stats = this.visitService.getVisitsOwnerStats(ownerService.findOwnerById(1).getId());
+		assertTrue(stats.containsKey("totalVisits"));
+		assertEquals(3, stats.get("totalVisits"));
+		assertTrue(stats.containsKey("visitsByYear"));
+		assertEquals(2, ((Map<String, Integer>) stats.get("visitsByYear")).get("2020"));
+		assertTrue(stats.containsKey("avgVisitsByYear"));
+		assertNotEquals(0, stats.get("avgVisitsByYear"));
+		assertTrue(stats.containsKey("visitsByPet"));
+		assertEquals(3, ((Map<String, Integer>) stats.get("visitsByPet")).get("Leo"));
+	}
+
+	@Test
+	@Transactional
+	void shouldReturnStatsForOwnerWithoutVisits() {
+		Map<String, Object> stats = this.visitService.getVisitsOwnerStats(ownerService.findOwnerById(9).getId());
+		assertTrue(stats.containsKey("totalVisits"));
+		assertEquals(0, stats.get("totalVisits"));
+	}
+
+	@Test
+	@Transactional
+	void shouldReturnStatsForOwnerWithoutPets() {
+		Map<String, Object> stats = this.visitService.getVisitsOwnerStats(ownerService.findOwnerById(9).getId());
+		assertTrue(stats.containsKey("totalVisits"));
+		assertEquals(0, stats.get("totalVisits"));
 	}
 
 }

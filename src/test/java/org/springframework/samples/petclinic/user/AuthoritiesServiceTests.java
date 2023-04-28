@@ -20,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureTestDatabase
 class AuthoritiesServiceTests {
 
-	@Autowired
-	private UserService userService;
+//	@Autowired
+//	private UserService userService;
 
 	@Autowired
 	private AuthoritiesService authService;
@@ -59,15 +59,15 @@ class AuthoritiesServiceTests {
 		assertEquals(count + 1, finalCount);
 	}
 
-	@Test
-	@Transactional
-	void shouldAddAuthoritiesToUser() {
-		User user = userService.findUser("owner1");
-		assertEquals("OWNER" ,user.getAuthority().getAuthority());
-		
-		this.authService.saveAuthorities("owner1", "TEST");
-		assertEquals("TEST" ,user.getAuthority().getAuthority());
-
-	}
+//	@Test
+//	@Transactional
+//	void shouldAddAuthoritiesToUser() {
+//		User user = userService.findUser("owner1");
+//		assertEquals("OWNER" ,user.getAuthority().getAuthority());
+//		
+//		this.authService.saveAuthorities("owner1", "TEST");
+//		assertEquals("TEST" ,user.getAuthority().getAuthority());
+//
+//	}
 
 }

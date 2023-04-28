@@ -2,9 +2,13 @@ package org.springframework.samples.petclinic.consultation;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -19,14 +23,13 @@ import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.pet.PetService;
 import org.springframework.samples.petclinic.util.EntityUtils;
-import org.springframework.samples.petclinic.util.TicketStatus;
 import org.springframework.samples.petclinic.vet.VetService;
 import org.springframework.transaction.annotation.Transactional;
 
 //@DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
 @SpringBootTest
 @AutoConfigureTestDatabase
-public class ConsultationServiceTests {
+class ConsultationServiceTests {
 
 	@Autowired
 	protected ConsultationService consultationService;
@@ -79,12 +82,12 @@ public class ConsultationServiceTests {
 
 		Consultation cons = new Consultation();
 		cons.setTitle("Consulta de prueba");
-		cons.setStatus(TicketStatus.PENDING);
+		cons.setStatus(ConsultationStatus.PENDING);
 		cons.setOwner(this.ownerService.findOwnerById(2));
 		cons.setPet(this.petService.findPetById(2));
 
 		this.consultationService.saveConsultation(cons);
-		Assertions.assertThat(cons.getId().longValue()).isNotEqualTo(0);
+		Assertions.assertThat(cons.getId().longValue()).isNotZero();
 
 		int finalCount = ((Collection<Consultation>) this.consultationService.findAll()).size();
 		assertEquals(initialCount + 1, finalCount);
@@ -95,11 +98,11 @@ public class ConsultationServiceTests {
 	void shouldUpdateConsultation() {
 		Consultation cons = this.consultationService.findConsultationById(1);
 		cons.setTitle("Change");
-		cons.setStatus(TicketStatus.ANSWERED);
+		cons.setStatus(ConsultationStatus.ANSWERED);
 		consultationService.updateConsultation(cons, 1);
 		cons = this.consultationService.findConsultationById(1);
 		assertEquals("Change", cons.getTitle());
-		assertEquals(TicketStatus.ANSWERED, cons.getStatus());
+		assertEquals(ConsultationStatus.ANSWERED, cons.getStatus());
 	}
 
 	@Test
@@ -109,7 +112,7 @@ public class ConsultationServiceTests {
 
 		Consultation cons = new Consultation();
 		cons.setTitle("Consulta de prueba");
-		cons.setStatus(TicketStatus.PENDING);
+		cons.setStatus(ConsultationStatus.PENDING);
 		cons.setOwner(this.ownerService.findOwnerById(2));
 		cons.setPet(this.petService.findPetById(2));
 		this.consultationService.saveConsultation(cons);
@@ -159,7 +162,7 @@ public class ConsultationServiceTests {
 		t.setUser(this.ownerService.findOwnerById(1).getUser());
 
 		this.consultationService.saveTicket(t);
-		Assertions.assertThat(t.getId().longValue()).isNotEqualTo(0);
+		Assertions.assertThat(t.getId().longValue()).isNotZero();
 
 		int finalCount = ((Collection<Ticket>) this.consultationService.findAllTicketsByConsultation(1)).size();
 		assertEquals(initialCount + 1, finalCount);
@@ -232,14 +235,15 @@ public class ConsultationServiceTests {
 	@Transactional
 	void shouldNotUpdateOwnerTicketNotPlatinum() {
 		Ticket ticket = this.consultationService.findTicketById(4);
+		int id = ticket.getId();
 		ticket.setDescription("Updated");
 		Owner o = this.ownerService.findOwnerById(4);
 		UpperPlanFeatureException response = assertThrows(UpperPlanFeatureException.class,
-				() -> this.consultationService.updateOwnerTicket(ticket, ticket.getId(), o));
+				() -> this.consultationService.updateOwnerTicket(ticket, id, o));
 		assertEquals("You need to be subscribed to plan PLATINUM to access this feature and you have plan BASIC.",
 				response.getMessage());
 	}
-	
+
 	@Test
 	@Transactional
 	void shouldDeleteAdminTicket() {
@@ -252,13 +256,13 @@ public class ConsultationServiceTests {
 		t1.setConsultation(c);
 		t1.setUser(this.ownerService.findOwnerById(1).getUser());
 		this.consultationService.saveTicket(t1);
-		
+
 		Ticket t2 = new Ticket();
 		t2.setDescription("Consulta de prueba");
 		t2.setConsultation(c);
 		t2.setUser(this.ownerService.findOwnerById(1).getUser());
 		this.consultationService.saveTicket(t2);
-		
+
 		Ticket t3 = new Ticket();
 		t3.setDescription("Consulta de prueba");
 		t3.setConsultation(c);
@@ -335,6 +339,65 @@ public class ConsultationServiceTests {
 				() -> this.consultationService.checkIfTicketInConsultation(c, t));
 		assertEquals(String.format("The ticket %s doesn't belong to the consultation %s.", t.getId(), c.getId()),
 				e.getMessage());
+	}
+
+	@Test
+	@Transactional
+	void shouldUpdateConsultationNoTickets() {
+		List<Ticket> tickets = (List<Ticket>) this.consultationService.findAllTicketsByConsultation(1);
+		for (Ticket t : tickets)
+			this.consultationService.deleteTicket(t.getId());
+		assertEquals(ConsultationStatus.PENDING, this.consultationService.findConsultationById(1).getStatus());
+
+	}
+
+	@Test
+	@Transactional
+	void shouldReturnStatsForAdmin() {
+		Map<String, Object> stats = this.consultationService.getAdminConsultationsStats();
+		assertTrue(stats.containsKey("totalConsultations"));
+		assertEquals(5, stats.get("totalConsultations"));
+		assertTrue(stats.containsKey("avgConsultationsByPlatinum"));
+		assertNotEquals(0, stats.get("avgConsultationsByPlatinum"));
+		assertTrue(stats.containsKey("avgConsultationsByOwners"));
+		assertNotEquals(0, stats.get("avgConsultationsByOwners"));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	@Transactional
+	void shouldReturnStatsForOwner() {
+		Map<String, Object> stats = this.consultationService
+				.getOwnerConsultationsStats(ownerService.findOwnerById(1).getId());
+		assertTrue(stats.containsKey("totalConsultations"));
+		assertEquals(2, stats.get("totalConsultations"));
+		assertTrue(stats.containsKey("consultationsByYear"));
+		assertEquals(1, ((Map<String, Integer>) stats.get("consultationsByYear")).get("2023"));
+		assertTrue(stats.containsKey("avgConsultationsByYear"));
+		assertNotEquals(0, stats.get("avgConsultationsByYear"));
+	}
+
+	@Test
+	@Transactional
+	void shouldReturnStatsForOwnerWithoutConsultations() {
+		Map<String, Object> stats = this.consultationService
+				.getOwnerConsultationsStats(ownerService.findOwnerById(9).getId());
+		assertTrue(stats.containsKey("totalConsultations"));
+		assertEquals(0, stats.get("totalConsultations"));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	@Transactional
+	void shouldReturnStatsForOwnerWithMultiplePets() {
+		Map<String, Object> stats = this.consultationService
+				.getOwnerConsultationsStats(ownerService.findOwnerById(10).getId());
+		assertTrue(stats.containsKey("totalConsultations"));
+		assertEquals(1, stats.get("totalConsultations"));
+		assertTrue(stats.containsKey("consultationsByPet"));
+		assertEquals(1, ((Map<String, Integer>) stats.get("consultationsByPet")).get("Lucky"));
+		assertTrue(stats.containsKey("avgConsultationsByPet"));
+		assertNotEquals(0, stats.get("avgConsultationsByPet"));
 	}
 
 }

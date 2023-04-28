@@ -19,8 +19,11 @@ public class VisitValidator implements Validator {
 					REQUIRED + " and between 9:00 and 20:00");
 		}
 
-//		// description validation
-//		ValidationUtils.rejectIfEmptyOrWhitespace(errors, "description", "description.required", "Description must not be empty");
+//		// date validation
+//				if (visit.isNew() && datetime.compareTo(LocalDateTime.now()) >= 1) {
+//					errors.rejectValue("datetime", REQUIRED + " and you can only appoint a visit in the future",
+//							REQUIRED + " and you can only appoint a visit in the future");
+//				}
 
 		// pet validation
 		if (visit.getPet() == null) {

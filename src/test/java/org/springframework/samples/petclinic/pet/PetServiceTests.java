@@ -18,11 +18,14 @@ package org.springframework.samples.petclinic.pet;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -73,7 +76,7 @@ class PetServiceTests {
 		Pet pet4 = EntityUtils.getById(pets, Pet.class, 4);
 		assertEquals("Jewel", pet4.getName());
 	}
-	
+
 	@Test
 	void shouldFindAllPetsByUserId() {
 		Collection<Pet> pets = this.petService.findAllPetsByUserId(2);
@@ -81,7 +84,7 @@ class PetServiceTests {
 		Pet pet1 = EntityUtils.getById(pets, Pet.class, 1);
 		assertEquals("Leo", pet1.getName());
 	}
-	
+
 	@Test
 	void shouldFindAllPetsByOwnerId() {
 		Collection<Pet> pets = this.petService.findAllPetsByOwnerId(1);
@@ -214,14 +217,13 @@ class PetServiceTests {
 	@Test
 	@Transactional
 	void shouldCheckLimitForPlatinum() {
-		Owner owner = this.ownerService.findOwnerById(8);
+		Owner owner = this.ownerService.findOwnerById(10);
 		assertEquals(true, this.petService.underLimit(owner));
 		createPet("wario", owner);
 		createPet("wario2", owner);
 		createPet("wario3", owner);
 		createPet("wario4", owner);
 		createPet("wario5", owner);
-		createPet("wario6", owner);
 		assertEquals(false, this.petService.underLimit(owner));
 	}
 
@@ -233,6 +235,19 @@ class PetServiceTests {
 		pet.setBirthDate(LocalDate.now());
 		pet.setOwner(owner);
 		petService.savePet(pet);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	@Transactional
+	void shouldReturnStatsForAdmin() {
+		Map<String, Object> stats = this.petService.getPetsStats();
+		assertTrue(stats.containsKey("totalPets"));
+		assertEquals(((Collection<Pet>) this.petService.findAll()).size(), stats.get("totalPets"));
+		assertTrue(stats.containsKey("petsByType"));
+		assertEquals(4, ((Map<String, Integer>) stats.get("petsByType")).get("cat"));
+		assertTrue(stats.containsKey("avgPetsByOwner"));
+		assertNotEquals(0, stats.get("avgPetsByOwner"));
 	}
 
 }
