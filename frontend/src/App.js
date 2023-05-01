@@ -8,8 +8,6 @@ import PrivateRoute from "./privateRoute";
 import PetEdit from "./admin/pets/petEdit";
 import UserList from "./admin/users/userList";
 import UserEdit from "./admin/users/userEdit";
-import OwnerList from "./admin/owners/ownerList";
-import OwnerEdit from "./admin/owners/ownerEdit";
 import PetList from "./admin/pets/petList";
 import VetList from "./admin/vets/vetList";
 import VetEdit from "./admin/vets/vetEdit";
@@ -36,6 +34,8 @@ import OwnerConsultationTickets from "./owner/consultations/tickets/ticketList";
 import VetConsultationList from "./vet/consultations/consultationList";
 import VetConsultationTickets from "./vet/consultations/tickets/ticketList";
 import AdminConsultationTickets from "./admin/consultations/tickets/ticketList";
+import OwnerListAdmin from "./admin/owners/ownerList/ownerListAdmin";
+import OwnerEditAdmin from "./admin/owners/ownerEdit/ownerEditAdmin";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -70,8 +70,8 @@ function App() {
         <>
           <Route path="/users" exact={true} element={<PrivateRoute><UserList /></PrivateRoute>} />
           <Route path="/users/:username" exact={true} element={<PrivateRoute><UserEdit /></PrivateRoute>} />
-          <Route path="/owners" exact={true} element={<PrivateRoute><OwnerList /></PrivateRoute>} />
-          <Route path="/owners/:id" exact={true} element={<PrivateRoute><OwnerEdit /></PrivateRoute>} />
+          <Route path="/owners" exact={true} element={<PrivateRoute><OwnerListAdmin /></PrivateRoute>} />
+          <Route path="/owners/:id" exact={true} element={<PrivateRoute><OwnerEditAdmin /></PrivateRoute>} />
           <Route path="/pets" exact={true} element={<PrivateRoute><PetList /></PrivateRoute>} />
           <Route path="/pets/:id" exact={true} element={<PrivateRoute><PetEdit /></PrivateRoute>} />
           <Route path="/pets/:petId/visits" exact={true} element={<PrivateRoute><VisitList /></PrivateRoute>} />
