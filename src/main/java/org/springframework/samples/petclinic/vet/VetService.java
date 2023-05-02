@@ -80,6 +80,7 @@ public class VetService {
 	@Transactional
 	public void deleteVet(int id) throws DataAccessException {
 		Vet toDelete = findVetById(id);
+		toDelete.removeAllSpecialties();
 		vetRepository.delete(toDelete);
 	}
 

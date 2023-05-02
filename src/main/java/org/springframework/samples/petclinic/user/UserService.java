@@ -15,6 +15,8 @@
  */
 package org.springframework.samples.petclinic.user;
 
+import java.util.Optional;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
@@ -22,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.vet.Vet;
+import org.springframework.samples.petclinic.vet.VetService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -34,13 +38,13 @@ public class UserService {
 
 //	private OwnerService ownerService;
 //
-//	private VetService vetService;
+	private VetService vetService;
 
 	@Autowired
-	public UserService(UserRepository userRepository) {
+	public UserService(UserRepository userRepository, VetService vetService) {
 		this.userRepository = userRepository;
 //		this.ownerService = ownerService;
-//		this.vetService = vetService;
+		this.vetService = vetService;
 	}
 
 	@Transactional
@@ -106,8 +110,8 @@ public class UserService {
 	@Transactional
 	public void deleteUser(Integer id) {
 		User toDelete = findUser(id);
-//		if (toDelete.getAuthority() != null)
-//			deleteRelations(id, toDelete.getAuthority().getAuthority());
+		if (toDelete.getAuthority() != null)
+			deleteRelations(id, toDelete.getAuthority().getAuthority());
 //		this.userRepository.deleteOwnerRelation(id);
 //		this.userRepository.deleteVetRelation(id);
 		this.userRepository.delete(toDelete);
@@ -122,10 +126,10 @@ public class UserService {
 			this.userRepository.deleteOwnerRelation(id);
 			break;
 		case "VET":
-//			Optional<Vet> vet = vetService.optFindVetByUser(id);
-//			if (vet.isPresent())
-//				vetService.deleteVet(vet.get().getId());
-			this.userRepository.deleteVetRelation(id);
+			Optional<Vet> vet = vetService.optFindVetByUser(id);
+			if (vet.isPresent()) {
+				vetService.deleteVet(vet.get().getId());
+			}
 			break;
 		default:
 			// The only relations that have user are Owner and Vet

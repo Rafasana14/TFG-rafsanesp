@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Container, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
-import tokenService from '../../../services/token.service';
+import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
+import tokenService from '../../services/token.service';
+import getErrorModal from '../../util/getErrorModal';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -73,39 +74,17 @@ export default function OwnerEditAdmin() {
             });
     }
 
-    function handleShow() {
+    function handleVisible() {
         setVisible(!visible);
     }
 
-    function getAlert() {
-        if (message) {
-            const closeBtn = (
-                <button className="close" onClick={handleShow} type="button">
-                    &times;
-                </button>
-            );
-            return (
-                <div>
-                    <Modal isOpen={visible} toggle={handleShow}
-                        keyboard={false}>
-                        <ModalHeader toggle={handleShow} close={closeBtn}>Alert!</ModalHeader>
-                        <ModalBody>
-                            {message || ""}
-                        </ModalBody>
-                        <ModalFooter>
-                            <Button color="primary" onClick={handleShow}>Close</Button>
-                        </ModalFooter>
-                    </Modal>
-                </div>
-            )
-        }
-
-    }
+    const alert = getErrorModal({ handleVisible }, visible, message);
 
     return (
         <div>
-            <Container>
+            <Container style={{ marginTop: "15px" }}>
                 {<h2>{id !== 'new' ? 'Edit Owner' : 'Add Owner'}</h2>}
+                {alert}
                 <Form onSubmit={handleSubmit}>
                     <FormGroup>
                         <Label for="firstName">First Name</Label>
@@ -146,7 +125,6 @@ export default function OwnerEditAdmin() {
                         <Button color="secondary" tag={Link} to="/owners">Cancel</Button>
                     </FormGroup>
                 </Form>
-                {message !== null ? getAlert() : null}
             </Container>
         </div>
     );

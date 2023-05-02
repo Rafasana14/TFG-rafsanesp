@@ -5,37 +5,37 @@ import { ErrorBoundary } from "react-error-boundary";
 import AppNavbar from "./AppNavbar";
 import Home from "./home";
 import PrivateRoute from "./privateRoute";
-import PetEdit from "./admin/pets/petEdit";
-import UserList from "./admin/users/userList";
-import UserEdit from "./admin/users/userEdit";
-import PetList from "./admin/pets/petList";
-import VetList from "./admin/vets/vetList";
-import VetEdit from "./admin/vets/vetEdit";
 import PricingPlan from "./owner/plan";
 import Register from "./auth/register";
 import Login from "./auth/login";
 import Logout from "./auth/logout";
-import VisitList from "./admin/visits/visitList";
-import VisitEdit from "./admin/visits/visitEdit";
 import OwnerPetList from "./owner/pets/petList";
 import OwnerPetEdit from "./owner/pets/petEdit";
 import OwnerVisitEdit from "./owner/visits/visitEdit";
 import PlanList from "./public/plan";
 import tokenService from "./services/token.service";
-import SpecialtiesList from "./admin/vets/specialtiesList";
-import SpecialtyEdit from "./admin/vets/specialtyEdit";
 import OwnerDashboard from "./owner/dashboard";
 import SwaggerDocs from "./public/swagger";
-import ConsultationList from "./admin/consultations/consultationList";
-import ConsultationEdit from "./admin/consultations/consultationEdit";
 import OwnerConsultationList from "./owner/consultations/consultationList";
 import OwnerConsultationEdit from "./owner/consultations/consultationEdit";
 import OwnerConsultationTickets from "./owner/consultations/tickets/ticketList";
 import VetConsultationList from "./vet/consultations/consultationList";
 import VetConsultationTickets from "./vet/consultations/tickets/ticketList";
-import AdminConsultationTickets from "./admin/consultations/tickets/ticketList";
-import OwnerListAdmin from "./admin/owners/ownerList/ownerListAdmin";
-import OwnerEditAdmin from "./admin/owners/ownerEdit/ownerEditAdmin";
+import PetEditAdmin from "./admin/pets/PetEditAdmin";
+import PetListAdmin from "./admin/pets/PetListAdmin";
+import UserListAdmin from "./admin/users/UserListAdmin";
+import UserEditAdmin from "./admin/users/UserEditAdmin";
+import OwnerListAdmin from "./admin/owners/OwnerListAdmin";
+import OwnerEditAdmin from "./admin/owners/OwnerEditAdmin";
+import SpecialtyListAdmin from "./admin/vets/SpecialtyListAdmin";
+import SpecialtyEditAdmin from "./admin/vets/SpecialtyEditAdmin";
+import VetListAdmin from "./admin/vets/VetListAdmin";
+import VetEditAdmin from "./admin/vets/VetEditAdmin";
+import VisitListAdmin from "./admin/visits/VisitListAdmin";
+import VisitEditAdmin from "./admin/visits/VisitEditAdmin";
+import ConsultationListAdmin from "./admin/consultations/ConsultationListAdmin";
+import TicketListAdmin from "./admin/consultations/TicketListAdmin";
+import ConsultationEditAdmin from "./admin/consultations/ConsultationEditAdmin";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -68,21 +68,21 @@ function App() {
     if (role === "ADMIN") {
       adminRoutes = (
         <>
-          <Route path="/users" exact={true} element={<PrivateRoute><UserList /></PrivateRoute>} />
-          <Route path="/users/:username" exact={true} element={<PrivateRoute><UserEdit /></PrivateRoute>} />
+          <Route path="/users" exact={true} element={<PrivateRoute><UserListAdmin /></PrivateRoute>} />
+          <Route path="/users/:username" exact={true} element={<PrivateRoute><UserEditAdmin /></PrivateRoute>} />
           <Route path="/owners" exact={true} element={<PrivateRoute><OwnerListAdmin /></PrivateRoute>} />
           <Route path="/owners/:id" exact={true} element={<PrivateRoute><OwnerEditAdmin /></PrivateRoute>} />
-          <Route path="/pets" exact={true} element={<PrivateRoute><PetList /></PrivateRoute>} />
-          <Route path="/pets/:id" exact={true} element={<PrivateRoute><PetEdit /></PrivateRoute>} />
-          <Route path="/pets/:petId/visits" exact={true} element={<PrivateRoute><VisitList /></PrivateRoute>} />
-          <Route path="/pets/:petId/visits/:visitId" exact={true} element={<PrivateRoute><VisitEdit /></PrivateRoute>} />
-          <Route path="/vets" exact={true} element={<PrivateRoute><VetList /></PrivateRoute>} />
-          <Route path="/vets/:id" exact={true} element={<PrivateRoute><VetEdit /></PrivateRoute>} />
-          <Route path="/vets/specialties" exact={true} element={<PrivateRoute><SpecialtiesList /></PrivateRoute>} />
-          <Route path="/vets/specialties/:specialtyId" exact={true} element={<PrivateRoute><SpecialtyEdit /></PrivateRoute>} />
-          <Route path="/consultations" exact={true} element={<PrivateRoute><ConsultationList /></PrivateRoute>} />
-          <Route path="/consultations/:consultationId" exact={true} element={<PrivateRoute><ConsultationEdit /></PrivateRoute>} />
-          <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><AdminConsultationTickets /></PrivateRoute>} />
+          <Route path="/pets" exact={true} element={<PrivateRoute><PetListAdmin /></PrivateRoute>} />
+          <Route path="/pets/:id" exact={true} element={<PrivateRoute><PetEditAdmin /></PrivateRoute>} />
+          <Route path="/pets/:petId/visits" exact={true} element={<PrivateRoute><VisitListAdmin /></PrivateRoute>} />
+          <Route path="/pets/:petId/visits/:visitId" exact={true} element={<PrivateRoute><VisitEditAdmin /></PrivateRoute>} />
+          <Route path="/vets" exact={true} element={<PrivateRoute><VetListAdmin /></PrivateRoute>} />
+          <Route path="/vets/:id" exact={true} element={<PrivateRoute><VetEditAdmin /></PrivateRoute>} />
+          <Route path="/vets/specialties" exact={true} element={<PrivateRoute><SpecialtyListAdmin /></PrivateRoute>} />
+          <Route path="/vets/specialties/:specialtyId" exact={true} element={<PrivateRoute><SpecialtyEditAdmin /></PrivateRoute>} />
+          <Route path="/consultations" exact={true} element={<PrivateRoute><ConsultationListAdmin /></PrivateRoute>} />
+          <Route path="/consultations/:consultationId" exact={true} element={<PrivateRoute><ConsultationEditAdmin /></PrivateRoute>} />
+          <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketListAdmin /></PrivateRoute>} />
         </>)
     }
     if (role === "OWNER") {

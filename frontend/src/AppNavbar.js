@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import jwt_decode from "jwt-decode";
 import tokenService from './services/token.service';
 
-export default function AppNavbar() {
+function AppNavbar() {
     const [roles, setRoles] = useState([]);
     const [username, setUsername] = useState("");
     const jwt = tokenService.getLocalAccessToken();
@@ -145,3 +145,5 @@ export default function AppNavbar() {
         </div>
     );
 }
+
+export default AppNavbar;

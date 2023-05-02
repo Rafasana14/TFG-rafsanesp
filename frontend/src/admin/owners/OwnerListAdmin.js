@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Alert, Button, ButtonGroup, Container, Table } from 'reactstrap';
-import tokenService from '../../../services/token.service';
+import tokenService from '../../services/token.service';
 
 const jwt = tokenService.getLocalAccessToken();
 

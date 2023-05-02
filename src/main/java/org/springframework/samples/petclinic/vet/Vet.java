@@ -29,8 +29,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.samples.petclinic.model.Person;
 import org.springframework.samples.petclinic.user.User;
 
@@ -50,7 +48,6 @@ public class Vet extends Person {
 
 	@OneToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST })
 	@JoinColumn(name = "user", referencedColumnName = "id")
-	@OnDelete(action = OnDeleteAction.CASCADE)
 	private User user;
 
 	@Column(name = "city")
@@ -59,6 +56,10 @@ public class Vet extends Person {
 
 	public void removeSpecialty(Specialty s) {
 		specialties.remove(s);
+	}
+	
+	public void removeAllSpecialties() {
+		specialties = null;
 	}
 
 }
