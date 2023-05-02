@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
@@ -144,6 +145,7 @@ class UserServiceTests {
 		User user = new User();
 		user.setUsername("Sam");
 		user.setPassword("password");
+		user.setAuthority(authService.findByAuthority("ADMIN"));
 
 		this.userService.saveUser(user);
 		assertNotEquals(0, user.getId().longValue());
@@ -152,21 +154,15 @@ class UserServiceTests {
 		int finalCount = ((Collection<User>) this.userService.findAll()).size();
 		assertEquals(count + 1, finalCount);
 	}
-
+	
 	@Test
 	@Transactional
-	void shouldDeleteUserWithoutAuthorities() {
-		Integer firstCount = ((Collection<User>) userService.findAll()).size();
+	void shouldNotInsertUserWithoutAuthorities() {
 		User user = new User();
 		user.setUsername("Sam");
 		user.setPassword("password");
-		this.userService.saveUser(user);
 
-		Integer secondCount = ((Collection<User>) userService.findAll()).size();
-		assertEquals(firstCount + 1, secondCount);
-		userService.deleteUser(user.getId());
-		Integer lastCount = ((Collection<User>) userService.findAll()).size();
-		assertEquals(firstCount, lastCount);
+		assertThrows(DataIntegrityViolationException.class, () -> this.userService.saveUser(user));
 	}
 
 	@Test

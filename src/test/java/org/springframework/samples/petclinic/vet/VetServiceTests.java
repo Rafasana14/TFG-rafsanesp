@@ -32,6 +32,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
+import org.springframework.samples.petclinic.user.AuthoritiesService;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.util.EntityUtils;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,8 +42,14 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureTestDatabase
 class VetServiceTests {
 
+	private VetService vetService;
+	private AuthoritiesService authService;
+	
 	@Autowired
-	protected VetService vetService;
+	public VetServiceTests(VetService vetService, AuthoritiesService authService) {
+		this.vetService = vetService;
+		this.authService = authService;
+	}
 
 	@Test
 	void shouldFindVets() {
@@ -115,7 +122,9 @@ class VetServiceTests {
 		User user = new User();
 		user.setUsername("Sam");
 		user.setPassword("supersecretpassword");
+		user.setAuthority(authService.findByAuthority("VET"));
 		vet.setUser(user);
+		
 
 		this.vetService.saveVet(vet);
 		assertNotEquals(0, vet.getId().longValue());
@@ -135,6 +144,7 @@ class VetServiceTests {
 		User user = new User();
 		user.setUsername("Sam");
 		user.setPassword("supersecretpassword");
+		user.setAuthority(authService.findByAuthority("VET"));
 		vet.setUser(user);
 		this.vetService.saveVet(vet);
 

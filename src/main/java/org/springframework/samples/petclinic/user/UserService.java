@@ -110,8 +110,7 @@ public class UserService {
 	@Transactional
 	public void deleteUser(Integer id) {
 		User toDelete = findUser(id);
-		if (toDelete.getAuthority() != null)
-			deleteRelations(id, toDelete.getAuthority().getAuthority());
+		deleteRelations(id, toDelete.getAuthority().getAuthority());
 //		this.userRepository.deleteOwnerRelation(id);
 //		this.userRepository.deleteVetRelation(id);
 		this.userRepository.delete(toDelete);
