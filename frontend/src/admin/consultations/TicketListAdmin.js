@@ -65,14 +65,17 @@ export default function TicketListAdmin() {
                     Accept: "application/json",
                     "Content-Type": "application/json",
                 },
-            }).then((response) => {
-                if (response.status === 200) {
-                    setTickets(tickets.filter((i) => i.id !== ticketId && i.creationDate < date));
-                }
-                return response.json();
-            }).then(json => {
-                getDeleteAlertsOrModal(json, id, alerts, setAlerts, setMessage, setVisible);
-            }).catch((message) => alert(message));
+            })
+                .then((response) => {
+                    if (response.status === 200) {
+                        setTickets(tickets.filter((i) => i.id !== ticketId && i.creationDate < date));
+                    }
+                    return response.json();
+                })
+                .then(json => {
+                    getDeleteAlertsOrModal(json, id, alerts, setAlerts, setMessage, setVisible);
+                })
+                .catch((message) => alert(message));
         }
     }
 
@@ -97,7 +100,7 @@ export default function TicketListAdmin() {
                     setVisible(true);
                 }
                 else setConsultation({ ...consultation, status: "CLOSED" });
-            })
+            }).catch((message) => alert(message));
 
     }
 
