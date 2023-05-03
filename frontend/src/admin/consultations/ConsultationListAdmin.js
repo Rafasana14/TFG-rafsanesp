@@ -1,36 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Alert, Button, Col, Container, Input, Row, Table } from 'reactstrap';
+import { Button, Col, Container, Input, Row, Table } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import consultationService from '../../services/consultation.service';
+import useFetchState from '../../util/useFetchState';
+import getErrorModal from '../../util/getErrorModal';
+import getDeleteAlertsOrModal from '../../util/getDeleteAlertsOrModal';
 
 const jwt = tokenService.getLocalAccessToken();
 
 export default function ConsultationListAdmin() {
-    const [consultations, setConsultations] = useState([]);
+    const [message, setMessage] = useState(null);
+    const [visible, setVisible] = useState(false);
+    const [consultations, setConsultations] = useFetchState([], `/api/v1/consultations`, jwt, setMessage, setVisible);
     const [filtered, setFiltered] = useState([]);
-    const [search, setSearch] = useState([]);
-    const [filter, setFilter] = useState([]);
+    const [search, setSearch] = useState("");
+    const [filter, setFilter] = useState("");
     const [alerts, setAlerts] = useState([]);
-
-    useEffect(() => {
-        let ignore = false;
-        fetch(`/api/v1/consultations`, {
-            headers: {
-                "Authorization": `Bearer ${jwt}`,
-            },
-        })
-            .then(response => response.json())
-            .then(json => {
-                if (!ignore) {
-                    setConsultations(json);
-                    setFiltered(json);
-                }
-            });
-        return () => {
-            ignore = true;
-        };
-    }, []);
 
     async function remove(id) {
         let confirmMessage = window.confirm("Are you sure you want to delete it?");
@@ -49,22 +35,9 @@ export default function ConsultationListAdmin() {
                 }
                 return response.json();
             }).then(json => {
-                const alertId = `alert-${id}`
-                setAlerts([
-                    ...alerts,
-                    {
-                        alert: <Alert toggle={() => dismiss(alertId)} key={"alert-" + id} id={alertId} color="info">
-                            {json.message}
-                        </Alert>,
-                        id: alertId
-                    }
-                ]);
-            });
+                getDeleteAlertsOrModal(json, id, alerts, setAlerts, setMessage, setVisible);
+            }).catch((message) => alert(message));
         }
-    }
-
-    function dismiss(id) {
-        setAlerts(alerts.filter(i => i.id !== id))
     }
 
     function handleSearch(event) {
@@ -103,15 +76,18 @@ export default function ConsultationListAdmin() {
         setFilter(value);
     }
 
+
     let consultationList;
-    if (filtered) consultationList = consultationService.getConsultationList(filtered, remove);
+    if (filtered.length > 0) consultationList = consultationService.getConsultationList(filtered, remove);
     else consultationList = consultationService.getConsultationList(consultations, remove);
+    const modal = getErrorModal(setVisible, visible, message);
 
     return (
         <div>
             <Container fluid style={{ marginTop: "15px" }}>
                 <h1 className="text-center">Consultations</h1>
                 {alerts.map((a) => a.alert)}
+                {modal}
                 <Row className="row-cols-auto g-3 align-items-center">
                     <Col>
                         <Button color="success" tag={Link} to="/consultations/new">

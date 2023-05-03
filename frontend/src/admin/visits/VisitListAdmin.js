@@ -1,40 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Alert, Button, ButtonGroup, Container, Table } from 'reactstrap';
+import { Button, ButtonGroup, Container, Table } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import getErrorModal from '../../util/getErrorModal';
+import getIdFromUrl from '../../util/getIdFromUrl';
+import useFetchState from '../../util/useFetchState';
+import getDeleteAlertsOrModal from '../../util/getDeleteAlertsOrModal';
 
 const jwt = tokenService.getLocalAccessToken();
 
 export default function VisitListAdmin() {
-    const [visits, setVisits] = useState([]);
-    const [alerts, setAlerts] = useState([]);
-    const pathArray = window.location.pathname.split('/');
+    const petId = getIdFromUrl(2);
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
-    const petId = pathArray[2];
-
-    useEffect(() => {
-        let ignore = false;
-        fetch(`/api/v1/pets/${petId}/visits`, {
-            headers: {
-                "Authorization": `Bearer ${jwt}`,
-            },
-        })
-            .then(response => response.json())
-            .then(json => {
-                if (!ignore) {
-                    if (json.message) {
-                        setMessage(json.message);
-                        setVisible(true);
-                    }
-                    else setVisits(json);
-                }
-            });
-        return () => {
-            ignore = true;
-        };
-    }, [petId]);
+    const [visits, setVisits] = useFetchState([], `/api/v1/pets/${petId}/visits`, jwt, setMessage, setVisible);
+    const [alerts, setAlerts] = useState([]);
 
     async function remove(id) {
         let confirmMessage = window.confirm("Are you sure you want to delete it?");
@@ -52,29 +32,12 @@ export default function VisitListAdmin() {
                 }
                 return response.json();
             }).then(json => {
-                const alertId = `alert-${id}`
-                setAlerts([
-                    ...alerts,
-                    {
-                        alert: <Alert toggle={() => dismiss(alertId)} key={"alert-" + id} id={alertId} color="info">
-                            {json.message}
-                        </Alert>,
-                        id: alertId
-                    }
-                ]);
-            });
+                getDeleteAlertsOrModal(json, id, alerts, setAlerts, setMessage, setVisible);
+            }).catch((message) => alert(message));
         }
     }
 
-    function dismiss(id) {
-        setAlerts(alerts.filter(i => i.id !== id))
-    }
-
-    function handleVisible() {
-        setVisible(!visible);
-    }
-
-    const modal = getErrorModal({ handleVisible }, visible, message);
+    const modal = getErrorModal(setVisible, visible, message);
     const visitList = visits.map((visit) => {
         return (
             <tr key={visit.id}>

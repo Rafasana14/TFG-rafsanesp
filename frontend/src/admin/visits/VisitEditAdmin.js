@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
 import tokenService from '../../services/token.service';
-import useData from '../../util/useData';
 import getErrorModal from '../../util/getErrorModal';
+import useFetchData from '../../util/useFetchData';
+import getIdFromUrl from '../../util/getIdFromUrl';
+import useFetchState from '../../util/useFetchState';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -15,37 +17,13 @@ export default function VisitEditAdmin() {
         vet: {},
         pet: {},
     };
-    const pathArray = window.location.pathname.split('/');
-    const petId = pathArray[2];
-    const visitId = pathArray[4];
-    const [visit, setVisit] = useState(emptyItem);
+    const petId = getIdFromUrl(2);
+    const visitId = getIdFromUrl(4);
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
-    const pet = useData(`/api/v1/pets/${petId}`, jwt);
-    const vets = useData(`/api/v1/vets`, jwt);
-
-    useEffect(() => {
-        let ignore = false;
-        if (visitId !== 'new') {
-            fetch(`/api/v1/pets/${petId}/visits/${visitId}`, {
-                headers: {
-                    "Authorization": `Bearer ${jwt}`,
-                },
-            }).then(response => response.json())
-                .then(json => {
-                    if (!ignore) {
-                        if (json.message) {
-                            setMessage(json.message);
-                            setVisible(true);
-                        }
-                        else setVisit(json);
-                    }
-                });
-        }
-        return () => {
-            ignore = true;
-        };
-    }, [petId, visitId,]);
+    const [visit, setVisit] = useFetchState(emptyItem, `/api/v1/pets/${petId}/visits/${visitId}`, jwt, setMessage, setVisible, visitId);
+    const pet = useFetchData(`/api/v1/pets/${petId}`, jwt);
+    const vets = useFetchData(`/api/v1/vets`, jwt);
 
     function handleChange(event) {
         const target = event.target;
@@ -62,7 +40,7 @@ export default function VisitEditAdmin() {
         event.preventDefault();
         setVisit({ ...visit, pet: pet })
 
-        await fetch(`/api/v1/pets/${petId}/visits` + (visit.id ? '/' + visit.id : ''), {
+        await (await fetch(`/api/v1/pets/${petId}/visits` + (visit.id ? '/' + visit.id : ''), {
             method: (visit.id) ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${jwt}`,
@@ -70,29 +48,24 @@ export default function VisitEditAdmin() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(visit),
-        })
-            .then(response => response.json())
+        })).json()
             .then(json => {
                 if (json.message) {
                     setMessage(json.message);
                     setVisible(true);
                 }
                 else window.location.href = `/pets/${petId}/visits`;
-            });
+            }).catch((message) => alert(message));
     }
 
-    function handleVisible() {
-        setVisible(!visible);
-    }
-
-    const alert = getErrorModal({ handleVisible }, visible, message);
+    const modal = getErrorModal(setVisible, visible, message);
     const vetOptions = vets.map(vet => <option key={vet.id} value={vet.id}>{vet.firstName} {vet.lastName}</option>);
 
     return (
         <div>
             <Container style={{ marginTop: "15px" }}>
                 {<h2>{visit.id ? 'Edit Visit' : 'Add Visit'}</h2>}
-                {alert}
+                {modal}
                 <Form onSubmit={handleSubmit}>
                     <FormGroup>
                         <Label for="datetime">Date and Time</Label>

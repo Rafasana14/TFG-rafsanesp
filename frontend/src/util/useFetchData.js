@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function useData(url, jwt) {
+export default function useFetchData(url, jwt) {
     const [data, setData] = useState([]);
     useEffect(() => {
         if (url) {
@@ -15,7 +15,7 @@ export default function useData(url, jwt) {
                     if (!ignore) {
                         setData(json);
                     }
-                });
+                }).catch((message) => alert(message));
             return () => {
                 ignore = true;
             };

@@ -41,7 +41,7 @@ import lombok.Setter;
 @Setter
 public class Vet extends Person {
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "vet_specialties", joinColumns = @JoinColumn(name = "vet_id"), inverseJoinColumns = @JoinColumn(name = "specialty_id"), uniqueConstraints = {
 			@UniqueConstraint(columnNames = { "vet_id", "specialty_id" }) })
 	private List<Specialty> specialties;

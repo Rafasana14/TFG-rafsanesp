@@ -1,8 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import getErrorModal from '../../util/getErrorModal';
+import useFetchState from '../../util/useFetchState';
+import getIdFromUrl from '../../util/getIdFromUrl';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -16,34 +18,10 @@ export default function OwnerEditAdmin() {
         telephone: '',
         plan: null,
     };
-    const [owner, setOwner] = useState(emptyItem);
+    const id = getIdFromUrl(2);
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
-    const pathArray = window.location.pathname.split('/');
-    const id = pathArray[2];
-
-    useEffect(() => {
-        let ignore = false;
-        if (id !== 'new') {
-            fetch(`/api/v1/owners/${id}`, {
-                headers: {
-                    "Authorization": `Bearer ${jwt}`,
-                },
-            }).then(response => response.json())
-                .then(json => {
-                    if (!ignore) {
-                        if (json.message) {
-                            setMessage(json.message);
-                            setVisible(true);
-                        }
-                        else setOwner(json);
-                    }
-                });
-        }
-        return () => {
-            ignore = true;
-        };
-    }, [id]);
+    const [owner, setOwner] = useFetchState(emptyItem, `/api/v1/owners/${id}`, jwt, setMessage, setVisible, id);
 
     function handleChange(event) {
         const target = event.target;
@@ -55,7 +33,7 @@ export default function OwnerEditAdmin() {
     async function handleSubmit(event) {
         event.preventDefault();
 
-        fetch('/api/v1/owners' + (owner.id ? '/' + owner.id : ''), {
+        await (await fetch('/api/v1/owners' + (owner.id ? '/' + owner.id : ''), {
             method: (owner.id) ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${jwt}`,
@@ -63,28 +41,23 @@ export default function OwnerEditAdmin() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(owner),
-        })
-            .then(response => response.json())
+        })).json()
             .then(json => {
                 if (json.message) {
                     setMessage(json.message);
                     setVisible(true);
                 }
                 else window.location.href = '/owners';
-            });
+            }).catch((message) => alert(message));
     }
 
-    function handleVisible() {
-        setVisible(!visible);
-    }
-
-    const alert = getErrorModal({ handleVisible }, visible, message);
+    const modal = getErrorModal(setVisible, visible, message);
 
     return (
         <div>
             <Container style={{ marginTop: "15px" }}>
                 {<h2>{id !== 'new' ? 'Edit Owner' : 'Add Owner'}</h2>}
-                {alert}
+                {modal}
                 <Form onSubmit={handleSubmit}>
                     <FormGroup>
                         <Label for="firstName">First Name</Label>

@@ -1,31 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Alert, Button, ButtonGroup, Container, Table } from 'reactstrap';
+import { Button, ButtonGroup, Container, Table } from 'reactstrap';
 import tokenService from '../../services/token.service';
+import useFetchState from '../../util/useFetchState';
+import getErrorModal from '../../util/getErrorModal';
+import getDeleteAlertsOrModal from '../../util/getDeleteAlertsOrModal';
 
 const jwt = tokenService.getLocalAccessToken();
 
 export default function UserListAdmin() {
-    const [users, setUsers] = useState([]);
+    const [message, setMessage] = useState(null);
+    const [visible, setVisible] = useState(false);
+    const [users, setUsers] = useFetchState([], `/api/v1/users`, jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
-
-    useEffect(() => {
-        let ignore = false;
-        fetch(`/api/v1/users`, {
-            headers: {
-                "Authorization": `Bearer ${jwt}`,
-            },
-        })
-            .then(response => response.json())
-            .then(json => {
-                if (!ignore) {
-                    setUsers(json);
-                }
-            });
-        return () => {
-            ignore = true;
-        };
-    }, []);
 
     async function remove(id) {
         let confirmMessage = window.confirm("Are you sure you want to delete it?");
@@ -43,22 +30,9 @@ export default function UserListAdmin() {
                 }
                 return response.json();
             }).then(json => {
-                const alertId = `alert-${id}`
-                setAlerts([
-                    ...alerts,
-                    {
-                        alert: <Alert toggle={() => dismiss(alertId)} key={"alert-" + id} id={alertId} color="info">
-                            {json.message}
-                        </Alert>,
-                        id: alertId
-                    }
-                ]);
-            });
+                getDeleteAlertsOrModal(json, id, alerts, setAlerts, setMessage, setVisible);
+            }).catch((message) => alert(message));
         }
-    }
-
-    function dismiss(id) {
-        setAlerts(alerts.filter(i => i.id !== id))
     }
 
     const userList = users.map((user) => {
@@ -81,12 +55,14 @@ export default function UserListAdmin() {
             </tr>
         );
     });
+    const modal = getErrorModal(setVisible, visible, message);
 
     return (
         <div>
             <Container style={{ marginTop: "15px" }} fluid>
                 <h1 className="text-center">Users</h1>
                 {alerts.map((a) => a.alert)}
+                {modal}
                 <Button color="success" tag={Link} to="/users/new">
                     Add User
                 </Button>

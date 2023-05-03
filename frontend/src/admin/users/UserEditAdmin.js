@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
 import tokenService from '../../services/token.service';
-import useData from '../../util/useData';
 import getErrorModal from '../../util/getErrorModal';
+import useFetchData from '../../util/useFetchData';
+import useFetchState from '../../util/useFetchState';
+import getIdFromUrl from '../../util/getIdFromUrl';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -14,35 +16,11 @@ export default function UserEditAdmin() {
         password: '',
         authority: null,
     };
-    const [user, setUser] = useState(emptyItem);
+    const id = getIdFromUrl(2);
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
-    const auths = useData(`/api/v1/users/authorities`, jwt);
-    const pathArray = window.location.pathname.split('/');
-    const id = pathArray[2];
-
-    useEffect(() => {
-        let ignore = false;
-        if (id !== 'new') {
-            fetch(`/api/v1/users/${id}`, {
-                headers: {
-                    "Authorization": `Bearer ${jwt}`,
-                },
-            }).then(response => response.json())
-                .then(json => {
-                    if (!ignore) {
-                        if (json.message) {
-                            setMessage(json.message);
-                            setVisible(true);
-                        }
-                        else setUser(json);
-                    }
-                });
-        }
-        return () => {
-            ignore = true;
-        };
-    }, [id]);
+    const [user, setUser] = useFetchState(emptyItem, `/api/v1/users/${id}`, jwt, setMessage, setVisible, id);
+    const auths = useFetchData(`/api/v1/users/authorities`, jwt);
 
     function handleChange(event) {
         const target = event.target;
@@ -58,7 +36,7 @@ export default function UserEditAdmin() {
     async function handleSubmit(event) {
         event.preventDefault();
 
-        fetch('/api/v1/users' + (user.id ? '/' + user.id : ''), {
+        await (await fetch('/api/v1/users' + (user.id ? '/' + user.id : ''), {
             method: (user.id) ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${jwt}`,
@@ -66,29 +44,25 @@ export default function UserEditAdmin() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(user),
-        })
-            .then(response => response.json())
+        })).json()
             .then(json => {
                 if (json.message) {
                     setMessage(json.message);
                     setVisible(true);
                 }
                 else window.location.href = '/users';
-            });
+            }).catch((message) => alert(message));
     }
 
-    function handleVisible() {
-        setVisible(!visible);
-    }
 
-    const alert = getErrorModal({ handleVisible }, visible, message);
+    const modal = getErrorModal(setVisible, visible, message);
     const authOptions = auths.map(auth => <option key={auth.id} value={auth.id}>{auth.authority}</option>);
 
     return (
         <div>
             <Container style={{ marginTop: "15px" }}>
                 {<h2>{user.id ? 'Edit User' : 'Add User'}</h2>}
-                {alert}
+                {modal}
                 <Form onSubmit={handleSubmit}>
                     <FormGroup>
                         <Label for="username">Username</Label>

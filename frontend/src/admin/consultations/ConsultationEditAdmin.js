@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import getErrorModal from '../../util/getErrorModal';
-import useData from '../../util/useData';
+import useFetchData from '../../util/useFetchData';
+import useFetchState from '../../util/useFetchState';
+import getIdFromUrl from '../../util/getIdFromUrl';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -14,40 +16,13 @@ export default function ConsultationEditAdmin() {
         status: null,
         owner: null,
     };
-    const [consultation, setConsultation] = useState(emptyItem);
-    const owners = useData("/api/v1/owners", jwt);
-    const pets = useData(`/api/v1/pets`, jwt);
-    const [petsOwned, setPetsOwned] = useState(emptyItem);
+    const id = getIdFromUrl(2);
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
-    const pathArray = window.location.pathname.split('/');
-    const id = pathArray[2];
-
-    useEffect(() => {
-        let ignore = false;
-        if (id !== 'new') {
-            fetch(`/api/v1/consultations/${id}`, {
-                headers: {
-                    "Authorization": `Bearer ${jwt}`,
-                },
-            }).then(response => response.json())
-                .then(json => {
-                    if (!ignore) {
-                        if (json.message) {
-                            setMessage(json.message);
-                            setVisible(true);
-                        }
-                        else {
-                            setConsultation(json);
-                            setPetsOwned(json.pet)
-                        }
-                    }
-                });
-        }
-        return () => {
-            ignore = true;
-        };
-    }, [id]);
+    const [consultation, setConsultation] = useFetchState(emptyItem, `/api/v1/consultations/${id}`, jwt, setMessage, setVisible, id);
+    const owners = useFetchData("/api/v1/owners", jwt);
+    const pets = useFetchData(`/api/v1/pets`, jwt);
+    const [petsOwned, setPetsOwned] = useState([]);
 
     function handleChange(event) {
         const target = event.target;
@@ -67,7 +42,7 @@ export default function ConsultationEditAdmin() {
     async function handleSubmit(event) {
         event.preventDefault();
 
-        await fetch('/api/v1/consultations' + (consultation.id ? '/' + consultation.id : ''), {
+        await (await fetch('/api/v1/consultations' + (consultation.id ? '/' + consultation.id : ''), {
             method: (consultation.id) ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${jwt}`,
@@ -75,34 +50,32 @@ export default function ConsultationEditAdmin() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(consultation),
-        })
-            .then(response => response.json())
+        })).json()
             .then(json => {
                 if (json.message) {
                     setMessage(json.message);
                     setVisible(true);
                 }
                 else window.location.href = '/consultations';
-            });
+            }).catch((message) => alert(message));
     }
 
-    function handleVisible() {
-        setVisible(!visible);
-    }
-
-    const alert = getErrorModal({ handleVisible }, visible, message);
+    const modal = getErrorModal(setVisible, visible, message);
     const ownerOptions = owners.map(owner => <option key={owner.id} value={owner.id}>{owner.user.username}</option>);
-    const petOptions = consultation.id ?
-        <option key={consultation.pet.id} value={consultation.pet.id}>{consultation.pet.name}</option> :
-        consultation.owner ?
+    let petOptions;
+    if (consultation.id)
+        petOptions = <option key={consultation.pet.id} value={consultation.pet.id}>{consultation.pet.name}</option>;
+    else
+        petOptions = consultation.owner ?
             petsOwned.map(pet => <option key={pet.id} value={pet.id}>{pet.name}</option>) :
             <></>;
+
 
     return (
         <div>
             <Container style={{ marginTop: "15px" }}>
                 {<h2>{id !== 'new' ? 'Edit Consultation' : 'Add Consultation'}</h2>}
-                {alert}
+                {modal}
                 <Form onSubmit={handleSubmit}>
                     <FormGroup>
                         <Label for="title">Title</Label>

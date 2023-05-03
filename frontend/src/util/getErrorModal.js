@@ -1,22 +1,26 @@
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 
-export default function getErrorModal({ handleVisible }, visible = false, message = null) {
+function handleVisible(setVisible, visible) {
+    setVisible(!visible);
+}
+
+export default function getErrorModal(setVisible, visible = false, message = null) {
     if (message) {
         const closeBtn = (
-            <button className="close" onClick={handleVisible} type="button">
+            <button className="close" onClick={() => handleVisible(setVisible, visible)} type="button">
                 &times;
             </button>
         );
         return (
             <div>
-                <Modal isOpen={visible} toggle={handleVisible}
+                <Modal isOpen={visible} toggle={() => handleVisible(setVisible, visible)}
                     keyboard={false}>
-                    <ModalHeader toggle={handleVisible} close={closeBtn}>Alert!</ModalHeader>
+                    <ModalHeader toggle={() => handleVisible(setVisible, visible)} close={closeBtn}>Alert!</ModalHeader>
                     <ModalBody>
                         {message}
                     </ModalBody>
                     <ModalFooter>
-                        <Button color="primary" onClick={handleVisible}>Close</Button>
+                        <Button color="primary" onClick={() => handleVisible(setVisible, visible)}>Close</Button>
                     </ModalFooter>
                 </Modal>
             </div>

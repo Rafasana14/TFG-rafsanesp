@@ -1,8 +1,11 @@
-import { useState, useEffect } from 'react';
-import { Alert, Container } from 'reactstrap';
+import { useState } from 'react';
+import { Container } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import ticketService from '../../services/ticket.service';
 import getErrorModal from '../../util/getErrorModal';
+import useFetchState from '../../util/useFetchState';
+import getDeleteAlertsOrModal from '../../util/getDeleteAlertsOrModal';
+import getIdFromUrl from '../../util/getIdFromUrl';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -11,58 +14,13 @@ export default function TicketListAdmin() {
         id: null,
         description: '',
     };
-    const pathArray = window.location.pathname.split('/');
-    const id = pathArray[2];
-    const [consultation, setConsultation] = useState({});
-    const [tickets, setTickets] = useState([]);
-    const [newTicket, setNewTicket] = useState(emptyTicket);
+    const id = getIdFromUrl(2);
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
+    const [consultation, setConsultation] = useFetchState({}, `/api/v1/consultations/${id}`, jwt, setMessage, setVisible, id);
+    const [tickets, setTickets] = useFetchState([], `/api/v1/consultations/${id}/tickets`, jwt, setMessage, setVisible);
+    const [newTicket, setNewTicket] = useState(emptyTicket);
     const [alerts, setAlerts] = useState([]);
-
-    useEffect(() => {
-        let ignore = false;
-        fetch(`/api/v1/consultations/${id}`, {
-            headers: {
-                "Authorization": `Bearer ${jwt}`,
-            },
-        })
-            .then(response => response.json())
-            .then(json => {
-                if (!ignore) {
-                    if (json.message) {
-                        setMessage(json.message);
-                        setVisible(true);
-                    }
-                    else setConsultation(json);
-                }
-            });
-        return () => {
-            ignore = true;
-        };
-    }, [id]);
-
-    useEffect(() => {
-        let ignore = false;
-        fetch(`/api/v1/consultations/${id}/tickets`, {
-            headers: {
-                "Authorization": `Bearer ${jwt}`,
-            },
-        })
-            .then(response => response.json())
-            .then(json => {
-                if (!ignore) {
-                    if (json.message) {
-                        setMessage(json.message);
-                        setVisible(true);
-                    }
-                    else setTickets(json);
-                }
-            });
-        return () => {
-            ignore = true;
-        };
-    }, [id]);
 
     function handleChange(event) {
         const target = event.target;
@@ -74,7 +32,7 @@ export default function TicketListAdmin() {
     async function handleSubmit(event) {
         event.preventDefault();
 
-        fetch(`/api/v1/consultations/${id}/tickets`, {
+        await (await fetch(`/api/v1/consultations/${id}/tickets`, {
             method: 'POST',
             headers: {
                 "Authorization": `Bearer ${jwt}`,
@@ -82,8 +40,7 @@ export default function TicketListAdmin() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(newTicket),
-        })
-            .then(response => response.json())
+        })).json()
             .then(json => {
                 if (json.message) {
                     setMessage(json.message);
@@ -93,7 +50,7 @@ export default function TicketListAdmin() {
                     setTickets([...tickets, json]);
                     setNewTicket(emptyTicket);
                 }
-            });
+            }).catch((message) => alert(message));
     }
 
     async function remove(ticketId, date) {
@@ -112,17 +69,8 @@ export default function TicketListAdmin() {
                 }
                 return response.json();
             }).then(json => {
-                const alertId = `alert-${id}`
-                setAlerts([
-                    ...alerts,
-                    {
-                        alert: <Alert toggle={() => dismiss(alertId)} key={"alert-" + id} id={alertId} color="info">
-                            {json.message}
-                        </Alert>,
-                        id: alertId
-                    }
-                ]);
-            });
+                getDeleteAlertsOrModal(json, id, alerts, setAlerts, setMessage, setVisible);
+            }).catch((message) => alert(message));
         }
     }
 
@@ -147,15 +95,7 @@ export default function TicketListAdmin() {
         else setConsultation({ ...consultation, status: "CLOSED" });
     }
 
-    function dismiss(id) {
-        setAlerts(alerts.filter(i => i.id !== id))
-    }
-
-    function handleVisible() {
-        setVisible(!visible);
-    }
-
-    const modal = getErrorModal({ handleVisible }, visible, message);
+    const modal = getErrorModal(setVisible, visible, message);
 
     const ticketList = ticketService.getTicketList(tickets, "ADMIN", remove);
     const ticketForm = ticketService.getTicketForm(newTicket, consultation.status, "ADMIN", handleChange, handleSubmit);

@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import tokenService from '../../services/token.service';
-import useData from '../../util/useData';
 import getErrorModal from '../../util/getErrorModal';
+import useFetchData from '../../util/useFetchData';
+import getIdFromUrl from '../../util/getIdFromUrl';
+import useFetchState from '../../util/useFetchState';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -15,36 +17,12 @@ export default function VetEditAdmin() {
         specialties: [],
         user: {},
     };
-    const [vet, setVet] = useState(emptyItem);
+    const id = getIdFromUrl(2);
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
-    const specialties = useData(`/api/v1/vets/specialties`, jwt);
-    const users = useData(`/api/v1/users`, jwt);
-    const pathArray = window.location.pathname.split('/');
-    const id = pathArray[2];
-
-    useEffect(() => {
-        let ignore = false;
-        if (id !== 'new') {
-            fetch(`/api/v1/vets/${id}`, {
-                headers: {
-                    "Authorization": `Bearer ${jwt}`,
-                },
-            }).then(response => response.json())
-                .then(json => {
-                    if (!ignore) {
-                        if (json.message) {
-                            setMessage(json.message);
-                            setVisible(true);
-                        }
-                        else setVet(json);
-                    }
-                });
-        }
-        return () => {
-            ignore = true;
-        };
-    }, [id]);
+    const [vet, setVet] = useFetchState(emptyItem, `/api/v1/vets/${id}`, jwt, setMessage, setVisible, id);
+    const specialties = useFetchData(`/api/v1/vets/specialties`, jwt);
+    const users = useFetchData(`/api/v1/users`, jwt);
 
     function handleChange(event) {
         const target = event.target;
@@ -71,7 +49,7 @@ export default function VetEditAdmin() {
     async function handleSubmit(event) {
         event.preventDefault();
 
-        await fetch('/api/v1/vets' + (vet.id ? '/' + vet.id : ''), {
+        await (await fetch('/api/v1/vets' + (vet.id ? '/' + vet.id : ''), {
             method: (vet.id) ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${jwt}`,
@@ -79,22 +57,18 @@ export default function VetEditAdmin() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(vet),
-        })
-            .then(response => response.json())
+        })).json()
             .then(json => {
                 if (json.message) {
                     setMessage(json.message);
                     setVisible(true);
                 }
                 else window.location.href = '/vets';
-            });
+            }).catch((message) => alert(message));
     }
 
-    function handleVisible() {
-        setVisible(!visible);
-    }
 
-    const alert = getErrorModal({ handleVisible }, visible, message);
+    const modal = getErrorModal(setVisible, visible, message);
     const selectedSpecialties = vet.specialties.map(specialty => specialty.name);
     const specialtiesBoxes = specialties.map(specialty => {
         if (selectedSpecialties?.includes(specialty.name)) {
@@ -115,7 +89,7 @@ export default function VetEditAdmin() {
         <div>
             <Container style={{ marginTop: "15px" }}>
                 {<h2>{vet.id ? 'Edit Vet' : 'Add Vet'}</h2>}
-                {alert}
+                {modal}
                 <Form onSubmit={handleSubmit}>
                     <FormGroup>
                         <Label for="firstName">First Name</Label>
