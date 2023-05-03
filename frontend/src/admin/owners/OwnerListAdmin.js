@@ -14,10 +14,10 @@ export default function OwnerListAdmin() {
   const [owners, setOwners] = useFetchState([], `/api/v1/owners`, jwt, setMessage, setVisible);
   const [alerts, setAlerts] = useState([]);
 
-  async function remove(id) {
+  function remove(id) {
     let confirmMessage = window.confirm("Are you sure you want to delete it?");
     if (confirmMessage) {
-      await fetch(`/api/v1/owners/${id}`, {
+      fetch(`/api/v1/owners/${id}`, {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${jwt}`,

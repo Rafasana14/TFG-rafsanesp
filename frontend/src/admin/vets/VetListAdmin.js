@@ -14,10 +14,10 @@ export default function VetListAdmin() {
     const [vets, setVets] = useFetchState([], `/api/v1/vets`, jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
 
-    async function remove(id) {
+    function remove(id) {
         let confirmMessage = window.confirm("Are you sure you want to delete it?");
         if (confirmMessage) {
-            await fetch(`/api/v1/vets/${id}`, {
+            fetch(`/api/v1/vets/${id}`, {
                 method: "DELETE",
                 headers: {
                     "Authorization": `Bearer ${jwt}`,

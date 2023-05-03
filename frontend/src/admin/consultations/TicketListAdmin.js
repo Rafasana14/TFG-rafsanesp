@@ -53,10 +53,10 @@ export default function TicketListAdmin() {
             }).catch((message) => alert(message));
     }
 
-    async function remove(ticketId, date) {
+    function remove(ticketId, date) {
         let confirmMessage = window.confirm("Are you sure you want to delete it?");
         if (confirmMessage) {
-            await fetch(`/api/v1/consultations/${id}/tickets/${ticketId}`, {
+            fetch(`/api/v1/consultations/${id}/tickets/${ticketId}`, {
                 method: "DELETE",
                 headers: {
                     "Authorization": `Bearer ${jwt}`,

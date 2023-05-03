@@ -14,10 +14,10 @@ export default function UserListAdmin() {
     const [users, setUsers] = useFetchState([], `/api/v1/users`, jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
 
-    async function remove(id) {
+    function remove(id) {
         let confirmMessage = window.confirm("Are you sure you want to delete it?");
         if (confirmMessage) {
-            await fetch(`/api/v1/users/${id}`, {
+            fetch(`/api/v1/users/${id}`, {
                 method: "DELETE",
                 headers: {
                     "Authorization": `Bearer ${jwt}`,
