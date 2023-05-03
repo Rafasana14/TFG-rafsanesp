@@ -24,14 +24,17 @@ export default function VetListAdmin() {
                     Accept: "application/json",
                     "Content-Type": "application/json",
                 },
-            }).then((response) => {
-                if (response.status === 200) {
-                    setVets(vets.filter((i) => i.id !== id));
-                }
-                return response.json();
-            }).then(json => {
-                getDeleteAlertsOrModal(json, id, alerts, setAlerts, setMessage, setVisible);
-            }).catch((message) => alert(message));
+            })
+                .then((response) => {
+                    if (response.status === 200) {
+                        setVets(vets.filter((i) => i.id !== id));
+                    }
+                    return response.json();
+                })
+                .then(json => {
+                    getDeleteAlertsOrModal(json, id, alerts, setAlerts, setMessage, setVisible);
+                })
+                .catch((message) => alert(message));
         }
     }
 

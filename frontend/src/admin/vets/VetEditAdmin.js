@@ -46,10 +46,10 @@ export default function VetEditAdmin() {
             setVet({ ...vet, specialties: vet.specialties.filter(s => s.name !== name) });
     }
 
-    async function handleSubmit(event) {
+    function handleSubmit(event) {
         event.preventDefault();
 
-        await (await fetch('/api/v1/vets' + (vet.id ? '/' + vet.id : ''), {
+        fetch('/api/v1/vets' + (vet.id ? '/' + vet.id : ''), {
             method: (vet.id) ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${jwt}`,
@@ -57,14 +57,16 @@ export default function VetEditAdmin() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(vet),
-        })).json()
+        })
+            .then(response => response.json())
             .then(json => {
                 if (json.message) {
                     setMessage(json.message);
                     setVisible(true);
                 }
                 else window.location.href = '/vets';
-            }).catch((message) => alert(message));
+            })
+            .catch((message) => alert(message));
     }
 
 

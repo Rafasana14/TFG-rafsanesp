@@ -25,10 +25,10 @@ export default function SpecialtyEditAdmin() {
         setSpecialty({ ...specialty, [name]: value })
     }
 
-    async function handleSubmit(event) {
+    function handleSubmit(event) {
         event.preventDefault();
 
-        await (await fetch('/api/v1/vets/specialties' + (specialty.id ? '/' + specialty.id : ''), {
+        fetch('/api/v1/vets/specialties' + (specialty.id ? '/' + specialty.id : ''), {
             method: (specialty.id) ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${jwt}`,
@@ -36,14 +36,16 @@ export default function SpecialtyEditAdmin() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(specialty),
-        })).json()
+        })
+            .then(response => response.json())
             .then(json => {
                 if (json.message) {
                     setMessage(json.message);
                     setVisible(true);
                 }
                 else window.location.href = '/vets/specialties';
-            }).catch((message) => alert(message));
+            })
+            .catch((message) => alert(message));
     }
 
 

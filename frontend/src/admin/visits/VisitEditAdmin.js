@@ -36,11 +36,11 @@ export default function VisitEditAdmin() {
             setVisit({ ...visit, [name]: value })
     }
 
-    async function handleSubmit(event) {
+    function handleSubmit(event) {
         event.preventDefault();
         setVisit({ ...visit, pet: pet })
 
-        await (await fetch(`/api/v1/pets/${petId}/visits` + (visit.id ? '/' + visit.id : ''), {
+        fetch(`/api/v1/pets/${petId}/visits` + (visit.id ? '/' + visit.id : ''), {
             method: (visit.id) ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${jwt}`,
@@ -48,14 +48,16 @@ export default function VisitEditAdmin() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(visit),
-        })).json()
+        })
+            .then(response => response.json())
             .then(json => {
                 if (json.message) {
                     setMessage(json.message);
                     setVisible(true);
                 }
                 else window.location.href = `/pets/${petId}/visits`;
-            }).catch((message) => alert(message));
+            })
+            .catch((message) => alert(message));
     }
 
     const modal = getErrorModal(setVisible, visible, message);

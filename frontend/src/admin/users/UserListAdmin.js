@@ -24,14 +24,17 @@ export default function UserListAdmin() {
                     Accept: "application/json",
                     "Content-Type": "application/json",
                 },
-            }).then((response) => {
-                if (response.status === 200) {
-                    setUsers(users.filter((i) => i.id !== id));
-                }
-                return response.json();
-            }).then(json => {
-                getDeleteAlertsOrModal(json, id, alerts, setAlerts, setMessage, setVisible);
-            }).catch((message) => alert(message));
+            })
+                .then((response) => {
+                    if (response.status === 200) {
+                        setUsers(users.filter((i) => i.id !== id));
+                    }
+                    return response.json();
+                })
+                .then(json => {
+                    getDeleteAlertsOrModal(json, id, alerts, setAlerts, setMessage, setVisible);
+                })
+                .catch((message) => alert(message));
         }
     }
 

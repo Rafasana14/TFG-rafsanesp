@@ -29,10 +29,10 @@ export default function TicketListAdmin() {
         setNewTicket({ ...newTicket, [name]: value })
     }
 
-    async function handleSubmit(event) {
+    function handleSubmit(event) {
         event.preventDefault();
 
-        await (await fetch(`/api/v1/consultations/${id}/tickets`, {
+        fetch(`/api/v1/consultations/${id}/tickets`, {
             method: 'POST',
             headers: {
                 "Authorization": `Bearer ${jwt}`,
@@ -40,7 +40,8 @@ export default function TicketListAdmin() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(newTicket),
-        })).json()
+        })
+            .then(response => response.json())
             .then(json => {
                 if (json.message) {
                     setMessage(json.message);
@@ -50,7 +51,8 @@ export default function TicketListAdmin() {
                     setTickets([...tickets, json]);
                     setNewTicket(emptyTicket);
                 }
-            }).catch((message) => alert(message));
+            })
+            .catch((message) => alert(message));
     }
 
     function remove(ticketId, date) {
@@ -74,12 +76,12 @@ export default function TicketListAdmin() {
         }
     }
 
-    async function handleClose(event) {
+    function handleClose(event) {
         event.preventDefault();
         const aux = consultation;
         aux.status = "CLOSED"
 
-        const response = await (await fetch(`/api/v1/consultations/${id}`, {
+        fetch(`/api/v1/consultations/${id}`, {
             method: 'PUT',
             headers: {
                 "Authorization": `Bearer ${jwt}`,
@@ -87,12 +89,16 @@ export default function TicketListAdmin() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(aux),
-        })).json();
-        if (response.message) {
-            setMessage(response.message);
-            setVisible(true);
-        }
-        else setConsultation({ ...consultation, status: "CLOSED" });
+        })
+            .then(response => response.json())
+            .then(json => {
+                if (json.message) {
+                    setMessage(json.message);
+                    setVisible(true);
+                }
+                else setConsultation({ ...consultation, status: "CLOSED" });
+            })
+
     }
 
     const modal = getErrorModal(setVisible, visible, message);

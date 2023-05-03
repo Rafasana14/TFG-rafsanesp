@@ -39,10 +39,10 @@ export default function PetEditAdmin() {
             setPet({ ...pet, [name]: value })
     }
 
-    async function handleSubmit(event) {
+    function handleSubmit(event) {
         event.preventDefault();
 
-        await (await fetch('/api/v1/pets' + (pet.id ? '/' + pet.id : ''), {
+        fetch('/api/v1/pets' + (pet.id ? '/' + pet.id : ''), {
             method: (pet.id) ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${jwt}`,
@@ -50,14 +50,16 @@ export default function PetEditAdmin() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(pet),
-        })).json()
+        })
+            .then(response => response.json())
             .then(json => {
                 if (json.message) {
                     setMessage(json.message);
                     setVisible(true);
                 }
                 else window.location.href = '/pets';
-            }).catch((message) => alert(message));
+            })
+            .catch((message) => alert(message));
     }
 
     const modal = getErrorModal(setVisible, visible, message);

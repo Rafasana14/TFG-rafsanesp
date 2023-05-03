@@ -39,10 +39,10 @@ export default function ConsultationEditAdmin() {
         else setConsultation({ ...consultation, [name]: value });
     }
 
-    async function handleSubmit(event) {
+    function handleSubmit(event) {
         event.preventDefault();
 
-        await (await fetch('/api/v1/consultations' + (consultation.id ? '/' + consultation.id : ''), {
+        fetch('/api/v1/consultations' + (consultation.id ? '/' + consultation.id : ''), {
             method: (consultation.id) ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${jwt}`,
@@ -50,14 +50,16 @@ export default function ConsultationEditAdmin() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(consultation),
-        })).json()
+        })
+            .then(response => response.json())
             .then(json => {
                 if (json.message) {
                     setMessage(json.message);
                     setVisible(true);
                 }
                 else window.location.href = '/consultations';
-            }).catch((message) => alert(message));
+            })
+            .catch((message) => alert(message));
     }
 
     const modal = getErrorModal(setVisible, visible, message);

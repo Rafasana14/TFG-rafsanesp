@@ -30,10 +30,10 @@ export default function OwnerEditAdmin() {
         setOwner({ ...owner, [name]: value })
     }
 
-    async function handleSubmit(event) {
+    function handleSubmit(event) {
         event.preventDefault();
 
-        await (await fetch('/api/v1/owners' + (owner.id ? '/' + owner.id : ''), {
+        fetch('/api/v1/owners' + (owner.id ? '/' + owner.id : ''), {
             method: (owner.id) ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${jwt}`,
@@ -41,14 +41,16 @@ export default function OwnerEditAdmin() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(owner),
-        })).json()
+        })
+            .then(response => response.json())
             .then(json => {
                 if (json.message) {
                     setMessage(json.message);
                     setVisible(true);
                 }
                 else window.location.href = '/owners';
-            }).catch((message) => alert(message));
+            })
+            .catch((message) => alert(message));
     }
 
     const modal = getErrorModal(setVisible, visible, message);
