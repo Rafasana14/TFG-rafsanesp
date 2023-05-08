@@ -50,7 +50,7 @@ class ConsultationServiceTests {
 		Consultation c1 = EntityUtils.getById(consultations, Consultation.class, 1);
 		assertEquals("owner1", c1.getOwner().getUser().getUsername());
 		Consultation c3 = EntityUtils.getById(consultations, Consultation.class, 3);
-		assertEquals("Mi gato no come", c3.getTitle());
+		assertEquals("My cat does not eat", c3.getTitle());
 	}
 
 	@Test
@@ -61,7 +61,7 @@ class ConsultationServiceTests {
 		Consultation c1 = EntityUtils.getById(consultations, Consultation.class, 1);
 		assertEquals("owner1", c1.getOwner().getUser().getUsername());
 		Consultation c2 = EntityUtils.getById(consultations, Consultation.class, 2);
-		assertEquals("Mi perro se pone nervioso", c2.getTitle());
+		assertEquals("My dog gets really nervous", c2.getTitle());
 	}
 
 	@Test
@@ -135,15 +135,15 @@ class ConsultationServiceTests {
 		Collection<Ticket> tickets = (Collection<Ticket>) this.consultationService.findAllTicketsByConsultation(1);
 
 		Ticket t1 = EntityUtils.getById(tickets, Ticket.class, 1);
-		assertEquals("¿Qué vacuna le pongo?", t1.getDescription());
+		assertEquals("What vaccine should my dog receive?", t1.getDescription());
 		Ticket t2 = EntityUtils.getById(tickets, Ticket.class, 2);
-		assertEquals("La de la rabia.", t2.getDescription());
+		assertEquals("Rabies' one.", t2.getDescription());
 	}
 
 	@Test
 	void shouldFindTicketWithCorrectId() {
 		Ticket t = this.consultationService.findTicketById(1);
-		assertEquals("¿Qué vacuna le pongo?", t.getDescription());
+		assertEquals("What vaccine should my dog receive?", t.getDescription());
 	}
 
 	@Test

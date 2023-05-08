@@ -26,6 +26,10 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
+      - name: Install dependencies
+        run: yarn
+      - name: Test and coverage
+        run: yarn run coverage
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
