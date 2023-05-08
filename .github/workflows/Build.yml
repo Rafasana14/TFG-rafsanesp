@@ -31,7 +31,7 @@ jobs:
         with:
           node-version: 16
       - name: Install dependencies
-        run: npm ci
+        run: npm --prefix ./frontend/src ci ./frontend/src
       - name: Test and coverage
         run: npm test -- --watchAll=false --coverage --collectCoverageFrom='!src/{index,reportWebVitals,error-page,App}.{js,jsx}'
       - name: Cache Maven packages
