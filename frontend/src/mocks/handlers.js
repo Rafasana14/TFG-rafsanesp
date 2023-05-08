@@ -1,5 +1,27 @@
 import { rest } from 'msw'
 
+const user2 = {
+    "id": 2,
+    "username": "owner1",
+    "authority": {
+        "id": 2,
+        "authority": "OWNER",
+        "new": false
+    },
+    "new": false
+};
+const owner1 = {
+    "id": 1,
+    "firstName": "George",
+    "lastName": "Franklin",
+    "address": "110 W. Liberty St.",
+    "city": "Sevilla",
+    "telephone": "608555103",
+    "plan": "PLATINUM",
+    "user": user2,
+    "new": false
+}
+
 export const handlers = [
     // Handles a POST /login request
     // rest.post('/login', (req, res, ctx) => {
@@ -14,27 +36,7 @@ export const handlers = [
         return res(
             ctx.status(200),
             ctx.json([
-                {
-                    "id": 1,
-                    "firstName": "George",
-                    "lastName": "Franklin",
-                    "address": "110 W. Liberty St.",
-                    "city": "Sevilla",
-                    "telephone": "608555103",
-                    "plan": "PLATINUM",
-                    "user": {
-                        "id": 2,
-                        "username": "owner1",
-                        "password": "$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e",
-                        "authority": {
-                            "id": 2,
-                            "authority": "OWNER",
-                            "new": false
-                        },
-                        "new": false
-                    },
-                    "new": false
-                },
+                owner1,
                 {
                     "id": 2,
                     "firstName": "Betty",
@@ -80,27 +82,7 @@ export const handlers = [
                         "name": "cat",
                         "new": false
                     },
-                    "owner": {
-                        "id": 1,
-                        "firstName": "George",
-                        "lastName": "Franklin",
-                        "address": "110 W. Liberty St.",
-                        "city": "Sevilla",
-                        "telephone": "608555103",
-                        "plan": "PLATINUM",
-                        "user": {
-                            "id": 2,
-                            "username": "owner1",
-                            "password": "$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e",
-                            "authority": {
-                                "id": 2,
-                                "authority": "OWNER",
-                                "new": false
-                            },
-                            "new": false
-                        },
-                        "new": false
-                    },
+                    "owner": owner1,
                     "new": false
                 },
                 {
@@ -508,27 +490,7 @@ export const handlers = [
                     "id": 1,
                     "title": "Consultation about vaccines",
                     "status": "ANSWERED",
-                    "owner": {
-                        "id": 1,
-                        "firstName": "George",
-                        "lastName": "Franklin",
-                        "address": "110 W. Liberty St.",
-                        "city": "Sevilla",
-                        "telephone": "608555103",
-                        "plan": "PLATINUM",
-                        "user": {
-                            "id": 2,
-                            "username": "owner1",
-                            "password": "$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e",
-                            "authority": {
-                                "id": 2,
-                                "authority": "OWNER",
-                                "new": false
-                            },
-                            "new": false
-                        },
-                        "new": false
-                    },
+                    "owner": owner1,
                     "pet": {
                         "id": 1,
                         "name": "Leo",
@@ -538,27 +500,7 @@ export const handlers = [
                             "name": "cat",
                             "new": false
                         },
-                        "owner": {
-                            "id": 1,
-                            "firstName": "George",
-                            "lastName": "Franklin",
-                            "address": "110 W. Liberty St.",
-                            "city": "Sevilla",
-                            "telephone": "608555103",
-                            "plan": "PLATINUM",
-                            "user": {
-                                "id": 2,
-                                "username": "owner1",
-                                "password": "$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e",
-                                "authority": {
-                                    "id": 2,
-                                    "authority": "OWNER",
-                                    "new": false
-                                },
-                                "new": false
-                            },
-                            "new": false
-                        },
+                        "owner": owner1,
                         "new": false
                     },
                     "creationDate": "2023-01-04T17:30:00",
@@ -590,27 +532,7 @@ export const handlers = [
                         "id": 1,
                         "title": "Consultation about vaccines",
                         "status": "ANSWERED",
-                        "owner": {
-                            "id": 1,
-                            "firstName": "George",
-                            "lastName": "Franklin",
-                            "address": "110 W. Liberty St.",
-                            "city": "Sevilla",
-                            "telephone": "608555103",
-                            "plan": "PLATINUM",
-                            "user": {
-                                "id": 2,
-                                "username": "owner1",
-                                "password": "$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e",
-                                "authority": {
-                                    "id": 2,
-                                    "authority": "OWNER",
-                                    "new": false
-                                },
-                                "new": false
-                            },
-                            "new": false
-                        },
+                        "owner": owner1,
                         "pet": {
                             "id": 1,
                             "name": "Leo",
@@ -620,27 +542,7 @@ export const handlers = [
                                 "name": "cat",
                                 "new": false
                             },
-                            "owner": {
-                                "id": 1,
-                                "firstName": "George",
-                                "lastName": "Franklin",
-                                "address": "110 W. Liberty St.",
-                                "city": "Sevilla",
-                                "telephone": "608555103",
-                                "plan": "PLATINUM",
-                                "user": {
-                                    "id": 2,
-                                    "username": "owner1",
-                                    "password": "$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e",
-                                    "authority": {
-                                        "id": 2,
-                                        "authority": "OWNER",
-                                        "new": false
-                                    },
-                                    "new": false
-                                },
-                                "new": false
-                            },
+                            "owner": owner1,
                             "new": false
                         },
                         "creationDate": "2023-01-04T17:30:00",
@@ -667,27 +569,7 @@ export const handlers = [
                         "id": 1,
                         "title": "Consultation about vaccines",
                         "status": "ANSWERED",
-                        "owner": {
-                            "id": 1,
-                            "firstName": "George",
-                            "lastName": "Franklin",
-                            "address": "110 W. Liberty St.",
-                            "city": "Sevilla",
-                            "telephone": "608555103",
-                            "plan": "PLATINUM",
-                            "user": {
-                                "id": 2,
-                                "username": "owner1",
-                                "password": "$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e",
-                                "authority": {
-                                    "id": 2,
-                                    "authority": "OWNER",
-                                    "new": false
-                                },
-                                "new": false
-                            },
-                            "new": false
-                        },
+                        "owner": owner1,
                         "pet": {
                             "id": 1,
                             "name": "Leo",
@@ -697,27 +579,7 @@ export const handlers = [
                                 "name": "cat",
                                 "new": false
                             },
-                            "owner": {
-                                "id": 1,
-                                "firstName": "George",
-                                "lastName": "Franklin",
-                                "address": "110 W. Liberty St.",
-                                "city": "Sevilla",
-                                "telephone": "608555103",
-                                "plan": "PLATINUM",
-                                "user": {
-                                    "id": 2,
-                                    "username": "owner1",
-                                    "password": "$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e",
-                                    "authority": {
-                                        "id": 2,
-                                        "authority": "OWNER",
-                                        "new": false
-                                    },
-                                    "new": false
-                                },
-                                "new": false
-                            },
+                            "owner": owner1,
                             "new": false
                         },
                         "creationDate": "2023-01-04T17:30:00",
