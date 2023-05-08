@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { Button, ButtonGroup, Container, Table } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import useFetchState from '../../util/useFetchState';
-import getDeleteAlertsOrModal from '../../util/getDeleteAlertsOrModal';
 import getErrorModal from '../../util/getErrorModal';
+import deleteFromList from '../../util/deleteFromList';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -13,30 +13,6 @@ export default function VetListAdmin() {
     const [visible, setVisible] = useState(false);
     const [vets, setVets] = useFetchState([], `/api/v1/vets`, jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
-
-    function remove(id) {
-        let confirmMessage = window.confirm("Are you sure you want to delete it?");
-        if (confirmMessage) {
-            fetch(`/api/v1/vets/${id}`, {
-                method: "DELETE",
-                headers: {
-                    "Authorization": `Bearer ${jwt}`,
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-            })
-                .then((response) => {
-                    if (response.status === 200) {
-                        setVets(vets.filter((i) => i.id !== id));
-                    }
-                    return response.json();
-                })
-                .then(json => {
-                    getDeleteAlertsOrModal(json, id, alerts, setAlerts, setMessage, setVisible);
-                })
-                .catch((message) => alert(message));
-        }
-    }
 
     const vetList = vets.map((vet) => {
         let specialtiesAux = vet.specialties.map(s => s.name).toString().replaceAll(",", ", ");
@@ -48,8 +24,11 @@ export default function VetListAdmin() {
                 <td >{vet.user.username}</td>
                 <td>
                     <ButtonGroup>
-                        <Button size="sm" color="primary" tag={Link} to={"/vets/" + vet.id}>Edit</Button>
-                        <Button size="sm" color="danger" onClick={() => remove(vet.id)}>Delete</Button>
+                        <Button size="sm" aria-label={"edit-" + vet.id} color="primary" tag={Link} to={"/vets/" + vet.id}>Edit</Button>
+                        <Button size="sm" aria-label={"delete-" + vet.id} color="danger"
+                            onClick={() => deleteFromList(`/api/v1/vets/${vet.id}`, vet.id, [vets, setVets], [alerts, setAlerts], setMessage, setVisible)}>
+                            Delete
+                        </Button>
                     </ButtonGroup>
                 </td>
             </tr>
@@ -67,7 +46,7 @@ export default function VetListAdmin() {
                     <Button color="success" tag={Link} to="/vets/new">Add Vet</Button>{" "}
                     <Button color="info" tag={Link} to="/vets/specialties">Specialties</Button>
                 </div>
-                <Table className="mt-4">
+                <Table aria-label='vets' className="mt-4">
                     <thead>
                         <tr>
                             <th width="20%">Name</th>

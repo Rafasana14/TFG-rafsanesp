@@ -1,19 +1,25 @@
 import { Link } from "react-router-dom";
 import { Button, ButtonGroup, Card, CardBody, CardText, CardTitle, Col, Container, Form, FormGroup, Input, Label, Row } from "reactstrap";
+import deleteFromList from "../util/deleteFromList";
 
 class TicketService {
-    getTicketList(tickets, auth, remove, plan = null, status = null) {
+    getTicketList([tickets, setTickets], auth, [alerts, setAlerts], setMessage, setVisible, plan = null) {
         return tickets.map((t, index) => {
-            let buttons;
+            const status = t.consultation.status;
+            const removeOwnerVet = () => deleteFromList(`/api/v1/consultations/${t.consultation.id}/tickets/${t.id}`, t.id, [tickets, setTickets],
+                [alerts, setAlerts], setMessage, setVisible, { date: t.creationDate });
+            const removeAdmin = () => deleteFromList(`/api/v1/consultations/${t.consultation.id}/tickets/${t.id}`, t.id, [tickets, setTickets],
+                [alerts, setAlerts], setMessage, setVisible, { date: t.creationDate });
             const length = tickets.length;
+            let buttons;
             if (auth === "OWNER") {
                 buttons = index === length - 1 && plan === "PLATINUM" && t.user.authority.authority === "OWNER" && status !== "CLOSED" ?
                     <ButtonGroup>
-                        <Button size="sm" color="primary" tag={Link}
+                        <Button aria-label={"edit-" + t.id} size="sm" color="primary" tag={Link}
                             to={`consultations/${t.consultation.id}/tickets/${t.id}`}>
                             Edit
                         </Button>
-                        <Button size="sm" color="danger" onClick={() => remove(t.id)}>
+                        <Button aria-label={"delete-" + t.id} size="sm" color="danger" onClick={removeOwnerVet}>
                             Delete
                         </Button>
                     </ButtonGroup> :
@@ -21,22 +27,22 @@ class TicketService {
             } else if (auth === "VET") {
                 buttons = index === length - 1 && t.user.authority.authority === "VET" && status !== "CLOSED" ?
                     <ButtonGroup>
-                        <Button size="sm" color="primary" tag={Link}
+                        <Button aria-label={"edit-" + t.id} size="sm" color="primary" tag={Link}
                             to={`consultations/${t.consultation.id}/tickets/${t.id}`}>
                             Edit
                         </Button>
-                        <Button size="sm" color="danger" onClick={() => remove(t.id)}>
+                        <Button aria-label={"delete-" + t.id} size="sm" color="danger" onClick={removeOwnerVet}>
                             Delete
                         </Button>
                     </ButtonGroup> :
                     <></>;
             } else {
                 buttons = <ButtonGroup>
-                    <Button size="sm" color="primary" tag={Link}
+                    <Button aria-label={"edit-" + t.id} size="sm" color="primary" tag={Link}
                         to={`consultations/${t.consultation.id}/tickets/${t.id}`}>
                         Edit
                     </Button>
-                    <Button size="sm" color="danger" onClick={() => remove(t.id, t.creationDate)}>
+                    <Button aria-label={"delete-" + t.id} size="sm" color="danger" onClick={removeAdmin}>
                         Delete
                     </Button>
                 </ButtonGroup>;
@@ -51,12 +57,13 @@ class TicketService {
 
             return (
                 <div key={t.id}>
-                    <Card mb="3" className={alignment} style={style}>
+                    <Card mb="3" aria-label={"ticket-" + t.id} className={alignment} style={style}>
                         <Row className="no-gutters">
                             <Col md="8">
                                 <CardBody>
-                                    <CardTitle>{t.user.username}-&gt; {t.description}</CardTitle>
-                                    <CardText>{t.description}</CardText>
+                                    <CardTitle tag="h5">
+                                        {t.user.username} -&gt; {t.description}
+                                    </CardTitle>
                                     <CardText><small className="text-muted">{new Date(t.creationDate).toLocaleString()}</small></CardText>
                                     {buttons}
                                 </CardBody>

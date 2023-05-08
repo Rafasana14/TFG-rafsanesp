@@ -5,7 +5,7 @@ import tokenService from '../../services/token.service';
 import getErrorModal from '../../util/getErrorModal';
 import getIdFromUrl from '../../util/getIdFromUrl';
 import useFetchState from '../../util/useFetchState';
-import getDeleteAlertsOrModal from '../../util/getDeleteAlertsOrModal';
+import deleteFromList from '../../util/deleteFromList';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -16,30 +16,6 @@ export default function VisitListAdmin() {
     const [visits, setVisits] = useFetchState([], `/api/v1/pets/${petId}/visits`, jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
 
-    function remove(id) {
-        let confirmMessage = window.confirm("Are you sure you want to delete it?");
-        if (confirmMessage) {
-            fetch(`/api/v1/pets/${petId}/visits/${id}`, {
-                method: "DELETE",
-                headers: {
-                    "Authorization": `Bearer ${jwt}`,
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-            })
-                .then((response) => {
-                    if (response.status === 200) {
-                        setVisits(visits.filter((i) => i.id !== id));
-                    }
-                    return response.json();
-                })
-                .then(json => {
-                    getDeleteAlertsOrModal(json, id, alerts, setAlerts, setMessage, setVisible);
-                })
-                .catch((message) => alert(message));
-        }
-    }
-
     const modal = getErrorModal(setVisible, visible, message);
     const visitList = visits.map((visit) => {
         return (
@@ -49,11 +25,13 @@ export default function VisitListAdmin() {
                 <td>{visit.vet.firstName} {visit.vet.lastName}</td>
                 <td>
                     <ButtonGroup>
-                        <Button size="sm" color="primary" tag={Link}
+                        <Button size="sm" aria-label={"edit-" + visit.id} color="primary" tag={Link}
                             to={`/pets/${petId}/visits/${visit.id}`}>
                             Edit
                         </Button>
-                        <Button size="sm" color="danger" onClick={() => remove(visit.id)}>
+                        <Button size="sm" aria-label={"delete-" + visit.id} color="danger"
+                            onClick={() => deleteFromList(`/api/v1/pets/${petId}/visits/${visit.id}`, visit.id,
+                                [visits, setVisits], [alerts, setAlerts], setMessage, setVisible)}>
                             Delete
                         </Button>
                     </ButtonGroup>
@@ -76,7 +54,7 @@ export default function VisitListAdmin() {
                         Back
                     </Button>
                 </div>
-                <Table className="mt-4">
+                <Table aria-label='visits' className="mt-4">
                     <thead>
                         <tr>
                             <th>Date and Time</th>

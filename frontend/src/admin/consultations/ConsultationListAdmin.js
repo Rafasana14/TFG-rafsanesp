@@ -5,7 +5,6 @@ import tokenService from '../../services/token.service';
 import consultationService from '../../services/consultation.service';
 import useFetchState from '../../util/useFetchState';
 import getErrorModal from '../../util/getErrorModal';
-import getDeleteAlertsOrModal from '../../util/getDeleteAlertsOrModal';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -17,31 +16,6 @@ export default function ConsultationListAdmin() {
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState("");
     const [alerts, setAlerts] = useState([]);
-
-    function remove(id) {
-        let confirmMessage = window.confirm("Are you sure you want to delete it?");
-        if (confirmMessage) {
-            fetch(`/api/v1/consultations/${id}`, {
-                method: "DELETE",
-                headers: {
-                    "Authorization": `Bearer ${jwt}`,
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-            })
-                .then((response) => {
-                    if (response.status === 200) {
-                        setConsultations(consultations.filter((i) => i.id !== id));
-                        setFiltered(filtered.filter((i) => i.id !== id));
-                    }
-                    return response.json();
-                })
-                .then(json => {
-                    getDeleteAlertsOrModal(json, id, alerts, setAlerts, setMessage, setVisible);
-                })
-                .catch((message) => alert(message));
-        }
-    }
 
     function handleSearch(event) {
         const value = event.target.value;
@@ -66,12 +40,12 @@ export default function ConsultationListAdmin() {
         let filteredConsultations;
         if (value === "") {
             if (search !== "")
-                filteredConsultations = consultations.filter((i) => i.owner.user.username.includes(search));
+                filteredConsultations = consultations.filter((i) => i.owner.user.username.toLowerCase().includes(search));
             else
                 filteredConsultations = consultations;
         } else {
             if (search !== "")
-                filteredConsultations = consultations.filter((i) => i.status === value && i.owner.user.username.includes(search));
+                filteredConsultations = consultations.filter((i) => i.status === value && i.owner.user.username.toLowerCase().includes(search));
             else
                 filteredConsultations = consultations.filter((i) => i.status === value);
         }
@@ -79,10 +53,19 @@ export default function ConsultationListAdmin() {
         setFilter(value);
     }
 
+    function handleClear() {
+        setFiltered(consultations);
+        setSearch("");
+        setFilter("");
+    }
 
     let consultationList;
-    if (filtered.length > 0) consultationList = consultationService.getConsultationList(filtered, remove);
-    else consultationList = consultationService.getConsultationList(consultations, remove);
+    if (filtered.length === 0 && (filter !== "" || search !== "")) consultationList =
+        <tr>
+            <td>There are no consultations with those filter and search parameters.</td>
+        </tr>
+    else consultationList = consultationService.getConsultationList([consultations, setConsultations],
+        [filtered, setFiltered], [alerts, setAlerts], setMessage, setVisible);
     const modal = getErrorModal(setVisible, visible, message);
 
     return (
@@ -96,17 +79,20 @@ export default function ConsultationListAdmin() {
                         <Button color="success" tag={Link} to="/consultations/new">
                             Add Consultation
                         </Button>
-                        <Button color="link" onClick={handleFilter} value="PENDING">Pending</Button>
-                        <Button color="link" onClick={handleFilter} value="ANSWERED">Answered</Button>
-                        <Button color="link" onClick={handleFilter} value="CLOSED">Closed</Button>
-                        <Button color="link" onClick={handleFilter} value="">Clear Filters</Button>
+                        <Button aria-label='pending-filter' color="link" onClick={handleFilter} value="PENDING">Pending</Button>
+                        <Button aria-label='answered-filter' color="link" onClick={handleFilter} value="ANSWERED">Answered</Button>
+                        <Button aria-label='closed-filter' color="link" onClick={handleFilter} value="CLOSED">Closed</Button>
+                        <Button aria-label='all-filter' color="link" onClick={handleFilter} value="">All</Button>
                     </Col>
                     <Col className="col-sm-3">
-                        <Input type="search" placeholder="Introduce an owner name to search by it" value={search || ''}
+                        <Input type="search" aria-label='search' placeholder="Introduce an owner name to search by it" value={search || ''}
                             onChange={handleSearch} />
                     </Col>
+                    <Col className="col-sm-3">
+                        <Button aria-label='clear-all' color="link" onClick={handleClear} >Clear All</Button>
+                    </Col>
                 </Row>
-                <Table className="mt-4">
+                <Table aria-label='consultations' className="mt-4">
                     <thead>
                         <tr>
                             <th>Title</th>

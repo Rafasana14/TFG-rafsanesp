@@ -41,7 +41,7 @@ class Home extends Component {
                         </Col>
                         <Col>
                             <div>
-                                <img style={{ maxHeight: "300px" }} src={bird.image} alt='random dog' />
+                                <img style={{ maxHeight: "300px" }} src={bird.image} alt='random bird' />
                                 <p>{bird.fact}</p>
                             </div>
                         </Col>
@@ -49,13 +49,13 @@ class Home extends Component {
                     <Row>
                         <Col>
                             <div>
-                                <img style={{ maxHeight: "300px" }} src={cat.image} alt='random dog' />
+                                <img style={{ maxHeight: "300px" }} src={cat.image} alt='random cat' />
                                 <p>{cat.fact}</p>
                             </div>
                         </Col>
                         <Col>
                             <div>
-                                <img style={{ maxHeight: "300px" }} src={panda.image} alt='random dog' />
+                                <img style={{ maxHeight: "300px" }} src={panda.image} alt='random panda' />
                                 <p>{panda.fact}</p>
                             </div>
                         </Col>

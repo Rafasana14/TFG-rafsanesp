@@ -4,7 +4,7 @@ import { Button, ButtonGroup, Container, Table } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import useFetchState from '../../util/useFetchState';
 import getErrorModal from '../../util/getErrorModal';
-import getDeleteAlertsOrModal from '../../util/getDeleteAlertsOrModal';
+import deleteFromList from '../../util/deleteFromList';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -13,30 +13,6 @@ export default function OwnerListAdmin() {
   const [visible, setVisible] = useState(false);
   const [owners, setOwners] = useFetchState([], `/api/v1/owners`, jwt, setMessage, setVisible);
   const [alerts, setAlerts] = useState([]);
-
-  function remove(id) {
-    let confirmMessage = window.confirm("Are you sure you want to delete it?");
-    if (confirmMessage) {
-      fetch(`/api/v1/owners/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${jwt}`,
-          Accept: "application/json",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((response) => {
-          if (response.status === 200) {
-            setOwners(owners.filter((i) => i.id !== id));
-          }
-          return response.json();
-        })
-        .then(json => {
-          getDeleteAlertsOrModal(json, id, alerts, setAlerts, setMessage, setVisible);
-        })
-        .catch((message) => alert(message));
-    }
-  }
 
   const ownerList = owners.map((owner) => {
     return (
@@ -51,8 +27,10 @@ export default function OwnerListAdmin() {
         <td>{owner.plan}</td>
         <td>
           <ButtonGroup>
-            <Button size="sm" color="primary" tag={Link} to={"/owners/" + owner.id}>Edit</Button>
-            <Button size="sm" color="danger" onClick={() => remove(owner.id)}>Delete</Button>
+            <Button size="sm" color="primary" aria-label={'edit-' + owner.user.username} tag={Link} to={"/owners/" + owner.id}>Edit</Button>
+            <Button size="sm" color="danger" aria-label={'delete-' + owner.user.username}
+              onClick={() => deleteFromList(`/api/v1/owners/${owner.id}`, owner.id, [owners, setOwners], [alerts, setAlerts], setMessage, setVisible)}>
+              Delete</Button>
           </ButtonGroup>
         </td>
       </tr>
@@ -72,7 +50,7 @@ export default function OwnerListAdmin() {
             Add Owner
           </Button>
         </div>
-        <Table className="mt-4">
+        <Table aria-label="owners" className="mt-4">
           <thead>
             <tr>
               <th width="10%">Name</th>

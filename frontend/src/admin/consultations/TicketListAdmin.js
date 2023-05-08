@@ -4,8 +4,8 @@ import tokenService from '../../services/token.service';
 import ticketService from '../../services/ticket.service';
 import getErrorModal from '../../util/getErrorModal';
 import useFetchState from '../../util/useFetchState';
-import getDeleteAlertsOrModal from '../../util/getDeleteAlertsOrModal';
 import getIdFromUrl from '../../util/getIdFromUrl';
+import getDeleteAlertsOrModal from '../../util/getDeleteAlertsOrModal';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -55,30 +55,6 @@ export default function TicketListAdmin() {
             .catch((message) => alert(message));
     }
 
-    function remove(ticketId, date) {
-        let confirmMessage = window.confirm("Are you sure you want to delete it?");
-        if (confirmMessage) {
-            fetch(`/api/v1/consultations/${id}/tickets/${ticketId}`, {
-                method: "DELETE",
-                headers: {
-                    "Authorization": `Bearer ${jwt}`,
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-            })
-                .then((response) => {
-                    if (response.status === 200) {
-                        setTickets(tickets.filter((i) => i.id !== ticketId && i.creationDate < date));
-                    }
-                    return response.json();
-                })
-                .then(json => {
-                    getDeleteAlertsOrModal(json, id, alerts, setAlerts, setMessage, setVisible);
-                })
-                .catch((message) => alert(message));
-        }
-    }
-
     function handleClose(event) {
         event.preventDefault();
         const aux = consultation;
@@ -99,14 +75,17 @@ export default function TicketListAdmin() {
                     setMessage(json.message);
                     setVisible(true);
                 }
-                else setConsultation({ ...consultation, status: "CLOSED" });
+                else {
+                    setConsultation({ ...consultation, status: "CLOSED" });
+                    getDeleteAlertsOrModal({ message: "Consultation closed!" }, id, alerts, setAlerts, setMessage, setVisible)
+                }
             }).catch((message) => alert(message));
 
     }
 
     const modal = getErrorModal(setVisible, visible, message);
 
-    const ticketList = ticketService.getTicketList(tickets, "ADMIN", remove);
+    const ticketList = ticketService.getTicketList([tickets, setTickets], "ADMIN", [alerts, setAlerts], setMessage, setVisible);
     const ticketForm = ticketService.getTicketForm(newTicket, consultation.status, "ADMIN", handleChange, handleSubmit);
     const ticketClose = ticketService.getTicketCloseButton(consultation, handleClose)
 

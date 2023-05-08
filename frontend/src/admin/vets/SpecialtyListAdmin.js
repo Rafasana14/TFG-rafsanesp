@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 import { Button, ButtonGroup, Container, Table } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import useFetchState from '../../util/useFetchState';
-import getDeleteAlertsOrModal from '../../util/getDeleteAlertsOrModal';
 import getErrorModal from '../../util/getErrorModal';
+import deleteFromList from '../../util/deleteFromList';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -14,39 +14,18 @@ export default function SpecialtyListAdmin() {
     const [specialties, setSpecialties] = useFetchState([], `/api/v1/vets/specialties`, jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
 
-
-    function remove(id) {
-        let confirmMessage = window.confirm("Are you sure you want to delete it?");
-        if (confirmMessage) {
-            fetch(`/api/v1/vets/specialties/${id}`, {
-                method: "DELETE",
-                headers: {
-                    "Authorization": `Bearer ${jwt}`,
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-            })
-                .then((response) => {
-                    if (response.status === 200) {
-                        setSpecialties(specialties.filter((i) => i.id !== id));
-                    }
-                    return response.json();
-                })
-                .then(json => {
-                    getDeleteAlertsOrModal(json, id, alerts, setAlerts, setMessage, setVisible);
-                })
-                .catch((message) => alert(message));
-        }
-    }
-
     const specialtiesList = specialties.map((s) => {
         return (
             <tr key={s.id}>
                 <td style={{ whiteSpace: 'nowrap' }}>{s.name}</td>
                 <td>
                     <ButtonGroup>
-                        <Button size="sm" color="primary" tag={Link} to={"/vets/specialties/" + s.id}>Edit</Button>
-                        <Button size="sm" color="danger" onClick={() => remove(s.id)}>Delete</Button>
+                        <Button size="sm" aria-label={"edit-" + s.id} color="primary" tag={Link} to={"/vets/specialties/" + s.id}>Edit</Button>
+                        <Button size="sm" aria-label={"delete-" + s.id} color="danger"
+                            onClick={() => deleteFromList(`/api/v1/vets/specialties/${s.id}`, s.id, [specialties, setSpecialties],
+                                [alerts, setAlerts], setMessage, setVisible)}>
+                            Delete
+                        </Button>
                     </ButtonGroup>
                 </td>
             </tr>
@@ -63,7 +42,7 @@ export default function SpecialtyListAdmin() {
                 <Button color="success" tag={Link} to="/vets/specialties/new">Add Specialty</Button>
                 {" "}
                 <Button color="info" tag={Link} to="/vets">Back</Button>
-                <Table className="mt-4">
+                <Table aria-label='specialties' className="mt-4">
                     <thead>
                         <tr>
                             <th width="20%">Name</th>

@@ -15,7 +15,6 @@ import OwnerVisitEdit from "./owner/visits/visitEdit";
 import PlanList from "./public/plan";
 import tokenService from "./services/token.service";
 import OwnerDashboard from "./owner/dashboard";
-import SwaggerDocs from "./public/swagger";
 import OwnerConsultationList from "./owner/consultations/consultationList";
 import OwnerConsultationEdit from "./owner/consultations/consultationEdit";
 import OwnerConsultationTickets from "./owner/consultations/tickets/ticketList";
@@ -36,6 +35,7 @@ import VisitEditAdmin from "./admin/visits/VisitEditAdmin";
 import ConsultationListAdmin from "./admin/consultations/ConsultationListAdmin";
 import TicketListAdmin from "./admin/consultations/TicketListAdmin";
 import ConsultationEditAdmin from "./admin/consultations/ConsultationEditAdmin";
+import SwaggerDocs from "./public/swagger";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -127,8 +127,8 @@ function App() {
 
   return (
     <div>
-      <AppNavbar />
       <ErrorBoundary FallbackComponent={ErrorFallback} >
+        <AppNavbar />
         <Routes>
           <Route path="/" exact={true} element={<Home />} />
           <Route path="/plans" element={<PlanList />} />

@@ -1,6 +1,6 @@
 -- One admin user, named admin1 with passwor 4dm1n and authority admin
 INSERT INTO authorities(id,authority) VALUES (1,'ADMIN');
-INSERT INTO users(id,username,password,authority) VALUES (1,'admin1','4dm1n',1);
+INSERT INTO users(id,username,password,authority) VALUES (1,'admin1','$2a$10$nMmTWAhPTqXqLDJTag3prumFrAJpsYtroxf0ojesFYq0k4PmcbWUS',1);
 -- Ten owner user, named owner1 with passwor 0wn3r
 /*INSERT INTO users(username,password,enabled) VALUES ('owner1','0wn3r',TRUE);
 INSERT INTO authorities(id,username,authority) VALUES (2,'owner1','owner');
@@ -23,26 +23,26 @@ INSERT INTO authorities(id,username,authority) VALUES (10,'owner9','owner');
 INSERT INTO users(username,password,enabled) VALUES ('owner10','0wn3r',TRUE);
 INSERT INTO authorities(id,username,authority) VALUES (11,'owner10','owner');*/
 INSERT INTO authorities(id,authority) VALUES (2,'OWNER');
-INSERT INTO users(id,username,password,authority) VALUES (2,'owner1','0wn3r',2);
-INSERT INTO users(id,username,password,authority) VALUES (3,'owner2','0wn3r',2);
-INSERT INTO users(id,username,password,authority) VALUES (4,'owner3','0wn3r',2);
-INSERT INTO users(id,username,password,authority) VALUES (5,'owner4','0wn3r',2);
-INSERT INTO users(id,username,password,authority) VALUES (6,'owner5','0wn3r',2);
-INSERT INTO users(id,username,password,authority) VALUES (7,'owner6','0wn3r',2);
-INSERT INTO users(id,username,password,authority) VALUES (8,'owner7','0wn3r',2);
-INSERT INTO users(id,username,password,authority) VALUES (9,'owner8','0wn3r',2);
-INSERT INTO users(id,username,password,authority) VALUES (10,'owner9','0wn3r',2);
-INSERT INTO users(id,username,password,authority) VALUES (11,'owner10','0wn3r',2);
+INSERT INTO users(id,username,password,authority) VALUES (2,'owner1','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+INSERT INTO users(id,username,password,authority) VALUES (3,'owner2','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+INSERT INTO users(id,username,password,authority) VALUES (4,'owner3','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+INSERT INTO users(id,username,password,authority) VALUES (5,'owner4','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+INSERT INTO users(id,username,password,authority) VALUES (6,'owner5','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+INSERT INTO users(id,username,password,authority) VALUES (7,'owner6','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+INSERT INTO users(id,username,password,authority) VALUES (8,'owner7','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+INSERT INTO users(id,username,password,authority) VALUES (9,'owner8','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+INSERT INTO users(id,username,password,authority) VALUES (10,'owner9','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+INSERT INTO users(id,username,password,authority) VALUES (11,'owner10','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
 -- One vet user, named vet1 with passwor v3t
 /*INSERT INTO users(username,password,enabled) VALUES ('vet1','v3t',TRUE);
 INSERT INTO authorities(id,username,authority) VALUES (12,'vet1','veterinarian');*/
 INSERT INTO authorities(id,authority) VALUES (3,'VET');
-INSERT INTO users(id,username,password,authority) VALUES (12,'vet1','v3t',3);
-INSERT INTO users(id,username,password,authority) VALUES (13,'vet2','v3t',3);
-INSERT INTO users(id,username,password,authority) VALUES (14,'vet3','v3t',3);
-INSERT INTO users(id,username,password,authority) VALUES (15,'vet4','v3t',3);
-INSERT INTO users(id,username,password,authority) VALUES (16,'vet5','v3t',3);
-INSERT INTO users(id,username,password,authority) VALUES (17,'vet6','v3t',3);
+INSERT INTO users(id,username,password,authority) VALUES (12,'vet1','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',3);
+INSERT INTO users(id,username,password,authority) VALUES (13,'vet2','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',3);
+INSERT INTO users(id,username,password,authority) VALUES (14,'vet3','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',3);
+INSERT INTO users(id,username,password,authority) VALUES (15,'vet4','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',3);
+INSERT INTO users(id,username,password,authority) VALUES (16,'vet5','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',3);
+INSERT INTO users(id,username,password,authority) VALUES (17,'vet6','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',3);
 
 INSERT INTO vets(id, first_name,last_name,city,user) VALUES (1, 'James', 'Carter','Sevilla',12);
 INSERT INTO vets(id, first_name,last_name,city,user) VALUES (2, 'Helen', 'Leary','Sevilla',13);
@@ -132,18 +132,18 @@ INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (7, 1, '
 INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (8, 2, '2013-01-03 9:45', 'neutered', 2);
 INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (9, 3, '2013-01-04 17:30', 'spayed', 3);
 
-INSERT INTO consultations(id,title,status,owner_id,pet_id,creation_date) VALUES (1, 'Consulta sobre vacunas', 1, 1, 1, '2023-01-04 17:30');
-INSERT INTO consultations(id,title,status,owner_id,pet_id,creation_date) VALUES (2, 'Mi perro se pone nervioso', 0, 1, 1, '2022-01-02 19:30');
-INSERT INTO consultations(id,title,status,owner_id,pet_id,creation_date) VALUES (3, 'Mi gato no come', 1, 2, 2, '2023-04-11 11:20');
-INSERT INTO consultations(id,title,status,owner_id,pet_id,creation_date) VALUES (4, 'Mi agaporni no canta', 2, 2, 2, '2023-02-24 10:30');
-INSERT INTO consultations(id,title,status,owner_id,pet_id,creation_date) VALUES (5, 'Mi serpiente ha puesto un huevo', 1, 10, 12, '2023-04-11 11:20');
+INSERT INTO consultations(id,title,status,owner_id,pet_id,creation_date) VALUES (1, 'Consultation about vaccines', 1, 1, 1, '2023-01-04 17:30');
+INSERT INTO consultations(id,title,status,owner_id,pet_id,creation_date) VALUES (2, 'My dog gets really nervous', 0, 1, 1, '2022-01-02 19:30');
+INSERT INTO consultations(id,title,status,owner_id,pet_id,creation_date) VALUES (3, 'My cat does not eat', 1, 2, 2, '2023-04-11 11:20');
+INSERT INTO consultations(id,title,status,owner_id,pet_id,creation_date) VALUES (4, 'My lovebird does not sing', 2, 2, 2, '2023-02-24 10:30');
+INSERT INTO consultations(id,title,status,owner_id,pet_id,creation_date) VALUES (5, 'My snake has layed eggs', 1, 10, 12, '2023-04-11 11:20');
 
-INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (1, '¿Qué vacuna le pongo?', '2023-01-04 17:32', 2, 1);
-INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (2, 'La de la rabia.', '2023-01-04 17:36', 12, 1);
-INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (3, 'Mi perro se pone muy nervioso con el fútbol. ¿Qué hago?', '2022-01-02 19:31', 2, 2);
-INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (4, 'También le pasa con el tenis.', '2022-01-02 19:33', 2, 2);
-INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (5, 'Mi gato lleva unos días sin comer el pienso.', '2023-04-11 11:30', 3, 3);
-INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (6, 'Prueba a darle atún para ver si así come.', '2023-04-11 15:20', 14, 3);
-INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (7, 'Mi agaporni no canta como el pájaro de mi vecino.', '2023-02-24 12:30', 3, 4);
-INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (8, 'Los agapornis no cantan.', '2023-02-24 18:30', 15, 4);
+INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (1, 'What vaccine should my dog receive?', '2023-01-04 17:32', 2, 1);
+INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (2, 'Rabies'' one.', '2023-01-04 17:36', 12, 1);
+INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (3, 'My dog gets really nervous during football matches. What should I do?', '2022-01-02 19:31', 2, 2);
+INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (4, 'It also happens with tennis matches.', '2022-01-02 19:33', 2, 2);
+INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (5, 'My cat han''t been eating his fodder.', '2023-04-11 11:30', 3, 3);
+INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (6, 'Try to give him some tuna to check if he eats that.', '2023-04-11 15:20', 14, 3);
+INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (7, 'My lovebird doesn''t sing as my neighbour''s one.', '2023-02-24 12:30', 3, 4);
+INSERT INTO consultation_tickets(id,description,creation_date, user_id, consultation_id) VALUES (8, 'Lovebirds do not sing.', '2023-02-24 18:30', 15, 4);
 

@@ -22,7 +22,10 @@ export default function useFetchState(initial, url, jwt, setMessage, setVisible,
                                 setData(json);
                             }
                         }
-                    }).catch((message) => alert(message));
+                    }).catch((message) => {
+                        setMessage('Failed to fetch data');
+                        setVisible(true);
+                    });
                 return () => {
                     ignore = true;
                 };

@@ -7,6 +7,7 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
+    "@types/jest": "^29.5.1",
     "bootstrap": "^5.3.0-alpha1",
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.4",
@@ -17,10 +18,12 @@
     "react-icons": "^4.7.1",
     "react-router-dom": "^6.11.0",
     "reactstrap": "^9.1.6",
-    "swagger-ui-react": "^5.0.0-alpha.1",
+    "swagger-ui-react": "^4.18.3",
     "web-vitals": "^3.1.1"
   },
   "devDependencies": {
+    "identity-obj-proxy": "^3.0.0",
+    "msw": "^1.2.1",
     "nth-check": "^2.1.1",
     "react-scripts": "5.0.1",
     "source-map-loader": "^4.0.1"
@@ -29,6 +32,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "coverage": "react-scripts test --coverage --watchAll --collectCoverageFrom='!src/{index,reportWebVitals,error-page,App}.{js,jsx}'",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -36,6 +40,15 @@
       "react-app",
       "react-app/jest"
     ]
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "/node_modules/(?!(swagger-ui-react|swagger-client|react-syntax-highlighter)/)"
+    ],
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/__mocks__/fileMock.js",
+      "\\.(css|less)$": "identity-obj-proxy"
+    }
   },
   "browserslist": {
     "production": [

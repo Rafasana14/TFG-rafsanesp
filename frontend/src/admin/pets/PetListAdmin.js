@@ -4,7 +4,7 @@ import { Button, ButtonGroup, Container, Table } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import useFetchState from '../../util/useFetchState';
 import getErrorModal from '../../util/getErrorModal';
-import getDeleteAlertsOrModal from '../../util/getDeleteAlertsOrModal';
+import deleteFromList from '../../util/deleteFromList';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -14,30 +14,6 @@ export default function PetListAdmin() {
     const [pets, setPets] = useFetchState([], `/api/v1/pets`, jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
 
-    function remove(id) {
-        let confirmMessage = window.confirm("Are you sure you want to delete it?");
-        if (confirmMessage) {
-            fetch(`/api/v1/pets/${id}`, {
-                method: "DELETE",
-                headers: {
-                    "Authorization": `Bearer ${jwt}`,
-                    Accept: "application/json",
-                    "Content-Type": "application/json",
-                },
-            })
-                .then((response) => {
-                    if (response.status === 200) {
-                        setPets(pets.filter((i) => i.id !== id));
-                    }
-                    return response.json();
-                })
-                .then(json => {
-                    getDeleteAlertsOrModal(json, id, alerts, setAlerts, setMessage, setVisible);
-                })
-                .catch((message) => alert(message));
-        }
-    }
-
     const petList = pets.map((pet) => {
         return (
             <tr key={pet.id}>
@@ -46,18 +22,19 @@ export default function PetListAdmin() {
                 <td>{pet.type?.name}</td>
                 <td>{pet.owner.user.username}</td>
                 <td>
-                    <Button size="sm" color="info" tag={Link}
+                    <Button aria-label={"visits-" + pet.id} size="sm" color="info" tag={Link}
                         to={`/pets/${pet.id}/visits`}>
                         Visits
                     </Button>
                 </td>
                 <td>
                     <ButtonGroup>
-                        <Button size="sm" color="primary" tag={Link}
+                        <Button aria-label={"edit-" + pet.id} size="sm" color="primary" tag={Link}
                             to={"/pets/" + pet.id}>
                             Edit
                         </Button>
-                        <Button size="sm" color="danger" onClick={() => remove(pet.id)}>
+                        <Button aria-label={"delete-" + pet.id} size="sm" color="danger"
+                            onClick={() => deleteFromList(`/api/v1/pets/${pet.id}`, pet.id, [pets, setPets], [alerts, setAlerts], setMessage, setVisible)}>
                             Delete
                         </Button>
                     </ButtonGroup>
@@ -76,7 +53,7 @@ export default function PetListAdmin() {
                 <Button color="success" tag={Link} to="/pets/new">
                     Add Pet
                 </Button>
-                <Table className="mt-4">
+                <Table aria-label='pets' className="mt-4">
                     <thead>
                         <tr>
                             <th>Name</th>
