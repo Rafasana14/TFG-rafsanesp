@@ -34,6 +34,7 @@ jobs:
         working-directory: ./frontend/src
         run: npm ci
       - name: Test and coverage
+        working-directory: ./frontend/src
         run: npm test -- --watchAll=false --coverage --collectCoverageFrom='!src/{index,reportWebVitals,error-page,App}.{js,jsx}'
       - name: Cache Maven packages
         uses: actions/cache@v3
