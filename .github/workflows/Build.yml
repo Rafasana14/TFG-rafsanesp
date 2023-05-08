@@ -27,7 +27,7 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
       - name: Install dependencies
-        run: yarn
+        run: yarn --cwd ./frontend/src install
       - name: Test and coverage
         run: yarn --cwd ./frontend/src run coverage
       - name: Cache Maven packages
