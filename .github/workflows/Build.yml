@@ -29,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: yarn
       - name: Test and coverage
-        run: yarn run coverage
+        run: yarn --cwd ./frontend/src run coverage
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
