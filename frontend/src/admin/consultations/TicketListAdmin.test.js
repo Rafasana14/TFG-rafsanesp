@@ -48,57 +48,6 @@ describe('TicketListAdmin', () => {
     });
 
     test('close consultation correct', async () => {
-        server.use(
-            rest.put('*/api/v1/consultations/:id', (req, res, ctx) => {
-                return res(
-                    ctx.status(200),
-                    ctx.json(
-                        {
-                            "id": 1,
-                            "title": "Consulta sobre vacunas",
-                            "status": "CLOSED",
-                            "owner": {
-                                "id": 1,
-                                "user": {
-                                    "id": 2,
-                                    "username": "owner1",
-                                    "authority": {
-                                        "id": 2,
-                                        "authority": "OWNER",
-                                        "new": false
-                                    },
-                                    "new": false
-                                },
-                                "new": false
-                            },
-                            "pet": {
-                                "id": 1,
-                                "name": "Leo",
-                                "owner": {
-                                    "id": 1,
-                                    "user": {
-                                        "id": 2,
-                                        "username": "owner1",
-                                        "password": "$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e",
-                                        "authority": {
-                                            "id": 2,
-                                            "authority": "OWNER",
-                                            "new": false
-                                        },
-                                        "new": false
-                                    },
-                                    "new": false
-                                },
-                                "new": false
-                            },
-                            "creationDate": "2023-01-04T17:30:00",
-                            "new": false
-                        },
-                    )
-                )
-            })
-        )
-
         const user = userEvent.setup();
         const jsdomConfirm = window.confirm;
         window.confirm = () => { return true };

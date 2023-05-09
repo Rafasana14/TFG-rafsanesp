@@ -279,6 +279,22 @@ export const handlers = [
                     "consultation": consultation1
                 },
             ))
-    })
+    }),
+
+    rest.put('*/api/v1/consultations/:id', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(
+                {
+                    "id": 1,
+                    "title": "Consulta sobre vacunas",
+                    "status": "CLOSED",
+                    "owner": owner1,
+                    "pet": pet1,
+                    "creationDate": "2023-01-04T17:30:00"
+                }
+            )
+        )
+    }),
 
 ]
