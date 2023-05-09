@@ -6,7 +6,6 @@ import { rest } from "msw";
 
 describe('TicketListAdmin', () => {
     test('renders correctly', async () => {
-
         render(<TicketListAdmin />);
         const heading = screen.getByRole('heading', { 'name': /Consultation Number/ });
         expect(heading).toBeInTheDocument();
@@ -63,7 +62,6 @@ describe('TicketListAdmin', () => {
                                 "user": {
                                     "id": 2,
                                     "username": "owner1",
-                                    "password": "$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e",
                                     "authority": {
                                         "id": 2,
                                         "authority": "OWNER",
@@ -143,81 +141,6 @@ describe('TicketListAdmin', () => {
     });
 
     test('add ticket correct', async () => {
-        server.use(
-            rest.post('*/api/v1/consultations/:id/tickets', (req, res, ctx) => {
-                return res(
-                    ctx.status(200),
-                    ctx.json(
-                        {
-                            "id": 3,
-                            "description": "test ticket",
-                            "creationDate": "2023-01-04T17:32:00",
-                            "user": {
-                                "id": 2,
-                                "username": "owner1",
-                                "password": "$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e",
-                                "authority": {
-                                    "id": 2,
-                                    "authority": "OWNER",
-                                    "new": false
-                                },
-                                "new": false
-                            },
-                            "consultation": {
-                                "id": 1,
-                                "title": "Consultation about vaccines",
-                                "status": "ANSWERED",
-                                "owner": {
-                                    "id": 1,
-                                    "user": {
-                                        "id": 2,
-                                        "username": "owner1",
-                                        "password": "$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e",
-                                        "authority": {
-                                            "id": 2,
-                                            "authority": "OWNER",
-                                            "new": false
-                                        },
-                                        "new": false
-                                    },
-                                    "new": false
-                                },
-                                "pet": {
-                                    "id": 1,
-                                    "name": "Leo",
-                                    "birthDate": "2010-09-07",
-                                    "type": {
-                                        "id": 1,
-                                        "name": "cat",
-                                        "new": false
-                                    },
-                                    "owner": {
-                                        "id": 1,
-                                        "user": {
-                                            "id": 2,
-                                            "username": "owner1",
-                                            "password": "$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e",
-                                            "authority": {
-                                                "id": 2,
-                                                "authority": "OWNER",
-                                                "new": false
-                                            },
-                                            "new": false
-                                        },
-                                        "new": false
-                                    },
-                                    "new": false
-                                },
-                                "creationDate": "2023-01-04T17:30:00",
-                                "new": false
-                            },
-                            "new": false
-                        },
-                    )
-                )
-            })
-        )
-
         const user = userEvent.setup();
         render(<TicketListAdmin />);
 

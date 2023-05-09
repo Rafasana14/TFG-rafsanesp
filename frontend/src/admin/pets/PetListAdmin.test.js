@@ -1,22 +1,11 @@
-import { render, screen } from "../../test-utils";
+import { render, screen, testRenderList } from "../../test-utils";
 import userEvent from "@testing-library/user-event";
 import PetListAdmin from "./PetListAdmin";
 
 describe('PetListAdmin', () => {
     test('renders correctly', async () => {
-
         render(<PetListAdmin />);
-        const heading = screen.getByRole('heading', { 'name': 'Pets' });
-        expect(heading).toBeInTheDocument();
-
-        const table = screen.getByRole('table', { 'name': 'pets' });
-        expect(table).toBeInTheDocument();
-
-        const addLink = screen.getByRole('link', { 'name': /Add/ });
-        expect(addLink).toBeInTheDocument();
-
-        const rows = screen.getAllByRole('row');
-        expect(rows).toHaveLength(1);
+        testRenderList('pets');
     });
 
     test('renders pets correctly', async () => {

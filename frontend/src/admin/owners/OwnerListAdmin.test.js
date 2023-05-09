@@ -1,24 +1,13 @@
 import { rest } from "msw";
 import { server } from "../../mocks/server";
-import { render, screen } from "../../test-utils";
+import { render, screen, testRenderList } from "../../test-utils";
 import OwnerListAdmin from "./OwnerListAdmin";
 import userEvent from "@testing-library/user-event";
 
 describe('OwnerListAdmin', () => {
     test('renders correctly', async () => {
-
         render(<OwnerListAdmin />);
-        const heading = screen.getByRole('heading', { 'name': 'Owners' });
-        expect(heading).toBeInTheDocument();
-
-        const table = screen.getByRole('table', { 'name': 'owners' });
-        expect(table).toBeInTheDocument();
-
-        const addLink = screen.getByRole('link', { 'name': /Add/ });
-        expect(addLink).toBeInTheDocument();
-
-        const rows = screen.getAllByRole('row');
-        expect(rows).toHaveLength(1);
+        testRenderList('owners');
     });
 
     test('renders owners correctly', async () => {

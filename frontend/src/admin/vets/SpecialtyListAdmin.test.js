@@ -1,22 +1,11 @@
-import { render, screen } from "../../test-utils";
+import { render, screen, testRenderList } from "../../test-utils";
 import userEvent from "@testing-library/user-event";
 import SpecialtyListAdmin from "./SpecialtyListAdmin";
 
 describe('SpecialtyListAdmin', () => {
     test('renders correctly', async () => {
-
         render(<SpecialtyListAdmin />);
-        const heading = screen.getByRole('heading', { 'name': 'Specialties' });
-        expect(heading).toBeInTheDocument();
-
-        const table = screen.getByRole('table', { 'name': 'specialties' });
-        expect(table).toBeInTheDocument();
-
-        const addLink = screen.getByRole('link', { 'name': /Add/ });
-        expect(addLink).toBeInTheDocument();
-
-        const rows = screen.getAllByRole('row');
-        expect(rows).toHaveLength(1);
+        testRenderList('specialties');
     });
 
     test('renders specialties correctly', async () => {

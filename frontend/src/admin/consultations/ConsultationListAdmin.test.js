@@ -1,16 +1,11 @@
-import { render, screen } from "../../test-utils";
+import { render, screen, testRenderList } from "../../test-utils";
 import userEvent from "@testing-library/user-event";
 import ConsultationListAdmin from "./ConsultationListAdmin";
 
 describe('ConsultationListAdmin', () => {
     test('renders correctly', async () => {
-
         render(<ConsultationListAdmin />);
-        const heading = screen.getByRole('heading', { 'name': 'Consultations' });
-        expect(heading).toBeInTheDocument();
-
-        const table = screen.getByRole('table', { 'name': 'consultations' });
-        expect(table).toBeInTheDocument();
+        testRenderList('consultations');
 
         const filterButtons = screen.getAllByRole('button', { 'name': /filter/ });
         expect(filterButtons).toHaveLength(4);
@@ -20,12 +15,6 @@ describe('ConsultationListAdmin', () => {
 
         const clearButton = screen.getByRole('button', { 'name': 'clear-all' });
         expect(clearButton).toBeInTheDocument();
-
-        const addLink = screen.getByRole('link', { 'name': /Add/ });
-        expect(addLink).toBeInTheDocument();
-
-        const rows = screen.getAllByRole('row');
-        expect(rows).toHaveLength(1);
     });
 
     test('renders consultations correctly', async () => {

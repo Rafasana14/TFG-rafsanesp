@@ -24,15 +24,4 @@ describe('AppNavbar', () => {
         expect(linkPlansElement).toBeInTheDocument();
     });
 
-    // test('renders admin links correctly', () => {
-    //     jest.spyOn('./services/token.service.js', 'getLocalAccessToken').mockReturnValue("jwt");
-    //     render(<AppNavbar />);
-
-    //     const linkDocsElement = screen.getByRole('link', { name: 'Dashboard' });
-    //     expect(linkDocsElement).toBeInTheDocument();
-
-    //     const linkPlansElement = screen.getByRole('link', { name: 'Owners' });
-    //     expect(linkPlansElement).toBeInTheDocument();
-    // });
-
 });

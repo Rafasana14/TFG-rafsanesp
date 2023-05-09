@@ -67,12 +67,12 @@ class Login extends Component {
               <FormGroup>
                 <Label for="username">Username</Label>
                 <Input type="text" required name="username" id="username" value={this.state.username || ''}
-                  onChange={this.handleChange} autoComplete="username" />
+                  onChange={this.handleChange} />
               </FormGroup>
               <FormGroup>
                 <Label for="password">Password</Label>
                 <Input type="password" required name="password" id="password" value={this.state.password || ''}
-                  onChange={this.handleChange} autoComplete="lastName" />
+                  onChange={this.handleChange} />
               </FormGroup>
               <br />
               <FormGroup>
