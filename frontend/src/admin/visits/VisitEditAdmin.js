@@ -6,6 +6,8 @@ import getErrorModal from '../../util/getErrorModal';
 import useFetchData from '../../util/useFetchData';
 import getIdFromUrl from '../../util/getIdFromUrl';
 import useFetchState from '../../util/useFetchState';
+import submitState from '../../util/submitState';
+import useNavigateAfterSubmit from '../../util/useNavigateAfterSubmit';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -24,6 +26,8 @@ export default function VisitEditAdmin() {
     const [visit, setVisit] = useFetchState(emptyItem, `/api/v1/pets/${petId}/visits/${visitId}`, jwt, setMessage, setVisible, visitId);
     const pet = useFetchData(`/api/v1/pets/${petId}`, jwt);
     const vets = useFetchData(`/api/v1/vets`, jwt);
+    const [redirect, setRedirect] = useState(false);
+    useNavigateAfterSubmit(`/pets/${petId}/visits`, redirect);
 
     function handleChange(event) {
         const target = event.target;
@@ -36,30 +40,7 @@ export default function VisitEditAdmin() {
             setVisit({ ...visit, [name]: value })
     }
 
-    function handleSubmit(event) {
-        event.preventDefault();
-        setVisit({ ...visit, pet: pet })
-
-        fetch(`/api/v1/pets/${petId}/visits` + (visit.id ? '/' + visit.id : ''), {
-            method: (visit.id) ? 'PUT' : 'POST',
-            headers: {
-                "Authorization": `Bearer ${jwt}`,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(visit),
-        })
-            .then(response => response.json())
-            .then(json => {
-                if (json.message) {
-                    setMessage(json.message);
-                    setVisible(true);
-                }
-                else window.location.href = `/pets/${petId}/visits`;
-            })
-            .catch((message) => alert(message));
-    }
-
+    const handleSubmit = async (event) => submitState(event, visit, `/api/v1/pets/${petId}/visits`, setMessage, setVisible, setRedirect);
     const modal = getErrorModal(setVisible, visible, message);
     const vetOptions = vets.map(vet => <option key={vet.id} value={vet.id}>{vet.firstName} {vet.lastName}</option>);
 

@@ -16,10 +16,8 @@ import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.PricingPlan;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
-import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -45,10 +43,10 @@ public class ConsultationController {
 		this.userService = userService;
 	}
 
-	@InitBinder("consultation")
-	public void initConsultationBinder(WebDataBinder dataBinder) {
-		dataBinder.setValidator(new ConsultationValidator());
-	}
+//	@InitBinder("consultation")
+//	public void initConsultationBinder(WebDataBinder dataBinder) {
+//		dataBinder.setValidator(new ConsultationValidator());
+//	}
 
 	@GetMapping
 	public ResponseEntity<List<Consultation>> findAllConsultations() {
@@ -71,7 +69,7 @@ public class ConsultationController {
 			return new ResponseEntity<>(cons, HttpStatus.OK);
 		else {
 			Owner owner = userService.findOwnerByUser(user.getId());
-			if (cons.getOwner().getId().equals(owner.getId()))
+			if (cons.getPet().getOwner().getId().equals(owner.getId()))
 				return new ResponseEntity<>(cons, HttpStatus.OK);
 			else
 				throw new ResourceNotOwnedException(cons);
@@ -87,16 +85,19 @@ public class ConsultationController {
 		BeanUtils.copyProperties(consultation, newConsultation, "id");
 		if (user.hasAuthority(OWNER_AUTH).equals(true)) {
 			Owner owner = userService.findOwnerByUser(user.getId());
-			if (owner.getPlan().equals(PricingPlan.PLATINUM)) {
-				newConsultation.setOwner(owner);
-				newConsultation.setStatus(ConsultationStatus.PENDING);
-				savedConsultation = this.consultationService.saveConsultation(newConsultation);
-			} else
-				throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getPlan());
+			if (owner.getId().equals(consultation.getPet().getOwner().getId())) {
+				if (owner.getPlan().equals(PricingPlan.PLATINUM)) {
+					newConsultation.setStatus(ConsultationStatus.PENDING);
+					savedConsultation = this.consultationService.saveConsultation(newConsultation);
+				} else {
+					throw new UpperPlanFeatureException(PricingPlan.PLATINUM, owner.getPlan());
+				}
+			} else {
+				throw new ResourceNotOwnedException(consultation.getPet());
+			}
 		} else {
 			savedConsultation = this.consultationService.saveConsultation(newConsultation);
 		}
-
 		return new ResponseEntity<>(savedConsultation, HttpStatus.CREATED);
 	}
 
@@ -108,7 +109,7 @@ public class ConsultationController {
 		User user = userService.findCurrentUser();
 		if (user.hasAuthority(OWNER_AUTH).equals(true)) {
 			Owner owner = userService.findOwnerByUser(user.getId());
-			if (owner.getId().equals(aux.getOwner().getId())) {
+			if (owner.getId().equals(aux.getPet().getOwner().getId())) {
 				if (owner.getPlan().equals(PricingPlan.PLATINUM)) {
 					return new ResponseEntity<>(
 							this.consultationService.updateConsultation(consultation, consultationId), HttpStatus.OK);
@@ -150,7 +151,7 @@ public class ConsultationController {
 		List<Ticket> res;
 		if (user.hasAuthority(OWNER_AUTH).equals(true)) {
 			Owner owner = userService.findOwnerByUser(user.getId());
-			if (cons.getOwner().getId().equals(owner.getId()))
+			if (cons.getPet().getOwner().getId().equals(owner.getId()))
 				res = (List<Ticket>) consultationService.findAllTicketsByConsultation(id);
 			else
 				throw new ResourceNotOwnedException(cons);
@@ -169,7 +170,7 @@ public class ConsultationController {
 		this.consultationService.checkIfTicketInConsultation(cons, ticket);
 		if (user.hasAuthority(OWNER_AUTH).equals(true)) {
 			Owner owner = userService.findOwnerByUser(user.getId());
-			if (cons.getOwner().getId().equals(owner.getId()))
+			if (cons.getPet().getOwner().getId().equals(owner.getId()))
 				return new ResponseEntity<>(ticket, HttpStatus.OK);
 			else
 				throw new ResourceNotOwnedException(cons);
@@ -190,7 +191,7 @@ public class ConsultationController {
 		newTicket.setConsultation(cons);
 		if (user.hasAuthority(OWNER_AUTH).equals(true)) {
 			Owner owner = userService.findOwnerByUser(user.getId());
-			if (owner.getId().equals(cons.getOwner().getId())) {
+			if (owner.getId().equals(cons.getPet().getOwner().getId())) {
 				if (owner.getPlan().equals(PricingPlan.PLATINUM)) {
 					cons.setStatus(ConsultationStatus.PENDING);
 					this.consultationService.saveConsultation(cons);
@@ -215,11 +216,11 @@ public class ConsultationController {
 		Consultation consultation = consultationService.findConsultationById(consultationId);
 		Ticket aux = consultationService.findTicketById(ticketId);
 		this.consultationService.checkIfTicketInConsultation(consultation, aux);
-		this.consultationService.checkLastTicketAndStatus(consultation, aux);
 		User user = userService.findCurrentUser();
 		if (user.hasAuthority(ADMIN_AUTH).equals(true)) {
 			return new ResponseEntity<>(this.consultationService.updateTicket(ticket, ticketId), HttpStatus.OK);
 		} else {
+			this.consultationService.checkLastTicketAndStatus(consultation, aux);
 			if (aux.getUser().getId().equals(user.getId())) {
 				if (user.hasAuthority(OWNER_AUTH).equals(true)) {
 					Owner owner = userService.findOwnerByUser(user.getId());

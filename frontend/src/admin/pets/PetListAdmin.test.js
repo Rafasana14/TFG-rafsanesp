@@ -1,11 +1,10 @@
 import { render, screen, testRenderList } from "../../test-utils";
-import userEvent from "@testing-library/user-event";
 import PetListAdmin from "./PetListAdmin";
 
 describe('PetListAdmin', () => {
     test('renders correctly', async () => {
         render(<PetListAdmin />);
-        testRenderList('pets');
+        testRenderList(/pets/i);
     });
 
     test('renders pets correctly', async () => {
@@ -30,10 +29,9 @@ describe('PetListAdmin', () => {
     });
 
     test('delete pet correct', async () => {
-        const user = userEvent.setup();
         const jsdomConfirm = window.confirm;
         window.confirm = () => { return true };
-        render(<PetListAdmin />);
+        const { user } = render(<PetListAdmin />);
 
         const pet1Delete = await screen.findByRole('button', { 'name': 'delete-1' });
         await user.click(pet1Delete);

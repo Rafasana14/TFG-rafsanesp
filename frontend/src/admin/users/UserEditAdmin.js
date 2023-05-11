@@ -6,6 +6,8 @@ import getErrorModal from '../../util/getErrorModal';
 import useFetchData from '../../util/useFetchData';
 import useFetchState from '../../util/useFetchState';
 import getIdFromUrl from '../../util/getIdFromUrl';
+import submitState from '../../util/submitState';
+import useNavigateAfterSubmit from '../../util/useNavigateAfterSubmit';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -21,6 +23,8 @@ export default function UserEditAdmin() {
     const [visible, setVisible] = useState(false);
     const [user, setUser] = useFetchState(emptyItem, `/api/v1/users/${id}`, jwt, setMessage, setVisible, id);
     const auths = useFetchData(`/api/v1/users/authorities`, jwt);
+    const [redirect, setRedirect] = useState();
+    useNavigateAfterSubmit("/users", redirect);
 
     function handleChange(event) {
         const target = event.target;
@@ -33,32 +37,9 @@ export default function UserEditAdmin() {
             setUser({ ...user, [name]: value })
     }
 
-    function handleSubmit(event) {
-        event.preventDefault();
-
-        fetch('/api/v1/users' + (user.id ? '/' + user.id : ''), {
-            method: (user.id) ? 'PUT' : 'POST',
-            headers: {
-                "Authorization": `Bearer ${jwt}`,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(user),
-        })
-            .then(response => response.json())
-            .then(json => {
-                if (json.message) {
-                    setMessage(json.message);
-                    setVisible(true);
-                }
-                else window.location.href = '/users';
-            })
-            .catch((message) => alert(message));
-    }
-
-
+    const handleSubmit = async (event) => submitState(event, user, `/api/v1/users`, setMessage, setVisible, setRedirect);
     const modal = getErrorModal(setVisible, visible, message);
-    const authOptions = auths.map(auth => <option key={auth.id} value={auth.id}>{auth.authority}</option>);
+    const authOptions = Array.from(auths).map(auth => <option key={auth.id} value={auth.id}>{auth.authority}</option>);
 
     return (
         <div>
@@ -68,12 +49,12 @@ export default function UserEditAdmin() {
                 <Form onSubmit={handleSubmit}>
                     <FormGroup>
                         <Label for="username">Username</Label>
-                        <Input type="text" required name="username" id="username" value={user.username || ''}
+                        <Input type="text" name="username" id="username" value={user.username || ''}
                             onChange={handleChange} />
                     </FormGroup>
                     <FormGroup>
                         <Label for="lastName">Password</Label>
-                        <Input type="password" required name="password" id="password" value={user.password || ''}
+                        <Input type="password" aria-label='password' role='textbox' required name="password" id="password" value={user.password || ''}
                             onChange={handleChange} />
                     </FormGroup>
                     <Label for="authority">Authority</Label>

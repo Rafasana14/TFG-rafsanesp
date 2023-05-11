@@ -2,12 +2,11 @@ import { rest } from "msw";
 import { server } from "../../mocks/server";
 import { render, screen, testRenderList } from "../../test-utils";
 import OwnerListAdmin from "./OwnerListAdmin";
-import userEvent from "@testing-library/user-event";
 
 describe('OwnerListAdmin', () => {
     test('renders correctly', async () => {
         render(<OwnerListAdmin />);
-        testRenderList('owners');
+        testRenderList(/owners/i);
     });
 
     test('renders owners correctly', async () => {
@@ -63,10 +62,9 @@ describe('OwnerListAdmin', () => {
     });
 
     test('delete owner correct', async () => {
-        const user = userEvent.setup();
         const jsdomConfirm = window.confirm;
         window.confirm = () => { return true };
-        render(<OwnerListAdmin />);
+        const { user } = render(<OwnerListAdmin />);
 
         const owner1Delete = await screen.findByRole('button', { 'name': 'delete-owner1' });
         await user.click(owner1Delete);

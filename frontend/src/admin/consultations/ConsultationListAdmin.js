@@ -27,9 +27,9 @@ export default function ConsultationListAdmin() {
                 filteredConsultations = consultations;
         } else {
             if (filter !== "")
-                filteredConsultations = consultations.filter((i) => i.status === filter && i.owner.user.username.includes(value));
+                filteredConsultations = consultations.filter((i) => i.status === filter && i.pet.owner.user.username.includes(value));
             else
-                filteredConsultations = consultations.filter((i) => i.owner.user.username.includes(value));
+                filteredConsultations = consultations.filter((i) => i.pet.owner.user.username.includes(value));
         }
         setFiltered(filteredConsultations);
         setSearch(value);
@@ -40,12 +40,12 @@ export default function ConsultationListAdmin() {
         let filteredConsultations;
         if (value === "") {
             if (search !== "")
-                filteredConsultations = consultations.filter((i) => i.owner.user.username.toLowerCase().includes(search));
+                filteredConsultations = consultations.filter((i) => i.pet.owner.user.username.toLowerCase().includes(search));
             else
                 filteredConsultations = consultations;
         } else {
             if (search !== "")
-                filteredConsultations = consultations.filter((i) => i.status === value && i.owner.user.username.toLowerCase().includes(search));
+                filteredConsultations = consultations.filter((i) => i.status === value && i.pet.owner.user.username.toLowerCase().includes(search));
             else
                 filteredConsultations = consultations.filter((i) => i.status === value);
         }

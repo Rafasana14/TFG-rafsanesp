@@ -34,6 +34,7 @@ import org.springframework.samples.petclinic.exceptions.ResourceNotFoundExceptio
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
 import org.springframework.samples.petclinic.user.AuthoritiesService;
 import org.springframework.samples.petclinic.user.User;
+import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.EntityUtils;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,11 +45,13 @@ class VetServiceTests {
 
 	private VetService vetService;
 	private AuthoritiesService authService;
+	private UserService userService;
 	
 	@Autowired
-	public VetServiceTests(VetService vetService, AuthoritiesService authService) {
+	public VetServiceTests(VetService vetService, AuthoritiesService authService, UserService userService) {
 		this.vetService = vetService;
 		this.authService = authService;
+		this.userService = userService;
 	}
 
 	@Test
@@ -123,8 +126,8 @@ class VetServiceTests {
 		user.setUsername("Sam");
 		user.setPassword("supersecretpassword");
 		user.setAuthority(authService.findByAuthority("VET"));
-		vet.setUser(user);
-		
+		userService.saveUser(user);
+		vet.setUser(user);		
 
 		this.vetService.saveVet(vet);
 		assertNotEquals(0, vet.getId().longValue());
@@ -145,6 +148,7 @@ class VetServiceTests {
 		user.setUsername("Sam");
 		user.setPassword("supersecretpassword");
 		user.setAuthority(authService.findByAuthority("VET"));
+		this.userService.saveUser(user);
 		vet.setUser(user);
 		this.vetService.saveVet(vet);
 

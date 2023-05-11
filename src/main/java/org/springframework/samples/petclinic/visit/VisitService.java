@@ -101,8 +101,8 @@ public class VisitService {
 			Map<String, Integer> visitsByYear = getVisitsByYear(ownerId);
 			int years = LocalDate.now().getYear() - this.visitRepository.getYearOfFirstVisit(ownerId);
 			if (years >= 1) {
-				Double avgVisitsByYear = (double) countAll / (years + 1);
-				res.put("avgVisitsByYear", avgVisitsByYear);
+				Double avgVisitsPerYear = (double) countAll / (years + 1);
+				res.put("avgVisitsPerYear", avgVisitsPerYear);
 			}
 			Map<String, Integer> visitsByPet = getVisitsByPet(ownerId);
 
@@ -119,8 +119,8 @@ public class VisitService {
 		Integer countAll = this.visitRepository.countAll();
 		int pets = this.visitRepository.countAllPets();
 		if (pets > 0) {
-			Double avgVisitsByPet = (double) this.visitRepository.countAll() / pets;
-			res.put("avgVisitsByPet", avgVisitsByPet);
+			Double avgVisitsPerPet = (double) this.visitRepository.countAll() / pets;
+			res.put("avgVisitsPerPet", avgVisitsPerPet);
 		}
 
 		res.put("totalVisits", countAll);
@@ -128,13 +128,13 @@ public class VisitService {
 	}
 
 	private Map<String, Integer> getVisitsByYear(int userId) {
-		Map<String, Integer> unsortedVisitsByYear = new HashMap<>();
+		Map<String, Integer> unsortedVisitsPerYear = new HashMap<>();
 		this.visitRepository.countVisitsGroupedByYear(userId).forEach(m -> {
 			String key = m.get("year").toString();
 			Integer value = m.get("visits");
-			unsortedVisitsByYear.put(key, value);
+			unsortedVisitsPerYear.put(key, value);
 		});
-		return unsortedVisitsByYear.entrySet().stream().sorted(Map.Entry.comparingByKey(Comparator.reverseOrder()))
+		return unsortedVisitsPerYear.entrySet().stream().sorted(Map.Entry.comparingByKey(Comparator.reverseOrder()))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue,
 						LinkedHashMap::new));
 	}

@@ -6,6 +6,8 @@ import getErrorModal from '../../util/getErrorModal';
 import useFetchData from '../../util/useFetchData';
 import getIdFromUrl from '../../util/getIdFromUrl';
 import useFetchState from '../../util/useFetchState';
+import submitState from '../../util/submitState';
+import useNavigateAfterSubmit from '../../util/useNavigateAfterSubmit';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -14,6 +16,7 @@ export default function VetEditAdmin() {
         id: '',
         firstName: '',
         lastName: '',
+        city: '',
         specialties: [],
         user: {},
     };
@@ -23,6 +26,8 @@ export default function VetEditAdmin() {
     const [vet, setVet] = useFetchState(emptyItem, `/api/v1/vets/${id}`, jwt, setMessage, setVisible, id);
     const specialties = useFetchData(`/api/v1/vets/specialties`, jwt);
     const users = useFetchData(`/api/v1/users`, jwt);
+    const [redirect, setRedirect] = useState(false);
+    useNavigateAfterSubmit("/vets", redirect);
 
     function handleChange(event) {
         const target = event.target;
@@ -46,30 +51,7 @@ export default function VetEditAdmin() {
             setVet({ ...vet, specialties: vet.specialties.filter(s => s.name !== name) });
     }
 
-    function handleSubmit(event) {
-        event.preventDefault();
-
-        fetch('/api/v1/vets' + (vet.id ? '/' + vet.id : ''), {
-            method: (vet.id) ? 'PUT' : 'POST',
-            headers: {
-                "Authorization": `Bearer ${jwt}`,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(vet),
-        })
-            .then(response => response.json())
-            .then(json => {
-                if (json.message) {
-                    setMessage(json.message);
-                    setVisible(true);
-                }
-                else window.location.href = '/vets';
-            })
-            .catch((message) => alert(message));
-    }
-
-
+    const handleSubmit = async (event) => submitState(event, vet, `/api/v1/vets`, setMessage, setVisible, setRedirect);
     const modal = getErrorModal(setVisible, visible, message);
     const selectedSpecialties = vet.specialties.map(specialty => specialty.name);
     const specialtiesBoxes = specialties.map(specialty => {
@@ -113,6 +95,7 @@ export default function VetEditAdmin() {
                         {specialtiesBoxes}
                     </Row>
                     <FormGroup>
+                        <Label for="user">User</Label>
                         {vet.id ?
                             <Input type="select" disabled name="user" id="user" value={vet.user?.id || ""}
                                 onChange={handleChange} >

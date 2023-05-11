@@ -6,6 +6,8 @@ import getErrorModal from '../../util/getErrorModal';
 import useFetchData from '../../util/useFetchData';
 import useFetchState from '../../util/useFetchState';
 import getIdFromUrl from '../../util/getIdFromUrl';
+import submitState from '../../util/submitState';
+import useNavigateAfterSubmit from '../../util/useNavigateAfterSubmit';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -23,6 +25,8 @@ export default function ConsultationEditAdmin() {
     const owners = useFetchData("/api/v1/owners", jwt);
     const pets = useFetchData(`/api/v1/pets`, jwt);
     const [petsOwned, setPetsOwned] = useState([]);
+    const [redirect, setRedirect] = useState(false);
+    useNavigateAfterSubmit("/consultations", redirect);
 
     function handleChange(event) {
         const target = event.target;
@@ -39,31 +43,13 @@ export default function ConsultationEditAdmin() {
         else setConsultation({ ...consultation, [name]: value });
     }
 
-    function handleSubmit(event) {
-        event.preventDefault();
-
-        fetch('/api/v1/consultations' + (consultation.id ? '/' + consultation.id : ''), {
-            method: (consultation.id) ? 'PUT' : 'POST',
-            headers: {
-                "Authorization": `Bearer ${jwt}`,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(consultation),
-        })
-            .then(response => response.json())
-            .then(json => {
-                if (json.message) {
-                    setMessage(json.message);
-                    setVisible(true);
-                }
-                else window.location.href = '/consultations';
-            })
-            .catch((message) => alert(message));
-    }
+    const handleSubmit = (event) => {
+        submitState(event, consultation, `/api/v1/consultations`, setMessage, setVisible, setRedirect);
+    };
 
     const modal = getErrorModal(setVisible, visible, message);
-    const ownerOptions = owners.map(owner => <option key={owner.id} value={owner.id}>{owner.user.username}</option>);
+
+    const ownerOptions = Array.from(owners).map(owner => <option key={owner.id} value={owner.id}>{owner.user.username}</option>);
     let petOptions;
     if (consultation.id)
         petOptions = <option key={consultation.pet.id} value={consultation.pet.id}>{consultation.pet.name}</option>;
@@ -71,7 +57,6 @@ export default function ConsultationEditAdmin() {
         petOptions = consultation.owner ?
             petsOwned.map(pet => <option key={pet.id} value={pet.id}>{pet.name}</option>) :
             <></>;
-
 
     return (
         <div>
@@ -97,12 +82,12 @@ export default function ConsultationEditAdmin() {
                     <FormGroup>
                         <Label for="owner">Owner</Label>
                         {consultation.id ?
-                            <Input type="select" disabled name="owner" id="owner" value={consultation.owner?.id || ""}
+                            <Input type="select" disabled name="owner" id="owner" value={consultation.owner?.id || consultation.pet?.owner.id || ""}
                                 onChange={handleChange} >
                                 <option value="">None</option>
                                 {ownerOptions}
                             </Input> :
-                            <Input type="select" required name="owner" id="owner" value={consultation.owner?.id || ""}
+                            <Input type="select" required name="owner" id="owner" value={consultation.owner?.id || consultation.pet?.owner.id || ""}
                                 onChange={handleChange} >
                                 <option value="">None</option>
                                 {ownerOptions}

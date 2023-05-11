@@ -1,15 +1,19 @@
 import { rest } from 'msw'
 
+const authAdmin = {
+    "id": 1,
+    "authority": "ADMIN"
+};
+
 const authOwner = {
+    "id": 2,
     "authority": "OWNER"
 };
 
 const userAdmin1 = {
     "id": 1,
     "username": "admin1",
-    "authority": {
-        "authority": "ADMIN"
-    }
+    "authority": authAdmin
 };
 
 const userOwner1 = {
@@ -62,14 +66,21 @@ const owner2 = {
     "user": userOwner2
 };
 
+const cat = {
+    "id": 1,
+    "name": "cat"
+};
+
+const dog = {
+    "id": 2,
+    "name": "dog"
+};
+
 const pet1 = {
     "id": 1,
     "name": "Leo",
     "birthDate": "2010-09-07",
-    "type": {
-        "id": 1,
-        "name": "cat"
-    },
+    "type": cat,
     "owner": owner1
 };
 
@@ -77,10 +88,7 @@ const pet2 = {
     "id": 2,
     "name": "Basil",
     "birthDate": "2012-08-06",
-    "type": {
-        "id": 6,
-        "name": "hamster"
-    },
+    "type": dog,
     "owner": owner2
 };
 
@@ -107,6 +115,21 @@ const vet2 = {
     "city": "Sevilla"
 };
 
+const radiology = {
+    "id": 1,
+    "name": "radiology"
+};
+
+const surgery = {
+    "id": 2,
+    "name": "surgery"
+};
+
+const dentistry = {
+    "id": 3,
+    "name": "dentistry"
+};
+
 const visit1 = {
     "id": 1,
     "datetime": "2013-01-01T13:00:00",
@@ -128,7 +151,6 @@ const consultation1 = {
     "id": 1,
     "title": "Mi gato no come",
     "status": "ANSWERED",
-    "owner": owner2,
     "pet": pet1,
     "creationDate": "2023-04-11T11:20:00"
 };
@@ -137,8 +159,7 @@ const consultation2 = {
     "id": 2,
     "title": "Título 2",
     "status": "PENDING",
-    "owner": owner1,
-    "pet": pet1,
+    "pet": pet2,
     "creationDate": "2023-04-11T11:20:00"
 };
 
@@ -178,6 +199,33 @@ export const handlers = [
         )
     }),
 
+    rest.get('*/api/v1/owners/:id', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(
+                owner1
+            ),
+        )
+    }),
+
+    rest.post('*/api/v1/owners', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(
+                owner1
+            ),
+        )
+    }),
+
+    rest.put('*/api/v1/owners/:id', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(
+                owner1
+            ),
+        )
+    }),
+
     rest.get('*/api/v1/pets', (req, res, ctx) => {
         return res(
             ctx.status(200),
@@ -185,6 +233,37 @@ export const handlers = [
                 pet1,
                 pet2,
             ]),
+        )
+    }),
+
+    rest.post('*/api/v1/pets', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(pet1),
+        )
+    }),
+
+    rest.get('*/api/v1/pets/types', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json([
+                cat,
+                dog
+            ]),
+        )
+    }),
+
+    rest.get('/api/v1/pets/:id', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(pet1),
+        )
+    }),
+
+    rest.put('*/api/v1/pets/:id', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(pet1),
         )
     }),
 
@@ -198,6 +277,37 @@ export const handlers = [
         )
     }),
 
+    rest.post('*/api/v1/users', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(userAdmin1),
+        )
+    }),
+
+    rest.get('*/api/v1/users/authorities', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json([
+                authAdmin,
+                authOwner
+            ]),
+        )
+    }),
+
+    rest.get('*/api/v1/users/:id', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(userAdmin1),
+        )
+    }),
+
+    rest.put('*/api/v1/users/:id', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(userAdmin1),
+        )
+    }),
+
     rest.get('*/api/v1/vets', (req, res, ctx) => {
         return res(
             ctx.status(200),
@@ -208,23 +318,55 @@ export const handlers = [
         )
     }),
 
+    rest.post('*/api/v1/vets', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(vet1),
+        )
+    }),
+
     rest.get('*/api/v1/vets/specialties', (req, res, ctx) => {
         return res(
             ctx.status(200),
             ctx.json([
-                {
-                    "id": 1,
-                    "name": "radiology"
-                },
-                {
-                    "id": 2,
-                    "name": "surgery"
-                },
-                {
-                    "id": 3,
-                    "name": "dentistry"
-                }
+                radiology, surgery, dentistry
             ]),
+        )
+    }),
+
+
+    rest.post('*/api/v1/vets/specialties', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(radiology),
+        )
+    }),
+
+    rest.get('*/api/v1/vets/:id', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(vet1),
+        )
+    }),
+
+    rest.put('*/api/v1/vets/:id', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(vet1),
+        )
+    }),
+
+    rest.get('*/api/v1/vets/specialties/:id', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(radiology),
+        )
+    }),
+
+    rest.put('*/api/v1/vets/specialties/:id', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(radiology),
         )
     }),
 
@@ -238,6 +380,27 @@ export const handlers = [
         )
     }),
 
+    rest.post('*/api/v1/pets/:petId/visits', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(visit1),
+        )
+    }),
+
+    rest.get('*/api/v1/pets/:petId/visits/:id', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(visit1),
+        )
+    }),
+
+    rest.put('*/api/v1/pets/:petId/visits/:id', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(visit1),
+        )
+    }),
+
     rest.get('*/api/v1/consultations', (req, res, ctx) => {
         return res(
             ctx.status(200),
@@ -248,12 +411,24 @@ export const handlers = [
         )
     }),
 
+    rest.post('*/api/v1/consultations', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(consultation1),
+        )
+    }),
+
     rest.get('*/api/v1/consultations/:id', (req, res, ctx) => {
         return res(
             ctx.status(200),
-            ctx.json([
-                consultation1,
-            ]),
+            ctx.json(consultation1),
+        )
+    }),
+
+    rest.put('*/api/v1/consultations/:id', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(consultation1),
         )
     }),
 
@@ -281,20 +456,18 @@ export const handlers = [
             ))
     }),
 
-    rest.put('*/api/v1/consultations/:id', (req, res, ctx) => {
+    rest.put('*/api/v1/consultations/:id/tickets/:ticketId', (req, res, ctx) => {
         return res(
             ctx.status(200),
             ctx.json(
                 {
-                    "id": 1,
-                    "title": "Consulta sobre vacunas",
-                    "status": "CLOSED",
-                    "owner": owner1,
-                    "pet": pet1,
-                    "creationDate": "2023-01-04T17:30:00"
-                }
-            )
-        )
+                    "id": 2,
+                    "description": "test ticket",
+                    "creationDate": "2023-01-04T17:32:00",
+                    "user": userOwner1,
+                    "consultation": consultation1
+                },
+            ))
     }),
 
 ]

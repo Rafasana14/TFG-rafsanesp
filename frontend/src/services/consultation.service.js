@@ -13,7 +13,7 @@ class ConsultationService {
                     <td>{c.title}</td>
                     <td>{c.status}</td>
                     {!plan ?
-                        <td>{c.owner.user.username}</td> : <></>
+                        <td>{c.pet.owner.user.username}</td> : <></>
                     }
                     <td>{c.pet.name}</td>
                     <td>{(new Date(c.creationDate)).toLocaleString()}</td>

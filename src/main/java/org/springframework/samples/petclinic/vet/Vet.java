@@ -46,7 +46,7 @@ public class Vet extends Person {
 			@UniqueConstraint(columnNames = { "vet_id", "specialty_id" }) })
 	private List<Specialty> specialties;
 
-	@OneToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST })
+	@OneToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH })
 	@JoinColumn(name = "user", referencedColumnName = "id")
 	private User user;
 

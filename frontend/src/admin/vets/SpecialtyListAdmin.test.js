@@ -1,11 +1,10 @@
 import { render, screen, testRenderList } from "../../test-utils";
-import userEvent from "@testing-library/user-event";
 import SpecialtyListAdmin from "./SpecialtyListAdmin";
 
 describe('SpecialtyListAdmin', () => {
     test('renders correctly', async () => {
         render(<SpecialtyListAdmin />);
-        testRenderList('specialties');
+        testRenderList(/specialties/i);
     });
 
     test('renders specialties correctly', async () => {
@@ -27,10 +26,9 @@ describe('SpecialtyListAdmin', () => {
     });
 
     test('delete specialty correct', async () => {
-        const user = userEvent.setup();
         const jsdomConfirm = window.confirm;
         window.confirm = () => { return true };
-        render(<SpecialtyListAdmin />);
+        const { user } = render(<SpecialtyListAdmin />);
 
         const specialty1Delete = await screen.findByRole('button', { 'name': 'delete-1' });
         await user.click(specialty1Delete);

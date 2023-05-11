@@ -1,11 +1,10 @@
 import { render, screen, testRenderList } from "../../test-utils";
-import userEvent from "@testing-library/user-event";
 import ConsultationListAdmin from "./ConsultationListAdmin";
 
 describe('ConsultationListAdmin', () => {
     test('renders correctly', async () => {
         render(<ConsultationListAdmin />);
-        testRenderList('consultations');
+        testRenderList(/consultations/i);
 
         const filterButtons = screen.getAllByRole('button', { 'name': /filter/ });
         expect(filterButtons).toHaveLength(4);
@@ -39,8 +38,7 @@ describe('ConsultationListAdmin', () => {
     });
 
     test('filter consultation correct', async () => {
-        const user = userEvent.setup();
-        render(<ConsultationListAdmin />);
+        const { user } = render(<ConsultationListAdmin />);
 
         const pendingFilter = await screen.findByRole('button', { 'name': 'pending-filter' });
         await user.click(pendingFilter);
@@ -53,8 +51,7 @@ describe('ConsultationListAdmin', () => {
     });
 
     test('search consultation correct', async () => {
-        const user = userEvent.setup();
-        render(<ConsultationListAdmin />);
+        const { user } = render(<ConsultationListAdmin />);
 
         const searchbar = await screen.findByRole('searchbox', { 'name': 'search' });
         await user.type(searchbar, "owner1");
@@ -67,8 +64,7 @@ describe('ConsultationListAdmin', () => {
     });
 
     test('clear all correct', async () => {
-        const user = userEvent.setup();
-        render(<ConsultationListAdmin />);
+        const { user } = render(<ConsultationListAdmin />);
 
         const pendingFilter = await screen.findByRole('button', { 'name': 'pending-filter' });
         await user.click(pendingFilter);
@@ -85,13 +81,12 @@ describe('ConsultationListAdmin', () => {
     });
 
     test('filter and search not found', async () => {
-        const user = userEvent.setup();
-        render(<ConsultationListAdmin />);
+        const { user } = render(<ConsultationListAdmin />);
 
         const pendingFilter = await screen.findByRole('button', { 'name': 'pending-filter' });
         await user.click(pendingFilter);
         const searchbar = await screen.findByRole('searchbox', { 'name': 'search' });
-        await user.type(searchbar, "owner2");
+        await user.type(searchbar, "owner1");
 
         const consultationOwner1 = screen.queryByRole('cell', { 'name': 'owner1' });
         expect(consultationOwner1).not.toBeInTheDocument();
@@ -104,40 +99,37 @@ describe('ConsultationListAdmin', () => {
     });
 
     test('filter then search', async () => {
-        const user = userEvent.setup();
-        render(<ConsultationListAdmin />);
+        const { user } = render(<ConsultationListAdmin />);
 
         const pendingFilter = await screen.findByRole('button', { 'name': 'pending-filter' });
         await user.click(pendingFilter);
         const searchbar = await screen.findByRole('searchbox', { 'name': 'search' });
-        await user.type(searchbar, "owner1");
+        await user.type(searchbar, "owner2");
 
-        const consultationOwner1 = await screen.findByRole('cell', { 'name': 'owner1' });
+        const consultationOwner1 = await screen.findByRole('cell', { 'name': 'owner2' });
         expect(consultationOwner1).toBeInTheDocument();
 
-        const consultationOwner2 = screen.queryByRole('cell', { 'name': 'owner2' });
+        const consultationOwner2 = screen.queryByRole('cell', { 'name': 'owner1' });
         expect(consultationOwner2).not.toBeInTheDocument();
     });
 
     test('search then filter', async () => {
-        const user = userEvent.setup();
-        render(<ConsultationListAdmin />);
+        const { user } = render(<ConsultationListAdmin />);
 
         const searchbar = await screen.findByRole('searchbox', { 'name': 'search' });
-        await user.type(searchbar, "owner1");
+        await user.type(searchbar, "owner2");
         const pendingFilter = await screen.findByRole('button', { 'name': 'pending-filter' });
         await user.click(pendingFilter);
 
-        const consultationOwner1 = await screen.findByRole('cell', { 'name': 'owner1' });
+        const consultationOwner1 = await screen.findByRole('cell', { 'name': 'owner2' });
         expect(consultationOwner1).toBeInTheDocument();
 
-        const consultationOwner2 = screen.queryByRole('cell', { 'name': 'owner2' });
+        const consultationOwner2 = screen.queryByRole('cell', { 'name': 'owner1' });
         expect(consultationOwner2).not.toBeInTheDocument();
     });
 
     test('search and filter then remove search', async () => {
-        const user = userEvent.setup();
-        render(<ConsultationListAdmin />);
+        const { user } = render(<ConsultationListAdmin />);
 
         const searchbar = await screen.findByRole('searchbox', { 'name': 'search' });
         await user.type(searchbar, "owner2");
@@ -150,8 +142,7 @@ describe('ConsultationListAdmin', () => {
     });
 
     test('search and filter then remove filter', async () => {
-        const user = userEvent.setup();
-        render(<ConsultationListAdmin />);
+        const { user } = render(<ConsultationListAdmin />);
 
         const searchbar = await screen.findByRole('searchbox', { 'name': 'search' });
         await user.type(searchbar, "owner2");
@@ -168,8 +159,7 @@ describe('ConsultationListAdmin', () => {
     });
 
     test('search then remove search', async () => {
-        const user = userEvent.setup();
-        render(<ConsultationListAdmin />);
+        const { user } = render(<ConsultationListAdmin />);
 
         const searchbar = await screen.findByRole('searchbox', { 'name': 'search' });
         await user.type(searchbar, "owner2");
@@ -183,8 +173,7 @@ describe('ConsultationListAdmin', () => {
     });
 
     test('filter then remove filter', async () => {
-        const user = userEvent.setup();
-        render(<ConsultationListAdmin />);
+        const { user } = render(<ConsultationListAdmin />);
 
         const pendingFilter = await screen.findByRole('button', { 'name': 'pending-filter' });
         await user.click(pendingFilter);
@@ -199,10 +188,9 @@ describe('ConsultationListAdmin', () => {
     });
 
     test('delete consultation correct', async () => {
-        const user = userEvent.setup();
         const jsdomConfirm = window.confirm;
         window.confirm = () => { return true };
-        render(<ConsultationListAdmin />);
+        const { user } = render(<ConsultationListAdmin />);
 
         const consultation1Delete = await screen.findByRole('button', { 'name': 'delete-1' });
         await user.click(consultation1Delete);
@@ -213,10 +201,9 @@ describe('ConsultationListAdmin', () => {
     });
 
     test('delete consultation with filters correct', async () => {
-        const user = userEvent.setup();
         const jsdomConfirm = window.confirm;
         window.confirm = () => { return true };
-        render(<ConsultationListAdmin />);
+        const { user } = render(<ConsultationListAdmin />);
 
         const answeredFilter = await screen.findByRole('button', { 'name': 'answered-filter' });
         await user.click(answeredFilter);

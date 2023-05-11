@@ -32,8 +32,8 @@ export default function TicketListAdmin() {
     function handleSubmit(event) {
         event.preventDefault();
 
-        fetch(`/api/v1/consultations/${id}/tickets`, {
-            method: 'POST',
+        fetch(`/api/v1/consultations/${id}/tickets` + (newTicket.id ? '/' + newTicket.id : ''), {
+            method: (newTicket.id) ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${jwt}`,
                 'Accept': 'application/json',
@@ -48,7 +48,16 @@ export default function TicketListAdmin() {
                     setVisible(true);
                 }
                 else {
-                    setTickets([...tickets, json]);
+                    if (!newTicket.id) setTickets([...tickets, json]);
+                    else {
+                        const ticket = tickets.find(t => t.id === newTicket.id);
+                        const index = tickets.indexOf(ticket);
+                        const nextTickets = tickets.map((t, i) => {
+                            if (i === index) return newTicket;
+                            else return t;
+                        });
+                        setTickets(nextTickets);
+                    }
                     setNewTicket(emptyTicket);
                 }
             })
@@ -80,15 +89,12 @@ export default function TicketListAdmin() {
                     getDeleteAlertsOrModal({ message: "Consultation closed!" }, id, alerts, setAlerts, setMessage, setVisible)
                 }
             }).catch((message) => alert(message));
-
     }
 
     const modal = getErrorModal(setVisible, visible, message);
-
-    const ticketList = ticketService.getTicketList([tickets, setTickets], "ADMIN", [alerts, setAlerts], setMessage, setVisible);
+    const ticketList = ticketService.getTicketList([tickets, setTickets], "ADMIN", [alerts, setAlerts], setMessage, setVisible, setNewTicket);
     const ticketForm = ticketService.getTicketForm(newTicket, consultation.status, "ADMIN", handleChange, handleSubmit);
-    const ticketClose = ticketService.getTicketCloseButton(consultation, handleClose)
-
+    const ticketClose = ticketService.getTicketCloseButton(consultation, handleClose);
     return (
         <div>
             <Container style={{ marginTop: "15px" }}>

@@ -5,12 +5,14 @@ import tokenService from '../../services/token.service';
 import getErrorModal from '../../util/getErrorModal';
 import useFetchState from '../../util/useFetchState';
 import getIdFromUrl from '../../util/getIdFromUrl';
+import submitState from '../../util/submitState';
+import useNavigateAfterSubmit from '../../util/useNavigateAfterSubmit';
 
 const jwt = tokenService.getLocalAccessToken();
 
 export default function OwnerEditAdmin() {
     const emptyItem = {
-        id: '',
+        id: null,
         firstName: '',
         lastName: '',
         address: '',
@@ -22,6 +24,8 @@ export default function OwnerEditAdmin() {
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
     const [owner, setOwner] = useFetchState(emptyItem, `/api/v1/owners/${id}`, jwt, setMessage, setVisible, id);
+    const [redirect, setRedirect] = useState(false);
+    useNavigateAfterSubmit("/owners", redirect);
 
     function handleChange(event) {
         const target = event.target;
@@ -30,35 +34,14 @@ export default function OwnerEditAdmin() {
         setOwner({ ...owner, [name]: value })
     }
 
-    function handleSubmit(event) {
-        event.preventDefault();
-
-        fetch('/api/v1/owners' + (owner.id ? '/' + owner.id : ''), {
-            method: (owner.id) ? 'PUT' : 'POST',
-            headers: {
-                "Authorization": `Bearer ${jwt}`,
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(owner),
-        })
-            .then(response => response.json())
-            .then(json => {
-                if (json.message) {
-                    setMessage(json.message);
-                    setVisible(true);
-                }
-                else window.location.href = '/owners';
-            })
-            .catch((message) => alert(message));
-    }
+    const handleSubmit = async (event) => submitState(event, owner, `/api/v1/owners`, setMessage, setVisible, setRedirect);
 
     const modal = getErrorModal(setVisible, visible, message);
 
     return (
         <div>
             <Container style={{ marginTop: "15px" }}>
-                {<h2>{id !== 'new' ? 'Edit Owner' : 'Add Owner'}</h2>}
+                {<h2>{owner.id ? 'Edit Owner' : 'Add Owner'}</h2>}
                 {modal}
                 <Form onSubmit={handleSubmit}>
                     <FormGroup>

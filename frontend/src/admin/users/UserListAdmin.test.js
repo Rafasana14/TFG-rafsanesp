@@ -1,11 +1,10 @@
 import { render, screen, testRenderList } from "../../test-utils";
-import userEvent from "@testing-library/user-event";
 import UserListAdmin from "./UserListAdmin";
 
 describe('UserListAdmin', () => {
     test('renders correctly', async () => {
         render(<UserListAdmin />);
-        testRenderList('users');
+        testRenderList(/users/i);
     });
 
     test('renders users correctly', async () => {
@@ -27,10 +26,9 @@ describe('UserListAdmin', () => {
     });
 
     test('delete user correct', async () => {
-        const user = userEvent.setup();
         const jsdomConfirm = window.confirm;
         window.confirm = () => { return true };
-        render(<UserListAdmin />);
+        const { user } = render(<UserListAdmin />);
 
         const user1Delete = await screen.findByRole('button', { 'name': 'delete-1' });
         await user.click(user1Delete);

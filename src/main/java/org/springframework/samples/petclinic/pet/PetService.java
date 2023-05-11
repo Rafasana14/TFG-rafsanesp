@@ -138,11 +138,11 @@ public class PetService {
 		Map<String, Object> res = new HashMap<>();
 		Integer countAll = this.petRepository.countAll();
 		int owners = this.petRepository.countAllOwners();
-		Double avgPetsByOwner = (double) countAll / owners;
+		Double avgPetsPerOwner = (double) countAll / owners;
 		Map<String, Integer> petsByType = getPetsByType();
 
 		res.put("totalPets", countAll);
-		res.put("avgPetsByOwner", avgPetsByOwner);
+		res.put("avgPetsPerOwner", avgPetsPerOwner);
 		res.put("petsByType", petsByType);
 
 		return res;

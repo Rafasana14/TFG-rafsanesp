@@ -29,6 +29,7 @@ import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -53,6 +54,9 @@ class UserControllerTests {
 
 	@MockBean
 	private AuthoritiesService authService;
+	
+	@MockBean
+	private PasswordEncoder encoder;
 
 	@Autowired
 	private ObjectMapper objectMapper;

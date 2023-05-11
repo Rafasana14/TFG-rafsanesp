@@ -26,14 +26,14 @@ class Login extends Component {
     });
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault();
     const reqBody = {
       username: this.state.username,
       password: this.state.password,
     };
 
-    (fetch("/api/v1/auth/signin", {
+    await fetch("/api/v1/auth/signin", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       body: JSON.stringify(reqBody),
@@ -48,7 +48,7 @@ class Login extends Component {
         tokenService.updateLocalAccessToken(data.token)
       }).catch((message) => {
         alert(message);
-      }));
+      });
 
     if (this.state.navigation === true) {
       return window.location.reload();
@@ -63,7 +63,7 @@ class Login extends Component {
           {this.state.message}
         </Alert> : <></>}
         <Container style={{ marginTop: "15px" }} className="d-flex justify-content-center">
-          <Form onSubmit={() => this.handleSubmit}>
+          <Form onSubmit={this.handleSubmit}>
             <Col>
               <FormGroup>
                 <Label for="username">Username</Label>

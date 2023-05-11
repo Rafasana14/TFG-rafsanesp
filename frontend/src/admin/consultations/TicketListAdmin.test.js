@@ -1,5 +1,4 @@
-import { render, screen } from "../../test-utils";
-import userEvent from "@testing-library/user-event";
+import { render, screen, waitFor } from "../../test-utils";
 import TicketListAdmin from "./TicketListAdmin";
 import { server } from "../../mocks/server";
 import { rest } from "msw";
@@ -26,7 +25,7 @@ describe('TicketListAdmin', () => {
     test('renders tickets correctly', async () => {
         render(<TicketListAdmin />);
 
-        const editButtons = await screen.findAllByRole('link', { 'name': /edit/ });
+        const editButtons = await screen.findAllByRole('button', { 'name': /edit/ });
         expect(editButtons).toHaveLength(2);
 
         const deleteButtons = await screen.findAllByRole('button', { 'name': /delete/ });
@@ -34,10 +33,9 @@ describe('TicketListAdmin', () => {
     });
 
     test('delete ticket correct', async () => {
-        const user = userEvent.setup();
         const jsdomConfirm = window.confirm;
         window.confirm = () => { return true };
-        render(<TicketListAdmin />);
+        const { user } = render(<TicketListAdmin />);
 
         const ticket2Delete = await screen.findByRole('button', { 'name': 'delete-2' });
         await user.click(ticket2Delete);
@@ -48,10 +46,9 @@ describe('TicketListAdmin', () => {
     });
 
     test('close consultation correct', async () => {
-        const user = userEvent.setup();
         const jsdomConfirm = window.confirm;
         window.confirm = () => { return true };
-        render(<TicketListAdmin />);
+        const { user } = render(<TicketListAdmin />);
 
         const closeButton = screen.getByRole('button', { 'name': /Close/ });
         await user.click(closeButton);
@@ -76,10 +73,9 @@ describe('TicketListAdmin', () => {
             })
         )
 
-        const user = userEvent.setup();
         const jsdomConfirm = window.confirm;
         window.confirm = () => { return true };
-        render(<TicketListAdmin />);
+        const { user } = render(<TicketListAdmin />);
 
         const closeButton = screen.getByRole('button', { 'name': /Close/ });
         await user.click(closeButton);
@@ -90,19 +86,33 @@ describe('TicketListAdmin', () => {
     });
 
     test('add ticket correct', async () => {
-        const user = userEvent.setup();
-        render(<TicketListAdmin />);
+        const { user } = render(<TicketListAdmin />);
 
         const input = screen.getByRole('textbox', { 'name': 'Description' });
         await user.type(input, "test ticket")
         const addButton = screen.getByRole('button', { 'name': /Save/ });
         await user.click(addButton);
 
-        const editButtons = await screen.findAllByRole('link', { 'name': /edit/ });
+        const newTicket = await screen.findByRole('heading', { 'name': /test ticket/ });
+        expect(newTicket).toBeInTheDocument();
+        const editButtons = await screen.findAllByRole('button', { 'name': /edit/ });
         expect(editButtons).toHaveLength(3);
+    });
+
+    test('edit ticket correct', async () => {
+        const { user } = render(<TicketListAdmin />, { route: "/consultations/1/tickets" });
+
+        const editButton = await screen.findByRole('button', { 'name': /edit-2/ });
+        await user.click(editButton);
+        const input = screen.getByRole('textbox', { 'name': 'Description' });
+        await user.type(input, "test ticket")
+        const addButton = screen.getByRole('button', { 'name': /Save/ });
+        await user.click(addButton);
 
         const newTicket = await screen.findByRole('heading', { 'name': /test ticket/ });
         expect(newTicket).toBeInTheDocument();
+        const editButtons = await screen.findAllByRole('button', { 'name': /edit/ });
+        expect(editButtons).toHaveLength(2);
     });
 
     test('add ticket with exception', async () => {
@@ -120,15 +130,14 @@ describe('TicketListAdmin', () => {
             })
         )
 
-        const user = userEvent.setup();
         const jsdomConfirm = window.confirm;
         window.confirm = () => { return true };
-        render(<TicketListAdmin />);
+        const { user } = render(<TicketListAdmin />);
 
         const input = screen.getByRole('textbox', { 'name': 'Description' });
         await user.type(input, "test ticket")
         const addButton = screen.getByRole('button', { 'name': /Save/ });
-        await user.click(addButton);
+        await waitFor(async () => await user.click(addButton));
         const modal = await screen.findByRole('dialog');
         expect(modal).toBeInTheDocument();
 

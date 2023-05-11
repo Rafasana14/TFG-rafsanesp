@@ -4,7 +4,7 @@ export default function useFetchState(initial, url, jwt, setMessage, setVisible,
     const [data, setData] = useState(initial);
     useEffect(() => {
         if (url) {
-            if (!id || id !== "new") {
+            if (!id || (id.toString() !== "new" && id !== "undefined")) {
                 let ignore = false;
                 fetch(url, {
                     headers: {
@@ -22,7 +22,7 @@ export default function useFetchState(initial, url, jwt, setMessage, setVisible,
                                 setData(json);
                             }
                         }
-                    }).catch((message) => {
+                    }).catch(() => {
                         setMessage('Failed to fetch data');
                         setVisible(true);
                     });
@@ -30,7 +30,6 @@ export default function useFetchState(initial, url, jwt, setMessage, setVisible,
                     ignore = true;
                 };
             }
-
         }
     }, [url, id, jwt, setMessage, setVisible]);
     return [data, setData];

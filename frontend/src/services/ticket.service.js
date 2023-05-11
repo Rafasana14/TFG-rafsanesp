@@ -1,9 +1,8 @@
-import { Link } from "react-router-dom";
 import { Button, ButtonGroup, Card, CardBody, CardText, CardTitle, Col, Container, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import deleteFromList from "../util/deleteFromList";
 
 class TicketService {
-    getTicketList([tickets, setTickets], auth, [alerts, setAlerts], setMessage, setVisible, plan = null) {
+    getTicketList([tickets, setTickets], auth, [alerts, setAlerts], setMessage, setVisible, setNewTicket, plan = null) {
         return tickets.map((t, index) => {
             const status = t.consultation.status;
             const removeOwnerVet = () => deleteFromList(`/api/v1/consultations/${t.consultation.id}/tickets/${t.id}`, t.id, [tickets, setTickets],
@@ -11,12 +10,12 @@ class TicketService {
             const removeAdmin = () => deleteFromList(`/api/v1/consultations/${t.consultation.id}/tickets/${t.id}`, t.id, [tickets, setTickets],
                 [alerts, setAlerts], setMessage, setVisible, { date: t.creationDate });
             const length = tickets.length;
+            const handleEdit = () => setNewTicket(t);
             let buttons;
             if (auth === "OWNER") {
                 buttons = index === length - 1 && plan === "PLATINUM" && t.user.authority.authority === "OWNER" && status !== "CLOSED" ?
                     <ButtonGroup>
-                        <Button aria-label={"edit-" + t.id} size="sm" color="primary" tag={Link}
-                            to={`consultations/${t.consultation.id}/tickets/${t.id}`}>
+                        <Button aria-label={"edit-" + t.id} size="sm" color="primary" onClick={handleEdit}>
                             Edit
                         </Button>
                         <Button aria-label={"delete-" + t.id} size="sm" color="danger" onClick={removeOwnerVet}>
@@ -27,8 +26,7 @@ class TicketService {
             } else if (auth === "VET") {
                 buttons = index === length - 1 && t.user.authority.authority === "VET" && status !== "CLOSED" ?
                     <ButtonGroup>
-                        <Button aria-label={"edit-" + t.id} size="sm" color="primary" tag={Link}
-                            to={`consultations/${t.consultation.id}/tickets/${t.id}`}>
+                        <Button aria-label={"edit-" + t.id} size="sm" color="primary" onClick={handleEdit}>
                             Edit
                         </Button>
                         <Button aria-label={"delete-" + t.id} size="sm" color="danger" onClick={removeOwnerVet}>
@@ -38,8 +36,7 @@ class TicketService {
                     <></>;
             } else {
                 buttons = <ButtonGroup>
-                    <Button aria-label={"edit-" + t.id} size="sm" color="primary" tag={Link}
-                        to={`consultations/${t.consultation.id}/tickets/${t.id}`}>
+                    <Button aria-label={"edit-" + t.id} size="sm" color="primary" onClick={handleEdit}>
                         Edit
                     </Button>
                     <Button aria-label={"delete-" + t.id} size="sm" color="danger" onClick={removeAdmin}>
@@ -80,7 +77,7 @@ class TicketService {
         if (auth === "ADMIN" || status !== "CLOSED")
             return (
                 <Container>
-                    <h4>Add New Ticket</h4>
+                    {newTicket.id ? <h4>Edit Ticket</h4> : <h4>Add New Ticket</h4>}
                     <Form onSubmit={handleSubmit}>
                         <FormGroup>
                             <Label for="description">Description</Label>
