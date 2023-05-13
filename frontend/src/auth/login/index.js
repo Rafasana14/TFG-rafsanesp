@@ -33,7 +33,7 @@ class Login extends Component {
       password: this.state.password,
     };
 
-    await fetch("/api/v1/auth/signin", {
+    await (await fetch("/api/v1/auth/signin", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       body: JSON.stringify(reqBody),
@@ -48,7 +48,7 @@ class Login extends Component {
         tokenService.updateLocalAccessToken(data.token)
       }).catch((message) => {
         alert(message);
-      });
+      }));
 
     if (this.state.navigation === true) {
       return window.location.reload();
