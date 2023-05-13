@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { server } from "../../mocks/server";
-import { fillForm, render, screen, testFilledEditForm, testRenderForm, waitFor } from "../../test-utils";
+import { act, fillForm, render, screen, testFilledEditForm, testRenderForm } from "../../test-utils";
 import * as router from 'react-router'
 import SpecialtyEditAdmin from "./SpecialtyEditAdmin";
 
@@ -26,7 +26,7 @@ describe('SpecialtyEditAdmin', () => {
         await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await waitFor(async () => await user.click(submit));
+        await act(async () => await user.click(submit));
 
         expect(navigate).toHaveBeenCalledWith('/vets/specialties')
     });
@@ -39,7 +39,7 @@ describe('SpecialtyEditAdmin', () => {
         await testFilledEditForm(form)
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await waitFor(async () => await user.click(submit));
+        await act(async () => await user.click(submit));
 
         expect(navigate).toHaveBeenCalledWith('/vets/specialties')
     });
@@ -61,7 +61,7 @@ describe('SpecialtyEditAdmin', () => {
         await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await waitFor(async () => await user.click(submit));
+        await act(async () => await user.click(submit));
 
         expect(navigate).not.toHaveBeenCalledWith('/vets/specialties');
 
