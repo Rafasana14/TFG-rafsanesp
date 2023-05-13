@@ -7,7 +7,6 @@ import Home from "./home";
 import PrivateRoute from "./privateRoute";
 import PricingPlan from "./owner/plan";
 import Register from "./auth/register";
-import Login from "./auth/login";
 import Logout from "./auth/logout";
 import OwnerPetList from "./owner/pets/petList";
 import OwnerPetEdit from "./owner/pets/petEdit";
@@ -36,6 +35,7 @@ import SwaggerDocs from "./public/swagger";
 import ConsultationEditOwner from "./owner/consultations/ConsultationEditOwner";
 import ConsultationListOwner from "./owner/consultations/ConsultationListOwner";
 import TicketListOwner from "./owner/consultations/TicketListOwner";
+import Login from "./auth/login/Login";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
