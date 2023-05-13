@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button, Col, Container, Input, Row, Table } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import consultationService from '../../services/consultation.service';
 import useFetchState from '../../util/useFetchState';
@@ -18,45 +16,15 @@ export default function ConsultationListAdmin() {
     const [alerts, setAlerts] = useState([]);
 
     function handleSearch(event) {
-        const value = event.target.value;
-        let filteredConsultations;
-        if (value === "") {
-            if (filter !== "")
-                filteredConsultations = consultations.filter((i) => i.status === filter);
-            else
-                filteredConsultations = consultations;
-        } else {
-            if (filter !== "")
-                filteredConsultations = consultations.filter((i) => i.status === filter && i.pet.owner.user.username.toLowerCase().includes(value));
-            else
-                filteredConsultations = consultations.filter((i) => i.pet.owner.user.username.toLowerCase().includes(value));
-        }
-        setFiltered(filteredConsultations);
-        setSearch(value);
+        consultationService.handleSearch(event, consultations, filter, setSearch, setFiltered, "ADMIN");
     }
 
     function handleFilter(event) {
-        const value = event.target.value;
-        let filteredConsultations;
-        if (value === "") {
-            if (search !== "")
-                filteredConsultations = consultations.filter((i) => i.pet.owner.user.username.toLowerCase().includes(search));
-            else
-                filteredConsultations = consultations;
-        } else {
-            if (search !== "")
-                filteredConsultations = consultations.filter((i) => i.status === value && i.pet.owner.user.username.toLowerCase().includes(search));
-            else
-                filteredConsultations = consultations.filter((i) => i.status === value);
-        }
-        setFiltered(filteredConsultations);
-        setFilter(value);
+        consultationService.handleFilter(event, consultations, setFilter, search, setFiltered, "ADMIN");
     }
 
     function handleClear() {
-        setFiltered(consultations);
-        setSearch("");
-        setFilter("");
+        consultationService.handleClear(consultations, setFiltered, setSearch, setFilter);
     }
 
     let consultationList;
@@ -68,44 +36,8 @@ export default function ConsultationListAdmin() {
         [filtered, setFiltered], [alerts, setAlerts], setMessage, setVisible);
     const modal = getErrorModal(setVisible, visible, message);
 
+
     return (
-        <div>
-            <Container fluid style={{ marginTop: "15px" }}>
-                <h1 className="text-center">Consultations</h1>
-                {alerts.map((a) => a.alert)}
-                {modal}
-                <Row className="row-cols-auto g-3 align-items-center">
-                    <Col>
-                        <Button color="success" tag={Link} to="/consultations/new">
-                            Add Consultation
-                        </Button>
-                        <Button aria-label='pending-filter' color="link" onClick={handleFilter} value="PENDING">Pending</Button>
-                        <Button aria-label='answered-filter' color="link" onClick={handleFilter} value="ANSWERED">Answered</Button>
-                        <Button aria-label='closed-filter' color="link" onClick={handleFilter} value="CLOSED">Closed</Button>
-                        <Button aria-label='all-filter' color="link" onClick={handleFilter} value="">All</Button>
-                    </Col>
-                    <Col className="col-sm-3">
-                        <Input type="search" aria-label='search' placeholder="Introduce an owner name to search by it" value={search || ''}
-                            onChange={handleSearch} />
-                    </Col>
-                    <Col className="col-sm-3">
-                        <Button aria-label='clear-all' color="link" onClick={handleClear} >Clear All</Button>
-                    </Col>
-                </Row>
-                <Table aria-label='consultations' className="mt-4">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Status</th>
-                            <th>Owner</th>
-                            <th>Pet</th>
-                            <th>Creation Date</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>{consultationList}</tbody>
-                </Table>
-            </Container>
-        </div>
+        consultationService.render(alerts, modal, search, [handleFilter, handleSearch, handleClear], consultationList, "ADMIN")
     );
 }

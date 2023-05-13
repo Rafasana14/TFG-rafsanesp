@@ -59,7 +59,7 @@ async function checkOption(option) {
 
 async function fillForm(user, form) {
     form.forEach(i => {
-        if (i.length === 3) {
+        if (i.length >= 3) {
             if (i[1] === "label") {
                 const input = screen.getByLabelText(i[0]);
                 fireEvent.change(input, { target: { value: i[2] } })

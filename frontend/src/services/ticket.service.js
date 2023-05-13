@@ -1,12 +1,13 @@
 import { Button, ButtonGroup, Card, CardBody, CardText, CardTitle, Col, Container, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import deleteFromList from "../util/deleteFromList";
+import { Link } from "react-router-dom";
 
 class TicketService {
     getTicketList([tickets, setTickets], auth, [alerts, setAlerts], setMessage, setVisible, setNewTicket, plan = null) {
         return tickets.map((t, index) => {
             const status = t.consultation.status;
             const removeOwnerVet = () => deleteFromList(`/api/v1/consultations/${t.consultation.id}/tickets/${t.id}`, t.id, [tickets, setTickets],
-                [alerts, setAlerts], setMessage, setVisible, { date: t.creationDate });
+                [alerts, setAlerts], setMessage, setVisible);
             const removeAdmin = () => deleteFromList(`/api/v1/consultations/${t.consultation.id}/tickets/${t.id}`, t.id, [tickets, setTickets],
                 [alerts, setAlerts], setMessage, setVisible, { date: t.creationDate });
             const length = tickets.length;
@@ -93,10 +94,13 @@ class TicketService {
         else return <></>;
     }
 
-    getTicketCloseButton(consultation, handleClose) {
-        if (consultation.status !== "CLOSED") {
+    getTicketHeading(consultation, handleClose, auth = "ADMIN") {
+        if (auth === "ADMIN" && consultation.status !== "CLOSED") {
             return <Row>
-                <Col sm="9">
+                <Col sm="3">
+                    <Button color="secondary" tag={Link} to="/consultations">Back</Button>
+                </Col>
+                <Col sm="6">
                     <h2 className="text-center">Consultation Number {consultation.id}</h2>
                 </Col>
                 <Col sm="3">
@@ -105,10 +109,65 @@ class TicketService {
                     </Button>
                 </Col>
             </Row>
-        } else
-            return <h2 className="text-center">Consultation Number {consultation.id}</h2>
+        } else {
+            return <Row>
+                <Col sm="3">
+                    <Button color="secondary" tag={Link} to="/consultations">Back</Button>
+                </Col>
+                <Col sm="6">
+                    <h2 className="text-center">Consultation Number {consultation.id}</h2>
+                </Col>
+                <Col sm="3"></Col>
+            </Row>
+        }
 
 
+
+    }
+
+    handleChange(event, [newTicket, setNewTicket]) {
+        const target = event.target;
+        const value = target.value;
+        const name = target.name;
+        setNewTicket({ ...newTicket, [name]: value })
+    }
+
+    handleSubmit(event, jwt, id, [tickets, setTickets], [newTicket, setNewTicket], setMessage, setVisible) {
+        event.preventDefault();
+
+        fetch(`/api/v1/consultations/${id}/tickets` + (newTicket.id ? '/' + newTicket.id : ''), {
+            method: (newTicket.id) ? 'PUT' : 'POST',
+            headers: {
+                "Authorization": `Bearer ${jwt}`,
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newTicket),
+        })
+            .then(response => response.json())
+            .then(json => {
+                if (json.message) {
+                    setMessage(json.message);
+                    setVisible(true);
+                }
+                else {
+                    if (!newTicket.id) setTickets([...tickets, json]);
+                    else {
+                        const ticket = tickets.find(t => t.id === newTicket.id);
+                        const index = tickets.indexOf(ticket);
+                        const nextTickets = tickets.map((t, i) => {
+                            if (i === index) return newTicket;
+                            else return t;
+                        });
+                        setTickets(nextTickets);
+                    }
+                    setNewTicket({
+                        id: null,
+                        description: '',
+                    });
+                }
+            })
+            .catch((message) => alert(message));
     }
 
 }

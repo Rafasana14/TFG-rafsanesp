@@ -179,6 +179,14 @@ const ticket2 = {
     "consultation": consultation1
 }
 
+const ticket3 = {
+    "id": 3,
+    "description": "Thank you",
+    "creationDate": "2023-01-04T17:36:00",
+    "user": userOwner1,
+    "consultation": consultation1
+}
+
 export const handlers = [
     rest.delete('*/:id', (req, res, ctx) => {
         return res(
@@ -186,6 +194,13 @@ export const handlers = [
             ctx.json({
                 message: "Entity deleted"
             }),
+        )
+    }),
+
+    rest.get('*/api/v1/plan', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(owner1),
         )
     }),
 
@@ -437,7 +452,8 @@ export const handlers = [
             ctx.status(200),
             ctx.json([
                 ticket1,
-                ticket2
+                ticket2,
+                ticket3
             ]),
         )
     }),

@@ -43,8 +43,8 @@ export default function ConsultationEditAdmin() {
         else setConsultation({ ...consultation, [name]: value });
     }
 
-    const handleSubmit = async (event) => {
-        await submitState(event, consultation, `/api/v1/consultations`, setMessage, setVisible, setRedirect);
+    const handleSubmit = (event) => {
+        submitState(event, consultation, `/api/v1/consultations`, setMessage, setVisible, setRedirect);
     };
 
     const modal = getErrorModal(setVisible, visible, message);

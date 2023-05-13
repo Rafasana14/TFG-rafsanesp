@@ -29,7 +29,7 @@ export default function SpecialtyEditAdmin() {
         setSpecialty({ ...specialty, [name]: value })
     }
 
-    const handleSubmit = async (event) => await submitState(event, specialty, `/api/v1/vets/specialties`, setMessage, setVisible, setRedirect);
+    const handleSubmit = (event) => submitState(event, specialty, `/api/v1/vets/specialties`, setMessage, setVisible, setRedirect);
     const modal = getErrorModal(setVisible, visible, message);
 
     return (

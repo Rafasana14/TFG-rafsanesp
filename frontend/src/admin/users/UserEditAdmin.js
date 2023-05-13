@@ -37,7 +37,7 @@ export default function UserEditAdmin() {
             setUser({ ...user, [name]: value })
     }
 
-    const handleSubmit = async (event) => await submitState(event, user, `/api/v1/users`, setMessage, setVisible, setRedirect);
+    const handleSubmit = (event) => submitState(event, user, `/api/v1/users`, setMessage, setVisible, setRedirect);
     const modal = getErrorModal(setVisible, visible, message);
     const authOptions = Array.from(auths).map(auth => <option key={auth.id} value={auth.id}>{auth.authority}</option>);
 
