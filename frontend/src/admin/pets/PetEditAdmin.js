@@ -43,7 +43,7 @@ export default function PetEditAdmin() {
             setPet({ ...pet, [name]: value })
     }
 
-    const handleSubmit = async (event) => submitState(event, pet, `/api/v1/pets`, setMessage, setVisible, setRedirect);
+    const handleSubmit = async (event) => await submitState(event, pet, `/api/v1/pets`, setMessage, setVisible, setRedirect);
 
     const modal = getErrorModal(setVisible, visible, message);
     const typeOptions = Array.from(types).map(type => <option key={type.id} value={type.id}>{type.name}</option>);

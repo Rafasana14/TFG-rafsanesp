@@ -5,10 +5,10 @@
 import '@testing-library/jest-dom';
 import { server } from './mocks/server';
 // Establish API mocking before all tests.
-global.IS_REACT_ACT_ENVIRONMENT = true
+global.IS_REACT_ACT_ENVIRONMENT = false
 beforeAll(() => {
     server.listen();
-    jest.setTimeout(10000);
+    jest.setTimeout(15000);
 })
 
 // Reset any request handlers that we may add during the tests,

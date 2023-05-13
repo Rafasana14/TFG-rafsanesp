@@ -34,7 +34,7 @@ export default function OwnerEditAdmin() {
         setOwner({ ...owner, [name]: value })
     }
 
-    const handleSubmit = async (event) => submitState(event, owner, `/api/v1/owners`, setMessage, setVisible, setRedirect);
+    const handleSubmit = async (event) => await submitState(event, owner, `/api/v1/owners`, setMessage, setVisible, setRedirect);
 
     const modal = getErrorModal(setVisible, visible, message);
 

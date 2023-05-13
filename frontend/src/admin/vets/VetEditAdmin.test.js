@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { server } from "../../mocks/server";
-import { checkOption, fillForm, render, screen, testFilledEditForm, testRenderForm, waitFor } from "../../test-utils";
+import { act, checkOption, fillForm, render, screen, testFilledEditForm, testRenderForm, waitFor } from "../../test-utils";
 import * as router from 'react-router'
 import VetEditAdmin from "./VetEditAdmin";
 
@@ -32,7 +32,7 @@ describe('VetEditAdmin', () => {
         await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await waitFor(async () => await user.click(submit));
+        await act(async () => await user.click(submit));
 
         expect(navigate).toHaveBeenCalledWith('/vets')
     });
@@ -46,7 +46,7 @@ describe('VetEditAdmin', () => {
         await testFilledEditForm(form)
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await waitFor(async () => await user.click(submit));
+        await act(async () => await user.click(submit));
 
         expect(navigate).toHaveBeenCalledWith('/vets')
     });
@@ -66,7 +66,7 @@ describe('VetEditAdmin', () => {
         )
         const { user } = render(<VetEditAdmin />, { route: route });
         await checkOption(/admin1/i);
-        fillForm(user, form);
+        await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
         await waitFor(async () => await user.click(submit));

@@ -3,6 +3,7 @@ import { server } from "../../mocks/server";
 import { fillForm, render, screen, testFilledEditForm, testRenderForm, waitFor } from "../../test-utils";
 import OwnerEditAdmin from "./OwnerEditAdmin";
 import * as router from 'react-router'
+import { act } from "@testing-library/react";
 
 const navigate = jest.fn()
 
@@ -31,7 +32,7 @@ describe('OwnerEditAdmin', () => {
         await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await waitFor(async () => await user.click(submit));
+        await act(async () => await user.click(submit));
 
         expect(navigate).toHaveBeenCalledWith('/owners')
     });
@@ -41,10 +42,10 @@ describe('OwnerEditAdmin', () => {
         const heading = await screen.findByRole('heading', { 'name': /edit owner/i });
         expect(heading).toBeInTheDocument();
 
-        testFilledEditForm(form)
+        await testFilledEditForm(form)
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await waitFor(async () => await user.click(submit));
+        await act(async () => await user.click(submit));
 
         expect(navigate).toHaveBeenCalledWith('/owners')
     });
@@ -63,7 +64,7 @@ describe('OwnerEditAdmin', () => {
             })
         )
         const { user } = render(<OwnerEditAdmin />, { route: route })
-        fillForm(user, form);
+        await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
         await waitFor(async () => await user.click(submit));

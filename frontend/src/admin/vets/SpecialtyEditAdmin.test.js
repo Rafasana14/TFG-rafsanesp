@@ -36,7 +36,7 @@ describe('SpecialtyEditAdmin', () => {
         const heading = await screen.findByRole('heading', { 'name': /edit specialty/i });
         expect(heading).toBeInTheDocument();
 
-        testFilledEditForm(form)
+        await testFilledEditForm(form)
 
         const submit = screen.getByRole('button', { name: /save/i })
         await waitFor(async () => await user.click(submit));
@@ -58,7 +58,7 @@ describe('SpecialtyEditAdmin', () => {
             })
         )
         const { user } = render(<SpecialtyEditAdmin />, { route: route })
-        fillForm(user, form);
+        await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
         await waitFor(async () => await user.click(submit));

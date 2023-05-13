@@ -3,6 +3,7 @@ import { server } from "../../mocks/server";
 import { checkOption, fillForm, render, screen, testFilledEditForm, testRenderForm, waitFor } from "../../test-utils";
 import * as router from 'react-router'
 import PetEditAdmin from "./PetEditAdmin";
+import { act } from "@testing-library/react";
 
 const navigate = jest.fn()
 
@@ -32,7 +33,7 @@ describe('PetEditAdmin', () => {
         await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await waitFor(async () => await user.click(submit));
+        await act(async () => await user.click(submit));
 
         expect(navigate).toHaveBeenCalledWith('/pets')
     });
@@ -43,7 +44,7 @@ describe('PetEditAdmin', () => {
         expect(heading).toBeInTheDocument();
         await checkOption(/owner1/i);
 
-        testFilledEditForm(form)
+        await testFilledEditForm(form)
 
         const submit = screen.getByRole('button', { name: /save/i })
         await waitFor(async () => await user.click(submit));

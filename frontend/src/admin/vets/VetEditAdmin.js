@@ -51,7 +51,7 @@ export default function VetEditAdmin() {
             setVet({ ...vet, specialties: vet.specialties.filter(s => s.name !== name) });
     }
 
-    const handleSubmit = async (event) => submitState(event, vet, `/api/v1/vets`, setMessage, setVisible, setRedirect);
+    const handleSubmit = async (event) => await submitState(event, vet, `/api/v1/vets`, setMessage, setVisible, setRedirect);
     const modal = getErrorModal(setVisible, visible, message);
     const selectedSpecialties = vet.specialties.map(specialty => specialty.name);
     const specialtiesBoxes = specialties.map(specialty => {
