@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import tokenService from '../services/token.service';
-import Login from '../auth/login';
+import Login from '../auth/login/Login';
 
 const PrivateRoute = ({ children }) => {
     const jwt = tokenService.getLocalAccessToken();
@@ -20,7 +20,7 @@ const PrivateRoute = ({ children }) => {
             setMessage("Your token has expired. Please, sign in again.")
             setIsValid(isValid);
             setIsLoading(false);
-        });
+        }).catch(() => alert("Error validating token"));
     } else return <Login message={message} navigation={false} />;
 
     if (isLoading === true) {

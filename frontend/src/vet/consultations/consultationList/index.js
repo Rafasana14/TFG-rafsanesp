@@ -33,14 +33,14 @@ class VetConsultationList extends Component {
 
         if (value === "") {
             if (filter !== "")
-                filteredConsultations = [...this.state.consultations].filter((i) => i.status === filter);
+                filteredConsultations = [...this.state.consultations].filter((i) => i.pet.status === filter);
             else
                 filteredConsultations = [...this.state.consultations];
         } else {
             if (filter !== "")
-                filteredConsultations = [...this.state.consultations].filter((i) => i.status === filter && i.owner.user.username.includes(value));
+                filteredConsultations = [...this.state.consultations].filter((i) => i.pet.status === filter && i.owner.user.username.includes(value));
             else
-                filteredConsultations = [...this.state.consultations].filter((i) => i.owner.user.username.includes(value));
+                filteredConsultations = [...this.state.consultations].filter((i) => i.pet.owner.user.username.includes(value));
         }
         this.setState({ filtered: filteredConsultations, search: value });
     }
@@ -52,12 +52,12 @@ class VetConsultationList extends Component {
 
         if (value === "") {
             if (search !== "")
-                filteredConsultations = [...this.state.consultations].filter((i) => i.owner.user.username.includes(search));
+                filteredConsultations = [...this.state.consultations].filter((i) => i.pet.owner.user.username.includes(search));
             else
                 filteredConsultations = [...this.state.consultations];
         } else {
             if (search !== "")
-                filteredConsultations = [...this.state.consultations].filter((i) => i.status === value && i.owner.user.username.includes(search));
+                filteredConsultations = [...this.state.consultations].filter((i) => i.status === value && i.pet.owner.user.username.includes(search));
             else
                 filteredConsultations = [...this.state.consultations].filter((i) => i.status === value);
         }
@@ -70,7 +70,7 @@ class VetConsultationList extends Component {
                 <tr key={c.id}>
                     <td>{c.title}</td>
                     <td>{c.status}</td>
-                    <td>{c.owner.user.username}</td>
+                    <td>{c.pet.owner.user.username}</td>
                     <td>{(new Date(c.creationDate)).toLocaleString()}</td>
                     <td>
                         <ButtonGroup>

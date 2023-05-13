@@ -188,8 +188,8 @@ public class VisitServiceTests {
 		Map<String, Object> stats = this.visitService.getVisitsAdminStats();
 		assertTrue(stats.containsKey("totalVisits"));
 		assertEquals(9, stats.get("totalVisits"));
-		assertTrue(stats.containsKey("avgVisitsByPet"));
-		assertNotEquals(0, stats.get("avgVisitsByPet"));
+		assertTrue(stats.containsKey("avgVisitsPerPet"));
+		assertNotEquals(0, stats.get("avgVisitsPerPet"));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -201,8 +201,8 @@ public class VisitServiceTests {
 		assertEquals(3, stats.get("totalVisits"));
 		assertTrue(stats.containsKey("visitsByYear"));
 		assertEquals(2, ((Map<String, Integer>) stats.get("visitsByYear")).get("2020"));
-		assertTrue(stats.containsKey("avgVisitsByYear"));
-		assertNotEquals(0, stats.get("avgVisitsByYear"));
+		assertTrue(stats.containsKey("avgVisitsPerYear"));
+		assertNotEquals(0, stats.get("avgVisitsPerYear"));
 		assertTrue(stats.containsKey("visitsByPet"));
 		assertEquals(3, ((Map<String, Integer>) stats.get("visitsByPet")).get("Leo"));
 	}

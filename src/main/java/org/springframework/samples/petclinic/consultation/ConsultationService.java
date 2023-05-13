@@ -169,15 +169,15 @@ public class ConsultationService {
 
 			if (pets > 1) {
 				Map<String, Integer> consultationsByPet = getConsultationsByPet(ownerId);
-				Double avgConsultationsByPet = (double) countAll / pets;
+				Double avgConsultationsPerPet = (double) countAll / pets;
 				res.put("consultationsByPet", consultationsByPet);
-				res.put("avgConsultationsByPet", avgConsultationsByPet);
+				res.put("avgConsultationsPerPet", avgConsultationsPerPet);
 			}
 
 			int years = LocalDate.now().getYear() - this.consultationRepository.getYearOfFirstConsultation(ownerId);
 			if (years >= 1) {
-				Double avgConsultationsByYear = (double) countAll / (years + 1);
-				res.put("avgConsultationsByYear", avgConsultationsByYear);
+				Double avgConsultationsPerYear = (double) countAll / (years + 1);
+				res.put("avgConsultationsPerYear", avgConsultationsPerYear);
 			}
 		}
 
@@ -190,14 +190,14 @@ public class ConsultationService {
 		Map<String, Object> res = new HashMap<>();
 		Integer countAll = this.consultationRepository.countAll();
 		if (this.consultationRepository.countAllPlatinums() > 0) {
-			Double avgConsultationsByPlatinum = (double) countAll / this.consultationRepository.countAllPlatinums();
+			Double avgConsultationsPerPlatinumOwner = (double) countAll / this.consultationRepository.countAllPlatinums();
 
-			res.put("avgConsultationsByPlatinum", avgConsultationsByPlatinum);
+			res.put("avgConsultationsPerPlatinumOwner", avgConsultationsPerPlatinumOwner);
 		}
-		Double avgConsultationsByOwners = (double) countAll / this.consultationRepository.countAllOwners();
+		Double avgConsultationsPerOwner = (double) countAll / this.consultationRepository.countAllOwners();
 
 		res.put("totalConsultations", countAll);
-		res.put("avgConsultationsByOwners", avgConsultationsByOwners);
+		res.put("avgConsultationsPerOwner", avgConsultationsPerOwner);
 
 		return res;
 	}

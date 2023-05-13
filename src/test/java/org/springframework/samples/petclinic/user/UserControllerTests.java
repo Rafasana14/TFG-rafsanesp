@@ -1,5 +1,6 @@
 package org.springframework.samples.petclinic.user;
 
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -22,11 +23,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
+import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -51,6 +54,9 @@ class UserControllerTests {
 
 	@MockBean
 	private AuthoritiesService authService;
+	
+	@MockBean
+	private PasswordEncoder encoder;
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -222,8 +228,8 @@ class UserControllerTests {
 		when(this.userService.findUser(TEST_USER_ID)).thenReturn(user);
 		doNothing().when(this.userService).deleteUser(TEST_USER_ID);
 
-		mockMvc.perform(delete(BASE_URL + "/{id}", TEST_USER_ID).with(csrf())).andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.message").value("You can't delete yourself!"));
+		mockMvc.perform(delete(BASE_URL + "/{id}", TEST_USER_ID).with(csrf())).andExpect(status().isForbidden())
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof AccessDeniedException));
 	}
 
 }

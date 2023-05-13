@@ -14,7 +14,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.samples.petclinic.model.BaseEntity;
-import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.pet.Pet;
 
 import lombok.Getter;
@@ -32,12 +31,6 @@ public class Consultation extends BaseEntity {
 
 	@NotNull
 	private ConsultationStatus status;
-
-	@OneToOne
-	@JoinColumn(name = "owner_id")
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@NotNull
-	private Owner owner;
 
 	@OneToOne
 	@JoinColumn(name = "pet_id")

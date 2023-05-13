@@ -37,6 +37,7 @@ import org.springframework.samples.petclinic.exceptions.ResourceNotFoundExceptio
 import org.springframework.samples.petclinic.pet.Pet;
 import org.springframework.samples.petclinic.pet.PetService;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
+import org.springframework.samples.petclinic.user.AuthoritiesService;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -49,11 +50,13 @@ class OwnerServiceTests {
 
 	private OwnerService ownerService;
 	private PetService petService;
+	private AuthoritiesService authService;
 
 	@Autowired
-	public OwnerServiceTests(OwnerService ownerService, PetService petService) {
+	public OwnerServiceTests(OwnerService ownerService, PetService petService, AuthoritiesService authService) {
 		this.ownerService = ownerService;
 		this.petService = petService;
+		this.authService = authService;
 	}
 
 	@Test
@@ -171,6 +174,7 @@ class OwnerServiceTests {
 		User user = new User();
 		user.setUsername("Sam");
 		user.setPassword("supersecretpassword");
+		user.setAuthority(authService.findByAuthority("OWNER"));
 		owner.setUser(user);
 		return this.ownerService.saveOwner(owner);
 	}

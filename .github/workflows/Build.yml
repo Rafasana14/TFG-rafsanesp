@@ -24,6 +24,16 @@ jobs:
           path: ~/.sonar/cache
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
+      - name: Install node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install dependencies
+        working-directory: ./frontend/src
+        run: npm ci
+      - name: Test and coverage
+        working-directory: ./frontend/src
+        run: npm test -- --watchAll=false --coverage --collectCoverageFrom='!src/{index,reportWebVitals,error-page,App}.{js,jsx}'
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:

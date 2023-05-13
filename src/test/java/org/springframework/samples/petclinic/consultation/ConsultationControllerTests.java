@@ -45,7 +45,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -131,7 +130,6 @@ class ConsultationControllerTests {
 		consultation.setCreationDate(LocalDateTime.of(2010, 1, 1, 12, 0));
 		consultation.setTitle("Checking Simba's teeth.");
 		consultation.setPet(simba);
-		consultation.setOwner(george);
 		consultation.setStatus(ConsultationStatus.PENDING);
 
 		ticket = new Ticket();
@@ -165,7 +163,6 @@ class ConsultationControllerTests {
 		stomach.setCreationDate(LocalDateTime.of(2010, 1, 1, 12, 0));
 		stomach.setTitle("Checking Simba's stomach.");
 		stomach.setPet(simba);
-		stomach.setOwner(george);
 		stomach.setStatus(ConsultationStatus.PENDING);
 
 		Consultation leg = new Consultation();
@@ -173,7 +170,6 @@ class ConsultationControllerTests {
 		leg.setCreationDate(LocalDateTime.of(2010, 1, 1, 12, 0));
 		leg.setTitle("Checking Simba's leg.");
 		leg.setPet(simba);
-		leg.setOwner(george);
 		leg.setStatus(ConsultationStatus.PENDING);
 
 		when(this.consultationService.findAll()).thenReturn(List.of(consultation, stomach, leg));
@@ -194,7 +190,6 @@ class ConsultationControllerTests {
 		stomach.setCreationDate(LocalDateTime.of(2010, 1, 1, 12, 0));
 		stomach.setTitle("Checking Simba's stomach.");
 		stomach.setPet(simba);
-		stomach.setOwner(george);
 		stomach.setStatus(ConsultationStatus.PENDING);
 
 		Consultation leg = new Consultation();
@@ -202,7 +197,6 @@ class ConsultationControllerTests {
 		leg.setCreationDate(LocalDateTime.of(2010, 1, 1, 12, 0));
 		leg.setTitle("Checking Simba's leg.");
 		leg.setPet(simba);
-		leg.setOwner(george);
 		leg.setStatus(ConsultationStatus.PENDING);
 
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
@@ -227,7 +221,7 @@ class ConsultationControllerTests {
 				.andExpect(jsonPath("$.title").value(consultation.getTitle()))
 				.andExpect(jsonPath("$.status").value(consultation.getStatus().toString()))
 				.andExpect(jsonPath("$.pet.name").value(simba.getName()))
-				.andExpect(jsonPath("$.owner.firstName").value(george.getFirstName()));
+				.andExpect(jsonPath("$.pet.owner.firstName").value(george.getFirstName()));
 	}
 
 	@Test
@@ -243,7 +237,7 @@ class ConsultationControllerTests {
 				.andExpect(jsonPath("$.title").value(consultation.getTitle()))
 				.andExpect(jsonPath("$.status").value(consultation.getStatus().toString()))
 				.andExpect(jsonPath("$.pet.name").value(simba.getName()))
-				.andExpect(jsonPath("$.owner.firstName").value(george.getFirstName()));
+				.andExpect(jsonPath("$.pet.owner.firstName").value(george.getFirstName()));
 	}
 
 	@Test
@@ -273,12 +267,11 @@ class ConsultationControllerTests {
 	@Test
 	@WithMockUser(username = "admin", authorities = "ADMIN")
 	void adminOrVetShouldCreateConsultation() throws Exception {
-		logged.setId(TEST_USER_ID);
+		logged.setId(2);
 		Consultation aux = new Consultation();
 		aux.setId(3);
 		aux.setTitle("Checking Simba's leg.");
 		aux.setPet(simba);
-		aux.setOwner(george);
 		aux.setStatus(ConsultationStatus.PENDING);
 
 		mockMvc.perform(post(BASE_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
@@ -286,22 +279,24 @@ class ConsultationControllerTests {
 	}
 
 	@Test
-	@WithMockUser(username = "admin", authorities = "ADMIN")
+	@WithMockUser(username = "owner", authorities = "OWNER")
 	void shouldNotCreateInvalidConsultationPetNotOfOwner() throws Exception {
-		logged.setId(TEST_USER_ID);
+		logged.setId(2);
 		Owner owner = new Owner();
 		owner.setId(2);
+		owner.setUser(logged);
 
 		Consultation aux = new Consultation();
 		aux.setId(2);
 		aux.setTitle("Checking Simba's leg.");
 		aux.setPet(simba);
-		aux.setOwner(owner);
 		aux.setStatus(ConsultationStatus.PENDING);
+		
+		when(this.userService.findOwnerByUser(2)).thenReturn(owner);
 
 		mockMvc.perform(post(BASE_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(aux))).andExpect(status().isBadRequest()).andExpect(
-						result -> assertTrue(result.getResolvedException() instanceof MethodArgumentNotValidException));
+						result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException));
 	}
 
 	@Test
@@ -312,7 +307,7 @@ class ConsultationControllerTests {
 		aux.setId(2);
 		aux.setTitle("Checking Simba's leg.");
 		aux.setPet(simba);
-		aux.setOwner(george);
+		aux.setStatus(ConsultationStatus.PENDING);
 
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 
@@ -328,7 +323,7 @@ class ConsultationControllerTests {
 		aux.setId(2);
 		aux.setTitle("Checking Simba's leg.");
 		aux.setPet(simba);
-		aux.setOwner(george);
+		aux.setStatus(ConsultationStatus.PENDING);
 		george.setPlan(PricingPlan.BASIC);
 
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);

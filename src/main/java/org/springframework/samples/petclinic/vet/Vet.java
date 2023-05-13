@@ -29,8 +29,6 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.samples.petclinic.model.Person;
 import org.springframework.samples.petclinic.user.User;
 
@@ -43,14 +41,13 @@ import lombok.Setter;
 @Setter
 public class Vet extends Person {
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "vet_specialties", joinColumns = @JoinColumn(name = "vet_id"), inverseJoinColumns = @JoinColumn(name = "specialty_id"), uniqueConstraints = {
 			@UniqueConstraint(columnNames = { "vet_id", "specialty_id" }) })
 	private List<Specialty> specialties;
 
-	@OneToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST })
+	@OneToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH })
 	@JoinColumn(name = "user", referencedColumnName = "id")
-	@OnDelete(action = OnDeleteAction.CASCADE)
 	private User user;
 
 	@Column(name = "city")
@@ -59,6 +56,10 @@ public class Vet extends Person {
 
 	public void removeSpecialty(Specialty s) {
 		specialties.remove(s);
+	}
+	
+	public void removeAllSpecialties() {
+		specialties = null;
 	}
 
 }

@@ -48,9 +48,9 @@ class ConsultationServiceTests {
 		Collection<Consultation> consultations = (Collection<Consultation>) this.consultationService.findAll();
 
 		Consultation c1 = EntityUtils.getById(consultations, Consultation.class, 1);
-		assertEquals("owner1", c1.getOwner().getUser().getUsername());
+		assertEquals("owner1", c1.getPet().getOwner().getUser().getUsername());
 		Consultation c3 = EntityUtils.getById(consultations, Consultation.class, 3);
-		assertEquals("Mi gato no come", c3.getTitle());
+		assertEquals("My cat does not eat", c3.getTitle());
 	}
 
 	@Test
@@ -59,15 +59,15 @@ class ConsultationServiceTests {
 				.findAllConsultationsByOwner(1);
 
 		Consultation c1 = EntityUtils.getById(consultations, Consultation.class, 1);
-		assertEquals("owner1", c1.getOwner().getUser().getUsername());
+		assertEquals("owner1", c1.getPet().getOwner().getUser().getUsername());
 		Consultation c2 = EntityUtils.getById(consultations, Consultation.class, 2);
-		assertEquals("Mi perro se pone nervioso", c2.getTitle());
+		assertEquals("My dog gets really nervous", c2.getTitle());
 	}
 
 	@Test
 	void shouldFindConsultationWithCorrectId() {
 		Consultation consultation = this.consultationService.findConsultationById(1);
-		assertEquals("owner1", consultation.getOwner().getUser().getUsername());
+		assertEquals("owner1", consultation.getPet().getOwner().getUser().getUsername());
 	}
 
 	@Test
@@ -83,7 +83,6 @@ class ConsultationServiceTests {
 		Consultation cons = new Consultation();
 		cons.setTitle("Consulta de prueba");
 		cons.setStatus(ConsultationStatus.PENDING);
-		cons.setOwner(this.ownerService.findOwnerById(2));
 		cons.setPet(this.petService.findPetById(2));
 
 		this.consultationService.saveConsultation(cons);
@@ -113,7 +112,6 @@ class ConsultationServiceTests {
 		Consultation cons = new Consultation();
 		cons.setTitle("Consulta de prueba");
 		cons.setStatus(ConsultationStatus.PENDING);
-		cons.setOwner(this.ownerService.findOwnerById(2));
 		cons.setPet(this.petService.findPetById(2));
 		this.consultationService.saveConsultation(cons);
 
@@ -135,15 +133,15 @@ class ConsultationServiceTests {
 		Collection<Ticket> tickets = (Collection<Ticket>) this.consultationService.findAllTicketsByConsultation(1);
 
 		Ticket t1 = EntityUtils.getById(tickets, Ticket.class, 1);
-		assertEquals("¿Qué vacuna le pongo?", t1.getDescription());
+		assertEquals("What vaccine should my dog receive?", t1.getDescription());
 		Ticket t2 = EntityUtils.getById(tickets, Ticket.class, 2);
-		assertEquals("La de la rabia.", t2.getDescription());
+		assertEquals("Rabies' one.", t2.getDescription());
 	}
 
 	@Test
 	void shouldFindTicketWithCorrectId() {
 		Ticket t = this.consultationService.findTicketById(1);
-		assertEquals("¿Qué vacuna le pongo?", t.getDescription());
+		assertEquals("What vaccine should my dog receive?", t.getDescription());
 	}
 
 	@Test
@@ -357,10 +355,10 @@ class ConsultationServiceTests {
 		Map<String, Object> stats = this.consultationService.getAdminConsultationsStats();
 		assertTrue(stats.containsKey("totalConsultations"));
 		assertEquals(5, stats.get("totalConsultations"));
-		assertTrue(stats.containsKey("avgConsultationsByPlatinum"));
-		assertNotEquals(0, stats.get("avgConsultationsByPlatinum"));
-		assertTrue(stats.containsKey("avgConsultationsByOwners"));
-		assertNotEquals(0, stats.get("avgConsultationsByOwners"));
+		assertTrue(stats.containsKey("avgConsultationsPerPlatinumOwner"));
+		assertNotEquals(0, stats.get("avgConsultationsPerPlatinumOwner"));
+		assertTrue(stats.containsKey("avgConsultationsPerOwner"));
+		assertNotEquals(0, stats.get("avgConsultationsPerOwner"));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -373,8 +371,8 @@ class ConsultationServiceTests {
 		assertEquals(2, stats.get("totalConsultations"));
 		assertTrue(stats.containsKey("consultationsByYear"));
 		assertEquals(1, ((Map<String, Integer>) stats.get("consultationsByYear")).get("2023"));
-		assertTrue(stats.containsKey("avgConsultationsByYear"));
-		assertNotEquals(0, stats.get("avgConsultationsByYear"));
+		assertTrue(stats.containsKey("avgConsultationsPerYear"));
+		assertNotEquals(0, stats.get("avgConsultationsPerYear"));
 	}
 
 	@Test
@@ -396,8 +394,8 @@ class ConsultationServiceTests {
 		assertEquals(1, stats.get("totalConsultations"));
 		assertTrue(stats.containsKey("consultationsByPet"));
 		assertEquals(1, ((Map<String, Integer>) stats.get("consultationsByPet")).get("Lucky"));
-		assertTrue(stats.containsKey("avgConsultationsByPet"));
-		assertNotEquals(0, stats.get("avgConsultationsByPet"));
+		assertTrue(stats.containsKey("avgConsultationsPerPet"));
+		assertNotEquals(0, stats.get("avgConsultationsPerPet"));
 	}
 
 }

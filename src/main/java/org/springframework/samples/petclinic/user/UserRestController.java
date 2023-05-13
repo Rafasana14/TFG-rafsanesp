@@ -22,7 +22,9 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.util.RestPreconditions;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -42,9 +44,11 @@ class UserRestController {
 
 	private final UserService userService;
 	private final AuthoritiesService authService;
+	private final PasswordEncoder encoder;
 
 	@Autowired
-	public UserRestController(UserService userService, AuthoritiesService authService) {
+	public UserRestController(PasswordEncoder encoder, UserService userService, AuthoritiesService authService) {
+		this.encoder = encoder;
 		this.userService = userService;
 		this.authService = authService;
 	}
@@ -56,32 +60,38 @@ class UserRestController {
 			res = (List<User>) userService.findAllByAuthority(auth);
 		} else
 			res = (List<User>) userService.findAll();
-		return new ResponseEntity<List<User>>(res, HttpStatus.OK);
+		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
 	@GetMapping("authorities")
 	public ResponseEntity<List<Authorities>> findAllAuths() {
 		List<Authorities> res = (List<Authorities>) authService.findAll();
-		return new ResponseEntity<List<Authorities>>(res, HttpStatus.OK);
+		return new ResponseEntity<>(res, HttpStatus.OK);
 	}
 
 	@GetMapping(value = "{id}")
 	public ResponseEntity<User> findById(@PathVariable("id") Integer id) {
-		return new ResponseEntity<User>(userService.findUser(id), HttpStatus.OK);
+		return new ResponseEntity<>(userService.findUser(id), HttpStatus.OK);
 	}
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<User> create(@RequestBody @Valid User user) {
+		user.setPassword(encoder.encode(user.getPassword()));
 		User savedUser = userService.saveUser(user);
-		return new ResponseEntity<User>(savedUser, HttpStatus.CREATED);
+		return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
 	}
 
 	@PutMapping(value = "{userId}")
 	@ResponseStatus(HttpStatus.OK)
 	public ResponseEntity<User> update(@PathVariable("userId") Integer id, @RequestBody @Valid User user) {
 		RestPreconditions.checkNotNull(userService.findUser(id), "User", "ID", id);
-		return new ResponseEntity<User>(this.userService.updateUser(user, id), HttpStatus.OK);
+		user.setPassword(encoder.encode(user.getPassword()));
+		User savedUser = this.userService.updateUser(user, id);
+		if(savedUser.getId().equals(this.userService.findCurrentUser().getId())) {
+			
+		}
+		return new ResponseEntity<>(this.userService.updateUser(user, id), HttpStatus.OK);
 	}
 
 	@DeleteMapping(value = "{userId}")
@@ -90,10 +100,9 @@ class UserRestController {
 		RestPreconditions.checkNotNull(userService.findUser(id), "User", "ID", id);
 		if (userService.findCurrentUser().getId() != id) {
 			userService.deleteUser(id);
-			return new ResponseEntity<MessageResponse>(new MessageResponse("User deleted!"), HttpStatus.OK);
+			return new ResponseEntity<>(new MessageResponse("User deleted!"), HttpStatus.OK);
 		} else
-			return new ResponseEntity<MessageResponse>(new MessageResponse("You can't delete yourself!"),
-					HttpStatus.BAD_REQUEST);
+			throw new AccessDeniedException("You can't delete yourself!");
 	}
 
 }

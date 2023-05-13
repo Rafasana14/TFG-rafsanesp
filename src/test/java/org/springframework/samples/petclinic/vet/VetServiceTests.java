@@ -32,7 +32,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
+import org.springframework.samples.petclinic.user.AuthoritiesService;
 import org.springframework.samples.petclinic.user.User;
+import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.EntityUtils;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,8 +43,16 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureTestDatabase
 class VetServiceTests {
 
+	private VetService vetService;
+	private AuthoritiesService authService;
+	private UserService userService;
+	
 	@Autowired
-	protected VetService vetService;
+	public VetServiceTests(VetService vetService, AuthoritiesService authService, UserService userService) {
+		this.vetService = vetService;
+		this.authService = authService;
+		this.userService = userService;
+	}
 
 	@Test
 	void shouldFindVets() {
@@ -115,7 +125,9 @@ class VetServiceTests {
 		User user = new User();
 		user.setUsername("Sam");
 		user.setPassword("supersecretpassword");
-		vet.setUser(user);
+		user.setAuthority(authService.findByAuthority("VET"));
+		userService.saveUser(user);
+		vet.setUser(user);		
 
 		this.vetService.saveVet(vet);
 		assertNotEquals(0, vet.getId().longValue());
@@ -135,6 +147,8 @@ class VetServiceTests {
 		User user = new User();
 		user.setUsername("Sam");
 		user.setPassword("supersecretpassword");
+		user.setAuthority(authService.findByAuthority("VET"));
+		this.userService.saveUser(user);
 		vet.setUser(user);
 		this.vetService.saveVet(vet);
 

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Navbar, NavbarBrand, NavLink, NavItem, Nav, NavbarText, NavbarToggler, Collapse } from 'reactstrap';
 import { Link } from 'react-router-dom';
-import jwt_decode from "jwt-decode";
 import tokenService from './services/token.service';
+import jwt_decode from "jwt-decode";
 
-export default function AppNavbar() {
+function AppNavbar() {
     const [roles, setRoles] = useState([]);
     const [username, setUsername] = useState("");
     const jwt = tokenService.getLocalAccessToken();
@@ -12,17 +12,10 @@ export default function AppNavbar() {
 
     const toggleNavbar = () => setCollapsed(!collapsed);
 
-    function getRolesFromJWT(jwt) {
-        return jwt_decode(jwt).authorities;
-    }
-    function getUsernameFromJWT(jwt) {
-        return jwt_decode(jwt).sub;
-    }
-
     useEffect(() => {
         if (jwt) {
-            setRoles(getRolesFromJWT(jwt));
-            setUsername(getUsernameFromJWT(jwt));
+            setRoles(jwt_decode(jwt).authorities);
+            setUsername(jwt_decode(jwt).sub);
         }
     }, [jwt])
 
@@ -89,10 +82,10 @@ export default function AppNavbar() {
                 <NavItem>
                     <NavLink style={{ color: "white" }} id="plans" tag={Link} to="/plans">Pricing Plans</NavLink>
                 </NavItem>
-                <NavItem className="ms-auto">
+                <NavItem>
                     <NavLink style={{ color: "white" }} id="register" tag={Link} to="/register">Register</NavLink>
                 </NavItem>
-                <NavItem className="ms-auto">
+                <NavItem>
                     <NavLink style={{ color: "white" }} id="login" tag={Link} to="/login">Login</NavLink>
                 </NavItem>
             </>
@@ -124,7 +117,7 @@ export default function AppNavbar() {
 
     return (
         <div>
-            <Navbar expand="md" dark color="success">
+            <Navbar expand="lg" dark color="success">
                 <NavbarBrand href="/">
                     <img alt="logo" src="/logo1-recortado.png" style={{ height: 40, width: 40 }} />
                     PetClinic
@@ -145,3 +138,5 @@ export default function AppNavbar() {
         </div>
     );
 }
+
+export default AppNavbar;

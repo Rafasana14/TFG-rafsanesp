@@ -1,6 +1,5 @@
 package org.springframework.samples.petclinic.vet;
 
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
@@ -10,7 +9,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.RestPreconditions;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -51,11 +49,9 @@ public class VetRestController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Vet> create(@RequestBody @Valid Vet vet) throws URISyntaxException {
+	public ResponseEntity<Vet> create(@RequestBody @Valid Vet vet){
 		Vet newVet = new Vet();
 		BeanUtils.copyProperties(vet, newVet, "id");
-		User user = userService.findCurrentUser();
-		newVet.setUser(user);
 		Vet savedVet = this.vetService.saveVet(newVet);
 
 		return new ResponseEntity<>(savedVet, HttpStatus.CREATED);
