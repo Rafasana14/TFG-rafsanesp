@@ -25,15 +25,8 @@ class Login extends Component {
       [name]: value
     });
   }
-
-  async handleSubmit(event) {
-    event.preventDefault();
-    const reqBody = {
-      username: this.state.username,
-      password: this.state.password,
-    };
-
-    await (await fetch("/api/v1/auth/signin", {
+  async login(reqBody) {
+    await fetch("/api/v1/auth/signin", {
       headers: { "Content-Type": "application/json" },
       method: "POST",
       body: JSON.stringify(reqBody),
@@ -48,7 +41,17 @@ class Login extends Component {
         tokenService.updateLocalAccessToken(data.token)
       }).catch((message) => {
         alert(message);
-      }));
+      });
+  }
+
+  async handleSubmit(event) {
+    event.preventDefault();
+    const reqBody = {
+      username: this.state.username,
+      password: this.state.password,
+    };
+
+    await this.login(reqBody);
 
     if (this.state.navigation === true) {
       return window.location.reload();
