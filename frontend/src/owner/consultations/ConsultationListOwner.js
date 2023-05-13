@@ -5,10 +5,11 @@ import tokenService from '../../services/token.service';
 import consultationService from '../../services/consultation.service';
 import useFetchState from '../../util/useFetchState';
 import getErrorModal from '../../util/getErrorModal';
+import useFetchData from '../../util/useFetchData';
 
 const jwt = tokenService.getLocalAccessToken();
 
-export default function ConsultationListAdmin() {
+export default function ConsultationListOwner() {
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
     const [consultations, setConsultations] = useFetchState([], `/api/v1/consultations`, jwt, setMessage, setVisible);
@@ -16,6 +17,7 @@ export default function ConsultationListAdmin() {
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState("");
     const [alerts, setAlerts] = useState([]);
+    const plan = useFetchData("/api/v1/plan", jwt).plan;
 
     function handleSearch(event) {
         const value = event.target.value;
@@ -27,9 +29,9 @@ export default function ConsultationListAdmin() {
                 filteredConsultations = consultations;
         } else {
             if (filter !== "")
-                filteredConsultations = consultations.filter((i) => i.status === filter && i.pet.owner.user.username.toLowerCase().includes(value));
+                filteredConsultations = consultations.filter((i) => i.status === filter && i.pet.name.toLowerCase().includes(value));
             else
-                filteredConsultations = consultations.filter((i) => i.pet.owner.user.username.toLowerCase().includes(value));
+                filteredConsultations = consultations.filter((i) => i.pet.name.toLowerCase().includes(value));
         }
         setFiltered(filteredConsultations);
         setSearch(value);
@@ -40,12 +42,12 @@ export default function ConsultationListAdmin() {
         let filteredConsultations;
         if (value === "") {
             if (search !== "")
-                filteredConsultations = consultations.filter((i) => i.pet.owner.user.username.toLowerCase().includes(search));
+                filteredConsultations = consultations.filter((i) => i.pet.name.toLowerCase().includes(search));
             else
                 filteredConsultations = consultations;
         } else {
             if (search !== "")
-                filteredConsultations = consultations.filter((i) => i.status === value && i.pet.owner.user.username.toLowerCase().includes(search));
+                filteredConsultations = consultations.filter((i) => i.status === value && i.pet.name.toLowerCase().includes(search));
             else
                 filteredConsultations = consultations.filter((i) => i.status === value);
         }
@@ -65,7 +67,7 @@ export default function ConsultationListAdmin() {
             <td>There are no consultations with those filter and search parameters.</td>
         </tr>
     else consultationList = consultationService.getConsultationList([consultations, setConsultations],
-        [filtered, setFiltered], [alerts, setAlerts], setMessage, setVisible);
+        [filtered, setFiltered], [alerts, setAlerts], setMessage, setVisible, plan);
     const modal = getErrorModal(setVisible, visible, message);
 
     return (
@@ -97,7 +99,6 @@ export default function ConsultationListAdmin() {
                         <tr>
                             <th>Title</th>
                             <th>Status</th>
-                            <th>Owner</th>
                             <th>Pet</th>
                             <th>Creation Date</th>
                             <th>Actions</th>
