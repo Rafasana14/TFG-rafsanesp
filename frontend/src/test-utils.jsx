@@ -17,12 +17,19 @@ const customRender = (ui, { route = '/' } = {}) => {
 // const renderWithMemory = (ui, options) =>
 //     render(ui, { wrapper: MemoryRouter, ...options })
 
-const testRenderList = (title) => {
+const testRenderList = (title, grid = false) => {
     const heading = screen.getByRole('heading', { 'name': title });
     expect(heading).toBeInTheDocument();
 
-    const table = screen.getByRole('table', { 'name': title });
-    expect(table).toBeInTheDocument();
+    if (grid) {
+        const grid = screen.getByRole('grid', { 'name': title });
+        expect(grid).toBeInTheDocument();
+    } else {
+        const table = screen.getByRole('table', { 'name': title });
+        expect(table).toBeInTheDocument();
+    }
+
+
 
     const addLink = screen.getByRole('link', { 'name': /Add/ });
     expect(addLink).toBeInTheDocument();

@@ -162,8 +162,8 @@ class OwnerPetEdit extends Component {
                             </FormGroup>
                         </Form>
                     </Col>
+                    <Col sm="4"></Col>
                 </Row>
-                <Col sm="4"></Col>
                 {modal}
             </Container>
         </div>

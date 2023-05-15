@@ -15,7 +15,7 @@ export default function ConsultationListOwner() {
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState("");
     const [alerts, setAlerts] = useState([]);
-    const plan = useFetchData("/api/v1/plan", jwt).plan;
+    const plan = useFetchData("/api/v1/plan", jwt, setMessage, setVisible).plan;
 
     function handleSearch(event) {
         consultationService.handleSearch(event, consultations, filter, setSearch, setFiltered, "OWNER");

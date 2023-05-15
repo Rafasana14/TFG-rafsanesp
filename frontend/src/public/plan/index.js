@@ -23,12 +23,12 @@ class PlanList extends Component {
 
         return <div>
             {/* <AppNavbar /> */}
+            <h1 className="text-center">Pricing Plans</h1>
             <Container>
-                <h1 className="text-center">Pricing Plans</h1>
                 <br></br>
                 <Row>
-                    <Col md="4">
-                        <Card className="basic-card" style={{ width: '18rem', backgroundColor: "#A5F2AA" }}>
+                    <Col sm="12" md="4" className='mt-1'>
+                        <Card className="basic-card" style={{ maxWidth: '18rem', backgroundColor: "#A5F2AA", padding: "10px" }}>
                             <CardBody>
                                 <CardTitle className="text-center" tag="h5">
                                     BASIC
@@ -48,20 +48,10 @@ class PlanList extends Component {
                                     </ListGroupItem>
                                 </ListGroup>
                             </CardBody>
-                            {/* <CardFooter>
-                                    <ButtonGroup>
-                                        <Button size="sm" color="primary" tag={Link} to={"/myPets/" + pet.id}>
-                                            Edit
-                                        </Button>
-                                        <Button size="sm" color="danger" onClick={() => this.removePet(pet.id)}>
-                                            Delete
-                                        </Button>
-                                    </ButtonGroup>
-                                </CardFooter> */}
                         </Card>
                     </Col>
-                    <Col md="4">
-                        <Card className="gold-card" style={{ width: '18rem', backgroundColor: "#F8EA70", }}>
+                    <Col sm="12" md="4" className='mt-1'>
+                        <Card className="gold-card" style={{ maxWidth: '18rem', backgroundColor: "#F8EA70", }}>
                             <CardBody>
                                 <CardTitle className="text-center" tag="h5">
                                     GOLD
@@ -93,20 +83,10 @@ class PlanList extends Component {
                                     </ListGroupItem>
                                 </ListGroup>
                             </CardBody>
-                            {/* <CardFooter>
-                                    <ButtonGroup>
-                                        <Button size="sm" color="primary" tag={Link} to={"/myPets/" + pet.id}>
-                                            Edit
-                                        </Button>
-                                        <Button size="sm" color="danger" onClick={() => this.removePet(pet.id)}>
-                                            Delete
-                                        </Button>
-                                    </ButtonGroup>
-                                </CardFooter> */}
                         </Card>
                     </Col>
-                    <Col md="4">
-                        <Card className="platinum-card" style={{ width: '18rem', backgroundColor: "#E17596", }}>
+                    <Col sm="12" md="4" className='mt-1'>
+                        <Card className="platinum-card" style={{ maxWidth: '18rem', backgroundColor: "#E17596", }}>
                             <CardBody>
                                 <CardTitle className="text-center" tag="h5">
                                     PLATINUM

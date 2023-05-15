@@ -1,5 +1,6 @@
 package org.springframework.samples.petclinic.visit;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 
 import org.springframework.validation.Errors;
@@ -14,16 +15,13 @@ public class VisitValidator implements Validator {
 		Visit visit = (Visit) obj;
 		LocalDateTime datetime = visit.getDatetime();
 		// date validation
-		if (datetime == null || datetime.getHour() < 9 || datetime.getHour() >= 20) {
-			errors.rejectValue("datetime", REQUIRED + " and between 9:00 and 20:00",
-					REQUIRED + " and between 9:00 and 20:00");
+		if (datetime == null || datetime.getHour() < 9 || datetime.getHour() >= 20
+				|| datetime.getDayOfWeek().equals(DayOfWeek.SATURDAY)
+				|| datetime.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
+			errors.rejectValue("datetime",
+					"Date and time are required and between 9:00 and 20:00 from Mondays to Fridays",
+					"Date and time are required and between 9:00 and 20:00 from Mondays to Fridays");
 		}
-
-//		// date validation
-//				if (visit.isNew() && datetime.compareTo(LocalDateTime.now()) >= 1) {
-//					errors.rejectValue("datetime", REQUIRED + " and you can only appoint a visit in the future",
-//							REQUIRED + " and you can only appoint a visit in the future");
-//				}
 
 		// pet validation
 		if (visit.getPet() == null) {

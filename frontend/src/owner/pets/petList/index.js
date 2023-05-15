@@ -90,9 +90,9 @@ class OwnerPetList extends Component {
         if (status === "200") {
             let pets = this.state.pets;
             const index = pets.findIndex((i) => i.id === petId);
-            let pet = [...this.state.pets].filter((i) => i.id === petId);
-            let updatedVisits = pet[0].visits.filter((i) => i.id !== visitId);
-            if (updatedVisits.length > 0) pet[0].visits = updatedVisits;
+            let pet = [...this.state.pets].find((i) => i.id === petId);
+            let updatedVisits = pet.visits.filter((i) => i.id !== visitId);
+            if (updatedVisits.length > 0) pet.visits = updatedVisits;
             else pet[0].visits = [];
             pets[index] = pet[0];
 

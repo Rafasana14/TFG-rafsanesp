@@ -24,8 +24,8 @@ export default function VisitEditAdmin() {
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
     const [visit, setVisit] = useFetchState(emptyItem, `/api/v1/pets/${petId}/visits/${visitId}`, jwt, setMessage, setVisible, visitId);
-    const pet = useFetchData(`/api/v1/pets/${petId}`, jwt);
-    const vets = useFetchData(`/api/v1/vets`, jwt);
+    const pet = useFetchData(`/api/v1/pets/${petId}`, jwt, setMessage, setVisible);
+    const vets = useFetchData(`/api/v1/vets`, jwt, setMessage, setVisible);
     const [redirect, setRedirect] = useState(false);
     useNavigateAfterSubmit(`/pets/${petId}/visits`, redirect);
 
@@ -42,7 +42,7 @@ export default function VisitEditAdmin() {
 
     const handleSubmit = (event) => submitState(event, visit, `/api/v1/pets/${petId}/visits`, setMessage, setVisible, setRedirect);
     const modal = getErrorModal(setVisible, visible, message);
-    const vetOptions = vets.map(vet => <option key={vet.id} value={vet.id}>{vet.firstName} {vet.lastName}</option>);
+    const vetOptions = vets.map(vet => <option key={vet.id} value={vet.id}>{vet.firstName} {vet.lastName} - {vet.user.username}</option>);
 
     return (
         <div>

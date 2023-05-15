@@ -5,15 +5,11 @@ import { ErrorBoundary } from "react-error-boundary";
 import AppNavbar from "./AppNavbar";
 import Home from "./home";
 import PrivateRoute from "./privateRoute";
-import PricingPlan from "./owner/plan";
 import Register from "./auth/register";
 import Logout from "./auth/logout";
-import OwnerPetList from "./owner/pets/petList";
-import OwnerPetEdit from "./owner/pets/petEdit";
 import OwnerVisitEdit from "./owner/visits/visitEdit";
 import PlanList from "./public/plan";
 import tokenService from "./services/token.service";
-import OwnerDashboard from "./owner/dashboard";
 import VetConsultationList from "./vet/consultations/consultationList";
 import VetConsultationTickets from "./vet/consultations/tickets/ticketList";
 import PetEditAdmin from "./admin/pets/PetEditAdmin";
@@ -36,6 +32,10 @@ import ConsultationEditOwner from "./owner/consultations/ConsultationEditOwner";
 import ConsultationListOwner from "./owner/consultations/ConsultationListOwner";
 import TicketListOwner from "./owner/consultations/TicketListOwner";
 import Login from "./auth/login/Login";
+import CalendarOwner from "./owner/dashboard/CalendarOwner";
+import PetEditOwner from "./owner/pets/PetEditOwner";
+import PetListOwner from "./owner/pets/PetListOwner";
+import PlanEdit from "./owner/PlanEdit";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -88,11 +88,11 @@ function App() {
     if (role === "OWNER") {
       ownerRoutes = (
         <>
-          <Route path="/dashboard" element={<PrivateRoute><OwnerDashboard /></PrivateRoute>} />
-          <Route path="/plan" exact={true} element={<PrivateRoute><PricingPlan /></PrivateRoute>} />
-          <Route path="/myPets" exact={true} element={<PrivateRoute><OwnerPetList /></PrivateRoute>} />
-          <Route path="/myPets/:id" exact={true} element={<PrivateRoute><OwnerPetEdit /></PrivateRoute>} />
-          <Route path="/myPets/:id/visits/:id" exact={true} element={<PrivateRoute><OwnerVisitEdit /></PrivateRoute>} />
+          <Route path="/dashboard" element={<PrivateRoute><CalendarOwner /></PrivateRoute>} />
+          <Route path="/plan" exact={true} element={<PrivateRoute><PlanEdit /></PrivateRoute>} />
+          <Route path="/pets" exact={true} element={<PrivateRoute><PetListOwner /></PrivateRoute>} />
+          <Route path="/pets/:id" exact={true} element={<PrivateRoute><PetEditOwner /></PrivateRoute>} />
+          <Route path="/pets/:id/visits/:id" exact={true} element={<PrivateRoute><OwnerVisitEdit /></PrivateRoute>} />
           <Route path="/consultations" exact={true} element={<PrivateRoute><ConsultationListOwner /></PrivateRoute>} />
           <Route path="/consultations/:consultationId" exact={true} element={<PrivateRoute><ConsultationEditOwner /></PrivateRoute>} />
           <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketListOwner /></PrivateRoute>} />
@@ -102,7 +102,6 @@ function App() {
       vetRoutes = (
         <>
           {/* <Route path="/dashboard" element={<PrivateRoute><OwnerDashboard /></PrivateRoute>} /> */}
-          <Route path="/myPets" exact={true} element={<PrivateRoute><OwnerPetList /></PrivateRoute>} />
           <Route path="/consultations" exact={true} element={<PrivateRoute><VetConsultationList /></PrivateRoute>} />
           <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><VetConsultationTickets /></PrivateRoute>} />
         </>)

@@ -17,11 +17,11 @@ export default function TicketListOwner() {
     const id = getIdFromUrl(2);
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
-    const consultation = useFetchData(`/api/v1/consultations/${id}`, jwt);
+    const consultation = useFetchData(`/api/v1/consultations/${id}`, jwt, setMessage, setVisible);
     const [tickets, setTickets] = useFetchState([], `/api/v1/consultations/${id}/tickets`, jwt, setMessage, setVisible);
     const [newTicket, setNewTicket] = useState(emptyTicket);
     const [alerts, setAlerts] = useState([]);
-    const plan = useFetchData("/api/v1/plan", jwt).plan;
+    const plan = useFetchData("/api/v1/plan", jwt, setMessage, setVisible).plan;
 
     function handleChange(event) {
         ticketService.handleChange(event, [newTicket, setNewTicket]);

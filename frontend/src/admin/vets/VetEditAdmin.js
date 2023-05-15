@@ -24,8 +24,8 @@ export default function VetEditAdmin() {
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
     const [vet, setVet] = useFetchState(emptyItem, `/api/v1/vets/${id}`, jwt, setMessage, setVisible, id);
-    const specialties = useFetchData(`/api/v1/vets/specialties`, jwt);
-    const users = useFetchData(`/api/v1/users`, jwt);
+    const specialties = useFetchData(`/api/v1/vets/specialties`, jwt, setMessage, setVisible);
+    const users = useFetchData(`/api/v1/users`, jwt, setMessage, setVisible);
     const [redirect, setRedirect] = useState(false);
     useNavigateAfterSubmit("/vets", redirect);
 

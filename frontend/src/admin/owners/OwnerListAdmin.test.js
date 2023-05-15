@@ -5,13 +5,13 @@ import OwnerListAdmin from "./OwnerListAdmin";
 
 describe('OwnerListAdmin', () => {
     test('renders correctly', async () => {
-        render(<OwnerListAdmin />);
-        testRenderList(/owners/i);
+        render(<OwnerListAdmin test={true} />);
+        testRenderList(/owners/i, true);
     });
 
     test('renders owners correctly', async () => {
-        render(<OwnerListAdmin />);
-        const owner1 = await screen.findByRole('cell', { 'name': 'owner1' });
+        render(<OwnerListAdmin test={true} />);
+        const owner1 = await screen.findByRole('cell', { 'name': /george/i });
         expect(owner1).toBeInTheDocument();
 
         const editButtons = await screen.findAllByRole('link', { 'name': /edit/ });
@@ -40,7 +40,7 @@ describe('OwnerListAdmin', () => {
                 )
             })
         )
-        render(<OwnerListAdmin />);
+        render(<OwnerListAdmin test={true} />);
 
         const modal = await screen.findByRole('dialog');
         expect(modal).toBeInTheDocument();
@@ -55,7 +55,7 @@ describe('OwnerListAdmin', () => {
                 )
             })
         )
-        render(<OwnerListAdmin />);
+        render(<OwnerListAdmin test={true} />);
 
         const modal = await screen.findByRole('dialog');
         expect(modal).toBeInTheDocument();
@@ -64,7 +64,7 @@ describe('OwnerListAdmin', () => {
     test('delete owner correct', async () => {
         const jsdomConfirm = window.confirm;
         window.confirm = () => { return true };
-        const { user } = render(<OwnerListAdmin />);
+        const { user } = render(<OwnerListAdmin test={true} />);
 
         const owner1Delete = await screen.findByRole('button', { 'name': 'delete-owner1' });
         await user.click(owner1Delete);

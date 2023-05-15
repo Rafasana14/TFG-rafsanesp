@@ -211,6 +211,7 @@ class OwnerVisitEdit extends Component {
 
         let modal = <></>;
         if (this.state.message) {
+            console.log(this.state.message);
             const show = this.state.modalShow;
             const closeBtn = (
                 <button className="close" onClick={this.handleShow} type="button">

@@ -22,8 +22,8 @@ export default function ConsultationEditAdmin() {
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
     const [consultation, setConsultation] = useFetchState(emptyItem, `/api/v1/consultations/${id}`, jwt, setMessage, setVisible, id);
-    const owners = useFetchData("/api/v1/owners", jwt);
-    const pets = useFetchData(`/api/v1/pets`, jwt);
+    const owners = useFetchData("/api/v1/owners", jwt, setMessage, setVisible);
+    const pets = useFetchData(`/api/v1/pets`, jwt, setMessage, setVisible);
     const [petsOwned, setPetsOwned] = useState([]);
     const [redirect, setRedirect] = useState(false);
     useNavigateAfterSubmit("/consultations", redirect);
