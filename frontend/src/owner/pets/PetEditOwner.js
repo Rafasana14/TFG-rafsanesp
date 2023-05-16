@@ -25,7 +25,7 @@ export default function PetEditOwner() {
     const [pet, setPet] = useFetchState(emptyItem, `/api/v1/pets/${id}`, jwt, setMessage, setVisible, id);
     const types = useFetchData(`/api/v1/pets/types`, jwt, setMessage, setVisible);
     const [redirect, setRedirect] = useState(false);
-    useNavigateAfterSubmit("/myPets", redirect);
+    useNavigateAfterSubmit("/pets", redirect);
 
     function handleChange(event) {
         const target = event.target;
@@ -73,7 +73,7 @@ export default function PetEditOwner() {
                             </FormGroup>
                             <FormGroup>
                                 <Button color="primary" type="submit">Save</Button>{' '}
-                                <Button color="secondary" tag={Link} to="/myPets">Cancel</Button>
+                                <Button color="secondary" tag={Link} to="/pets">Cancel</Button>
                             </FormGroup>
                         </Form>
                     </Col>

@@ -85,8 +85,8 @@ export default function PlanEdit() {
         <Container style={{ marginTop: "15px" }}>
             <h1 className="text-center">My Plan - {plan}</h1>
             {modal}
-            <Col >
-                <Table align='center' style={{ maxWidth: "700px" }}>
+            <Col align='center'>
+                <Table style={{ maxWidth: "700px" }}>
                     <thead>
                         <tr>
                             <th className="bg-white border-bottom border-dark" ></th>

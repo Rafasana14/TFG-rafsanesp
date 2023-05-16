@@ -24,7 +24,7 @@ export default function PetListOwner() {
         const petVisits = visits.filter(i => i.pet.id === pet.id && new Date(i.datetime) > new Date());
         let tableBody = (
             <tr className="table-info" >
-                <td colSpan={3} width={"100%"}>There are no future visits for this pet.</td>
+                <td colSpan={3} width={"100%"}>There are no future visits for this pet. Check History if you want to see past visits.</td>
             </tr >
         );
 
@@ -84,7 +84,8 @@ export default function PetListOwner() {
         return (
             <div key={pet.id} >
                 <Row >
-                    <Col >
+                    <Col md="0" xs="0" lg="2"></Col>
+                    <Col>
                         <Card className="pet-card" style={{ maxWidth: '16rem', minWidth: '16rem' }}>
                             <CardBody>
                                 <CardTitle tag="h5">
@@ -101,7 +102,7 @@ export default function PetListOwner() {
                             </CardBody>
                             <CardFooter>
                                 <ButtonGroup>
-                                    <Button size="sm" color="primary" tag={Link} to={"pets/" + pet.id}>
+                                    <Button size="sm" color="primary" tag={Link} to={"/pets/" + pet.id}>
                                         Edit
                                     </Button>
                                     <Button size="sm" color="danger" onClick={() => removePet(pet.id)}>
@@ -114,6 +115,7 @@ export default function PetListOwner() {
                     <Col >
                         {visitTable}
                     </Col>
+                    <Col md="0" xs="0" lg="2"></Col>
                 </Row>
                 <div className="mb-4">
                     <hr className="solid" />
@@ -128,7 +130,7 @@ export default function PetListOwner() {
                 <h1 className="text-center">Pets</h1>
                 {alerts.map((a) => a.alert)}
                 {modal}
-                <Button color="success" tag={Link} to="pets/new">
+                <Button color="success" tag={Link} to="/pets/new">
                     Add Pet
                 </Button><br></br><br></br>
                 {petList}

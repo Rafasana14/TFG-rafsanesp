@@ -5,7 +5,7 @@ import tokenService from '../../services/token.service';
 import useFetchState from '../../util/useFetchState';
 import getErrorModal from '../../util/getErrorModal';
 import deleteFromList from '../../util/deleteFromList';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -85,12 +85,6 @@ export default function OwnerListAdmin({ test = false }) {
                 telephone: owner.telephone,
                 username: owner.user.username,
                 plan: owner.plan,
-                actions: (<ButtonGroup>
-                    <Button size="sm" color="primary" aria-label={'edit-' + owner.user.username} tag={Link} to={"/owners/" + owner.id}>Edit</Button>
-                    <Button size="sm" color="danger" aria-label={'delete-' + owner.user.username}
-                        onClick={() => deleteFromList(`/api/v1/owners/${owner.id}`, owner.id, [owners, setOwners], [alerts, setAlerts], setMessage, setVisible)}>
-                        Delete</Button>
-                </ButtonGroup>)
             }
         );
     });
@@ -118,6 +112,9 @@ export default function OwnerListAdmin({ test = false }) {
                             },
                         }}
                         pageSizeOptions={[10, 20]}
+                        slots={{
+                            toolbar: GridToolbar,
+                        }}
                     />
                 </Col>
                 {/* <Table aria-label="owners" className="mt-4">
