@@ -66,17 +66,17 @@ export default function PlanEdit() {
     if (plan === "BASIC") {
         basicButton = <td className="border-bottom-0"></td>;
     } else {
-        basicButton = <td className={cell}><Button className="text-dark" style={{ backgroundColor: "#A5F2AA" }} onClick={(e) => changePlan(e, "BASIC")}>CHANGE</Button></td>;
+        basicButton = <td className={cell}><Button className="text-dark" style={{ backgroundColor: "#A5F2AA" }} onClick={async (e) => await changePlan(e, "BASIC")}>CHANGE</Button></td>;
     }
     if (plan === "GOLD") {
         goldButton = <td className="border-bottom-0"></td>;
     } else {
-        goldButton = <td className={cell}><Button className="text-dark" style={{ backgroundColor: "#F8EA70" }} onClick={(e) => changePlan(e, "GOLD")}>CHANGE</Button></td>;
+        goldButton = <td className={cell}><Button className="text-dark" style={{ backgroundColor: "#F8EA70" }} onClick={async (e) => await changePlan(e, "GOLD")}>CHANGE</Button></td>;
     }
     if (plan === "PLATINUM") {
         platinumButton = <td className="border-bottom-0"></td>;
     } else {
-        platinumButton = <td className={cell}><Button className="text-dark" style={{ backgroundColor: "#E17596" }} onClick={(e) => changePlan(e, "PLATINUM")}>CHANGE</Button></td>;
+        platinumButton = <td className={cell}><Button className="text-dark" style={{ backgroundColor: "#E17596" }} onClick={async (e) => await changePlan(e, "PLATINUM")}>CHANGE</Button></td>;
     }
 
     const modal = getErrorModal(setVisible, visible, message);
