@@ -9,7 +9,7 @@ describe('VisitListAdmin', () => {
 
     test('renders visits correctly', async () => {
         render(<VisitListAdmin />);
-        const visit1 = await screen.findByRole('cell', { 'name': 'rabies shot' });
+        const visit1 = await screen.findByRole('cell', { 'name': 'description1' });
         expect(visit1).toBeInTheDocument();
 
         const visit2 = await screen.findByRole('cell', { 'name': 'No description provided' });

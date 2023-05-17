@@ -31,7 +31,7 @@ export default function VisitEditOwner() {
     const [city, setCity] = useState();
     const plan = pet?.owner?.plan;
     const [redirect, setRedirect] = useState(false);
-    useNavigateAfterSubmit(`/pets/${petId}/visits/${visitId}`, redirect);
+    useNavigateAfterSubmit(`/pets/${petId}/visits`, redirect);
 
     useEffect(() => {
         if (visit?.vet.city) {
@@ -165,12 +165,11 @@ export default function VisitEditOwner() {
                     <Col sm="4">
                         <Form onSubmit={handleSubmit}>
                             <FormGroup>
-                                <Label for="date">Date and Time</Label>
+                                <Label for="datetime">Date and Time</Label>
                                 {datetimeInput}
                             </FormGroup>
                             <FormGroup>
                                 <Label for="description">Description</Label>
-                                {/* poner required tras reunión */}
                                 <Input type="textarea" name="description" id="description" value={visit.description || ''}
                                     onChange={handleChange} />
                             </FormGroup>

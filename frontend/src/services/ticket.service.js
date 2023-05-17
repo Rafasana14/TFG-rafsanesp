@@ -1,6 +1,7 @@
 import { Button, ButtonGroup, Card, CardBody, CardText, CardTitle, Col, Container, Form, FormGroup, Input, Label, Row } from "reactstrap";
 import deleteFromList from "../util/deleteFromList";
 import { Link } from "react-router-dom";
+import tokenService from "./token.service";
 
 class TicketService {
     getTicketList([tickets, setTickets], auth, [alerts, setAlerts], setMessage, setVisible, setNewTicket, plan = null) {
@@ -25,7 +26,7 @@ class TicketService {
                     </ButtonGroup> :
                     <></>;
             } else if (auth === "VET") {
-                buttons = index === length - 1 && t.user.authority.authority === "VET" && status !== "CLOSED" ?
+                buttons = index === length - 1 && t.user.username === tokenService.getUser().username && status !== "CLOSED" ?
                     <ButtonGroup>
                         <Button aria-label={"edit-" + t.id} size="sm" color="primary" onClick={handleEdit}>
                             Edit
@@ -95,7 +96,7 @@ class TicketService {
     }
 
     getTicketHeading(consultation, handleClose, auth = "ADMIN") {
-        if (auth === "ADMIN" && consultation.status !== "CLOSED") {
+        if (auth !== "OWNER" && consultation.status !== "CLOSED") {
             return <Row>
                 <Col sm="3">
                     <Button color="secondary" tag={Link} to="/consultations">Back</Button>

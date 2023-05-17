@@ -52,7 +52,7 @@ export default function VisitListOwner({ test = false }) {
                         to={`/pets/${petId}/visits/${params.row.id}`}>
                         Edit
                     </Button>
-                    <Button size="sm" aria-label={"delete-" + params.row.id} color="danger"
+                    <Button size="sm" aria-label={"cancel-" + params.row.id} color="danger"
                         onClick={() => deleteFromList(`/api/v1/pets/${petId}/visits/${params.row.id}`, params.row.id,
                             [visits, setVisits], [alerts, setAlerts], setMessage, setVisible)}>
                         Cancel

@@ -42,7 +42,7 @@ describe('UserEditAdmin', () => {
         await testFilledEditForm(form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await waitFor(async () => await user.click(submit));
+        await act(async () => await user.click(submit));
 
         expect(navigate).toHaveBeenCalledWith('/users')
     });

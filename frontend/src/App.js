@@ -8,8 +8,6 @@ import PrivateRoute from "./privateRoute";
 import Register from "./auth/register";
 import Logout from "./auth/logout";
 import tokenService from "./services/token.service";
-import VetConsultationList from "./vet/consultations/consultationList";
-import VetConsultationTickets from "./vet/consultations/tickets/ticketList";
 import PetEditAdmin from "./admin/pets/PetEditAdmin";
 import PetListAdmin from "./admin/pets/PetListAdmin";
 import UserListAdmin from "./admin/users/UserListAdmin";
@@ -36,7 +34,9 @@ import PetListOwner from "./owner/pets/PetListOwner";
 import PlanEdit from "./owner/PlanEdit";
 import VisitEditOwner from "./owner/visits/VisitEditOwner";
 import VisitListOwner from "./owner/visits/VisitListOwner";
-import { PlanList } from "./public/plan";
+import { PlanList } from "./public/plan/PlanList";
+import ConsultationListVet from "./vet/consultations/ConsultationListVet";
+import TicketListVet from "./vet/consultations/TicketListVet";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -104,8 +104,8 @@ function App() {
       vetRoutes = (
         <>
           {/* <Route path="/dashboard" element={<PrivateRoute><OwnerDashboard /></PrivateRoute>} /> */}
-          <Route path="/consultations" exact={true} element={<PrivateRoute><VetConsultationList /></PrivateRoute>} />
-          <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><VetConsultationTickets /></PrivateRoute>} />
+          <Route path="/consultations" exact={true} element={<PrivateRoute><ConsultationListVet /></PrivateRoute>} />
+          <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketListVet /></PrivateRoute>} />
         </>)
     }
   })

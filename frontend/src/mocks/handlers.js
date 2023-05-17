@@ -28,7 +28,7 @@ const userOwner2 = {
     "authority": authOwner
 };
 
-const userVet1 = {
+export const userVet1 = {
     "id": 12,
     "username": "vet1",
     "authority": {
@@ -92,29 +92,6 @@ const pet2 = {
     "owner": owner2
 };
 
-const vet1 = {
-    "id": 1,
-    "firstName": "James",
-    "lastName": "Carter",
-    "specialties": [],
-    "user": userVet1,
-    "city": "Sevilla"
-}
-
-const vet2 = {
-    "id": 2,
-    "firstName": "Helen",
-    "lastName": "Leary",
-    "specialties": [
-        {
-            "id": 1,
-            "name": "radiology"
-        }
-    ],
-    "user": userVet2,
-    "city": "Sevilla"
-};
-
 const radiology = {
     "id": 1,
     "name": "radiology"
@@ -130,10 +107,30 @@ const dentistry = {
     "name": "dentistry"
 };
 
+const vet1 = {
+    "id": 1,
+    "firstName": "James",
+    "lastName": "Carter",
+    "specialties": [radiology],
+    "user": userVet1,
+    "city": "Sevilla"
+}
+
+const vet2 = {
+    "id": 2,
+    "firstName": "Helen",
+    "lastName": "Leary",
+    "specialties": [
+        radiology
+    ],
+    "user": userVet2,
+    "city": "Badajoz"
+};
+
 const visit1 = {
     "id": 1,
-    "datetime": "2013-01-01T13:00:00",
-    "description": "rabies shot",
+    "datetime": "2030-01-01T13:00:00",
+    "description": "description1",
     "pet": pet1,
     "vet": vet1,
     "city": "Badajoz",
@@ -147,7 +144,7 @@ const visit2 = {
     "vet": vet2
 };
 
-const consultation1 = {
+export const consultation1 = {
     "id": 1,
     "title": "Mi gato no come",
     "status": "ANSWERED",
@@ -163,7 +160,7 @@ const consultation2 = {
     "creationDate": "2023-04-11T11:20:00"
 };
 
-const ticket1 = {
+export const ticket1 = {
     "id": 1,
     "description": "What vaccine should my dog recieve?",
     "creationDate": "2023-01-04T17:32:00",
@@ -171,7 +168,7 @@ const ticket1 = {
     "consultation": consultation1
 };
 
-const ticket2 = {
+export const ticket2 = {
     "id": 2,
     "description": "Rabies' one.",
     "creationDate": "2023-01-04T17:36:00",
@@ -201,6 +198,13 @@ export const handlers = [
         return res(
             ctx.status(200),
             ctx.json(owner1),
+        )
+    }),
+
+    rest.put('*/api/v1/plan', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json({ ...owner1, plan: "GOLD" }),
         )
     }),
 
@@ -382,6 +386,16 @@ export const handlers = [
         return res(
             ctx.status(200),
             ctx.json(radiology),
+        )
+    }),
+
+    rest.get('*/api/v1/visits', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json([
+                visit1,
+                visit2
+            ]),
         )
     }),
 

@@ -14,7 +14,7 @@ export default function PetListOwner() {
     const [visible, setVisible] = useState(false);
     const [pets, setPets] = useFetchState([], `/api/v1/pets?userId=${user.id}`, jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
-    const [visits, setVisits] = useFetchState([], `/api/v1//visits`, jwt, setMessage, setVisible);
+    const [visits, setVisits] = useFetchState([], `/api/v1/visits`, jwt, setMessage, setVisible);
 
     const removeVisit = (petId, visitId) => deleteFromList(`/api/v1/pets/${petId}/visits/${visitId}`, visitId, [visits, setVisits], [alerts, setAlerts], setMessage, setVisible);
 
@@ -37,11 +37,12 @@ export default function PetListOwner() {
                         <td>{visit.vet.firstName} {visit.vet.lastName}</td>
                         <td>
                             <ButtonGroup>
-                                <Button size="sm" color="primary" tag={Link}
+                                <Button aria-label={`edit-visit-${visit.id}`} size="sm" color="primary" tag={Link}
                                     to={`/pets/${pet.id}/visits/${visit.id}`}>
                                     Edit
                                 </Button>
-                                <Button size="sm" color="danger" onClick={() => removeVisit(pet.id, visit.id)}>
+                                <Button aria-label={`cancel-visit-${visit.id}`} size="sm" color="danger"
+                                    onClick={() => removeVisit(pet.id, visit.id)}>
                                     Cancel
                                 </Button>
                             </ButtonGroup>
@@ -51,7 +52,7 @@ export default function PetListOwner() {
         }
 
         const visitTable = (
-            <Table key={pet.id} style={{ maxWidth: "600px", minWidth: "290px" }} className="mt-3 table-primary" hover striped>
+            <Table key={pet.id} aria-label={`visits-${pet.id}`} style={{ maxWidth: "600px", minWidth: "290px" }} className="mt-3 table-primary" hover striped>
                 <thead>
                     <tr>
                         <th >Next Visits</th>
@@ -102,10 +103,10 @@ export default function PetListOwner() {
                             </CardBody>
                             <CardFooter>
                                 <ButtonGroup>
-                                    <Button size="sm" color="primary" tag={Link} to={"/pets/" + pet.id}>
+                                    <Button aria-label={`edit-pet-${pet.id}`} size="sm" color="primary" tag={Link} to={"/pets/" + pet.id}>
                                         Edit
                                     </Button>
-                                    <Button size="sm" color="danger" onClick={() => removePet(pet.id)}>
+                                    <Button aria-label={`delete-pet-${pet.id}`} size="sm" color="danger" onClick={() => removePet(pet.id)}>
                                         Delete
                                     </Button>
                                 </ButtonGroup>

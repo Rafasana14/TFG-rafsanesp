@@ -3,7 +3,7 @@ import { Col, Container } from 'reactstrap';
 import useFetchState from '../util/useFetchState';
 import tokenService from '../services/token.service';
 import getErrorModal from '../util/getErrorModal';
-import { PricingPlanTable } from '../public/plan';
+import { PricingPlanTable } from '../public/plan/PlanList';
 
 const jwt = tokenService.getLocalAccessToken()
 
