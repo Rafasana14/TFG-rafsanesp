@@ -1,28 +1,11 @@
 import React, { Component } from 'react';
-import { Card, CardBody, CardText, CardTitle, Col, Container, ListGroup, ListGroupItem, Row, Table } from 'reactstrap';
+import { Button, Card, CardBody, CardText, CardTitle, Col, Container, ListGroup, ListGroupItem, Row, Table } from 'reactstrap';
 import { BsCheckLg, BsXLg } from 'react-icons/bs';
 
 class PlanList extends Component {
 
     render() {
-
-        const cell = "border border-left border-dark text-center";
-
-        const basicStyle = {
-            backgroundColor: "#A5F2AA",
-            width: "18%"
-        };
-        const goldStyle = {
-            backgroundColor: "#F8EA70",
-            width: "18%"
-        };
-        const platinumStyle = {
-            backgroundColor: "#E17596",
-            width: "18%"
-        };
-
         return <div>
-            {/* <AppNavbar /> */}
             <h1 className="text-center">Pricing Plans</h1>
             <Container>
                 <br></br>
@@ -124,16 +107,6 @@ class PlanList extends Component {
                                     </ListGroupItem>
                                 </ListGroup>
                             </CardBody>
-                            {/* <CardFooter>
-                                    <ButtonGroup>
-                                        <Button size="sm" color="primary" tag={Link} to={"/myPets/" + pet.id}>
-                                            Edit
-                                        </Button>
-                                        <Button size="sm" color="danger" onClick={() => this.removePet(pet.id)}>
-                                            Delete
-                                        </Button>
-                                    </ButtonGroup>
-                                </CardFooter> */}
                         </Card>
                     </Col>
                 </Row>
@@ -144,66 +117,7 @@ class PlanList extends Component {
                 <Row>
                     <Col md="3"></Col>
                     <Col md="6">
-                        <Table>
-                            <thead>
-                                <tr>
-                                    <th className="bg-white border-bottom border-dark" ></th>
-                                    <th style={basicStyle} className={cell}>BASIC</th>
-                                    <th style={goldStyle} className={cell}>GOLD</th>
-                                    <th style={platinumStyle} className={cell}>PLATINUM</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr className="border border-dark">
-                                    <td className="table-info border border-dark">Max Number of Pets</td>
-                                    <td style={basicStyle} className={cell}>2</td>
-                                    <td style={goldStyle} className={cell}>4</td>
-                                    <td style={platinumStyle} className={cell}>7</td>
-                                </tr>
-                                <tr className="border border-dark">
-                                    <td className="table-info border border-dark">Number of Visits per Month and Pet</td>
-                                    <td style={basicStyle} className={cell}>1</td>
-                                    <td style={goldStyle} className={cell}>3</td>
-                                    <td style={platinumStyle} className={cell}>6</td>
-                                </tr>
-                                <tr className="border border-dark">
-                                    <td className="table-info border border-dark">Vet Selection for Visits</td>
-                                    <td style={basicStyle} className={cell}><BsXLg /></td>
-                                    <td style={goldStyle} className={cell}><BsCheckLg /></td>
-                                    <td style={platinumStyle} className={cell}><BsCheckLg /></td>
-                                </tr>
-                                <tr className="border border-dark">
-                                    <td className="table-info border border-dark">Calendar with Upcoming Visits</td>
-                                    <td style={basicStyle} className={cell}><BsXLg /></td>
-                                    <td style={goldStyle} className={cell}><BsCheckLg /></td>
-                                    <td style={platinumStyle} className={cell}><BsCheckLg /></td>
-                                </tr>
-                                <tr className="border border-dark">
-                                    <td className="table-info border border-dark">Statistics Dashboard for your Pets</td>
-                                    <td style={basicStyle} className={cell}><BsXLg /></td>
-                                    <td style={goldStyle} className={cell}><BsXLg /></td>
-                                    <td style={platinumStyle} className={cell}><BsCheckLg /></td>
-                                </tr>
-                                <tr className="border border-dark">
-                                    <td className="table-info border border-dark">Online Consultation</td>
-                                    <td style={basicStyle} className={cell}><BsXLg /></td>
-                                    <td style={goldStyle} className={cell}><BsXLg /></td>
-                                    <td style={platinumStyle} className={cell}><BsCheckLg /></td>
-                                </tr>
-                                <tr className="border border-dark">
-                                    <td className="table-info border border-dark">Support Priority</td>
-                                    <td style={basicStyle} className={cell}>Low</td>
-                                    <td style={goldStyle} className={cell}>Medium</td>
-                                    <td style={platinumStyle} className={cell}>High</td>
-                                </tr>
-                                <tr className="border border-dark">
-                                    <td className="table-info border border-dark">Prize</td>
-                                    <td style={basicStyle} className={cell}>FREE</td>
-                                    <td style={goldStyle} className={cell}>€5</td>
-                                    <td style={platinumStyle} className={cell}>€12</td>
-                                </tr>
-                            </tbody>
-                        </Table>
+                        <PricingPlanTable />
                     </Col>
                     <Col md="3"></Col>
                 </Row>
@@ -211,4 +125,114 @@ class PlanList extends Component {
         </div >
     }
 }
-export default PlanList;
+
+function PricingPlanTable({ plan, changePlan, buttons = false }) {
+
+    const cell = "border border-left border-dark text-center";
+
+    const basicStyle = {
+        backgroundColor: "#A5F2AA",
+        width: "18%"
+    };
+    const goldStyle = {
+        backgroundColor: "#F8EA70",
+        width: "18%"
+    };
+    const platinumStyle = {
+        backgroundColor: "#E17596",
+        width: "18%"
+    };
+
+    let basicButton, goldButton, platinumButton;
+    if (buttons) {
+        if (plan === "BASIC") {
+            basicButton = <td className="border-bottom-0"></td>;
+        } else {
+            basicButton = <td className={cell}><Button className="text-dark" style={{ backgroundColor: "#A5F2AA" }} onClick={(e) => changePlan(e, "BASIC")}>CHANGE</Button></td>;
+        }
+        if (plan === "GOLD") {
+            goldButton = <td className="border-bottom-0"></td>;
+        } else {
+            goldButton = <td className={cell}><Button className="text-dark" style={{ backgroundColor: "#F8EA70" }} onClick={(e) => changePlan(e, "GOLD")}>CHANGE</Button></td>;
+        }
+        if (plan === "PLATINUM") {
+            platinumButton = <td className="border-bottom-0"></td>;
+        } else {
+            platinumButton = <td className={cell}><Button className="text-dark" style={{ backgroundColor: "#E17596" }} onClick={(e) => changePlan(e, "PLATINUM")}>CHANGE</Button></td>;
+        }
+    }
+
+
+    return (
+        <Table style={{ maxWidth: "700px" }}>
+            <thead>
+                <tr>
+                    <th className="bg-white border-bottom border-dark" ></th>
+                    <th style={basicStyle} className={cell}>BASIC</th>
+                    <th style={goldStyle} className={cell}>GOLD</th>
+                    <th style={platinumStyle} className={cell}>PLATINUM</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr className="border border-dark">
+                    <td className="table-info border border-dark">Max Number of Pets</td>
+                    <td style={basicStyle} className={cell}>2</td>
+                    <td style={goldStyle} className={cell}>4</td>
+                    <td style={platinumStyle} className={cell}>7</td>
+                </tr>
+                <tr className="border border-dark">
+                    <td className="table-info border border-dark">Number of Visits per Month and Pet</td>
+                    <td style={basicStyle} className={cell}>1</td>
+                    <td style={goldStyle} className={cell}>3</td>
+                    <td style={platinumStyle} className={cell}>6</td>
+                </tr>
+                <tr className="border border-dark">
+                    <td className="table-info border border-dark">Vet Selection for Visits</td>
+                    <td style={basicStyle} className={cell}><BsXLg /></td>
+                    <td style={goldStyle} className={cell}><BsCheckLg /></td>
+                    <td style={platinumStyle} className={cell}><BsCheckLg /></td>
+                </tr>
+                <tr className="border border-dark">
+                    <td className="table-info border border-dark">Calendar with Upcoming Visits</td>
+                    <td style={basicStyle} className={cell}><BsXLg /></td>
+                    <td style={goldStyle} className={cell}><BsCheckLg /></td>
+                    <td style={platinumStyle} className={cell}><BsCheckLg /></td>
+                </tr>
+                <tr className="border border-dark">
+                    <td className="table-info border border-dark">Statistics Dashboard for your Pets</td>
+                    <td style={basicStyle} className={cell}><BsXLg /></td>
+                    <td style={goldStyle} className={cell}><BsXLg /></td>
+                    <td style={platinumStyle} className={cell}><BsCheckLg /></td>
+                </tr>
+                <tr className="border border-dark">
+                    <td className="table-info border border-dark">Online Consultation</td>
+                    <td style={basicStyle} className={cell}><BsXLg /></td>
+                    <td style={goldStyle} className={cell}><BsXLg /></td>
+                    <td style={platinumStyle} className={cell}><BsCheckLg /></td>
+                </tr>
+                <tr className="border border-dark">
+                    <td className="table-info border border-dark">Support Priority</td>
+                    <td style={basicStyle} className={cell}>Low</td>
+                    <td style={goldStyle} className={cell}>Medium</td>
+                    <td style={platinumStyle} className={cell}>High</td>
+                </tr>
+                <tr className="border border-dark">
+                    <td className="table-info border border-dark">Prize</td>
+                    <td style={basicStyle} className={cell}>FREE</td>
+                    <td style={goldStyle} className={cell}>€5</td>
+                    <td style={platinumStyle} className={cell}>€12</td>
+                </tr>
+                {buttons ?
+                    <tr style={{ height: "60px" }}>
+                        <td className="border-bottom-0"></td>
+                        {basicButton}
+                        {goldButton}
+                        {platinumButton}
+                    </tr>
+                    : <></>
+                }
+            </tbody>
+        </Table>
+    )
+}
+export { PlanList, PricingPlanTable };

@@ -31,7 +31,7 @@ export default function VisitEditOwner() {
     const [city, setCity] = useState();
     const plan = pet?.owner?.plan;
     const [redirect, setRedirect] = useState(false);
-    useNavigateAfterSubmit(`/pets`, redirect);
+    useNavigateAfterSubmit(`/pets/${petId}/visits/${visitId}`, redirect);
 
     useEffect(() => {
         if (visit?.vet.city) {

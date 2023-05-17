@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Button, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 
 function handleVisible(setVisible, visible) {
@@ -11,6 +12,8 @@ export default function getErrorModal(setVisible, visible = false, message = nul
                 &times;
             </button>
         );
+        const cond = message.includes("limit");
+
         return (
             <div>
                 <Modal isOpen={visible} toggle={() => handleVisible(setVisible, visible)}
@@ -20,6 +23,7 @@ export default function getErrorModal(setVisible, visible = false, message = nul
                         {message}
                     </ModalBody>
                     <ModalFooter>
+                        {cond ? <Button color="info" tag={Link} to={`/plan`}>Check Plan</Button> : <></>}
                         <Button color="primary" onClick={() => handleVisible(setVisible, visible)}>Close</Button>
                     </ModalFooter>
                 </Modal>

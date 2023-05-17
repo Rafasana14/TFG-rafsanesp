@@ -7,7 +7,6 @@ import Home from "./home";
 import PrivateRoute from "./privateRoute";
 import Register from "./auth/register";
 import Logout from "./auth/logout";
-import PlanList from "./public/plan";
 import tokenService from "./services/token.service";
 import VetConsultationList from "./vet/consultations/consultationList";
 import VetConsultationTickets from "./vet/consultations/tickets/ticketList";
@@ -37,6 +36,7 @@ import PetListOwner from "./owner/pets/PetListOwner";
 import PlanEdit from "./owner/PlanEdit";
 import VisitEditOwner from "./owner/visits/VisitEditOwner";
 import VisitListOwner from "./owner/visits/VisitListOwner";
+import { PlanList } from "./public/plan";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
