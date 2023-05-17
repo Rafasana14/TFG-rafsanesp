@@ -164,7 +164,7 @@ public class VisitRestController {
 			Owner owner = userService.findOwnerByUser(user.getId());
 			if (owner.getId().equals(pet.getOwner().getId())) {
 				visitService.deleteVisit(visitId);
-				return new ResponseEntity<>(new MessageResponse("Visit deleted!"), HttpStatus.OK);
+				return new ResponseEntity<>(new MessageResponse("Visit canceled!"), HttpStatus.OK);
 			} else
 				throw new ResourceNotOwnedException(pet);
 		}

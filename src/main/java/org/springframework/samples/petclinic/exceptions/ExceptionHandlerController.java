@@ -1,9 +1,7 @@
 package org.springframework.samples.petclinic.exceptions;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -85,10 +83,12 @@ public class ExceptionHandlerController {
 	@ExceptionHandler(value = MethodArgumentNotValidException.class)
 	public final ResponseEntity<ErrorMessage> handleMethodArgumentException(MethodArgumentNotValidException ex,
 			WebRequest request) {
-		Map<String, Object> fieldError = new HashMap<>();
+//		Map<String, Object> fieldError = new HashMap<>();
+		StringBuilder bld = new StringBuilder();
 		List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
-		fieldErrors.stream().forEach(error -> fieldError.put(error.getField(), error.getDefaultMessage()));
-		ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST.value(), new Date(), fieldError.toString(),
+//		fieldErrors.stream().forEach(error -> fieldError.put(error.getField(), error.getDefaultMessage()));
+		fieldErrors.stream().forEach(error -> bld.append(error.getDefaultMessage() + ".\n"));
+		ErrorMessage message = new ErrorMessage(HttpStatus.BAD_REQUEST.value(), new Date(), bld.toString(),
 				request.getDescription(false));
 
 		return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);

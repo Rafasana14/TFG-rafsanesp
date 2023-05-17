@@ -15,18 +15,16 @@ class Home extends Component {
     }
 
     async componentDidMount() {
-        const bird = await (await fetch("https://some-random-api.ml/animal/bird")).json();
-        this.setState({ bird: bird, });
-        const dog = await (await fetch("https://some-random-api.ml/animal/dog")).json();
+        const dog = await (await fetch("https://some-random-api.com/animal/dog")).json();
         this.setState({ dog: dog, });
-        const cat = await (await fetch("https://some-random-api.ml/animal/cat")).json();
+        const cat = await (await fetch("https://some-random-api.com/animal/cat")).json();
         this.setState({ cat: cat, });
-        const panda = await (await fetch("https://some-random-api.ml/animal/red_panda")).json();
+        const panda = await (await fetch("https://some-random-api.com/animal/red_panda")).json();
         this.setState({ panda: panda, });
     }
 
     render() {
-        const { bird, dog, cat, panda } = this.state;
+        const { dog, cat, panda } = this.state;
         return (
             <div>
                 {/* <AppNavbar/> */}
@@ -40,10 +38,7 @@ class Home extends Component {
                             </div>
                         </Col>
                         <Col>
-                            <div>
-                                <img style={{ maxHeight: "300px" }} src={bird.image} alt='random bird' />
-                                <p>{bird.fact}</p>
-                            </div>
+                            PETCLINIC IS BLABLABLA
                         </Col>
                     </Row>
                     <Row>

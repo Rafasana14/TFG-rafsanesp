@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function useFetchData(url, jwt) {
+export default function useFetchData(url, jwt, setMessage, setVisible) {
     const [data, setData] = useState([]);
     useEffect(() => {
         if (url) {
@@ -13,13 +13,19 @@ export default function useFetchData(url, jwt) {
                 .then(response => response.json())
                 .then(json => {
                     if (!ignore) {
-                        setData(json);
+                        if (json.message) {
+                            setMessage(json.message);
+                            setVisible(true);
+                        }
+                        else {
+                            setData(json);
+                        }
                     }
                 }).catch((message) => alert(message));
             return () => {
                 ignore = true;
             };
         }
-    }, [url, jwt]);
+    }, [url, jwt, setMessage, setVisible]);
     return data;
 }

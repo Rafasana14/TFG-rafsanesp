@@ -23,8 +23,8 @@ export default function PetEditAdmin() {
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
     const [pet, setPet] = useFetchState(emptyItem, `/api/v1/pets/${id}`, jwt, setMessage, setVisible, id);
-    const types = useFetchData(`/api/v1/pets/types`, jwt);
-    const owners = useFetchData(`/api/v1/owners`, jwt);
+    const types = useFetchData(`/api/v1/pets/types`, jwt, setMessage, setVisible);
+    const owners = useFetchData(`/api/v1/owners`, jwt, setMessage, setVisible);
     const [redirect, setRedirect] = useState(false);
     useNavigateAfterSubmit("/pets", redirect);
 

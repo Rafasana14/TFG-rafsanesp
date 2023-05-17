@@ -22,7 +22,7 @@ export default function UserEditAdmin() {
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
     const [user, setUser] = useFetchState(emptyItem, `/api/v1/users/${id}`, jwt, setMessage, setVisible, id);
-    const auths = useFetchData(`/api/v1/users/authorities`, jwt);
+    const auths = useFetchData(`/api/v1/users/authorities`, jwt, setMessage, setVisible);
     const [redirect, setRedirect] = useState();
     useNavigateAfterSubmit("/users", redirect);
 
