@@ -39,6 +39,11 @@ public class VisitService {
 	public Collection<Visit> findVisitsByOwnerId(int ownerId) {
 		return visitRepository.findByOwnerId(ownerId);
 	}
+	
+	@Transactional(readOnly = true)
+	public Collection<Visit> findVisitsByVetId(int vetId) {
+		return visitRepository.findByVetId(vetId);
+	}
 
 	@Transactional(readOnly = true)
 	public Collection<Visit> findVisitsByPetId(int petId) {
@@ -148,5 +153,7 @@ public class VisitService {
 		});
 		return unsortedVisitsByPet;
 	}
+
+
 
 }

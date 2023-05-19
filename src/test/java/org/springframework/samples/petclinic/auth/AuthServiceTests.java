@@ -19,7 +19,7 @@ import petclinic.payload.request.SignupRequest;
 
 @SpringBootTest
 //@DataJpaTest(includeFilters = @ComponentScan.Filter({Service.class}))
-public class AuthServiceTests {
+class AuthServiceTests {
 
 	@Autowired
 	protected AuthService authService;
@@ -32,7 +32,7 @@ public class AuthServiceTests {
 
 	@Test
 	@Transactional
-	public void shouldCreateAdminUser() {
+	void shouldCreateAdminUser() {
 		SignupRequest request = createRequest("ADMIN", "admin2");
 		int userFirstCount = ((Collection<User>) this.userService.findAll()).size();
 		this.authService.createUser(request);
@@ -42,7 +42,7 @@ public class AuthServiceTests {
 	
 	@Test
 	@Transactional
-	public void shouldCreateVetUser() {
+	void shouldCreateVetUser() {
 		SignupRequest request = createRequest("VET", "vettest");
 		int userFirstCount = ((Collection<User>) this.userService.findAll()).size();
 		int vetFirstCount = ((Collection<Vet>) this.vetService.findAll()).size();
@@ -55,7 +55,7 @@ public class AuthServiceTests {
 	
 	@Test
 	@Transactional
-	public void shouldCreateOwnerUser() {
+	void shouldCreateOwnerUser() {
 		SignupRequest request = createRequest("OWNER", "ownertest");
 		int userFirstCount = ((Collection<User>) this.userService.findAll()).size();
 		int ownerFirstCount = ((Collection<Owner>) this.ownerService.findAll()).size();

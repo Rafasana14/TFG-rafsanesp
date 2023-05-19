@@ -132,7 +132,7 @@ export default function VisitEditOwner() {
                     <option value="">None</option>
                     {vetsOptions}</Input>
             } else {
-                return <Input type="text" readOnly name="vet" id="vet" value={visit.vet.id ? (visit.vet.firstName + " " + visit.vet.lastName) : ''} />
+                return <Input type="text" disabled name="vet" id="vet" value={visit.vet.id ? (visit.vet.firstName + " " + visit.vet.lastName) : ''} />
             }
         }
     }

@@ -29,6 +29,9 @@ public interface VisitRepository extends CrudRepository<Visit, Integer> {
 
 	@Query("SELECT v FROM Visit v WHERE v.pet.owner.id = :ownerId ORDER BY v.datetime DESC")
 	public Collection<Visit> findByOwnerId(int ownerId);
+	
+	@Query("SELECT v FROM Visit v WHERE v.vet.id = :vetId ORDER BY v.datetime DESC")
+	public Collection<Visit> findByVetId(int vetId);
 
 	@Query("SELECT COUNT(v) FROM Visit v WHERE v.pet.id = :id AND MONTH(v.datetime) = :month AND YEAR(v.datetime) = :year")
 	public Integer countVisitsByPetInMonth(int id, Integer month, Integer year);

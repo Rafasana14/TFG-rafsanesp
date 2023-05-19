@@ -4,16 +4,10 @@ import { rest } from "msw";
 import TicketListOwner from "./TicketListOwner";
 
 describe('TicketListOwner', () => {
-    test('renders correctly', async () => {
+    test('renders correctly', () => {
         render(<TicketListOwner />);
         const heading = screen.getByRole('heading', { 'name': /Consultation Number/ });
         expect(heading).toBeInTheDocument();
-
-        const table = screen.getByRole('textbox', { 'name': 'Description' });
-        expect(table).toBeInTheDocument();
-
-        const saveButton = screen.getByRole('button', { 'name': 'Save' });
-        expect(saveButton).toBeInTheDocument();
 
         const backButton = screen.getByRole('link', { 'name': /Back/ });
         expect(backButton).toBeInTheDocument();
@@ -49,9 +43,9 @@ describe('TicketListOwner', () => {
     test('add ticket correct', async () => {
         const { user } = render(<TicketListOwner />);
 
-        const input = screen.getByRole('textbox', { 'name': 'Description' });
+        const input = await screen.findByRole('textbox', { 'name': 'Description' });
         await user.type(input, "test ticket")
-        const addButton = screen.getByRole('button', { 'name': /Save/ });
+        const addButton = await screen.findByRole('button', { 'name': /Save/ });
         await user.click(addButton);
 
         const newTicket = await screen.findByRole('heading', { 'name': /test ticket/ });
@@ -65,9 +59,9 @@ describe('TicketListOwner', () => {
 
         const editButton = await screen.findByRole('button', { 'name': /edit-3/ });
         await user.click(editButton);
-        const input = screen.getByRole('textbox', { 'name': 'Description' });
+        const input = await screen.findByRole('textbox', { 'name': 'Description' });
         await user.type(input, "test ticket")
-        const addButton = screen.getByRole('button', { 'name': /Save/ });
+        const addButton = await screen.findByRole('button', { 'name': /Save/ });
         await user.click(addButton);
 
         const newTicket = await screen.findByRole('heading', { 'name': /test ticket/ });
@@ -95,9 +89,9 @@ describe('TicketListOwner', () => {
         window.confirm = () => { return true };
         const { user } = render(<TicketListOwner />);
 
-        const input = screen.getByRole('textbox', { 'name': 'Description' });
+        const input = await screen.findByRole('textbox', { 'name': 'Description' });
         await user.type(input, "test ticket")
-        const addButton = screen.getByRole('button', { 'name': /Save/ });
+        const addButton = await screen.findByRole('button', { 'name': /Save/ });
         await waitFor(async () => await user.click(addButton));
         const modal = await screen.findByRole('dialog');
         expect(modal).toBeInTheDocument();

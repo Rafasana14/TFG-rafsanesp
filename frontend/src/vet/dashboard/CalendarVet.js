@@ -13,7 +13,7 @@ require('moment/locale/es.js');
 const localizer = momentLocalizer(moment);
 const jwt = tokenService.getLocalAccessToken();
 
-function CalendarOwner() {
+function CalendarVet() {
 
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
@@ -29,9 +29,10 @@ function CalendarOwner() {
             return {
                 visitId: Number(visit.id),
                 petId: Number(visit.pet.id),
+                ownerId: Number(visit.pet.owner.id),
                 start: start,
                 end: end,
-                title: `Visit for ${visit.pet.name} with Vet ${visit.vet.firstName} ${visit.vet.lastName}`,
+                title: `Visit for ${visit.pet.name} of Owner ${visit.pet.owner.firstName} ${visit.pet.owner.lastName} - ${visit.pet.owner.user.username} `,
                 description: visit.description,
             }
         }));
@@ -39,7 +40,7 @@ function CalendarOwner() {
 
     const modal = getErrorModal(setVisible, visible, message);
 
-    const title = <h3 className='text-center'>Visits Calendar</h3>;
+    const title = <h1 className='text-center'>Dashboard</h1>;
 
     const handleSelectSlot = useCallback(
         ({ start, end }) => {
@@ -54,7 +55,7 @@ function CalendarOwner() {
             events={events}
             startAccessor="start"
             endAccessor="end"
-            onSelectEvent={(e) => window.location.href = `/pets/${e.petId}/visits/${e.visitId}`}
+            onSelectEvent={(e) => window.location.href = `/owners/${e.ownerId}/pets/${e.petId}/visits/${e.visitId}`}
             onSelectSlot={handleSelectSlot}
             selectable
             views={{
@@ -74,4 +75,4 @@ function CalendarOwner() {
         {modal}
     </div >
 }
-export default CalendarOwner;
+export default CalendarVet;

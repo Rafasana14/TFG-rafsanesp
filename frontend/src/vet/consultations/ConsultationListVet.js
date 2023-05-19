@@ -54,6 +54,7 @@ export default function ConsultationListVet({ test = false }) {
         { field: 'title', headerName: 'Title', width: 300 },
         { field: 'status', headerName: 'Status', width: 130 },
         { field: 'owner', headerName: 'Owner', width: 150 },
+        { field: 'pet', headerName: 'Pet', width: 150 },
         { field: 'creationDate', type: 'dateTime', headerName: 'Creation Date', width: 150 },
         { field: 'actions', headerName: 'Actions', width: 90, sortable: false, renderCell: renderButtons },
     ];
@@ -65,6 +66,7 @@ export default function ConsultationListVet({ test = false }) {
                 title: consultation.title,
                 status: consultation.status,
                 owner: consultation.pet.owner.user.username,
+                pet: consultation.pet.name,
                 creationDate: new Date(consultation.creationDate),
             }
         );
@@ -75,7 +77,7 @@ export default function ConsultationListVet({ test = false }) {
         <Container fluid style={{ marginTop: "15px" }}>
             <h1 className="text-center">Consultations</h1>
             {modal}
-            <Col style={{ maxWidth: "900px" }} align="center" >
+            <Col style={{ maxWidth: "1050px" }} align="center" >
                 <DataGrid
                     disableVirtualization={test}
                     aria-label='consultations'

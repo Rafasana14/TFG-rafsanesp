@@ -39,6 +39,6 @@ export default function ConsultationListOwner() {
     const modal = getErrorModal(setVisible, visible, message);
 
     return (
-        consultationService.render(alerts, modal, search, [handleFilter, handleSearch, handleClear], consultationList, "OWNER")
+        consultationService.render(alerts, modal, search, [handleFilter, handleSearch, handleClear], consultationList, "OWNER", plan)
     );
 }

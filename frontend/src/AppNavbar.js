@@ -66,6 +66,12 @@ function AppNavbar() {
             ownerLinks = (
                 <>
                     <NavItem>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/owners">Owners</NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink style={{ color: "white" }} tag={Link} to="/visits">Visits</NavLink>
+                    </NavItem>
+                    <NavItem>
                         <NavLink style={{ color: "white" }} tag={Link} to="/consultations">Consultations</NavLink>
                     </NavItem>
                 </>

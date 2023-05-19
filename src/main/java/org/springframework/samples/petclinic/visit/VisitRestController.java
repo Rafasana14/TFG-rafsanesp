@@ -35,6 +35,7 @@ import org.springframework.samples.petclinic.pet.PetService;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.RestPreconditions;
+import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -186,7 +187,12 @@ public class VisitRestController {
 				Owner logged = userService.findOwnerByUser(user.getId());
 				List<Visit> res = (List<Visit>) visitService.findVisitsByOwnerId(logged.getId());
 				return new ResponseEntity<>(res, HttpStatus.OK);
-			} else {
+			}
+			else if (user.hasAuthority(VET_AUTH).equals(true)) {
+				Vet logged = userService.findVetByUser(user.getId());
+				List<Visit> res = (List<Visit>) visitService.findVisitsByVetId(logged.getId());
+				return new ResponseEntity<>(res, HttpStatus.OK);
+			}else{
 				List<Visit> res = (List<Visit>) visitService.findAll();
 				return new ResponseEntity<>(res, HttpStatus.OK);
 			}
