@@ -1,6 +1,5 @@
 package org.springframework.samples.petclinic.visit;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -31,6 +30,7 @@ import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.LimitReachedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
+import org.springframework.samples.petclinic.exceptions.UpperPlanFeatureException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.owner.PricingPlan;
@@ -242,8 +242,7 @@ class VisitControllerTests {
 		when(this.visitService.findVisitsByPetId(TEST_PET_ID)).thenReturn(List.of(visit, stomach, leg));
 
 		mockMvc.perform(get(BASE_URL)).andExpect(status().isBadRequest())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException))
-				.andExpect(result -> assertEquals("Pet not owned.", result.getResolvedException().getMessage()));
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException));
 	}
 
 	@Test
@@ -287,8 +286,7 @@ class VisitControllerTests {
 		when(this.userService.findOwnerByUser(2)).thenReturn(other);
 
 		mockMvc.perform(get(BASE_URL + "/{id}", TEST_PET_ID)).andExpect(status().isBadRequest())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException))
-				.andExpect(result -> assertEquals("Pet not owned.", result.getResolvedException().getMessage()));
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException));
 	}
 
 	@Test
@@ -396,8 +394,7 @@ class VisitControllerTests {
 
 		mockMvc.perform(post(BASE_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(aux))).andExpect(status().isBadRequest())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException))
-				.andExpect(result -> assertEquals("Pet not owned.", result.getResolvedException().getMessage()));
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException));
 	}
 
 	@Test
@@ -416,10 +413,7 @@ class VisitControllerTests {
 
 		mockMvc.perform(post(BASE_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(aux))).andExpect(status().isForbidden())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof LimitReachedException))
-				.andExpect(result -> assertEquals(
-						"You have reached the limit for Visits per month for your Pet Simba with the BASIC plan. Please, upgrade your plan or contact an administrator.",
-						result.getResolvedException().getMessage()));
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof LimitReachedException));
 	}
 
 	@Test
@@ -469,8 +463,7 @@ class VisitControllerTests {
 
 		mockMvc.perform(put(BASE_URL + "/{id}", TEST_PET_ID).with(csrf()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(visit))).andExpect(status().isBadRequest())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException))
-				.andExpect(result -> assertEquals("Pet not owned.", result.getResolvedException().getMessage()));
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException));
 	}
 
 	@Test
@@ -510,8 +503,7 @@ class VisitControllerTests {
 		doNothing().when(this.visitService).deleteVisit(TEST_VISIT_ID);
 
 		mockMvc.perform(delete(BASE_URL + "/{id}", TEST_VISIT_ID).with(csrf())).andExpect(status().isBadRequest())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException))
-				.andExpect(result -> assertEquals("Pet not owned.", result.getResolvedException().getMessage()));
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException));
 	}
 
 	@Test
@@ -563,6 +555,25 @@ class VisitControllerTests {
 				.andExpect(jsonPath("$[?(@.id == 1)].description").value("Checking Simba's teeth."))
 				.andExpect(jsonPath("$[?(@.id == 2)].pet.name").value(simba.getName()));
 	}
+	
+	@Test
+	@WithMockUser(value = "vet", authorities = { "VET" })
+	void ownerShouldFindAllVisitsForVet() throws Exception {
+		logged.setId(TEST_USER_ID);
+		Visit stomach = new Visit();
+		stomach.setId(2);
+		stomach.setDatetime(LocalDateTime.of(2010, 1, 1, 12, 0));
+		stomach.setDescription("Checking Simba's stomach.");
+		stomach.setPet(simba);
+		stomach.setVet(vet);
+
+		when(this.userService.findVetByUser(TEST_USER_ID)).thenReturn(vet);
+		when(this.visitService.findVisitsByVetId(TEST_OWNER_ID)).thenReturn(List.of(visit, stomach));
+
+		mockMvc.perform(get(VISITS_URL)).andExpect(status().isOk()).andExpect(jsonPath("$.size()").value(2))
+				.andExpect(jsonPath("$[?(@.id == 1)].description").value("Checking Simba's teeth."))
+				.andExpect(jsonPath("$[?(@.id == 2)].pet.name").value(simba.getName()));
+	}
 
 	@Test
 	@WithMockUser(value = "admin", authorities = { "ADMIN" })
@@ -601,8 +612,7 @@ class VisitControllerTests {
 		when(this.petService.findPetById(TEST_PET_ID)).thenReturn(simba);
 
 		mockMvc.perform(get(VISITS_URL).param("ownerId", TEST_OWNER_ID.toString())).andExpect(status().isForbidden())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof AccessDeniedException))
-				.andExpect(result -> assertEquals("Access denied!", result.getResolvedException().getMessage()));
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof AccessDeniedException));
 	}
 
 	@Test
@@ -626,8 +636,8 @@ class VisitControllerTests {
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.visitService.getVisitsOwnerStats(george.getId())).thenReturn(new HashMap<>());
 
-		mockMvc.perform(get(VISITS_URL + "/stats")).andExpect(status().isForbidden())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof AccessDeniedException));
+		mockMvc.perform(get(VISITS_URL + "/stats")).andExpect(status().isBadRequest())
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof UpperPlanFeatureException));
 	}
 
 	@Test

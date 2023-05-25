@@ -16,6 +16,7 @@ import org.springframework.samples.petclinic.exceptions.ResourceNotFoundExceptio
 import org.springframework.samples.petclinic.exceptions.UpperPlanFeatureException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.PricingPlan;
+import org.springframework.samples.petclinic.util.UtilFunctions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -169,15 +170,13 @@ public class ConsultationService {
 
 			if (pets > 1) {
 				Map<String, Integer> consultationsByPet = getConsultationsByPet(ownerId);
-				Double avgConsultationsPerPet = (double) countAll / pets;
 				res.put("consultationsByPet", consultationsByPet);
-				res.put("avgConsultationsPerPet", avgConsultationsPerPet);
 			}
 
 			int years = LocalDate.now().getYear() - this.consultationRepository.getYearOfFirstConsultation(ownerId);
 			if (years >= 1) {
 				Double avgConsultationsPerYear = (double) countAll / (years + 1);
-				res.put("avgConsultationsPerYear", avgConsultationsPerYear);
+				res.put("avgConsultationsPerYear", UtilFunctions.round(2, avgConsultationsPerYear));
 			}
 		}
 
@@ -216,6 +215,10 @@ public class ConsultationService {
 
 	private Map<String, Integer> getConsultationsByPet(int userId) {
 		Map<String, Integer> unsortedConsultationsByPet = new HashMap<>();
+		this.consultationRepository.findAllPetsByOwner(userId).forEach(m -> {
+			String key = m.getName();
+			unsortedConsultationsByPet.put(key, 0);
+		});
 		this.consultationRepository.countConsultationsGroupedByPet(userId).forEach(m -> {
 			String key = m.get("pet");
 			Integer value = Integer.parseInt(m.get("consultations"));

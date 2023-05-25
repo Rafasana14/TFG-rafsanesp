@@ -70,11 +70,11 @@ INSERT INTO types VALUES (6, 'hamster');
 INSERT INTO types VALUES (7, 'turtle');
 
 INSERT INTO	owners VALUES (1, 'George', 'Franklin', '110 W. Liberty St.', 'Sevilla', 'PLATINUM', '608555103', 2);
-INSERT INTO owners VALUES (2, 'Betty', 'Davis', '638 Cardinal Ave.', 'Sevilla','PLATINUM', '608555174', 3);
+INSERT INTO owners VALUES (2, 'Betty', 'Davis', '638 Cardinal Ave.', 'Sevilla','GOLD', '608555174', 3);
 INSERT INTO owners VALUES (3, 'Eduardo', 'Rodriquez', '2693 Commerce St.', 'Sevilla','BASIC', '608558763', 4);
 INSERT INTO owners VALUES (4, 'Harold', 'Davis', '563 Friendly St.', 'Sevilla','BASIC', '608555319', 5);
 INSERT INTO owners VALUES (5, 'Peter', 'McTavish', '2387 S. Fair Way', 'Sevilla','BASIC', '608555765', 6);
-INSERT INTO owners VALUES (6, 'Jean', 'Coleman', '105 N. Lake St.', 'Badajoz','BASIC', '608555264', 7);
+INSERT INTO owners VALUES (6, 'Jean', 'Coleman', '105 N. Lake St.', 'Badajoz','PLATINUM', '608555264', 7);
 INSERT INTO owners VALUES (7, 'Jeff', 'Black', '1450 Oak Blvd.', 'Badajoz','GOLD', '608555538', 8);
 INSERT INTO owners VALUES (8, 'Maria', 'Escobito', '345 Maple St.', 'Badajoz','GOLD', '608557683', 9);
 INSERT INTO owners VALUES (9, 'David', 'Schroeder', '2749 Blackhawk Trail','Cádiz','GOLD', '685559435', 10);
@@ -124,7 +124,7 @@ INSERT INTO owners_pets(owner_id,pets_id) VALUES (10,13);*/
 
 INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (1, 7, '2013-01-01 13:00', 'rabies shot', 4);
 INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (2, 8, '2013-01-02 15:30', 'rabies shot', 5);
-INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (3, 8, '2013-01-03 9:45', 'neutered', 5);
+INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (3, 8, '2014-01-03 9:45', 'neutered', 5);
 INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (4, 7, '2013-01-04 17:30', 'spayed', 4);
 INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (5, 1, '2013-01-01 13:00', 'rabies shot', 1);
 INSERT INTO visits(id,pet_id,visit_date_time,description,vet_id) VALUES (6, 1, '2020-01-02 15:30', 'health check', 1);

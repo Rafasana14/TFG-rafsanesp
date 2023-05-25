@@ -38,6 +38,8 @@ import ConsultationListVet from "./vet/consultations/ConsultationListVet";
 import TicketListVet from "./vet/consultations/TicketListVet";
 import DashboardOwner from "./owner/dashboard/DashboardOwner";
 import CalendarVet from "./vet/dashboard/CalendarVet";
+import StatsAdmin from "./admin/dashboard/StatsAdmin";
+import './App.css';
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -70,6 +72,7 @@ function App() {
     if (role === "ADMIN") {
       adminRoutes = (
         <>
+          <Route path="/dashboard" element={<PrivateRoute><StatsAdmin /></PrivateRoute>} />
           <Route path="/users" exact={true} element={<PrivateRoute><UserListAdmin /></PrivateRoute>} />
           <Route path="/users/:username" exact={true} element={<PrivateRoute><UserEditAdmin /></PrivateRoute>} />
           <Route path="/owners" exact={true} element={<PrivateRoute><OwnerListAdmin /></PrivateRoute>} />
@@ -128,7 +131,7 @@ function App() {
   }
 
   return (
-    <div>
+    <div className="body">
       <ErrorBoundary FallbackComponent={ErrorFallback} >
         <AppNavbar />
         <Routes>

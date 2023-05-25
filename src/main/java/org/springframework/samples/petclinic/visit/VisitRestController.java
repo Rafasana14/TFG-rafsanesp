@@ -27,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.LimitReachedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
+import org.springframework.samples.petclinic.exceptions.UpperPlanFeatureException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.owner.PricingPlan;
@@ -206,6 +207,7 @@ public class VisitRestController {
 			Owner o = userService.findOwnerByUser(user.getId());
 			if (o.getPlan().equals(PricingPlan.PLATINUM))
 				return new ResponseEntity<>(this.visitService.getVisitsOwnerStats(o.getId()), HttpStatus.OK);
+			else throw new UpperPlanFeatureException(PricingPlan.PLATINUM, o.getPlan());
 		} else if (user.hasAuthority(ADMIN_AUTH).equals(true))
 			return new ResponseEntity<>(this.visitService.getVisitsAdminStats(), HttpStatus.OK);
 		throw new AccessDeniedException();

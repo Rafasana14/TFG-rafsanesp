@@ -58,6 +58,10 @@ public interface OwnerRepository extends CrudRepository<Owner, Integer> {
 
 	@Query("SELECT COUNT(o) FROM Owner o WHERE o.plan = :plan")
 	public Integer countByPlan(PricingPlan plan);
+	
+	@Query("SELECT NEW MAP(cast(o.plan as string) as plan, cast(COUNT(o) as string) as owners)"
+			+ " FROM Owner o GROUP BY o.plan")
+	public List<Map<String, String>> countOwnersGroupedByPlan();
 
 	@Query("SELECT COUNT(o) FROM Owner o")
 	public Integer countAll();

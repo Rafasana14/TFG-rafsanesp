@@ -101,18 +101,13 @@ public class OwnerService {
 	@Transactional(readOnly = true)
 	public Map<String, Object> getOwnersStats() {
 		Map<String, Object> res = new HashMap<>();
-		Integer basicOwners = this.ownerRepository.countByPlan(PricingPlan.BASIC);
-		Integer goldOwners = this.ownerRepository.countByPlan(PricingPlan.GOLD);
-		Integer platinumOwners = this.ownerRepository.countByPlan(PricingPlan.PLATINUM);
 		Integer totalOwners = this.ownerRepository.countAll();
 		Integer moreThanOnePet = getOwnersWithMoreThanOnePet();
-		Map<String, Integer> ownersVisits = getOwnersVisits();
+//		Map<String, Integer> ownersVisits = getOwnersVisits();
 
-		res.put("basicOwners", basicOwners);
-		res.put("goldOwners", goldOwners);
-		res.put("platinumOwners", platinumOwners);
+		res.put("ownersByPlan", getOwnersPlans());
 		res.put("totalOwners", totalOwners);
-		res.put("ownersVisits", ownersVisits);
+//		res.put("ownersVisits", ownersVisits);
 		res.put("moreThanOnePet", moreThanOnePet);
 
 		return res;
@@ -128,15 +123,30 @@ public class OwnerService {
 		}
 		return res;
 	}
-
-	private Map<String, Integer> getOwnersVisits() {
-		Map<String, Integer> unsortedOwnersVisits = new HashMap<>();
-		this.ownerRepository.getOwnersWithMostVisits().forEach(m -> {
-			String key = findOwnerById(m.get("userId")).getUser().getUsername();
-			Integer value = m.get("visits");
-			unsortedOwnersVisits.put(key, value);
+//
+//	private Map<String, Integer> getOwnersVisits() {
+//		Map<String, Integer> unsortedOwnersVisits = new HashMap<>();
+//		this.ownerRepository.getOwnersWithMostVisits().forEach(m -> {
+//			String key = findOwnerById(m.get("userId")).getUser().getUsername();
+//			Integer value = m.get("visits");
+//			unsortedOwnersVisits.put(key, value);
+//		});
+//		return unsortedOwnersVisits.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+//				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue,
+//						LinkedHashMap::new));
+//	}
+	
+	private Map<String, Integer> getOwnersPlans() {
+		Map<String, Integer> unsortedOwnersPlans = new HashMap<>();
+		unsortedOwnersPlans.put("BASIC", 0);
+		unsortedOwnersPlans.put("GOLD", 0);
+		unsortedOwnersPlans.put("PLATINUM", 0);
+		this.ownerRepository.countOwnersGroupedByPlan().forEach(m -> {
+			String key = m.get("plan");
+			Integer value = Integer.parseInt(m.get("owners"));
+			unsortedOwnersPlans.put(key, value);
 		});
-		return unsortedOwnersVisits.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+		return unsortedOwnersPlans.entrySet().stream().sorted(Map.Entry.comparingByKey(Comparator.naturalOrder()))
 				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue,
 						LinkedHashMap::new));
 	}

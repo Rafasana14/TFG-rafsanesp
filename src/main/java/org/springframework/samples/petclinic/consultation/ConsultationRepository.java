@@ -6,6 +6,7 @@ import java.util.Map;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.samples.petclinic.pet.Pet;
 
 public interface ConsultationRepository extends CrudRepository<Consultation, Integer> {
 
@@ -37,6 +38,9 @@ public interface ConsultationRepository extends CrudRepository<Consultation, Int
 
 	@Query("SELECT COUNT(p) FROM Pet p WHERE p.owner.id = :ownerId")
 	public Integer countAllPetsOfOwner(int ownerId);
+	
+	@Query("SELECT p FROM Pet p WHERE p.owner.id = :ownerId")
+	public List<Pet> findAllPetsByOwner(int ownerId);
 
 	@Query("SELECT NEW MAP(c.pet.name as pet, cast(COUNT(c) as string) as consultations)"
 			+ " FROM  Consultation c WHERE c.pet.owner.id = :ownerId GROUP BY c.pet")

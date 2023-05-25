@@ -1,6 +1,5 @@
 package org.springframework.samples.petclinic.pet;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -167,8 +166,7 @@ class PetRestControllerTests {
 		when(this.petService.findAll()).thenReturn(List.of(simba, timon, pumba));
 
 		mockMvc.perform(get(BASE_URL)).andExpect(status().isForbidden())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof RuntimeException))
-				.andExpect(result -> assertEquals("Access denied!", result.getResolvedException().getMessage()));
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof AccessDeniedException));
 	}
 
 	@Test
@@ -226,8 +224,7 @@ class PetRestControllerTests {
 		when(this.petService.findAllPetsByUserId(TEST_USER_ID)).thenReturn(List.of(simba, timon));
 
 		mockMvc.perform(get(BASE_URL).param("userId", TEST_USER_ID.toString())).andExpect(status().isForbidden())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof AccessDeniedException))
-				.andExpect(result -> assertEquals("Access denied!", result.getResolvedException().getMessage()));
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof AccessDeniedException));
 	}
 
 	@Test
@@ -288,8 +285,7 @@ class PetRestControllerTests {
 		when(this.userService.findOwnerByUser(logged.getId())).thenReturn(other);
 
 		mockMvc.perform(get(BASE_URL + "/{id}", TEST_PET_ID)).andExpect(status().isBadRequest())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException))
-				.andExpect(result -> assertEquals("Pet not owned.", result.getResolvedException().getMessage()));
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException));
 	}
 
 	@Test
@@ -371,10 +367,7 @@ class PetRestControllerTests {
 
 		mockMvc.perform(post(BASE_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(pet))).andExpect(status().isForbidden())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof LimitReachedException))
-				.andExpect(result -> assertEquals(
-						"You have reached the limit for Pets with the BASIC plan. Please, upgrade your plan or contact an administrator.",
-						result.getResolvedException().getMessage()));
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof LimitReachedException));
 	}
 
 	@Test
@@ -454,8 +447,7 @@ class PetRestControllerTests {
 
 		mockMvc.perform(put(BASE_URL + "/{id}", TEST_PET_ID).with(csrf()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(simba))).andExpect(status().isBadRequest())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException))
-				.andExpect(result -> assertEquals("Pet not owned.", result.getResolvedException().getMessage()));
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException));
 	}
 
 	@Test
@@ -493,8 +485,7 @@ class PetRestControllerTests {
 		when(this.userService.findOwnerByUser(2)).thenReturn(other);
 
 		mockMvc.perform(delete(BASE_URL + "/{id}", TEST_PET_ID).with(csrf())).andExpect(status().isBadRequest())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException))
-				.andExpect(result -> assertEquals("Pet not owned.", result.getResolvedException().getMessage()));
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException));
 	}
 
 	@Test

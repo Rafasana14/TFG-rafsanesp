@@ -1673,6 +1673,11 @@
     "@jridgewell/resolve-uri" "3.1.0"
     "@jridgewell/sourcemap-codec" "1.4.14"
 
+"@kurkle/color@^0.3.0":
+  "integrity" "sha512-fuscdXJ9G1qb7W8VdHi+IwRqij3lBkosAm4ydQtEmbY58OzHXqQhvlxqEkoz0yssNVn38bcpRWgA9PP+OGoisw=="
+  "resolved" "https://registry.npmjs.org/@kurkle/color/-/color-0.3.2.tgz"
+  "version" "0.3.2"
+
 "@leichtgewicht/ip-codec@^2.0.1":
   "integrity" "sha512-Hcv+nVC0kZnQ3tD9GVu5xSMR4VVYOteQIr/hwFPVEvPdlXqgGEuRjiheChHgdM+JyqdgNcmzZOX/tnl0JOiI7A=="
   "resolved" "https://registry.npmjs.org/@leichtgewicht/ip-codec/-/ip-codec-2.0.4.tgz"
@@ -3630,6 +3635,13 @@
   "resolved" "https://registry.npmjs.org/chardet/-/chardet-0.7.0.tgz"
   "version" "0.7.0"
 
+"chart.js@^4.1.1", "chart.js@^4.3.0":
+  "integrity" "sha512-ynG0E79xGfMaV2xAHdbhwiPLczxnNNnasrmPEXriXsPJGjmhOBYzFVEsB65w2qMDz+CaBJJuJD0inE/ab/h36g=="
+  "resolved" "https://registry.npmjs.org/chart.js/-/chart.js-4.3.0.tgz"
+  "version" "4.3.0"
+  dependencies:
+    "@kurkle/color" "^0.3.0"
+
 "check-types@^11.1.1":
   "integrity" "sha512-HBiYvXvn9Z70Z88XKjz3AEKd4HJhBXsa3j7xFnITAzoS8+q6eIGi8qDB8FKPBAjtuxjI/zFpwuiCb8oDtKOYrA=="
   "resolved" "https://registry.npmjs.org/check-types/-/check-types-11.2.2.tgz"
@@ -4004,6 +4016,11 @@
     "postcss-modules-values" "^4.0.0"
     "postcss-value-parser" "^4.2.0"
     "semver" "^7.3.8"
+
+"css-mediaquery@^0.1.2":
+  "integrity" "sha512-COtn4EROW5dBGlE/4PiKnh6rZpAPxDeFLaEEwt4i10jpDMFt2EhQGS79QmmrO+iKCHv0PU/HrOWEhijFd1x99Q=="
+  "resolved" "https://registry.npmjs.org/css-mediaquery/-/css-mediaquery-0.1.2.tgz"
+  "version" "0.1.2"
 
 "css-minimizer-webpack-plugin@^3.2.0":
   "integrity" "sha512-1u6D71zeIfgngN2XNRJefc/hY7Ybsxd74Jm4qngIXyUEk7fss3VUzuHxLAq/R8NAba4QU9OUSaMZlbpRc7bM4Q=="
@@ -5805,6 +5822,11 @@
   "resolved" "https://registry.npmjs.org/human-signals/-/human-signals-2.1.0.tgz"
   "version" "2.1.0"
 
+"hyphenate-style-name@^1.0.0":
+  "integrity" "sha512-ygGZLjmXfPHj+ZWh6LwbC37l43MhfztxetbFCoYTM2VjkIUpeHgSNn7QIyVFj7YQ1Wl9Cbw5sholVJPzWvC2MQ=="
+  "resolved" "https://registry.npmjs.org/hyphenate-style-name/-/hyphenate-style-name-1.0.4.tgz"
+  "version" "1.0.4"
+
 "iconv-lite@^0.4.24":
   "integrity" "sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA=="
   "resolved" "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.4.24.tgz"
@@ -7219,6 +7241,13 @@
   dependencies:
     "tmpl" "1.0.5"
 
+"matchmediaquery@^0.3.0":
+  "integrity" "sha512-Hlk20WQHRIm9EE9luN1kjRjYXAQToHOIAHPJn9buxBwuhfTHoKUcX+lXBbxc85DVQfXYbEQ4HcwQdd128E3qHQ=="
+  "resolved" "https://registry.npmjs.org/matchmediaquery/-/matchmediaquery-0.3.1.tgz"
+  "version" "0.3.1"
+  dependencies:
+    "css-mediaquery" "^0.1.2"
+
 "mdn-data@2.0.14":
   "integrity" "sha512-dn6wd0uw5GsdswPFfsgMp5NSB0/aDe6fK94YJV/AJDYXL6HVLWBsxeq7js7Ad+mU2K9LAlwpk6kN2D5mwCPVow=="
   "resolved" "https://registry.npmjs.org/mdn-data/-/mdn-data-2.0.14.tgz"
@@ -8570,7 +8599,7 @@
     "kleur" "^3.0.3"
     "sisteransi" "^1.0.5"
 
-"prop-types@^15.5.8", "prop-types@^15.6.2", "prop-types@^15.7.2", "prop-types@^15.8.1":
+"prop-types@^15.5.8", "prop-types@^15.6.1", "prop-types@^15.6.2", "prop-types@^15.7.2", "prop-types@^15.8.1":
   "integrity" "sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg=="
   "resolved" "https://registry.npmjs.org/prop-types/-/prop-types-15.8.1.tgz"
   "version" "15.8.1"
@@ -8726,6 +8755,11 @@
     "prop-types" "^15.8.1"
     "react-overlays" "^5.2.1"
     "uncontrollable" "^7.2.1"
+
+"react-chartjs-2@^5.2.0":
+  "integrity" "sha512-98iN5aguJyVSxp5U3CblRLH67J8gkfyGNbiK3c+l1QI/G4irHMPQw44aEPmjVag+YKTyQ260NcF82GTQ3bdscA=="
+  "resolved" "https://registry.npmjs.org/react-chartjs-2/-/react-chartjs-2-5.2.0.tgz"
+  "version" "5.2.0"
 
 "react-copy-to-clipboard@5.1.0":
   "integrity" "sha512-k61RsNgAayIJNoy9yDsYzDe/yAZAzEbEgcz3DZMhF686LEyukcE1hzurxe85JandPUG+yTfGVFzuEw3xt8WP/A=="
@@ -8888,6 +8922,16 @@
   "integrity" "sha512-F27qZr8uUqwhWZboondsPx8tnC3Ct3SxZA3V5WyEvujRyyNv0VYPhoBg1gZ8/MV5tubQp76Trw8lTv9hzRBa+A=="
   "resolved" "https://registry.npmjs.org/react-refresh/-/react-refresh-0.11.0.tgz"
   "version" "0.11.0"
+
+"react-responsive@^9.0.2":
+  "integrity" "sha512-+4CCab7z8G8glgJoRjAwocsgsv6VA2w7JPxFWHRc7kvz8mec1/K5LutNC2MG28Mn8mu6+bu04XZxHv5gyfT7xQ=="
+  "resolved" "https://registry.npmjs.org/react-responsive/-/react-responsive-9.0.2.tgz"
+  "version" "9.0.2"
+  dependencies:
+    "hyphenate-style-name" "^1.0.0"
+    "matchmediaquery" "^0.3.0"
+    "prop-types" "^15.6.1"
+    "shallow-equal" "^1.2.1"
 
 "react-router-dom@^6.11.0":
   "integrity" "sha512-Q3mK1c/CYoF++J6ZINz7EZzwlgSOZK/kc7lxIA7PhtWhKju4KfF1WHqlx0kVCIFJAWztuYVpXZeljEbds8z4Og=="
@@ -9542,6 +9586,11 @@
   dependencies:
     "inherits" "^2.0.1"
     "safe-buffer" "^5.0.1"
+
+"shallow-equal@^1.2.1":
+  "integrity" "sha512-S4vJDjHHMBaiZuT9NPb616CSmLf618jawtv3sufLl6ivK8WocjAo58cXwbRV1cgqxH0Qbv+iUt6m05eqEa2IRA=="
+  "resolved" "https://registry.npmjs.org/shallow-equal/-/shallow-equal-1.2.1.tgz"
+  "version" "1.2.1"
 
 "shebang-command@^1.2.0":
   "integrity" "sha512-EV3L1+UQWGor21OmnvojK36mhg+TyIKDh3iFBKBohr5xeXIhNBcx8oWdgkTEEQ+BEFFYdLRuqMfd5L84N1V5Vg=="
