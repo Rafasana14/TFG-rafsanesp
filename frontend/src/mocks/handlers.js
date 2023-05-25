@@ -44,7 +44,7 @@ const userVet2 = {
     }
 };
 
-const owner1 = {
+export const owner1 = {
     "id": 1,
     "firstName": "George",
     "lastName": "Franklin",
@@ -477,7 +477,7 @@ export const handlers = [
             ctx.status(200),
             ctx.json(
                 {
-                    "id": 3,
+                    "id": 4,
                     "description": "test ticket",
                     "creationDate": "2023-01-04T17:32:00",
                     "user": userOwner1,
@@ -497,6 +497,95 @@ export const handlers = [
                     "user": userOwner1,
                     "consultation": consultation1
                 },
+            ))
+    }),
+
+    rest.get('*/api/v1/consultations/stats', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(
+                {
+                    "totalConsultations": 5,
+                    "avgConsultationsPerPlatinumOwner": 1.6666666666666667,
+                    "avgConsultationsPerOwner": 0.5
+                }
+            ))
+    }),
+
+    rest.get('*/api/v1/visits/stats', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(
+                {
+                    "avgVisitsPerPet": 0.64,
+                    "totalVisits": 9,
+                    "visitsByYear": {
+                        "2020": 2,
+                        "2013": 7
+                    }
+                }
+            ))
+    }),
+
+    rest.get('*/api/v1/owners/stats', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(
+                {
+                    "ownersByPlan": {
+                        "BASIC": 4,
+                        "GOLD": 3,
+                        "PLATINUM": 3
+                    },
+                    "totalOwners": 10,
+                    "moreThanOnePet": 3
+                }
+            ))
+    }),
+
+    rest.get('*/api/v1/vets/stats', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(
+                {
+                    "vetsBySpecialty": {
+                        "dentistry": 1,
+                        "radiology": 2,
+                        "surgery": 2
+                    },
+                    "vetsByCity": {
+                        "Cádiz": 1,
+                        "Sevilla": 3,
+                        "Badajoz": 2
+                    },
+                    "totalVets": 6,
+                    "visitsByVet": {
+                        "James Carter": 3,
+                        "Rafael Ortega": 2,
+                        "Henry Stevens": 2,
+                        "Linda Douglas": 1,
+                        "Helen Leary": 1
+                    }
+                }
+            ))
+    }),
+
+    rest.get('*/api/v1/pets/stats', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(
+                {
+                    "petsByType": {
+                        "hamster": 1,
+                        "cat": 4,
+                        "bird": 2,
+                        "snake": 1,
+                        "dog": 4,
+                        "lizard": 1
+                    },
+                    "avgPetsPerOwner": 1.3,
+                    "totalPets": 13
+                }
             ))
     }),
 

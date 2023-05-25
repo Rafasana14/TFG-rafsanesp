@@ -20,28 +20,6 @@ export default function VisitListOwner({ test = false }) {
     const [alerts, setAlerts] = useState([]);
 
     const modal = getErrorModal(setVisible, visible, message);
-    // const visitList = visits.map((visit) => {
-    //     return (
-    //         <tr key={visit.id}>
-    //             <td>{(new Date(visit.datetime)).toLocaleString()}</td>
-    //             <td>{visit.description ? visit.description : "No description provided"}</td>
-    //             <td>{visit.vet.firstName} {visit.vet.lastName}</td>
-    //             <td>
-    //                 <ButtonGroup>
-    //                     <Button size="sm" aria-label={"edit-" + visit.id} color="primary" tag={Link}
-    //                         to={`/pets/${petId}/visits/${visit.id}`}>
-    //                         Edit
-    //                     </Button>
-    //                     <Button size="sm" aria-label={"delete-" + visit.id} color="danger"
-    //                         onClick={() => deleteFromList(`/api/v1/pets/${petId}/visits/${visit.id}`, visit.id,
-    //                             [visits, setVisits], [alerts, setAlerts], setMessage, setVisible)}>
-    //                         Delete
-    //                     </Button>
-    //                 </ButtonGroup>
-    //             </td>
-    //         </tr>
-    //     );
-    // });
 
     const renderButtons = (params) => {
         const today = new Date();
@@ -125,7 +103,10 @@ export default function VisitListOwner({ test = false }) {
                             },
                             columns: {
                                 columnVisibilityModel: { id: false, }
-                            }
+                            },
+                            sorting: {
+                                sortModel: [{ field: 'datetime', sort: 'desc' }],
+                            },
                         }}
                         pageSizeOptions={[10, 20]}
                         slots={{
@@ -138,17 +119,6 @@ export default function VisitListOwner({ test = false }) {
                         }}
                     />
                 </Col>
-                {/* <Table aria-label='visits' className="mt-4">
-                    <thead>
-                        <tr>
-                            <th>Date and Time</th>
-                            <th>Description</th>
-                            <th>Vet</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>{visitList}</tbody>
-                </Table> */}
             </Container>
         </div>
     );

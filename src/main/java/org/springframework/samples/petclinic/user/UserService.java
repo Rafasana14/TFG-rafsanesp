@@ -15,8 +15,6 @@
  */
 package org.springframework.samples.petclinic.user;
 
-import java.util.Optional;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
@@ -25,7 +23,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.vet.Vet;
-import org.springframework.samples.petclinic.vet.VetService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -38,13 +35,13 @@ public class UserService {
 
 //	private OwnerService ownerService;
 //
-	private VetService vetService;
+//	private VetService vetService;
 
 	@Autowired
-	public UserService(UserRepository userRepository, VetService vetService) {
+	public UserService(UserRepository userRepository) {
 		this.userRepository = userRepository;
 //		this.ownerService = ownerService;
-		this.vetService = vetService;
+//		this.vetService = vetService;
 	}
 
 	@Transactional
@@ -73,6 +70,11 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public Owner findOwnerByUser(int id) {
 		return userRepository.findOwnerByUser(id).orElseThrow(() -> new ResourceNotFoundException("Owner", "ID", id));
+	}
+	
+	@Transactional(readOnly = true)
+	public Vet findVetByUser(Integer id) {
+		return userRepository.findVetByUser(id).orElseThrow(() -> new ResourceNotFoundException("Vet", "ID", id));
 	}
 
 	@Transactional(readOnly = true)
@@ -119,16 +121,10 @@ public class UserService {
 	private void deleteRelations(Integer id, String auth) {
 		switch (auth) {
 		case "OWNER":
-//			Optional<Owner> owner = ownerService.optFindOwnerByUser(id);
-//			if (owner.isPresent())
-//				ownerService.deleteOwner(owner.get().getId());
 			this.userRepository.deleteOwnerRelation(id);
 			break;
 		case "VET":
-			Optional<Vet> vet = vetService.optFindVetByUser(id);
-			if (vet.isPresent()) {
-				vetService.deleteVet(vet.get().getId());
-			}
+			this.userRepository.deleteVetRelation(id);
 			break;
 		default:
 			// The only relations that have user are Owner and Vet

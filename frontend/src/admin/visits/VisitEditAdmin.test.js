@@ -3,7 +3,6 @@ import { server } from "../../mocks/server";
 import { checkOption, fillForm, render, screen, testFilledEditForm, testRenderForm, waitFor } from "../../test-utils";
 import * as router from 'react-router'
 import VisitEditAdmin from "./VisitEditAdmin";
-import { act } from "@testing-library/react";
 
 const navigate = jest.fn()
 
@@ -33,9 +32,9 @@ describe('VisitEditAdmin', () => {
         await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await act(async () => await user.click(submit));
+        await user.click(submit);
 
-        expect(navigate).toHaveBeenCalledWith('/pets/1/visits')
+        await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/pets/1/visits'));
     });
 
     test('edit visit renders correctly', async () => {
@@ -47,9 +46,9 @@ describe('VisitEditAdmin', () => {
         await testFilledEditForm(form)
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await act(async () => await user.click(submit));
+        await user.click(submit);
 
-        expect(navigate).toHaveBeenCalledWith('/pets/1/visits')
+        await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/pets/1/visits'));
     });
 
     test('creates visit with exception', async () => {
@@ -70,7 +69,7 @@ describe('VisitEditAdmin', () => {
         await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await waitFor(async () => await user.click(submit));
+        await user.click(submit);
 
         expect(navigate).not.toHaveBeenCalledWith('/pets/1/visits');
 

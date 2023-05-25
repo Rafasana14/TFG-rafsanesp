@@ -28,7 +28,6 @@ import ConsultationEditOwner from "./owner/consultations/ConsultationEditOwner";
 import ConsultationListOwner from "./owner/consultations/ConsultationListOwner";
 import TicketListOwner from "./owner/consultations/TicketListOwner";
 import Login from "./auth/login/Login";
-import CalendarOwner from "./owner/dashboard/CalendarOwner";
 import PetEditOwner from "./owner/pets/PetEditOwner";
 import PetListOwner from "./owner/pets/PetListOwner";
 import PlanEdit from "./owner/PlanEdit";
@@ -37,6 +36,10 @@ import VisitListOwner from "./owner/visits/VisitListOwner";
 import { PlanList } from "./public/plan/PlanList";
 import ConsultationListVet from "./vet/consultations/ConsultationListVet";
 import TicketListVet from "./vet/consultations/TicketListVet";
+import DashboardOwner from "./owner/dashboard/DashboardOwner";
+import CalendarVet from "./vet/dashboard/CalendarVet";
+import StatsAdmin from "./admin/dashboard/StatsAdmin";
+import './App.css';
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -69,6 +72,7 @@ function App() {
     if (role === "ADMIN") {
       adminRoutes = (
         <>
+          <Route path="/dashboard" element={<PrivateRoute><StatsAdmin /></PrivateRoute>} />
           <Route path="/users" exact={true} element={<PrivateRoute><UserListAdmin /></PrivateRoute>} />
           <Route path="/users/:username" exact={true} element={<PrivateRoute><UserEditAdmin /></PrivateRoute>} />
           <Route path="/owners" exact={true} element={<PrivateRoute><OwnerListAdmin /></PrivateRoute>} />
@@ -89,7 +93,7 @@ function App() {
     if (role === "OWNER") {
       ownerRoutes = (
         <>
-          <Route path="/dashboard" element={<PrivateRoute><CalendarOwner /></PrivateRoute>} />
+          <Route path="/dashboard" element={<PrivateRoute><DashboardOwner /></PrivateRoute>} />
           <Route path="/plan" exact={true} element={<PrivateRoute><PlanEdit /></PrivateRoute>} />
           <Route path="/pets" exact={true} element={<PrivateRoute><PetListOwner /></PrivateRoute>} />
           <Route path="/pets/:id" exact={true} element={<PrivateRoute><PetEditOwner /></PrivateRoute>} />
@@ -103,7 +107,7 @@ function App() {
     if (role === "VET") {
       vetRoutes = (
         <>
-          {/* <Route path="/dashboard" element={<PrivateRoute><OwnerDashboard /></PrivateRoute>} /> */}
+          <Route path="/dashboard" element={<PrivateRoute><CalendarVet /></PrivateRoute>} />
           <Route path="/consultations" exact={true} element={<PrivateRoute><ConsultationListVet /></PrivateRoute>} />
           <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketListVet /></PrivateRoute>} />
         </>)
@@ -127,7 +131,7 @@ function App() {
   }
 
   return (
-    <div>
+    <div className="body">
       <ErrorBoundary FallbackComponent={ErrorFallback} >
         <AppNavbar />
         <Routes>

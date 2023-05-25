@@ -139,6 +139,7 @@ public class ConsultationController {
 			Owner o = userService.findOwnerByUser(user.getId());
 			if (o.getPlan().equals(PricingPlan.PLATINUM))
 				return new ResponseEntity<>(consultationService.getOwnerConsultationsStats(o.getId()), HttpStatus.OK);
+			else throw new UpperPlanFeatureException(PricingPlan.PLATINUM, o.getPlan());
 		} else if (user.hasAuthority(ADMIN_AUTH).equals(true))
 			return new ResponseEntity<>(consultationService.getAdminConsultationsStats(), HttpStatus.OK);
 		throw new AccessDeniedException();

@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.samples.petclinic.pet.Pet;
 
 public interface VisitRepository extends CrudRepository<Visit, Integer> {
 
@@ -29,6 +30,9 @@ public interface VisitRepository extends CrudRepository<Visit, Integer> {
 
 	@Query("SELECT v FROM Visit v WHERE v.pet.owner.id = :ownerId ORDER BY v.datetime DESC")
 	public Collection<Visit> findByOwnerId(int ownerId);
+	
+	@Query("SELECT v FROM Visit v WHERE v.vet.id = :vetId ORDER BY v.datetime DESC")
+	public Collection<Visit> findByVetId(int vetId);
 
 	@Query("SELECT COUNT(v) FROM Visit v WHERE v.pet.id = :id AND MONTH(v.datetime) = :month AND YEAR(v.datetime) = :year")
 	public Integer countVisitsByPetInMonth(int id, Integer month, Integer year);
@@ -44,10 +48,17 @@ public interface VisitRepository extends CrudRepository<Visit, Integer> {
 	// OWNER
 	@Query("SELECT COUNT(v) FROM Visit v WHERE v.pet.owner.id = :ownerId")
 	public Integer countAllByOwner(int ownerId);
+	
+	@Query("SELECT p FROM Pet p WHERE p.owner.id = :ownerId")
+	public List<Pet> findAllPetsByOwner(int ownerId);
 
 	@Query("SELECT NEW MAP(YEAR(v.datetime) as year, cast(COUNT(v) as integer) as visits)"
 			+ " FROM  Visit v WHERE v.pet.owner.id = :ownerId GROUP BY YEAR(v.datetime)")
 	public List<Map<String, Integer>> countVisitsGroupedByYear(int ownerId);
+	
+	@Query("SELECT NEW MAP(YEAR(v.datetime) as year, cast(COUNT(v) as integer) as visits)"
+			+ " FROM  Visit v GROUP BY YEAR(v.datetime)")
+	public List<Map<String, Integer>> countVisitsGroupedByYear();
 
 	@Query("SELECT MIN(YEAR(v.datetime)) FROM Visit v WHERE v.pet.owner.id = :ownerId")
 	public Integer getYearOfFirstVisit(int ownerId);
@@ -55,5 +66,8 @@ public interface VisitRepository extends CrudRepository<Visit, Integer> {
 	@Query("SELECT NEW MAP(v.pet.name as pet, cast(COUNT(v) as string) as visits)"
 			+ " FROM  Visit v WHERE v.pet.owner.id = :ownerId GROUP BY v.pet")
 	public List<Map<String, String>> countVisitsGroupedByPet(int ownerId);
+	
+	@Query("SELECT COUNT(p) FROM Pet p WHERE p.owner.id = :ownerId")
+	public Integer countAllPetsOfOwner(int ownerId);
 
 }

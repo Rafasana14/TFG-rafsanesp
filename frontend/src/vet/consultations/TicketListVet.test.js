@@ -1,4 +1,4 @@
-import { act, render, screen, waitFor } from "../../test-utils";
+import { render, screen, waitFor } from "../../test-utils";
 import { server } from "../../mocks/server";
 import { rest } from "msw";
 import TicketListVet from "./TicketListVet";
@@ -56,7 +56,7 @@ describe('TicketListVet', () => {
         const { user } = render(<TicketListVet />, { route: route });
 
         const ticket2Delete = await screen.findByRole('button', { 'name': 'delete-2' });
-        await act(async () => await user.click(ticket2Delete));
+        await user.click(ticket2Delete);
         const alert = await screen.findByRole('alert');
         expect(alert).toBeInTheDocument();
 

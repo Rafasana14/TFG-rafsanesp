@@ -16,6 +16,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
+import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.samples.petclinic.vet.VetService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
@@ -104,6 +105,17 @@ class UserServiceTests {
 	@Test
 	void shouldNotFindSingleUserOwnerWithBadUserId() {
 		assertThrows(ResourceNotFoundException.class, () -> this.userService.findOwnerByUser(100));
+	}
+	
+	@Test
+	void shouldFindSingleVetByUserId() {
+		Vet vet = this.userService.findVetByUser(12);
+		assertEquals("vet1", vet.getUser().getUsername());
+	}
+	
+	@Test
+	void shouldNotFindSingleUserVetWithBadUserId() {
+		assertThrows(ResourceNotFoundException.class, () -> this.userService.findVetByUser(100));
 	}
 
 	@Test
@@ -227,28 +239,28 @@ class UserServiceTests {
 		assertEquals(firstCount, lastCount);
 	}
 
-//	@Test
-//	@Transactional
-//	void shouldDeleteUserWithVet() {
-//		Integer firstCount = ((Collection<User>) userService.findAll()).size();
-//		User user = new User();
-//		user.setUsername("Sam");
-//		user.setPassword("password");
-//		Authorities auth = authService.findByAuthority("VET");
-//		user.setAuthority(auth);
-//		userService.saveUser(user);
-//		Vet vet = new Vet();
-//		vet.setFirstName("Test");
-//		vet.setLastName("Test");
-//		vet.setUser(user);
-//		vet.setCity("Test");
-//		this.vetService.saveVet(vet);
-//
-//		Integer secondCount = ((Collection<User>) userService.findAll()).size();
-//		assertEquals(firstCount + 1, secondCount);
-//		userService.deleteUser(user.getId());
-//		Integer lastCount = ((Collection<User>) userService.findAll()).size();
-//		assertEquals(firstCount, lastCount);
-//	}
+	@Test
+	@Transactional
+	void shouldDeleteUserWithVet() {
+		Integer firstCount = ((Collection<User>) userService.findAll()).size();
+		User user = new User();
+		user.setUsername("Sam");
+		user.setPassword("password");
+		Authorities auth = authService.findByAuthority("VET");
+		user.setAuthority(auth);
+		userService.saveUser(user);
+		Vet vet = new Vet();
+		vet.setFirstName("Test");
+		vet.setLastName("Test");
+		vet.setUser(user);
+		vet.setCity("Test");
+		this.vetService.saveVet(vet);
+
+		Integer secondCount = ((Collection<User>) userService.findAll()).size();
+		assertEquals(firstCount + 1, secondCount);
+		userService.deleteUser(user.getId());
+		Integer lastCount = ((Collection<User>) userService.findAll()).size();
+		assertEquals(firstCount, lastCount);
+	}
 
 }

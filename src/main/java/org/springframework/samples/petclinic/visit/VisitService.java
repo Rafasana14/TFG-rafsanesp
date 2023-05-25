@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -13,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.owner.PricingPlan;
+import org.springframework.samples.petclinic.util.UtilFunctions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +40,11 @@ public class VisitService {
 	@Transactional(readOnly = true)
 	public Collection<Visit> findVisitsByOwnerId(int ownerId) {
 		return visitRepository.findByOwnerId(ownerId);
+	}
+	
+	@Transactional(readOnly = true)
+	public Collection<Visit> findVisitsByVetId(int vetId) {
+		return visitRepository.findByVetId(vetId);
 	}
 
 	@Transactional(readOnly = true)
@@ -96,19 +103,24 @@ public class VisitService {
 	public Map<String, Object> getVisitsOwnerStats(int ownerId) {
 		Map<String, Object> res = new HashMap<>();
 		Integer countAll = this.visitRepository.countAllByOwner(ownerId);
-		res.put("totalVisits", countAll);
+		int pets = this.visitRepository.countAllPetsOfOwner(ownerId);
 		if (countAll > 0) {
-			Map<String, Integer> visitsByYear = getVisitsByYear(ownerId);
+			Map<String, Integer> visitsByYear = getVisitsByYear(this.visitRepository.countVisitsGroupedByYear(ownerId));
+			res.put("visitsByYear", visitsByYear);
+
+			if (pets > 1) {
+				Map<String, Integer> visitsByPet = getVisitsByPet(ownerId);
+				res.put("visitsByPet", visitsByPet);
+			}
+
 			int years = LocalDate.now().getYear() - this.visitRepository.getYearOfFirstVisit(ownerId);
 			if (years >= 1) {
 				Double avgVisitsPerYear = (double) countAll / (years + 1);
-				res.put("avgVisitsPerYear", avgVisitsPerYear);
+				res.put("avgVisitsPerYear", UtilFunctions.round(2, avgVisitsPerYear));
 			}
-			Map<String, Integer> visitsByPet = getVisitsByPet(ownerId);
-
-			res.put("visitsByYear", visitsByYear);
-			res.put("visitsByPet", visitsByPet);
 		}
+
+		res.put("totalVisits", countAll);
 
 		return res;
 	}
@@ -117,19 +129,21 @@ public class VisitService {
 		Map<String, Object> res = new HashMap<>();
 
 		Integer countAll = this.visitRepository.countAll();
+		Map<String, Integer> visitsByYear = getVisitsByYear(this.visitRepository.countVisitsGroupedByYear());
+		res.put("visitsByYear", visitsByYear);
 		int pets = this.visitRepository.countAllPets();
 		if (pets > 0) {
 			Double avgVisitsPerPet = (double) this.visitRepository.countAll() / pets;
-			res.put("avgVisitsPerPet", avgVisitsPerPet);
+			res.put("avgVisitsPerPet", UtilFunctions.round(2, avgVisitsPerPet));
 		}
 
 		res.put("totalVisits", countAll);
 		return res;
 	}
 
-	private Map<String, Integer> getVisitsByYear(int userId) {
+	private Map<String, Integer> getVisitsByYear(List<Map<String, Integer>> list) {
 		Map<String, Integer> unsortedVisitsPerYear = new HashMap<>();
-		this.visitRepository.countVisitsGroupedByYear(userId).forEach(m -> {
+		list.forEach(m -> {
 			String key = m.get("year").toString();
 			Integer value = m.get("visits");
 			unsortedVisitsPerYear.put(key, value);
@@ -141,6 +155,10 @@ public class VisitService {
 
 	private Map<String, Integer> getVisitsByPet(int userId) {
 		Map<String, Integer> unsortedVisitsByPet = new HashMap<>();
+		this.visitRepository.findAllPetsByOwner(userId).forEach(m -> {
+			String key = m.getName();
+			unsortedVisitsByPet.put(key, 0);
+		});
 		this.visitRepository.countVisitsGroupedByPet(userId).forEach(m -> {
 			String key = m.get("pet");
 			Integer value = Integer.parseInt(m.get("visits"));
@@ -148,5 +166,7 @@ public class VisitService {
 		});
 		return unsortedVisitsByPet;
 	}
+
+
 
 }

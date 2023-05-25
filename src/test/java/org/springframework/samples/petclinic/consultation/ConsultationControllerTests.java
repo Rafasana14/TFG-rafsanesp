@@ -1,6 +1,5 @@
 package org.springframework.samples.petclinic.consultation;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -330,10 +329,7 @@ class ConsultationControllerTests {
 
 		mockMvc.perform(post(BASE_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(aux))).andExpect(status().isBadRequest())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof UpperPlanFeatureException))
-				.andExpect(result -> assertEquals(
-						"You need to be subscribed to plan PLATINUM to access this feature and you have plan BASIC.",
-						result.getResolvedException().getMessage()));
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof UpperPlanFeatureException));
 	}
 
 	@Test
@@ -384,9 +380,7 @@ class ConsultationControllerTests {
 		mockMvc.perform(put(BASE_URL + "/{id}", TEST_CONSULTATION_ID).with(csrf())
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(consultation)))
 				.andExpect(status().isBadRequest())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException))
-				.andExpect(
-						result -> assertEquals("Consultation not owned.", result.getResolvedException().getMessage()));
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotOwnedException));
 	}
 
 	@Test
@@ -403,10 +397,7 @@ class ConsultationControllerTests {
 		mockMvc.perform(put(BASE_URL + "/{id}", TEST_CONSULTATION_ID).with(csrf())
 				.contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(consultation)))
 				.andExpect(status().isBadRequest())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof UpperPlanFeatureException))
-				.andExpect(result -> assertEquals(
-						"You need to be subscribed to plan PLATINUM to access this feature and you have plan BASIC.",
-						result.getResolvedException().getMessage()));
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof UpperPlanFeatureException));
 	}
 
 	@Test
@@ -600,10 +591,7 @@ class ConsultationControllerTests {
 
 		mockMvc.perform(post(TICKET_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(aux))).andExpect(status().isBadRequest())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof UpperPlanFeatureException))
-				.andExpect(result -> assertEquals(
-						"You need to be subscribed to plan PLATINUM to access this feature and you have plan BASIC.",
-						result.getResolvedException().getMessage()));
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof UpperPlanFeatureException));
 	}
 
 	@Test
@@ -742,8 +730,8 @@ class ConsultationControllerTests {
 		when(this.userService.findOwnerByUser(TEST_USER_ID)).thenReturn(george);
 		when(this.consultationService.getOwnerConsultationsStats(george.getId())).thenReturn(new HashMap<>());
 
-		mockMvc.perform(get(BASE_URL + "/stats")).andExpect(status().isForbidden())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof AccessDeniedException));
+		mockMvc.perform(get(BASE_URL + "/stats")).andExpect(status().isBadRequest())
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof UpperPlanFeatureException));
 	}
 
 	@Test

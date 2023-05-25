@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { server } from "../mocks/server";
-import { act, render, screen } from "../test-utils";
+import { render, screen } from "../test-utils";
 import PlanEdit from "./PlanEdit";
 
 
@@ -28,7 +28,7 @@ describe('PlanEditOwner', () => {
         expect(currentPlan).toBeInTheDocument();
 
         const gold = screen.getByRole('button', { name: /change-gold/i });
-        await act(async () => await user.click(gold));
+        await user.click(gold);
 
         currentPlan = await screen.findByRole('heading', { name: /gold/i });
         expect(currentPlan).toBeInTheDocument();
@@ -56,7 +56,7 @@ describe('PlanEditOwner', () => {
         expect(currentPlan).toBeInTheDocument();
 
         const basic = screen.getByRole('button', { name: /change-basic/i });
-        await act(async () => await user.click(basic));
+        await user.click(basic);
 
         currentPlan = await screen.findByRole('heading', { name: /basic/i });
         expect(currentPlan).toBeInTheDocument();
@@ -94,7 +94,7 @@ describe('PlanEditOwner', () => {
         expect(currentPlan).toBeInTheDocument();
 
         const platinum = screen.getByRole('button', { name: /change-platinum/i });
-        await act(async () => await user.click(platinum));
+        await user.click(platinum);
 
         currentPlan = await screen.findByRole('heading', { name: /platinum/i });
         expect(currentPlan).toBeInTheDocument();

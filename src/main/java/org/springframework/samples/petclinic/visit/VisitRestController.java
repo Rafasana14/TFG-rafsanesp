@@ -27,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.LimitReachedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotOwnedException;
+import org.springframework.samples.petclinic.exceptions.UpperPlanFeatureException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.owner.PricingPlan;
@@ -35,6 +36,7 @@ import org.springframework.samples.petclinic.pet.PetService;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.RestPreconditions;
+import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -186,7 +188,12 @@ public class VisitRestController {
 				Owner logged = userService.findOwnerByUser(user.getId());
 				List<Visit> res = (List<Visit>) visitService.findVisitsByOwnerId(logged.getId());
 				return new ResponseEntity<>(res, HttpStatus.OK);
-			} else {
+			}
+			else if (user.hasAuthority(VET_AUTH).equals(true)) {
+				Vet logged = userService.findVetByUser(user.getId());
+				List<Visit> res = (List<Visit>) visitService.findVisitsByVetId(logged.getId());
+				return new ResponseEntity<>(res, HttpStatus.OK);
+			}else{
 				List<Visit> res = (List<Visit>) visitService.findAll();
 				return new ResponseEntity<>(res, HttpStatus.OK);
 			}
@@ -200,6 +207,7 @@ public class VisitRestController {
 			Owner o = userService.findOwnerByUser(user.getId());
 			if (o.getPlan().equals(PricingPlan.PLATINUM))
 				return new ResponseEntity<>(this.visitService.getVisitsOwnerStats(o.getId()), HttpStatus.OK);
+			else throw new UpperPlanFeatureException(PricingPlan.PLATINUM, o.getPlan());
 		} else if (user.hasAuthority(ADMIN_AUTH).equals(true))
 			return new ResponseEntity<>(this.visitService.getVisitsAdminStats(), HttpStatus.OK);
 		throw new AccessDeniedException();

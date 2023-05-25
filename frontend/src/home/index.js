@@ -38,7 +38,8 @@ class Home extends Component {
                             </div>
                         </Col>
                         <Col>
-                            PETCLINIC IS BLABLABLA
+                            <h2>The best place to care for your pet!!</h2>
+                            <h3>We have the best vets in the city ready to help your little friends.</h3>
                         </Col>
                     </Row>
                     <Row>

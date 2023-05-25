@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { server } from "../../mocks/server";
-import { act, checkOption, fillForm, render, screen, testFilledEditForm, testRenderForm, waitFor } from "../../test-utils";
+import { checkOption, fillForm, render, screen, testFilledEditForm, testRenderForm, waitFor } from "../../test-utils";
 import * as router from 'react-router'
 import VetEditAdmin from "./VetEditAdmin";
 
@@ -24,7 +24,7 @@ describe('VetEditAdmin', () => {
         testRenderForm(/add vet/i, form);
     });
 
-    test('creates pet correctly', async () => {
+    test('creates vet correctly', async () => {
         const { user } = render(<VetEditAdmin />, { route: route });
 
         await checkOption(/admin1/i);
@@ -32,9 +32,9 @@ describe('VetEditAdmin', () => {
         await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await act(async () => await user.click(submit));
+        await user.click(submit);
 
-        expect(navigate).toHaveBeenCalledWith('/vets')
+        await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/vets'));
     });
 
     test('edit vet renders correctly', async () => {
@@ -46,9 +46,9 @@ describe('VetEditAdmin', () => {
         await testFilledEditForm(form)
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await act(async () => await user.click(submit));
+        await user.click(submit);
 
-        expect(navigate).toHaveBeenCalledWith('/vets')
+        await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/vets'));
     });
 
     test('creates vet with exception', async () => {

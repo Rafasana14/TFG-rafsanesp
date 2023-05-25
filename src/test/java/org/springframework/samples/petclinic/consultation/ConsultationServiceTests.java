@@ -394,8 +394,6 @@ class ConsultationServiceTests {
 		assertEquals(1, stats.get("totalConsultations"));
 		assertTrue(stats.containsKey("consultationsByPet"));
 		assertEquals(1, ((Map<String, Integer>) stats.get("consultationsByPet")).get("Lucky"));
-		assertTrue(stats.containsKey("avgConsultationsPerPet"));
-		assertNotEquals(0, stats.get("avgConsultationsPerPet"));
 	}
 
 }

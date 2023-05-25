@@ -2,7 +2,6 @@ import { rest } from "msw";
 import { server } from "../../mocks/server";
 import { checkOption, fillForm, render, screen, testFilledEditForm, testRenderForm, waitFor } from "../../test-utils";
 import * as router from 'react-router'
-import { act } from "@testing-library/react";
 import VisitEditOwner from "./VisitEditOwner";
 
 const navigate = jest.fn()
@@ -35,9 +34,9 @@ describe('VisitEditOwner', () => {
         await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await act(async () => await user.click(submit));
+        await user.click(submit);
 
-        expect(navigate).toHaveBeenCalledWith('/pets/1/visits')
+        await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/pets/1/visits'));
     });
 
     test('creates visit with exception', async () => {
@@ -55,13 +54,13 @@ describe('VisitEditOwner', () => {
         )
         const { user } = render(<VisitEditOwner />, { route: route });
         const city = await screen.findByRole('radio', { name: /sevilla/i })
-        await act(async () => await user.click(city));
-        expect(city).toBeChecked()
+        await user.click(city);
+        await waitFor(async () => expect(city).toBeChecked());
         await checkOption(/james/i);
         await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await waitFor(async () => await user.click(submit));
+        await user.click(submit);
 
         expect(navigate).not.toHaveBeenCalledWith('/pets/1/visits');
 
@@ -114,9 +113,9 @@ describe('VisitEditOwner', () => {
         await testFilledEditForm(form)
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await act(async () => await user.click(submit));
+        await user.click(submit);
 
-        expect(navigate).toHaveBeenCalledWith('/pets/1/visits')
+        await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/pets/1/visits'));
     });
 
     test('edits past visit', async () => {
@@ -144,8 +143,8 @@ describe('VisitEditOwner', () => {
         await testFilledEditForm(auxForm)
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await act(async () => await user.click(submit));
+        await user.click(submit);
 
-        expect(navigate).toHaveBeenCalledWith('/pets/1/visits');
+        await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/pets/1/visits'));
     });
 });

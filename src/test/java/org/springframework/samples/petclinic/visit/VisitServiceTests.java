@@ -196,15 +196,15 @@ public class VisitServiceTests {
 	@Test
 	@Transactional
 	void shouldReturnStatsForOwner() {
-		Map<String, Object> stats = this.visitService.getVisitsOwnerStats(ownerService.findOwnerById(1).getId());
+		Map<String, Object> stats = this.visitService.getVisitsOwnerStats(ownerService.findOwnerById(6).getId());
 		assertTrue(stats.containsKey("totalVisits"));
-		assertEquals(3, stats.get("totalVisits"));
+		assertEquals(4, stats.get("totalVisits"));
 		assertTrue(stats.containsKey("visitsByYear"));
-		assertEquals(2, ((Map<String, Integer>) stats.get("visitsByYear")).get("2020"));
+		assertEquals(3, ((Map<String, Integer>) stats.get("visitsByYear")).get("2013"));
 		assertTrue(stats.containsKey("avgVisitsPerYear"));
 		assertNotEquals(0, stats.get("avgVisitsPerYear"));
 		assertTrue(stats.containsKey("visitsByPet"));
-		assertEquals(3, ((Map<String, Integer>) stats.get("visitsByPet")).get("Leo"));
+		assertEquals(2, ((Map<String, Integer>) stats.get("visitsByPet")).get("Max"));
 	}
 
 	@Test

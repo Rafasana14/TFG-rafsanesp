@@ -33,7 +33,7 @@ export default function TicketListOwner() {
 
     const modal = getErrorModal(setVisible, visible, message);
     const ticketList = ticketService.getTicketList([tickets, setTickets], "OWNER", [alerts, setAlerts], setMessage, setVisible, setNewTicket, plan);
-    const ticketForm = ticketService.getTicketForm(newTicket, consultation.status, "OWNER", handleChange, handleSubmit);
+    const ticketForm = plan === "PLATINUM" ? ticketService.getTicketForm(newTicket, consultation.status, "OWNER", handleChange, handleSubmit) : <></>;
     const ticketHeading = ticketService.getTicketHeading(consultation, null, "OWNER");
     return (
         <div>

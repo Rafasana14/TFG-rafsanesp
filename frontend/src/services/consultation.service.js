@@ -90,7 +90,7 @@ class ConsultationService {
                                 to={`/consultations/${c.id}/tickets`}>
                                 Details
                             </Button>
-                            {!plan || plan === "PLATINUM" ?
+                            {!plan || (plan === "PLATINUM" && c.status !== "CLOSED") ?
                                 <Button aria-label={"edit-" + c.id} size="sm" color="primary" tag={Link}
                                     to={"/consultations/" + c.id}>
                                     Edit
@@ -111,7 +111,13 @@ class ConsultationService {
             );
         });
     }
-    render(alerts, modal, search, [handleFilter, handleSearch, handleClear], consultationList, auth = "ADMIN") {
+    render(alerts, modal, search, [handleFilter, handleSearch, handleClear], consultationList, auth = "ADMIN", plan = null) {
+        let addButton = <></>;
+        if (!plan || plan === "PLATINUM") {
+            addButton = <Button color="success" tag={Link} to="/consultations/new">
+                Add Consultation
+            </Button>;
+        }
         return <div>
             <Container fluid style={{ marginTop: "15px" }}>
                 <h1 className="text-center">Consultations</h1>
@@ -119,16 +125,14 @@ class ConsultationService {
                 {modal}
                 <Row className="row-cols-auto g-3 align-items-center">
                     <Col>
-                        <Button color="success" tag={Link} to="/consultations/new">
-                            Add Consultation
-                        </Button>
+                        {addButton}
                         <Button aria-label='pending-filter' color="link" onClick={handleFilter} value="PENDING">Pending</Button>
                         <Button aria-label='answered-filter' color="link" onClick={handleFilter} value="ANSWERED">Answered</Button>
                         <Button aria-label='closed-filter' color="link" onClick={handleFilter} value="CLOSED">Closed</Button>
                         <Button aria-label='all-filter' color="link" onClick={handleFilter} value="">All</Button>
                     </Col>
                     <Col className="col-sm-3">
-                        <Input type="search" aria-label='search' placeholder={"Introduce an " + (auth === "ADMIN" ? "owner" : "pet") + " name to search by it"}
+                        <Input type="search" aria-label='search' placeholder={"Introduce " + (auth === "ADMIN" ? "an owner" : "a pet") + " name to search by it"}
                             value={search || ''} onChange={handleSearch} />
                     </Col>
                     <Col className="col-sm-3">

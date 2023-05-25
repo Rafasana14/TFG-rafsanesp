@@ -127,7 +127,7 @@ export default function PetListOwner() {
 
     return (
         <div>
-            < Container fluid style={{ marginTop: "20px" }}>
+            < Container style={{ marginTop: "20px" }}>
                 <h1 className="text-center">Pets</h1>
                 {alerts.map((a) => a.alert)}
                 {modal}

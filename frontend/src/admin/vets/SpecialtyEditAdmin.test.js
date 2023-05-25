@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { server } from "../../mocks/server";
-import { act, fillForm, render, screen, testFilledEditForm, testRenderForm } from "../../test-utils";
+import { act, fillForm, render, screen, testFilledEditForm, testRenderForm, waitFor } from "../../test-utils";
 import * as router from 'react-router'
 import SpecialtyEditAdmin from "./SpecialtyEditAdmin";
 
@@ -26,9 +26,9 @@ describe('SpecialtyEditAdmin', () => {
         await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await act(async () => await user.click(submit));
+        await user.click(submit);
 
-        expect(navigate).toHaveBeenCalledWith('/vets/specialties')
+        await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/vets/specialties'));
     });
 
     test('edit specialty renders correctly', async () => {
@@ -41,7 +41,7 @@ describe('SpecialtyEditAdmin', () => {
         const submit = screen.getByRole('button', { name: /save/i })
         await act(async () => await user.click(submit));
 
-        expect(navigate).toHaveBeenCalledWith('/vets/specialties')
+        await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/vets/specialties'));
     });
 
     test('creates specialty with exception', async () => {
@@ -58,10 +58,10 @@ describe('SpecialtyEditAdmin', () => {
             })
         )
         const { user } = render(<SpecialtyEditAdmin />, { route: route })
-        await fillForm(user, form);
+        await act(async () => await fillForm(user, form));
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await act(async () => await user.click(submit));
+        await user.click(submit);
 
         expect(navigate).not.toHaveBeenCalledWith('/vets/specialties');
 
