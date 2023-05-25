@@ -22,7 +22,6 @@ export default function DashboardOwner() {
                 <CalendarOwner />
             )
         } else if (plan === "PLATINUM") {
-            console.log(plan)
             return <div>
                 <ButtonGroup>
                     <Button aria-label={`show-calendar`} outline color="dark"
@@ -46,14 +45,14 @@ export default function DashboardOwner() {
 
     const modal = getErrorModal(setVisible, visible, message);
 
-    const state = getFunctions();
+    getFunctions();
 
     return (
-        <Container fluid style={{ marginTop: "20px" }}>
+        < Container fluid style={{ marginTop: "20px" }}>
             <h2 className="text-center" style={{ marginTop: "15px" }}>Dashboard</h2>
             {modal}
-            {state}
-        </Container>
+            {getFunctions()}
+        </Container >
     )
 
 }

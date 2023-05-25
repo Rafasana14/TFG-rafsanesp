@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { server } from "../../mocks/server";
-import { act, checkOption, fillForm, render, screen, testFilledEditForm, testRenderForm, waitFor } from "../../test-utils";
+import { checkOption, fillForm, render, screen, testFilledEditForm, testRenderForm, waitFor } from "../../test-utils";
 import * as router from 'react-router'
 import UserEditAdmin from "./UserEditAdmin";
 
@@ -28,9 +28,9 @@ describe('UserEditAdmin', () => {
         await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await act(async () => await user.click(submit));
+        await user.click(submit);
 
-        expect(navigate).toHaveBeenCalledWith('/users')
+        await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/users'));
     });
 
     test('edit user renders correctly', async () => {
@@ -42,9 +42,9 @@ describe('UserEditAdmin', () => {
         await testFilledEditForm(form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await act(async () => await user.click(submit));
+        await user.click(submit);
 
-        expect(navigate).toHaveBeenCalledWith('/users')
+        await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/users'));
     });
 
     test('creates user with exception', async () => {
@@ -65,7 +65,7 @@ describe('UserEditAdmin', () => {
         await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await waitFor(async () => await user.click(submit));
+        await user.click(submit);
 
         expect(navigate).not.toHaveBeenCalledWith('/users');
 

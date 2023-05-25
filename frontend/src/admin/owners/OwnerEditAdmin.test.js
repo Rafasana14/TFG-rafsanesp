@@ -3,7 +3,6 @@ import { server } from "../../mocks/server";
 import { fillForm, render, screen, testFilledEditForm, testRenderForm, waitFor } from "../../test-utils";
 import OwnerEditAdmin from "./OwnerEditAdmin";
 import * as router from 'react-router'
-import { act } from "@testing-library/react";
 
 const navigate = jest.fn()
 
@@ -32,9 +31,9 @@ describe('OwnerEditAdmin', () => {
         await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await act(async () => await user.click(submit));
+        await user.click(submit);
 
-        expect(navigate).toHaveBeenCalledWith('/owners')
+        await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/owners'));
     });
 
     test('edit owner renders correctly', async () => {
@@ -45,9 +44,9 @@ describe('OwnerEditAdmin', () => {
         await testFilledEditForm(form)
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await act(async () => await user.click(submit));
+        await user.click(submit);
 
-        expect(navigate).toHaveBeenCalledWith('/owners')
+        await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/owners'));
     });
 
     test('creates owner with exception', async () => {
@@ -67,7 +66,7 @@ describe('OwnerEditAdmin', () => {
         await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await waitFor(async () => await user.click(submit));
+        await user.click(submit);
 
         expect(navigate).not.toHaveBeenCalledWith('/owners');
 

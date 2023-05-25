@@ -2,7 +2,6 @@ import { rest } from "msw";
 import { server } from "../../mocks/server";
 import { checkOption, fillForm, render, screen, testFilledEditForm, testRenderForm, waitFor } from "../../test-utils";
 import * as router from 'react-router';
-import { act } from "@testing-library/react";
 import PetEditOwner from "./PetEditOwner";
 
 const navigate = jest.fn()
@@ -32,9 +31,9 @@ describe('PetEditOwner', () => {
         await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await act(async () => await user.click(submit));
+        await user.click(submit);
 
-        expect(navigate).toHaveBeenCalledWith('/pets')
+        await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/pets'));
     });
 
     test('edit pet renders correctly', async () => {
@@ -46,9 +45,9 @@ describe('PetEditOwner', () => {
         await testFilledEditForm(form)
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await act(async () => await user.click(submit));
+        await user.click(submit);
 
-        expect(navigate).toHaveBeenCalledWith('/pets')
+        await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/pets'));
     });
 
     test('creates pet with exception', async () => {
@@ -69,7 +68,7 @@ describe('PetEditOwner', () => {
         await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await waitFor(async () => await user.click(submit));
+        await user.click(submit);
 
         expect(navigate).not.toHaveBeenCalledWith('/pets');
 

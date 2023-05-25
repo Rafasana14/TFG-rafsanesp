@@ -44,7 +44,7 @@ const userVet2 = {
     }
 };
 
-const owner1 = {
+export const owner1 = {
     "id": 1,
     "firstName": "George",
     "lastName": "Franklin",
@@ -477,7 +477,7 @@ export const handlers = [
             ctx.status(200),
             ctx.json(
                 {
-                    "id": 3,
+                    "id": 4,
                     "description": "test ticket",
                     "creationDate": "2023-01-04T17:32:00",
                     "user": userOwner1,
