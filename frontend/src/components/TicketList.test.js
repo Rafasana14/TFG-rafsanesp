@@ -254,4 +254,23 @@ describe('TicketList', () => {
         await waitForElementToBeRemoved(input);
         expect(input).not.toBeInTheDocument();
     });
+
+    test('fetches plan with error for owner', async () => {
+        server.use(
+            rest.get('*/api/v1/plan', (req, res, ctx) => {
+                return res(
+                    ctx.status(500),
+                    ctx.json(
+                        {
+                            message: "Error fetching data",
+                        },
+                    )
+                )
+            })
+        )
+        render(<TicketList auth="OWNER" />);
+
+        const modal = await screen.findByRole('dialog');
+        expect(modal).toBeInTheDocument();
+    });
 });
