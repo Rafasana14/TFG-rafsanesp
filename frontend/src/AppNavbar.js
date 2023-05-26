@@ -123,7 +123,7 @@ function AppNavbar() {
 
     return (
         <div>
-            <Navbar expand="lg" light >
+            <Navbar color='success' expand="lg" dark >
                 <NavbarBrand href="/">
                     <img alt="logo" src="/logo1-recortado.png" style={{ height: 40, width: 40 }} />
                     PetClinic
