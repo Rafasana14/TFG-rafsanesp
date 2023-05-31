@@ -3,12 +3,12 @@ import SpecialtyListAdmin from "./SpecialtyListAdmin";
 
 describe('SpecialtyListAdmin', () => {
     test('renders correctly', async () => {
-        render(<SpecialtyListAdmin />);
-        testRenderList(/specialties/i);
+        render(<SpecialtyListAdmin test={true} />);
+        testRenderList(/specialties/i, true);
     });
 
     test('renders specialties correctly', async () => {
-        render(<SpecialtyListAdmin />);
+        render(<SpecialtyListAdmin test={true} />);
         const specialty1 = await screen.findByRole('cell', { 'name': 'surgery' });
         expect(specialty1).toBeInTheDocument();
 
@@ -28,7 +28,7 @@ describe('SpecialtyListAdmin', () => {
     test('delete specialty correct', async () => {
         const jsdomConfirm = window.confirm;
         window.confirm = () => { return true };
-        const { user } = render(<SpecialtyListAdmin />);
+        const { user } = render(<SpecialtyListAdmin test={true} />);
 
         const specialty1Delete = await screen.findByRole('button', { 'name': 'delete-1' });
         await user.click(specialty1Delete);

@@ -75,6 +75,7 @@ html {
 
 .datagrid {
   background-color: white;
+  margin-top: 10px;
 }
 
 .rbc-day-bg {
@@ -90,5 +91,14 @@ span.rbc-btn-group>button {
 }
 
 .rbc-agenda-view {
+  background-color: white;
+}
+
+tr>td.stats-cell {
+  background-color: white;
+  width: 10%;
+}
+
+button.dashboard-button {
   background-color: white;
 }

@@ -37,7 +37,7 @@ export default function UserEditAdmin() {
             setUser({ ...user, [name]: value })
     }
 
-    const handleSubmit = (event) => submitState(event, user, `/api/v1/users`, setMessage, setVisible, setRedirect);
+    const handleSubmit = async (event) => await submitState(event, user, `/api/v1/users`, setMessage, setVisible, setRedirect);
     const modal = getErrorModal(setVisible, visible, message);
     const authOptions = Array.from(auths).map(auth => <option key={auth.id} value={auth.id}>{auth.authority}</option>);
 
@@ -46,7 +46,7 @@ export default function UserEditAdmin() {
             <Container style={{ marginTop: "15px" }}>
                 {<h2>{user.id ? 'Edit User' : 'Add User'}</h2>}
                 {modal}
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                     <FormGroup>
                         <Label for="username">Username</Label>
                         <Input type="text" name="username" id="username" value={user.username || ''}

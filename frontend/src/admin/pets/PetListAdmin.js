@@ -34,12 +34,12 @@ export default function PetListAdmin({ test = false }) {
     }
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 70 },
-        { field: 'name', headerName: 'Name', width: 200 },
-        { field: 'birthdate', headerName: 'BirthDate', width: 150, sortable: false },
-        { field: 'type', headerName: 'Type', width: 150 },
-        { field: 'owner', headerName: 'Owner', width: 200 },
-        { field: 'actions', headerName: 'Actions', width: 180, sortable: false, renderCell: renderButtons },
+        { field: 'id', headerName: 'ID', flex: 0.1, minWidth: 60, },
+        { field: 'name', headerName: 'Name', minWidth: 150, flex: 0.8 },
+        { field: 'birthdate', headerName: 'BirthDate', flex: 0.5, minWidth: 150, sortable: false },
+        { field: 'type', headerName: 'Type', minWidth: 100, flex: 0.5 },
+        { field: 'owner', headerName: 'Owner', minWidth: 150, flex: 1 },
+        { field: 'actions', headerName: 'Actions', flex: 0.5, minWidth: 180, sortable: false, filterable: false, renderCell: renderButtons },
     ];
 
     const rows = Array.from(pets).map((pet) => {
@@ -60,13 +60,11 @@ export default function PetListAdmin({ test = false }) {
                 <h1 className="text-center">Pets</h1>
                 {alerts.map((a) => a.alert)}
                 {modal}
-                <div className="float-right">
-                    <Button className='add-button' tag={Link} to="/pets/new">
-                        Add Pet
-                    </Button>
-                </div><br></br>
+                <Button className='add-button' tag={Link} to="/pets/new">
+                    Add Pet
+                </Button>
                 <Row>
-                    <Col style={{ maxWidth: "1000px" }}>
+                    <Col style={{ maxWidth: '1600px' }}>
                         <DataGrid
                             className='datagrid'
                             disableVirtualization={test}

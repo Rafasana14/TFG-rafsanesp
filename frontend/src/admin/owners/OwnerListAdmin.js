@@ -28,14 +28,14 @@ export default function OwnerListAdmin({ test = false }) {
     }
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 70 },
-        { field: 'name', headerName: 'Name', width: 150 },
-        { field: 'address', headerName: 'Address', width: 200, sortable: false },
-        { field: 'city', headerName: 'City', width: 150, sortable: false },
-        { field: 'telephone', headerName: 'Telephone', width: 150, sortable: false },
-        { field: 'username', headerName: 'Username', width: 160 },
-        { field: 'plan', headerName: 'Plan', width: 150 },
-        { field: 'actions', headerName: 'Actions', width: 130, sortable: false, renderCell: renderButtons },
+        { field: 'id', headerName: 'ID', flex: 0.1, minWidth: 60, },
+        { field: 'name', headerName: 'Name', flex: 1, minWidth: 150 },
+        { field: 'address', headerName: 'Address', flex: 1, minWidth: 200, sortable: false },
+        { field: 'city', headerName: 'City', flex: 1, minWidth: 150, sortable: false },
+        { field: 'telephone', headerName: 'Telephone', flex: 1, minWidth: 150, sortable: false },
+        { field: 'username', headerName: 'Username', flex: 1, minWidth: 160 },
+        { field: 'plan', headerName: 'Plan', flex: 1, minWidth: 150 },
+        { field: 'actions', headerName: 'Actions', flex: 1, minWidth: 130, sortable: false, filterable: false, renderCell: renderButtons },
     ];
 
     const rows = Array.from(owners).map((owner) => {
@@ -58,12 +58,10 @@ export default function OwnerListAdmin({ test = false }) {
                 <h1 className="text-center">Owners</h1>
                 {alerts.map((a) => a.alert)}
                 {modal}
-                <div className="float-right">
-                    <Button className='add-button' tag={Link} to="/owners/new">
-                        Add Owner
-                    </Button>
-                </div><br></br>
-                <Col style={{ maxWidth: "1200px" }}>
+                <Button className='add-button' tag={Link} to="/owners/new">
+                    Add Owner
+                </Button>
+                <Col style={{ maxWidth: "1600px" }}>
                     <DataGrid
                         className='datagrid'
                         disableVirtualization={test}

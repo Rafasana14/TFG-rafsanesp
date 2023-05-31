@@ -34,7 +34,7 @@ export default function OwnerEditAdmin() {
         setOwner({ ...owner, [name]: value })
     }
 
-    const handleSubmit = (event) => submitState(event, owner, `/api/v1/owners`, setMessage, setVisible, setRedirect);
+    const handleSubmit = async (event) => await submitState(event, owner, `/api/v1/owners`, setMessage, setVisible, setRedirect);
 
     const modal = getErrorModal(setVisible, visible, message);
 
@@ -43,7 +43,7 @@ export default function OwnerEditAdmin() {
             <Container style={{ marginTop: "15px" }}>
                 {<h2>{owner.id ? 'Edit Owner' : 'Add Owner'}</h2>}
                 {modal}
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                     <FormGroup>
                         <Label for="firstName">First Name</Label>
                         <Input type="text" required name="firstName" id="firstName" value={owner.firstName || ''}

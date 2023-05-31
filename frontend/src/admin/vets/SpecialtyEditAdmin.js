@@ -29,7 +29,7 @@ export default function SpecialtyEditAdmin() {
         setSpecialty({ ...specialty, [name]: value })
     }
 
-    const handleSubmit = (event) => submitState(event, specialty, `/api/v1/vets/specialties`, setMessage, setVisible, setRedirect);
+    const handleSubmit = async (event) => await submitState(event, specialty, `/api/v1/vets/specialties`, setMessage, setVisible, setRedirect);
     const modal = getErrorModal(setVisible, visible, message);
 
     return (
@@ -37,7 +37,7 @@ export default function SpecialtyEditAdmin() {
             <Container style={{ marginTop: "15px" }}>
                 {<h2>{specialty.id ? 'Edit Specialty' : 'Add Specialty'}</h2>}
                 {modal}
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                     <FormGroup>
                         <Label for="name">Name</Label>
                         <Input type="text" name="name" id="name" value={specialty.name || ''}

@@ -38,9 +38,9 @@ export default function ConsultationEditOwner() {
         else setConsultation({ ...consultation, [name]: value });
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         const aux = { ...consultation, owner: pets.length > 0 ? pets[0].owner : null, status: "PENDING" }
-        submitState(event, aux, `/api/v1/consultations`, setMessage, setVisible, setRedirect);
+        await submitState(event, aux, `/api/v1/consultations`, setMessage, setVisible, setRedirect);
     };
 
     const modal = getErrorModal(setVisible, visible, message);
@@ -54,7 +54,7 @@ export default function ConsultationEditOwner() {
             <Container style={{ marginTop: "15px" }}>
                 {<h2>{id !== 'new' ? 'Edit Consultation' : 'Add Consultation'}</h2>}
                 {modal}
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                     <FormGroup>
                         <Label for="title">Title</Label>
                         <Input type="text" required name="title" id="title" value={consultation.title || ''}
@@ -75,8 +75,8 @@ export default function ConsultationEditOwner() {
                             </Input>}
                     </FormGroup>
                     <FormGroup>
-                        <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="secondary" tag={Link} to="/consultations">Cancel</Button>
+                        <Button className='save-button' type="submit">Save</Button>{' '}
+                        <Button className='back-button' tag={Link} to="/consultations">Cancel</Button>
                     </FormGroup>
                 </Form>
             </Container>

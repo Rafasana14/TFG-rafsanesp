@@ -28,17 +28,17 @@ export default function TicketList({ auth }) {
         ticketService.handleChange(event, [newTicket, setNewTicket]);
     }
 
-    function handleSubmit(event) {
-        ticketService.handleSubmit(event, jwt, id, [tickets, setTickets], [newTicket, setNewTicket], setMessage, setVisible);
+    async function handleSubmit(event) {
+        await ticketService.handleSubmit(event, jwt, id, [tickets, setTickets], [newTicket, setNewTicket], setMessage, setVisible);
     }
 
-    function handleClose(event) {
+    async function handleClose(event) {
         event.preventDefault();
         if (auth !== "OWNER") {
             const aux = consultation;
             aux.status = "CLOSED"
 
-            fetch(`/api/v1/consultations/${id}`, {
+            await fetch(`/api/v1/consultations/${id}`, {
                 method: 'PUT',
                 headers: {
                     "Authorization": `Bearer ${jwt}`,

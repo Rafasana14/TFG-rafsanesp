@@ -2,9 +2,6 @@ import { fireEvent, render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
 import userEvent from "@testing-library/user-event";
 
-// const customRender = (ui, options) =>
-//     render(ui, { wrapper: BrowserRouter, ...options })
-
 const customRender = (ui, { route = '/' } = {}) => {
     window.history.pushState({}, 'Test page', route)
 
@@ -13,9 +10,6 @@ const customRender = (ui, { route = '/' } = {}) => {
         ...render(ui, { wrapper: BrowserRouter }),
     }
 }
-
-// const renderWithMemory = (ui, options) =>
-//     render(ui, { wrapper: MemoryRouter, ...options })
 
 const testRenderList = (title, grid = false) => {
     const heading = screen.getByRole('heading', { 'name': title });
@@ -28,8 +22,6 @@ const testRenderList = (title, grid = false) => {
         const table = screen.getByRole('table', { 'name': title });
         expect(table).toBeInTheDocument();
     }
-
-
 
     const addLink = screen.getByRole('link', { 'name': /Add/ });
     expect(addLink).toBeInTheDocument();

@@ -1,42 +1,57 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, ButtonGroup, Container, Table } from 'reactstrap';
+import { Button, ButtonGroup, Col, Container } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import getErrorModal from '../../util/getErrorModal';
 import getIdFromUrl from '../../util/getIdFromUrl';
 import useFetchState from '../../util/useFetchState';
 import deleteFromList from '../../util/deleteFromList';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 const jwt = tokenService.getLocalAccessToken();
 
-export default function VisitListAdmin() {
+export default function VisitListAdmin({ test = false }) {
     const petId = getIdFromUrl(2);
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
     const [visits, setVisits] = useFetchState([], `/api/v1/pets/${petId}/visits`, jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
-
     const modal = getErrorModal(setVisible, visible, message);
-    const visitList = visits.map((visit) => {
+
+    const renderButtons = (params) => {
         return (
-            <tr key={visit.id}>
-                <td>{(new Date(visit.datetime)).toLocaleString()}</td>
-                <td>{visit.description ? visit.description : "No description provided"}</td>
-                <td>{visit.vet.firstName} {visit.vet.lastName}</td>
-                <td>
-                    <ButtonGroup>
-                        <Button size="sm" aria-label={"edit-" + visit.id} color="primary" tag={Link}
-                            to={`/pets/${petId}/visits/${visit.id}`}>
-                            Edit
-                        </Button>
-                        <Button size="sm" aria-label={"delete-" + visit.id} color="danger"
-                            onClick={() => deleteFromList(`/api/v1/pets/${petId}/visits/${visit.id}`, visit.id,
-                                [visits, setVisits], [alerts, setAlerts], setMessage, setVisible)}>
-                            Delete
-                        </Button>
-                    </ButtonGroup>
-                </td>
-            </tr>
+            <div>
+                <ButtonGroup>
+                    <Button size="sm" className='edit-button' aria-label={'edit-' + params.row.name} tag={Link} to={`/pets/${petId}/visits/${params.row.id}`}>Edit</Button>
+                    <Button size="sm" className='delete-button' aria-label={'delete-' + params.row.id}
+                        onClick={() => deleteFromList(`/api/v1/pets/${petId}/visits/${params.row.id}`, params.row.id, [visits, setVisits], [alerts, setAlerts], setMessage, setVisible)}>
+                        Delete
+                    </Button>
+                </ButtonGroup>
+            </div>
+        )
+    }
+
+    const columns = [
+        { field: 'id', headerName: 'ID', flex: 0.1, minWidth: 70 },
+        { field: 'datetime', type: 'dateTime', headerName: 'Date and Time', flex: 0.7, minWidth: 170 },
+        { field: 'description', headerName: 'Description', flex: 1, minWidth: 350, sortable: false },
+        { field: 'vet', headerName: 'Vet', flex: 0.7, minWidth: 250 },
+        { field: 'city', headerName: 'City', flex: 0.4, minWidth: 150 },
+        { field: 'actions', headerName: 'Actions', flex: 0.3, minWidth: 130, sortable: false, filterable: false, renderCell: renderButtons },
+    ];
+
+    const rows = Array.from(visits).map((v) => {
+        const vet = `${v.vet.firstName} ${v.vet.lastName} - ${v.vet.user.username} `;
+
+        return (
+            {
+                id: v.id,
+                datetime: new Date(v.datetime),
+                description: v.description || "No description provided",
+                city: v.vet.city,
+                vet: vet,
+            }
         );
     });
 
@@ -47,24 +62,34 @@ export default function VisitListAdmin() {
                 {alerts.map((a) => a.alert)}
                 {modal}
                 <div className="float-right">
-                    <Button color="success" tag={Link} to={`/pets/${petId}/visits/new`}>
+                    <Button className='add-button' tag={Link} to={`/pets/${petId}/visits/new`}>
                         Add Visit
                     </Button>{" "}
-                    <Button color="primary" tag={Link} to={`/pets/`}>
+                    <Button className='back-button' tag={Link} to={`/pets/`}>
                         Back
                     </Button>
                 </div>
-                <Table aria-label='visits' className="mt-4">
-                    <thead>
-                        <tr>
-                            <th>Date and Time</th>
-                            <th>Description</th>
-                            <th>Vet</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>{visitList}</tbody>
-                </Table>
+                <Col style={{ maxWidth: "1600px" }} align="center" >
+                    <DataGrid
+                        className='datagrid'
+                        disableVirtualization={test}
+                        aria-label='visits'
+                        rows={rows}
+                        columns={columns}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 0, pageSize: 10 },
+                            },
+                            sorting: {
+                                sortModel: [{ field: 'datetime', sort: 'desc' }],
+                            },
+                        }}
+                        pageSizeOptions={[10, 20]}
+                        slots={{
+                            toolbar: GridToolbar,
+                        }}
+                    />
+                </Col>
             </Container>
         </div>
     );

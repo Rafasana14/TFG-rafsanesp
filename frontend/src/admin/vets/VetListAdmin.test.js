@@ -3,12 +3,12 @@ import VetListAdmin from "./VetListAdmin";
 
 describe('VetListAdmin', () => {
     test('renders correctly', async () => {
-        render(<VetListAdmin />);
-        testRenderList(/vets/i);
+        render(<VetListAdmin test={true} />);
+        testRenderList(/vets/i, true);
     });
 
     test('renders vets correctly', async () => {
-        render(<VetListAdmin />);
+        render(<VetListAdmin test={true} />);
         const vet1 = await screen.findByRole('cell', { 'name': 'vet1' });
         expect(vet1).toBeInTheDocument();
 
@@ -28,7 +28,7 @@ describe('VetListAdmin', () => {
     test('delete vet correct', async () => {
         const jsdomConfirm = window.confirm;
         window.confirm = () => { return true };
-        const { user } = render(<VetListAdmin />);
+        const { user } = render(<VetListAdmin test={true} />);
 
         const vet1Delete = await screen.findByRole('button', { 'name': 'delete-1' });
         await user.click(vet1Delete);

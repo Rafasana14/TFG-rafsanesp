@@ -17,10 +17,10 @@ class TicketService {
             if (auth === "OWNER") {
                 buttons = index === length - 1 && plan === "PLATINUM" && t.user.authority.authority === "OWNER" && status !== "CLOSED" ?
                     <ButtonGroup>
-                        <Button aria-label={"edit-" + t.id} size="sm" color="primary" onClick={handleEdit}>
+                        <Button aria-label={"edit-" + t.id} size="sm" className="edit-button" onClick={handleEdit}>
                             Edit
                         </Button>
-                        <Button aria-label={"delete-" + t.id} size="sm" color="danger" onClick={removeOwnerVet}>
+                        <Button aria-label={"delete-" + t.id} size="sm" className="delete-button" onClick={removeOwnerVet}>
                             Delete
                         </Button>
                     </ButtonGroup> :
@@ -28,20 +28,20 @@ class TicketService {
             } else if (auth === "VET") {
                 buttons = index === length - 1 && t.user.username === tokenService.getUser().username && status !== "CLOSED" ?
                     <ButtonGroup>
-                        <Button aria-label={"edit-" + t.id} size="sm" color="primary" onClick={handleEdit}>
+                        <Button aria-label={"edit-" + t.id} size="sm" className="edit-button" onClick={handleEdit}>
                             Edit
                         </Button>
-                        <Button aria-label={"delete-" + t.id} size="sm" color="danger" onClick={removeOwnerVet}>
+                        <Button aria-label={"delete-" + t.id} size="sm" className="delete-button" onClick={removeOwnerVet}>
                             Delete
                         </Button>
                     </ButtonGroup> :
                     <></>;
             } else {
                 buttons = <ButtonGroup>
-                    <Button aria-label={"edit-" + t.id} size="sm" color="primary" onClick={handleEdit}>
+                    <Button aria-label={"edit-" + t.id} size="sm" className="edit-button" onClick={handleEdit}>
                         Edit
                     </Button>
-                    <Button aria-label={"delete-" + t.id} size="sm" color="danger" onClick={removeAdmin}>
+                    <Button aria-label={"delete-" + t.id} size="sm" className="delete-button" onClick={removeAdmin}>
                         Delete
                     </Button>
                 </ButtonGroup>;
@@ -80,14 +80,14 @@ class TicketService {
             return (
                 <Container>
                     {newTicket.id ? <h4>Edit Ticket</h4> : <h4>Add New Ticket</h4>}
-                    <Form onSubmit={handleSubmit}>
+                    <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                         <FormGroup>
                             <Label for="description">Description</Label>
                             <Input type="textarea" required name="description" id="description" value={newTicket.description || ''}
                                 onChange={handleChange} />
                         </FormGroup>
                         <FormGroup>
-                            <Button color="primary" type="submit">Save</Button>
+                            <Button className="save-button" type="submit">Save</Button>
                         </FormGroup>
                     </Form>
                 </Container>
@@ -99,13 +99,13 @@ class TicketService {
         if (auth !== "OWNER" && consultation.status !== "CLOSED") {
             return <Row>
                 <Col sm="3">
-                    <Button color="secondary" tag={Link} to="/consultations">Back</Button>
+                    <Button className="back-button" tag={Link} to="/consultations">Back</Button>
                 </Col>
                 <Col sm="6">
                     <h2 className="text-center">Consultation Number {consultation.id}</h2>
                 </Col>
                 <Col sm="3">
-                    <Button color="warning" onClick={handleClose} >
+                    <Button className="close-button" onClick={(e) => { (async () => { await handleClose(e); })(); }} >
                         Close Consultation
                     </Button>
                 </Col>
@@ -133,10 +133,10 @@ class TicketService {
         setNewTicket({ ...newTicket, [name]: value })
     }
 
-    handleSubmit(event, jwt, id, [tickets, setTickets], [newTicket, setNewTicket], setMessage, setVisible) {
+    async handleSubmit(event, jwt, id, [tickets, setTickets], [newTicket, setNewTicket], setMessage, setVisible) {
         event.preventDefault();
 
-        fetch(`/api/v1/consultations/${id}/tickets` + (newTicket.id ? '/' + newTicket.id : ''), {
+        await fetch(`/api/v1/consultations/${id}/tickets` + (newTicket.id ? '/' + newTicket.id : ''), {
             method: (newTicket.id) ? 'PUT' : 'POST',
             headers: {
                 "Authorization": `Bearer ${jwt}`,

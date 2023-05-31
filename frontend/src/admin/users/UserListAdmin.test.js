@@ -3,12 +3,12 @@ import UserListAdmin from "./UserListAdmin";
 
 describe('UserListAdmin', () => {
     test('renders correctly', async () => {
-        render(<UserListAdmin />);
-        testRenderList(/users/i);
+        render(<UserListAdmin test={true} />);
+        testRenderList(/users/i, true);
     });
 
     test('renders users correctly', async () => {
-        render(<UserListAdmin />);
+        render(<UserListAdmin test={true} />);
         const owner1 = await screen.findByRole('cell', { 'name': 'owner1' });
         expect(owner1).toBeInTheDocument();
 
@@ -28,7 +28,7 @@ describe('UserListAdmin', () => {
     test('delete user correct', async () => {
         const jsdomConfirm = window.confirm;
         window.confirm = () => { return true };
-        const { user } = render(<UserListAdmin />);
+        const { user } = render(<UserListAdmin test={true} />);
 
         const user1Delete = await screen.findByRole('button', { 'name': 'delete-1' });
         await user.click(user1Delete);

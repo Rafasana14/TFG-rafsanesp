@@ -58,8 +58,7 @@ export default function Login({ message, navigation }) {
 								<Input type="password" required name="password" id="password" value={password || ''}
 									onChange={(e) => setPassword(e.target.value)} />
 							</FormGroup>
-							<br />
-							<FormGroup>
+							<FormGroup align='center'>
 								<Button className="save-button" type="submit">Login</Button>{' '}
 								<Button className="cancel-button" tag={Link} to="/">Cancel</Button>
 							</FormGroup>
