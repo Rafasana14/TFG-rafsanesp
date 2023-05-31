@@ -88,8 +88,8 @@ export default function PetEditAdmin() {
                             </Input>}
                     </FormGroup>
                     <FormGroup>
-                        <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="secondary" tag={Link} to="/pets">Cancel</Button>
+                        <Button className='save-button' type="submit">Save</Button>{' '}
+                        <Button className='cancel-button' tag={Link} to="/pets">Cancel</Button>
                     </FormGroup>
                 </Form>
             </Container>

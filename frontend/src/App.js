@@ -4,9 +4,6 @@ import jwt_decode from "jwt-decode";
 import { ErrorBoundary } from "react-error-boundary";
 import AppNavbar from "./AppNavbar";
 import Home from "./home";
-import PrivateRoute from "./privateRoute";
-import Register from "./auth/register";
-import Logout from "./auth/logout";
 import tokenService from "./services/token.service";
 import PetEditAdmin from "./admin/pets/PetEditAdmin";
 import PetListAdmin from "./admin/pets/PetListAdmin";
@@ -25,7 +22,7 @@ import ConsultationEditAdmin from "./admin/consultations/ConsultationEditAdmin";
 import SwaggerDocs from "./public/swagger";
 import ConsultationEditOwner from "./owner/consultations/ConsultationEditOwner";
 import ConsultationListOwner from "./owner/consultations/ConsultationListOwner";
-import Login from "./auth/login/Login";
+import Login from "./auth/Login";
 import PetEditOwner from "./owner/pets/PetEditOwner";
 import PetListOwner from "./owner/pets/PetListOwner";
 import PlanEdit from "./owner/PlanEdit";
@@ -38,6 +35,9 @@ import CalendarVet from "./vet/dashboard/CalendarVet";
 import StatsAdmin from "./admin/dashboard/StatsAdmin";
 import './App.css';
 import TicketList from "./components/TicketList";
+import Register from "./auth/Register";
+import Logout from "./auth/Logout.js";
+import PrivateRoute from "./util/privateRoute";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (

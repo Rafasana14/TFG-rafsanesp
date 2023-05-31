@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Form, Button, Container, FormGroup, Input, Label, Col, Alert, Row } from "reactstrap";
-import tokenService from "../../services/token.service";
+import tokenService from "../services/token.service";
 
 export default function Login({ message, navigation }) {
 	const [username, setUsername] = useState("");
@@ -30,7 +30,7 @@ export default function Login({ message, navigation }) {
 				if (navigation === true) {
 					return window.location.reload();
 				}
-				else window.location.href = "/dashboard";
+				else window.location.assign("/dashboard");
 			}).catch((message) => {
 				alert(message);
 			}
@@ -60,8 +60,8 @@ export default function Login({ message, navigation }) {
 							</FormGroup>
 							<br />
 							<FormGroup>
-								<Button color="primary" type="submit">Login</Button>{' '}
-								<Button color="secondary" tag={Link} to="/">Cancel</Button>
+								<Button className="save-button" type="submit">Login</Button>{' '}
+								<Button className="cancel-button" tag={Link} to="/">Cancel</Button>
 							</FormGroup>
 						</Form>
 						{!navigation ? <p className="text-center">You are not registered? <a href="/register" tag={Link} to="register">Sign up</a></p> : <></>}

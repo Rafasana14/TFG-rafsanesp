@@ -589,4 +589,43 @@ export const handlers = [
             ))
     }),
 
+    rest.post('*/api/v1/auth/signup', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(
+                {
+                    "token": "token",
+                    "id": 1,
+                    "username": "username",
+                    "roles": "VET"
+                }
+            ))
+    }),
+
+    rest.post('*/api/v1/auth/signup', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(
+                {
+                    "token": "token",
+                    "id": 1,
+                    "username": "username",
+                    "roles": "VET"
+                }
+            ))
+    }),
+
+    rest.post('*/api/v1/auth/signin', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(
+                {
+                    "token": "token",
+                    "id": 1,
+                    "username": "username",
+                    "roles": "VET"
+                }
+            ))
+    }),
+
 ]

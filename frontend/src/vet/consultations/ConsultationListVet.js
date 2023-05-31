@@ -12,36 +12,11 @@ export default function ConsultationListVet({ test = false }) {
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
     const consultations = useFetchData(`/api/v1/consultations`, jwt, setMessage, setVisible);
-
-    // function handleSearch(event) {
-    //     consultationService.handleSearch(event, consultations, filter, setSearch, setFiltered, "VET");
-    // }
-
-    // function handleFilter(event) {
-    //     consultationService.handleFilter(event, consultations, setFilter, search, setFiltered, "VET");
-    // }
-
-    // function handleClear() {
-    //     consultationService.handleClear(consultations, setFiltered, setSearch, setFilter);
-    // }
-
-    // let consultationList;
-    // if (filtered.length === 0 && (filter !== "" || search !== "")) consultationList =
-    //     <tr>
-    //         <td>There are no consultations with those filter and search parameters.</td>
-    //     </tr>
-    // else consultationList = consultationService.getConsultationList([consultations, setConsultations],
-    //     [filtered, setFiltered], [alerts, setAlerts], setMessage, setVisible);
     const modal = getErrorModal(setVisible, visible, message);
-
-    // return (
-    //     consultationService.render(alerts, modal, search, [handleFilter, handleSearch, handleClear], consultationList, "VET")
-    // );
-
 
     const renderButtons = (params) => {
         return (
-            <Button aria-label={"details-" + params.row.id} size="sm" color="info" tag={Link}
+            <Button aria-label={"details-" + params.row.id} size="sm" className='extra-button' tag={Link}
                 to={`/consultations/${params.row.id}/tickets`}>
                 Details
             </Button>
@@ -79,6 +54,7 @@ export default function ConsultationListVet({ test = false }) {
             {modal}
             <Col style={{ maxWidth: "1050px" }} align="center" >
                 <DataGrid
+                    className='datagrid'
                     disableVirtualization={test}
                     aria-label='consultations'
                     rows={rows}

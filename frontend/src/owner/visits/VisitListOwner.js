@@ -93,6 +93,7 @@ export default function VisitListOwner({ test = false }) {
                 <br></br>
                 <Col style={{ maxWidth: "1100px" }} align="center" >
                     <DataGrid
+                        className='datagrid'
                         disableVirtualization={test}
                         aria-label='visits'
                         rows={rows}

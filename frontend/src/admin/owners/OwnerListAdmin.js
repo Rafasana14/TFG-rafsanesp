@@ -14,53 +14,16 @@ export default function OwnerListAdmin({ test = false }) {
     const [visible, setVisible] = useState(false);
     const [owners, setOwners] = useFetchState([], `/api/v1/owners`, jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
-
-    // const ownerList = owners.map((owner) => {
-    //     return (
-    //         <tr key={owner.id}>
-    //             <td style={{ whiteSpace: "nowrap" }}>
-    //                 {owner.firstName} {owner.lastName}
-    //             </td>
-    //             <td>{owner.address}</td>
-    //             <td>{owner.city}</td>
-    //             <td>{owner.telephone}</td>
-    //             <td>{owner.user.username}</td>
-    //             <td>{owner.plan}</td>
-    //             <td>
-    //                 <ButtonGroup>
-    //                     <Button size="sm" color="primary" aria-label={'edit-' + owner.user.username} tag={Link} to={"/owners/" + owner.id}>Edit</Button>
-    //                     <Button size="sm" color="danger" aria-label={'delete-' + owner.user.username}
-    //                         onClick={() => deleteFromList(`/api/v1/owners/${owner.id}`, owner.id, [owners, setOwners], [alerts, setAlerts], setMessage, setVisible)}>
-    //                         Delete</Button>
-    //                 </ButtonGroup>
-    //             </td>
-    //         </tr>
-    //     );
-    // });
-
     const modal = getErrorModal(setVisible, visible, message);
 
     const renderButtons = (params) => {
         return (
             <ButtonGroup>
-                <Button size="sm" color="primary" aria-label={'edit-' + params.row.username} tag={Link} to={"/owners/" + params.row.id}>Edit</Button>
-                <Button size="sm" color="danger" aria-label={'delete-' + params.row.username}
+                <Button size="sm" className='edit-button' aria-label={'edit-' + params.row.username} tag={Link} to={"/owners/" + params.row.id}>Edit</Button>
+                <Button size="sm" className='delete-button' aria-label={'delete-' + params.row.username}
                     onClick={() => deleteFromList(`/api/v1/owners/${params.row.id}`, params.row.id, [owners, setOwners], [alerts, setAlerts], setMessage, setVisible)}>
                     Delete</Button>
             </ButtonGroup>
-            // <strong>
-            //     <Button
-            //         variant="contained"
-            //         color="primary"
-            //         size="small"
-            //         style={{ marginLeft: 16 }}
-            //         onClick={() => {
-            //             parseName(params.row.col6)
-            //         }}
-            //     >
-            //         More Info
-            //     </Button>
-            // </strong>
         )
     }
 
@@ -96,12 +59,13 @@ export default function OwnerListAdmin({ test = false }) {
                 {alerts.map((a) => a.alert)}
                 {modal}
                 <div className="float-right">
-                    <Button color="success" tag={Link} to="/owners/new">
+                    <Button className='add-button' tag={Link} to="/owners/new">
                         Add Owner
                     </Button>
                 </div><br></br>
                 <Col style={{ maxWidth: "1200px" }}>
                     <DataGrid
+                        className='datagrid'
                         disableVirtualization={test}
                         aria-label='owners'
                         rows={rows}
@@ -117,20 +81,6 @@ export default function OwnerListAdmin({ test = false }) {
                         }}
                     />
                 </Col>
-                {/* <Table aria-label="owners" className="mt-4">
-          <thead>
-            <tr>
-              <th width="10%">Name</th>
-              <th width="10%">Address</th>
-              <th width="10%">City</th>
-              <th width="10%">Telephone</th>
-              <th width="10%">User</th>
-              <th width="10%">Plan</th>
-              <th width="40%">Actions</th>
-            </tr>
-          </thead>
-          <tbody>{ownerList}</tbody>
-        </Table> */}
             </Container>
         </div>
     );

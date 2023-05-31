@@ -72,3 +72,23 @@ html {
   background-color: #00A6FF;
   border-color: black;
 }
+
+.datagrid {
+  background-color: white;
+}
+
+.rbc-day-bg {
+  background-color: white;
+}
+
+.rbc-header {
+  background-color: white;
+}
+
+span.rbc-btn-group>button {
+  background-color: white;
+}
+
+.rbc-agenda-view {
+  background-color: white;
+}
