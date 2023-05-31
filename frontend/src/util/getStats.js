@@ -1,6 +1,26 @@
 import { Bar, Pie } from "react-chartjs-2";
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+    ArcElement
+} from 'chart.js';
 
-function getBarStats(title, label, data) {
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+    ArcElement
+);
+
+function getBarStats(title, label, data, ariaLabel) {
     if (data) {
         const barOptions = {
             responsive: true,
@@ -31,11 +51,11 @@ function getBarStats(title, label, data) {
                 },
             ],
         };
-        return <Bar style={{ maxWidth: '600px' }} options={barOptions} data={barData} />
+        return <Bar aria-label={ariaLabel} style={{ maxWidth: '600px' }} options={barOptions} data={barData} />
     }
 }
 
-function getPieStats(title, label, data, plan = false) {
+function getPieStats(title, label, data, ariaLabel, plan = false) {
     if (data) {
         const pieOptions = {
             responsive: true,
@@ -72,7 +92,7 @@ function getPieStats(title, label, data, plan = false) {
                 },
             ],
         };
-        return <Pie style={{ maxWidth: '600px' }} options={pieOptions} data={pieData} />
+        return <Pie aria-label={ariaLabel} style={{ maxWidth: '600px' }} options={pieOptions} data={pieData} />
     }
 }
 

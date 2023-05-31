@@ -43,8 +43,8 @@ export default function ConsultationEditAdmin() {
         else setConsultation({ ...consultation, [name]: value });
     }
 
-    const handleSubmit = (event) => {
-        submitState(event, consultation, `/api/v1/consultations`, setMessage, setVisible, setRedirect);
+    const handleSubmit = async (event) => {
+        await submitState(event, consultation, `/api/v1/consultations`, setMessage, setVisible, setRedirect);
     };
 
     const modal = getErrorModal(setVisible, visible, message);
@@ -63,7 +63,7 @@ export default function ConsultationEditAdmin() {
             <Container style={{ marginTop: "15px" }}>
                 {<h2>{id !== 'new' ? 'Edit Consultation' : 'Add Consultation'}</h2>}
                 {modal}
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                     <FormGroup>
                         <Label for="title">Title</Label>
                         <Input type="text" required name="title" id="title" value={consultation.title || ''}

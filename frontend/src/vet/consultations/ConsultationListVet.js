@@ -12,36 +12,11 @@ export default function ConsultationListVet({ test = false }) {
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
     const consultations = useFetchData(`/api/v1/consultations`, jwt, setMessage, setVisible);
-
-    // function handleSearch(event) {
-    //     consultationService.handleSearch(event, consultations, filter, setSearch, setFiltered, "VET");
-    // }
-
-    // function handleFilter(event) {
-    //     consultationService.handleFilter(event, consultations, setFilter, search, setFiltered, "VET");
-    // }
-
-    // function handleClear() {
-    //     consultationService.handleClear(consultations, setFiltered, setSearch, setFilter);
-    // }
-
-    // let consultationList;
-    // if (filtered.length === 0 && (filter !== "" || search !== "")) consultationList =
-    //     <tr>
-    //         <td>There are no consultations with those filter and search parameters.</td>
-    //     </tr>
-    // else consultationList = consultationService.getConsultationList([consultations, setConsultations],
-    //     [filtered, setFiltered], [alerts, setAlerts], setMessage, setVisible);
     const modal = getErrorModal(setVisible, visible, message);
-
-    // return (
-    //     consultationService.render(alerts, modal, search, [handleFilter, handleSearch, handleClear], consultationList, "VET")
-    // );
-
 
     const renderButtons = (params) => {
         return (
-            <Button aria-label={"details-" + params.row.id} size="sm" color="info" tag={Link}
+            <Button aria-label={"details-" + params.row.id} size="sm" className='extra-button' tag={Link}
                 to={`/consultations/${params.row.id}/tickets`}>
                 Details
             </Button>
@@ -50,13 +25,13 @@ export default function ConsultationListVet({ test = false }) {
     }
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 70, filterable: false },
-        { field: 'title', headerName: 'Title', width: 300 },
-        { field: 'status', headerName: 'Status', width: 130 },
-        { field: 'owner', headerName: 'Owner', width: 150 },
-        { field: 'pet', headerName: 'Pet', width: 150 },
-        { field: 'creationDate', type: 'dateTime', headerName: 'Creation Date', width: 150 },
-        { field: 'actions', headerName: 'Actions', width: 90, sortable: false, renderCell: renderButtons },
+        { field: 'id', headerName: 'ID', flex: 0.1, minWidth: 70, filterable: false },
+        { field: 'title', headerName: 'Title', flex: 1, minWidth: 300 },
+        { field: 'status', headerName: 'Status', flex: 0.4, minWidth: 130 },
+        { field: 'owner', headerName: 'Owner', flex: 0.5, minWidth: 150 },
+        { field: 'pet', headerName: 'Pet', flex: 0.4, minWidth: 150 },
+        { field: 'creationDate', type: 'dateTime', headerName: 'Creation Date', flex: 0.5, minWidth: 150 },
+        { field: 'actions', headerName: 'Actions', flex: 0.3, minWidth: 90, sortable: false, filterable: false, renderCell: renderButtons },
     ];
 
     const rows = Array.from(consultations).map((consultation) => {
@@ -73,12 +48,13 @@ export default function ConsultationListVet({ test = false }) {
     });
 
 
-    return <div>
+    return (
         <Container fluid style={{ marginTop: "15px" }}>
             <h1 className="text-center">Consultations</h1>
             {modal}
-            <Col style={{ maxWidth: "1050px" }} align="center" >
+            <Col style={{ maxWidth: "1600px" }} align="center" >
                 <DataGrid
+                    className='datagrid'
                     disableVirtualization={test}
                     aria-label='consultations'
                     rows={rows}
@@ -98,5 +74,5 @@ export default function ConsultationListVet({ test = false }) {
                 />
             </Col>
         </Container>
-    </div>
+    )
 }

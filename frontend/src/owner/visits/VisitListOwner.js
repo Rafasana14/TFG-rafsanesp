@@ -46,12 +46,12 @@ export default function VisitListOwner({ test = false }) {
     }
 
     const columns = [
-        { field: 'id', headerName: 'ID', width: 70, filterable: false },
-        { field: 'datetime', type: 'dateTime', headerName: 'Date and Time', width: 170 },
-        { field: 'description', headerName: 'Description', width: 350, sortable: false },
-        { field: 'vet', headerName: 'Vet', width: 250 },
-        { field: 'city', headerName: 'City', width: 150 },
-        { field: 'actions', headerName: 'Actions', width: 130, sortable: false, renderCell: renderButtons },
+        { field: 'id', headerName: 'ID', flex: 0.1, minWidth: 70, filterable: false },
+        { field: 'datetime', type: 'dateTime', headerName: 'Date and Time', flex: 0.7, minWidth: 170 },
+        { field: 'description', headerName: 'Description', flex: 1, minWidth: 350, sortable: false },
+        { field: 'vet', headerName: 'Vet', flex: 0.9, minWidth: 250 },
+        { field: 'city', headerName: 'City', flex: 0.5, minWidth: 150 },
+        { field: 'actions', headerName: 'Actions', flex: 0.3, minWidth: 130, sortable: false, filterable: false, renderCell: renderButtons },
     ];
 
     const rows = Array.from(visits).map((visit) => {
@@ -82,17 +82,15 @@ export default function VisitListOwner({ test = false }) {
                 <h1 className="text-center">Visits{pet ? " of " + pet.name : ""}</h1>
                 {alerts.map((a) => a.alert)}
                 {modal}
-                <div className="float-right">
-                    <Button color="success" tag={Link} to={`/pets/${petId}/visits/new`}>
-                        Add Visit
-                    </Button>{" "}
-                    <Button color="primary" tag={Link} to={`/pets/`}>
-                        Back
-                    </Button>
-                </div>
-                <br></br>
-                <Col style={{ maxWidth: "1100px" }} align="center" >
+                <Button color="success" tag={Link} to={`/pets/${petId}/visits/new`}>
+                    Add Visit
+                </Button>{" "}
+                <Button color="primary" tag={Link} to={`/pets/`}>
+                    Back
+                </Button>
+                <Col style={{ maxWidth: "1600px" }} align="center" >
                     <DataGrid
+                        className='datagrid'
                         disableVirtualization={test}
                         aria-label='visits'
                         rows={rows}

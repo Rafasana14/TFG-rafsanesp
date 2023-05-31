@@ -32,6 +32,11 @@ describe('DashboardOwner', () => {
         const headingStats = await screen.findAllByRole('heading', { 'name': /stats/i });
         expect(headingStats).toHaveLength(3);
 
+        const barGraphs = await screen.findAllByRole('img', { name: /bar/i });
+        expect(barGraphs).toHaveLength(2);
+        const pieGraphs = await screen.findAllByRole('img', { name: /pie/i });
+        expect(pieGraphs).toHaveLength(2);
+
         window.confirm = jsdomAlert;
     });
 

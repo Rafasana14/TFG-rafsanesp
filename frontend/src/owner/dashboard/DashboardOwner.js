@@ -24,11 +24,11 @@ export default function DashboardOwner() {
         } else if (plan === "PLATINUM") {
             return <div>
                 <ButtonGroup>
-                    <Button aria-label={`show-calendar`} outline color="dark"
+                    <Button aria-label={`show-calendar`} outline color="dark" className="dashboard-button"
                         onClick={() => setShowStats(false)} active={!showStats}>
                         Calendar
                     </Button>
-                    <Button aria-label={`show-stats`} outline color="dark"
+                    <Button aria-label={`show-stats`} outline color="dark" className="dashboard-button"
                         onClick={() => setShowStats(true)} active={showStats}>
                         Stats
                     </Button>

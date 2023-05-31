@@ -39,7 +39,7 @@ export default function PetEditOwner() {
             setPet({ ...pet, [name]: value })
     }
 
-    const handleSubmit = (event) => submitState(event, pet, `/api/v1/pets`, setMessage, setVisible, setRedirect);
+    const handleSubmit = async (event) => await submitState(event, pet, `/api/v1/pets`, setMessage, setVisible, setRedirect);
 
     const modal = getErrorModal(setVisible, visible, message);
     const typeOptions = Array.from(types).map(type => <option key={type.id} value={type.id}>{type.name}</option>);
@@ -52,7 +52,7 @@ export default function PetEditOwner() {
                 <Row>
                     <Col></Col>
                     <Col className='justify-content-center' xs="10" sm="8" md="6" lg="4" xl="3">
-                        <Form onSubmit={handleSubmit}>
+                        <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                             <FormGroup>
                                 <Label for="name">Name</Label>
                                 <Input type="text" required name="name" id="name" value={pet.name || ''}

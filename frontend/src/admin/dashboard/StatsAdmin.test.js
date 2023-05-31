@@ -1,5 +1,5 @@
 import { render, screen } from "../../test-utils";
-import StatsAdmin from "./StatsAdmin";
+import StatsAdmin from './StatsAdmin';
 
 describe('StatsAdmin', () => {
     test('renders correctly', async () => {
@@ -10,6 +10,11 @@ describe('StatsAdmin', () => {
 
         const statsTables = await screen.findAllByRole('table', { 'name': /stats/i });
         expect(statsTables).toHaveLength(4);
+
+        const barGraphs = await screen.findAllByRole('img', { name: /bar/i });
+        expect(barGraphs).toHaveLength(4);
+        const pieGraphs = await screen.findAllByRole('img', { name: /pie/i });
+        expect(pieGraphs).toHaveLength(2);
     });
 
 });

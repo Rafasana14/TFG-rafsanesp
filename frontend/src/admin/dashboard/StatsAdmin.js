@@ -4,30 +4,10 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import getErrorModal from '../../util/getErrorModal';
 import useFetchData from '../../util/useFetchData';
 import tokenService from '../../services/token.service';
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-    ArcElement
-} from 'chart.js';
 import { getBarStats, getPieStats } from '../../util/getStats';
 import { useMediaQuery } from 'react-responsive';
 
 const jwt = tokenService.getLocalAccessToken();
-
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-    ArcElement
-);
 
 function StatsAdmin() {
     const isMobile = useMediaQuery({ query: `(max-width: 767px)` });
@@ -50,41 +30,41 @@ function StatsAdmin() {
             <Row>
                 <Col md="6">
                     <h4 className='text-center'>Owners Stats</h4>
-                    <Table aria-label='owners-stats' color='info' align='center' style={{ maxWidth: "400px" }}>
+                    <Table aria-label='owners-stats' align='center' style={{ maxWidth: "400px" }}>
                         <tbody>
                             <tr className="border border-dark">
                                 <td className="table-info border border-dark">Total Owners</td>
-                                <td >{ownersStats.totalOwners}</td>
+                                <td className='stats-cell'>{ownersStats.totalOwners}</td>
                             </tr>
                             <tr className="border border-dark">
                                 <td className="table-info border border-dark">Owners with more than 1 Pet</td>
-                                <td >{ownersStats.moreThanOnePet}</td>
+                                <td className='stats-cell'>{ownersStats.moreThanOnePet}</td>
                             </tr>
                             <tr className="border border-dark">
                                 <td className="table-info border border-dark">Total Consultations</td>
-                                <td >{consultationsStats.totalConsultations}</td>
+                                <td className='stats-cell'>{consultationsStats.totalConsultations}</td>
                             </tr>
                             <tr className="border border-dark">
                                 <td className="table-info border border-dark">Average Consultations per Owner</td>
-                                <td >{consultationsStats.avgConsultationsPerOwner}</td>
+                                <td className='stats-cell'>{consultationsStats.avgConsultationsPerOwner}</td>
                             </tr>
                         </tbody>
                     </Table>
-                    {getPieStats('Number of Owners by Plan', 'Number of Owners', ownersStats.ownersByPlan, true)}
+                    {getPieStats('Number of Owners by Plan', 'Number of Owners', ownersStats.ownersByPlan, 'owners-pie-graph', true)}
                 </Col>
                 {isMobile ? <div className="mb-4"><hr className="solid" /></div> : <></>}
                 <Col md="6">
                     <h4 className='text-center'>Vets Stats</h4>
-                    <Table aria-label='vets-stats' color='info' align='center' style={{ maxWidth: "400px" }}>
+                    <Table aria-label='vets-stats' align='center' style={{ maxWidth: "400px" }}>
                         <tbody>
                             <tr className="border border-dark">
                                 <td className="table-info border border-dark">Total Vets</td>
-                                <td >{vetsStats.totalVets}</td>
+                                <td className='stats-cell'>{vetsStats.totalVets}</td>
                             </tr>
                         </tbody>
                     </Table>
-                    {getBarStats('Number of Vets by City', 'Number of Vets', vetsStats.vetsByCity)}
-                    {getBarStats('Number of Vets by Specialty', 'Number of Vets', vetsStats.vetsBySpecialty)}
+                    {getBarStats('Number of Vets by City', 'Number of Vets', vetsStats.vetsByCity, 'vets-cities-bar-graph')}
+                    {getBarStats('Number of Vets by Specialty', 'Number of Vets', vetsStats.vetsBySpecialty, 'vets-specialties-bar-graph')}
                 </Col>
             </Row>
             <div className="mb-4">
@@ -97,15 +77,15 @@ function StatsAdmin() {
                         <tbody>
                             <tr className="border border-dark">
                                 <td className="table-info border border-dark">Total Pets</td>
-                                <td >{petsStats.totalPets}</td>
+                                <td className='stats-cell'>{petsStats.totalPets}</td>
                             </tr>
                             <tr className="border border-dark">
                                 <td className="table-info border border-dark">Average Pets per Owner</td>
-                                <td >{petsStats.avgPetsPerOwner}</td>
+                                <td className='stats-cell'>{petsStats.avgPetsPerOwner}</td>
                             </tr>
                         </tbody>
                     </Table>
-                    {getBarStats('Number of Pets by Type', 'Number of Pets', petsStats.petsByType)}
+                    {getBarStats('Number of Pets by Type', 'Number of Pets', petsStats.petsByType, 'pets-bar-graph')}
                 </Col>
                 {isMobile ? <div className="mb-4"><hr className="solid" /></div> : <></>}
                 <Col md="6">
@@ -114,16 +94,16 @@ function StatsAdmin() {
                         <tbody>
                             <tr className="border border-dark">
                                 <td className="table-info border border-dark">Total Vets</td>
-                                <td >{visitsStats.totalVisits}</td>
+                                <td className='stats-cell'>{visitsStats.totalVisits}</td>
                             </tr>
                             <tr className="border border-dark">
                                 <td className="table-info border border-dark">Average Visits per Pet</td>
-                                <td >{visitsStats.avgVisitsPerPet}</td>
+                                <td className='stats-cell'>{visitsStats.avgVisitsPerPet}</td>
                             </tr>
                         </tbody>
                     </Table>
-                    {getBarStats('Number of Visits by Year', 'Number of Visits', visitsStats.visitsByYear)}
-                    {getPieStats('Number of Visits By Vet', 'Number of Visits', vetsStats.visitsByVet)}
+                    {getBarStats('Number of Visits by Year', 'Number of Visits', visitsStats.visitsByYear, 'visits-bar-graph')}
+                    {getPieStats('Number of Visits By Vet', 'Number of Visits', vetsStats.visitsByVet, 'visits-pie-graph')}
                 </Col>
             </Row>
         </Container>

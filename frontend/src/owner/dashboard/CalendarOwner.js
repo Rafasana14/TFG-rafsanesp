@@ -50,11 +50,12 @@ function CalendarOwner() {
 
     const calendar = <div style={{ height: `${600}px` }} className="calendar-container">
         <Calendar
+            // style={{ backgroundColor: 'white' }}
             localizer={localizer}
             events={events}
             startAccessor="start"
             endAccessor="end"
-            onSelectEvent={(e) => window.location.href = `/pets/${e.petId}/visits/${e.visitId}`}
+            onSelectEvent={(e) => window.location.assign(`/pets/${e.petId}/visits/${e.visitId}`)}
             onSelectSlot={handleSelectSlot}
             selectable
             views={{

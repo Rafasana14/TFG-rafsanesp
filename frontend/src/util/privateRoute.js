@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import tokenService from '../services/token.service';
-import Login from '../auth/login/Login';
+import Login from '../auth/Login';
 
 const PrivateRoute = ({ children }) => {
     const jwt = tokenService.getLocalAccessToken();

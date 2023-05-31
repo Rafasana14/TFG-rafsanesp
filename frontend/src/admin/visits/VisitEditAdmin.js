@@ -40,7 +40,7 @@ export default function VisitEditAdmin() {
             setVisit({ ...visit, [name]: value })
     }
 
-    const handleSubmit = (event) => submitState(event, visit, `/api/v1/pets/${petId}/visits`, setMessage, setVisible, setRedirect);
+    const handleSubmit = async (event) => await submitState(event, visit, `/api/v1/pets/${petId}/visits`, setMessage, setVisible, setRedirect);
     const modal = getErrorModal(setVisible, visible, message);
     const vetOptions = vets.map(vet => <option key={vet.id} value={vet.id}>{vet.firstName} {vet.lastName} - {vet.user.username}</option>);
 
@@ -49,7 +49,7 @@ export default function VisitEditAdmin() {
             <Container style={{ marginTop: "15px" }}>
                 {<h2>{visit.id ? 'Edit Visit' : 'Add Visit'}</h2>}
                 {modal}
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                     <FormGroup>
                         <Label for="datetime">Date and Time</Label>
                         <Input type="datetime-local" required name="datetime" id="datetime" value={visit.datetime || ''}

@@ -4,30 +4,10 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import getErrorModal from '../../util/getErrorModal';
 import useFetchData from '../../util/useFetchData';
 import tokenService from '../../services/token.service';
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-    ArcElement
-} from 'chart.js';
 import { getBarStats, getPieStats } from '../../util/getStats';
 import { useMediaQuery } from 'react-responsive';
 
 const jwt = tokenService.getLocalAccessToken();
-
-ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend,
-    ArcElement
-);
 
 function StatsOwner() {
     const isMobile = useMediaQuery({ query: `(max-width: 767px)` });
@@ -40,23 +20,21 @@ function StatsOwner() {
 
     const title = <h3 className='text-center'>Stats</h3>;
 
-
-
     return <div>
         <Container style={{ marginTop: "15px" }}>
             {title}
             <Row>
                 <Col md="6">
                     <h4 className='text-center'>Consultations Stats</h4>
-                    <Table color='info' align='center' style={{ maxWidth: "400px" }}>
+                    <Table align='center' style={{ maxWidth: "400px" }}>
                         <tbody>
                             <tr className="border border-dark">
                                 <td className="table-info border border-dark">Total Consultations</td>
-                                <td >{consultationsStats.totalConsultations}</td>
+                                <td className='stats-cell'>{consultationsStats.totalConsultations}</td>
                             </tr>
                             <tr className="border border-dark">
                                 <td className="table-info border border-dark">Average Consultation per Year</td>
-                                <td >{consultationsStats.avgConsultationsPerYear}</td>
+                                <td className='stats-cell'>{consultationsStats.avgConsultationsPerYear}</td>
                             </tr>
                         </tbody>
                     </Table>
@@ -70,11 +48,11 @@ function StatsOwner() {
                         <tbody>
                             <tr className="border border-dark">
                                 <td className="table-info border border-dark">Total Visits</td>
-                                <td >{visitsStats.totalVisits}</td>
+                                <td className='stats-cell'>{visitsStats.totalVisits}</td>
                             </tr>
                             <tr className="border border-dark">
                                 <td className="table-info border border-dark">Average Visits per Year</td>
-                                <td >{visitsStats.avgVisitsPerYear}</td>
+                                <td className='stats-cell'>{visitsStats.avgVisitsPerYear}</td>
                             </tr>
                         </tbody>
                     </Table>

@@ -69,9 +69,9 @@ export default function VisitEditOwner() {
         }
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         setVisit({ ...visit, pet: pet });
-        submitState(event, visit, `/api/v1/pets/${petId}/visits`, setMessage, setVisible, setRedirect)
+        await submitState(event, visit, `/api/v1/pets/${petId}/visits`, setMessage, setVisible, setRedirect)
     };
 
     function getDateTimeInput(visit, datetime) {
@@ -163,7 +163,7 @@ export default function VisitEditOwner() {
                 <Row>
                     <Col sm="4"></Col>
                     <Col sm="4">
-                        <Form onSubmit={handleSubmit}>
+                        <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                             <FormGroup>
                                 <Label for="datetime">Date and Time</Label>
                                 {datetimeInput}

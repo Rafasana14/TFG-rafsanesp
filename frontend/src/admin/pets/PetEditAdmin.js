@@ -43,7 +43,7 @@ export default function PetEditAdmin() {
             setPet({ ...pet, [name]: value })
     }
 
-    const handleSubmit = (event) => submitState(event, pet, `/api/v1/pets`, setMessage, setVisible, setRedirect);
+    const handleSubmit = async (event) => await submitState(event, pet, `/api/v1/pets`, setMessage, setVisible, setRedirect);
 
     const modal = getErrorModal(setVisible, visible, message);
     const typeOptions = Array.from(types).map(type => <option key={type.id} value={type.id}>{type.name}</option>);
@@ -54,7 +54,7 @@ export default function PetEditAdmin() {
             <Container style={{ marginTop: "15px" }}>
                 {<h2>{pet.id ? 'Edit Pet' : 'Add Pet'}</h2>}
                 {modal}
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                     <FormGroup>
                         <Label for="name">Name</Label>
                         <Input type="text" required name="name" id="name" value={pet.name || ''}
@@ -88,8 +88,8 @@ export default function PetEditAdmin() {
                             </Input>}
                     </FormGroup>
                     <FormGroup>
-                        <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="secondary" tag={Link} to="/pets">Cancel</Button>
+                        <Button className='save-button' type="submit">Save</Button>{' '}
+                        <Button className='cancel-button' tag={Link} to="/pets">Cancel</Button>
                     </FormGroup>
                 </Form>
             </Container>

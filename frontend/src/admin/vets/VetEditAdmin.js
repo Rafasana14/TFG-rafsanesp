@@ -51,7 +51,7 @@ export default function VetEditAdmin() {
             setVet({ ...vet, specialties: vet.specialties.filter(s => s.name !== name) });
     }
 
-    const handleSubmit = (event) => submitState(event, vet, `/api/v1/vets`, setMessage, setVisible, setRedirect);
+    const handleSubmit = async (event) => await submitState(event, vet, `/api/v1/vets`, setMessage, setVisible, setRedirect);
     const modal = getErrorModal(setVisible, visible, message);
     const selectedSpecialties = vet.specialties.map(specialty => specialty.name);
     const specialtiesBoxes = specialties.map(specialty => {
@@ -74,7 +74,7 @@ export default function VetEditAdmin() {
             <Container style={{ marginTop: "15px" }}>
                 {<h2>{vet.id ? 'Edit Vet' : 'Add Vet'}</h2>}
                 {modal}
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                     <FormGroup>
                         <Label for="firstName">First Name</Label>
                         <Input type="text" name="firstName" id="firstName" value={vet.firstName || ''}

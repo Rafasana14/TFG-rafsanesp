@@ -8,8 +8,8 @@ import 'jest-canvas-mock';
 // Establish API mocking before all tests.
 global.IS_REACT_ACT_ENVIRONMENT = true;
 jest.mock('react-chartjs-2', () => ({
-    Bar: () => null,
-    Pie: () => null
+    Bar: () => <img aria-label='bar' />,
+    Pie: () => <img aria-label='pie' />,
 }));
 
 beforeAll(() => {

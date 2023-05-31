@@ -1,40 +1,55 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, ButtonGroup, Container, Table } from 'reactstrap';
+import { Button, ButtonGroup, Col, Container } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import useFetchState from '../../util/useFetchState';
 import getErrorModal from '../../util/getErrorModal';
 import deleteFromList from '../../util/deleteFromList';
+import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 const jwt = tokenService.getLocalAccessToken();
 
-export default function VetListAdmin() {
+export default function VetListAdmin({ test = false }) {
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
     const [vets, setVets] = useFetchState([], `/api/v1/vets`, jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
+    const modal = getErrorModal(setVisible, visible, message);
 
-    const vetList = vets.map((vet) => {
-        let specialtiesAux = vet.specialties.map(s => s.name).toString().replaceAll(",", ", ");
+    const renderButtons = (params) => {
         return (
-            <tr key={vet.id}>
-                <td style={{ whiteSpace: 'nowrap' }}>{vet.firstName} {vet.lastName}</td>
-                <td >{vet.city}</td>
-                <td style={{ whiteSpace: 'break-spaces' }}>{specialtiesAux}</td>
-                <td >{vet.user.username}</td>
-                <td>
-                    <ButtonGroup>
-                        <Button size="sm" aria-label={"edit-" + vet.id} color="primary" tag={Link} to={"/vets/" + vet.id}>Edit</Button>
-                        <Button size="sm" aria-label={"delete-" + vet.id} color="danger"
-                            onClick={() => deleteFromList(`/api/v1/vets/${vet.id}`, vet.id, [vets, setVets], [alerts, setAlerts], setMessage, setVisible)}>
-                            Delete
-                        </Button>
-                    </ButtonGroup>
-                </td>
-            </tr>
+            <div>
+                <ButtonGroup>
+                    <Button size="sm" className='edit-button' aria-label={'edit-' + params.row.name} tag={Link} to={"/vets/" + params.row.id}>Edit</Button>
+                    <Button size="sm" className='delete-button' aria-label={'delete-' + params.row.id}
+                        onClick={() => deleteFromList(`/api/v1/vets/${params.row.id}`, params.row.id, [vets, setVets], [alerts, setAlerts], setMessage, setVisible)}>
+                        Delete
+                    </Button>
+                </ButtonGroup>
+            </div>
+        )
+    }
+
+    const columns = [
+        { field: 'id', headerName: 'ID', flex: 0.1, minWidth: 60, },
+        { field: 'name', headerName: 'Name', flex: 1, minWidth: 130 },
+        { field: 'city', headerName: 'City', flex: 0.5, minWidth: 130 },
+        { field: 'specialties', headerName: 'Specialties', flex: 1, minWidth: 150 },
+        { field: 'username', headerName: 'Username', minWidth: 150, flex: 1 },
+        { field: 'actions', headerName: 'Actions', flex: 0.3, minWidth: 180, sortable: false, filterable: false, renderCell: renderButtons },
+    ];
+
+    const rows = Array.from(vets).map((vet) => {
+        return (
+            {
+                id: vet.id,
+                name: vet.firstName + ' ' + vet.lastName,
+                city: vet.city,
+                specialties: vet.specialties.map(s => s.name).toString().replaceAll(",", ", "),
+                username: vet.user.username,
+            }
         );
     });
-    const modal = getErrorModal(setVisible, visible, message);
 
     return (
         <div>
@@ -43,23 +58,27 @@ export default function VetListAdmin() {
                 {alerts.map((a) => a.alert)}
                 {modal}
                 <div className="float-right">
-                    <Button color="success" tag={Link} to="/vets/new">Add Vet</Button>{" "}
-                    <Button color="info" tag={Link} to="/vets/specialties">Specialties</Button>
+                    <Button className='add-button' tag={Link} to="/vets/new">Add Vet</Button>{" "}
+                    <Button className='extra-button' tag={Link} to="/vets/specialties">Specialties</Button>
                 </div>
-                <Table aria-label='vets' className="mt-4">
-                    <thead>
-                        <tr>
-                            <th width="20%">Name</th>
-                            <th width="20%">City</th>
-                            <th width="20%">Specialties</th>
-                            <th width="20%">User</th>
-                            <th width="20%">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {vetList}
-                    </tbody>
-                </Table>
+                <Col style={{ maxWidth: "1600px" }}>
+                    <DataGrid
+                        className='datagrid'
+                        disableVirtualization={test}
+                        aria-label='vets'
+                        rows={rows}
+                        columns={columns}
+                        initialState={{
+                            pagination: {
+                                paginationModel: { page: 0, pageSize: 10 },
+                            },
+                        }}
+                        pageSizeOptions={[10, 20]}
+                        slots={{
+                            toolbar: GridToolbar,
+                        }}
+                    />
+                </Col>
             </Container>
         </div>
     );
