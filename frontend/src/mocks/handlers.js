@@ -184,6 +184,13 @@ const ticket3 = {
     "consultation": consultation1
 }
 
+const request = {
+    "token": "token",
+    "id": 1,
+    "username": "username",
+    "roles": "VET"
+}
+
 export const handlers = [
     rest.delete('*/:id', (req, res, ctx) => {
         return res(
@@ -593,25 +600,7 @@ export const handlers = [
         return res(
             ctx.status(200),
             ctx.json(
-                {
-                    "token": "token",
-                    "id": 1,
-                    "username": "username",
-                    "roles": "VET"
-                }
-            ))
-    }),
-
-    rest.post('*/api/v1/auth/signup', (req, res, ctx) => {
-        return res(
-            ctx.status(200),
-            ctx.json(
-                {
-                    "token": "token",
-                    "id": 1,
-                    "username": "username",
-                    "roles": "VET"
-                }
+                request
             ))
     }),
 
@@ -619,12 +608,7 @@ export const handlers = [
         return res(
             ctx.status(200),
             ctx.json(
-                {
-                    "token": "token",
-                    "id": 1,
-                    "username": "username",
-                    "roles": "VET"
-                }
+                request
             ))
     }),
 

@@ -69,21 +69,7 @@ describe('Register', () => {
         await waitFor(() => expect(window.location.assign).toHaveBeenCalledWith('/dashboard'));
     });
 
-    test('register user fails', async () => {
-        const jsdomAlert = window.alert;
-        window.alert = () => { return true };
-        server.use(
-            rest.post('*/auth/signup', (req, res, ctx) => {
-                return res(
-                    ctx.status(404),
-                    ctx.json(
-                        'Error'
-                    )
-                )
-            })
-        )
-        const { user } = render(<Register />);
-
+    async function testError(user) {
         const vetButton = screen.getByRole('button', { name: /vet/i })
         await user.click(vetButton);
         await fillForm(user, form);
@@ -92,6 +78,25 @@ describe('Register', () => {
         await user.click(submit);
 
         expect(window.location.assign).not.toHaveBeenCalled();
+    }
+
+    test('register user fails', async () => {
+        const jsdomAlert = window.alert;
+        window.alert = () => { return true };
+        server.use(
+            rest.post('*/auth/signup', (req, res, ctx) => {
+                return res(
+                    ctx.status(404),
+                    ctx.json(
+                        'Error registering'
+                    )
+                )
+            })
+        )
+        const { user } = render(<Register />);
+
+        await testError(user);
+
         window.confirm = jsdomAlert;
     });
 
@@ -103,21 +108,15 @@ describe('Register', () => {
                 return res(
                     ctx.status(404),
                     ctx.json(
-                        'Error'
+                        'Error logging in'
                     )
                 )
             })
         )
         const { user } = render(<Register />);
 
-        const vetButton = screen.getByRole('button', { name: /vet/i })
-        await user.click(vetButton);
-        await fillForm(user, form);
+        await testError(user)
 
-        const submit = screen.getByRole('button', { name: /save/i });
-        await user.click(submit);
-
-        expect(window.location.assign).not.toHaveBeenCalled();
         window.confirm = jsdomAlert;
     });
 });

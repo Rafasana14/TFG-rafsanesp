@@ -87,7 +87,7 @@ function Register() {
     if (type) {
         return <div>
             <Container style={{ marginTop: "15px" }}>
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={async (e) => await handleSubmit(e)}>
                     <h2 className='text-center'>Register {type}</h2>
                     <Row className='justify-content-center'>
                         <Col lg='3' md='4' sm='8' xs='12'>

@@ -42,7 +42,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "coverage": "react-scripts test --coverage --watchAll --collectCoverageFrom='!src/{index,reportWebVitals,error-page,App}.{js,jsx}'",
+    "coverage": "react-scripts test --coverage --watchAll --collectCoverageFrom='!src/{util/privateRoute,index,reportWebVitals,error-page,App}.{js,jsx}'",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
