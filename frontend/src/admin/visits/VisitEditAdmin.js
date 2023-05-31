@@ -49,7 +49,7 @@ export default function VisitEditAdmin() {
             <Container style={{ marginTop: "15px" }}>
                 {<h2>{visit.id ? 'Edit Visit' : 'Add Visit'}</h2>}
                 {modal}
-                <Form onSubmit={handleSubmit}>
+                <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                     <FormGroup>
                         <Label for="datetime">Date and Time</Label>
                         <Input type="datetime-local" required name="datetime" id="datetime" value={visit.datetime || ''}
