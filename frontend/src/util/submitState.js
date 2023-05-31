@@ -2,10 +2,10 @@ import tokenService from "../services/token.service";
 
 const jwt = tokenService.getLocalAccessToken();
 
-export default function submitState(event, state, baseUrl, setMessage, setVisible, setRedirect = null) {
+export default async function submitState(event, state, baseUrl, setMessage, setVisible, setRedirect = null) {
     event.preventDefault();
 
-    fetch(baseUrl + (state.id ? '/' + state.id : ''), {
+    await fetch(baseUrl + (state.id ? '/' + state.id : ''), {
         method: (state.id) ? 'PUT' : 'POST',
         headers: {
             "Authorization": `Bearer ${jwt}`,

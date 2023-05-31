@@ -7,14 +7,14 @@ export default function Login({ message, navigation }) {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 
-	function handleSubmit(event) {
+	async function handleSubmit(event) {
 		event.preventDefault();
 		const reqBody = {
 			username: username,
 			password: password,
 		};
 
-		fetch("/api/v1/auth/signin", {
+		await fetch("/api/v1/auth/signin", {
 			headers: { "Content-Type": "application/json" },
 			method: "POST",
 			body: JSON.stringify(reqBody),
@@ -47,7 +47,7 @@ export default function Login({ message, navigation }) {
 				<Row>
 					<Col></Col>
 					<Col md="5" lg="3" sm="5">
-						<Form onSubmit={handleSubmit}>
+						<Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
 							<FormGroup>
 								<Label for="username">Username</Label>
 								<Input type="text" required name="username" id="username" value={username || ''}

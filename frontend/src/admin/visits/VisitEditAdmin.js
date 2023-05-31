@@ -40,7 +40,7 @@ export default function VisitEditAdmin() {
             setVisit({ ...visit, [name]: value })
     }
 
-    const handleSubmit = (event) => submitState(event, visit, `/api/v1/pets/${petId}/visits`, setMessage, setVisible, setRedirect);
+    const handleSubmit = async (event) => await submitState(event, visit, `/api/v1/pets/${petId}/visits`, setMessage, setVisible, setRedirect);
     const modal = getErrorModal(setVisible, visible, message);
     const vetOptions = vets.map(vet => <option key={vet.id} value={vet.id}>{vet.firstName} {vet.lastName} - {vet.user.username}</option>);
 
