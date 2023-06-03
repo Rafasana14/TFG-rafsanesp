@@ -28,7 +28,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
-import org.springframework.samples.petclinic.pet.PetService;
+import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,12 +36,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class OwnerService {
 
 	private OwnerRepository ownerRepository;
-	private PetService petService;
+//	private UserService userService;
 
 	@Autowired
-	public OwnerService(OwnerRepository ownerRepository, PetService petService) {
+	public OwnerService(OwnerRepository ownerRepository, UserService petService) {
 		this.ownerRepository = ownerRepository;
-		this.petService = petService;
+//		this.userService = userService;
 	}
 
 	@Transactional(readOnly = true)
@@ -59,10 +59,10 @@ public class OwnerService {
 		return this.ownerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Owner", "ID", id));
 	}
 
-//	@Transactional(readOnly = true)
-//	public Owner findOwnerByUser(int userId) throws DataAccessException {
-//		return this.ownerRepository.findByUser(userId).orElseThrow(()->new ResourceNotFoundException("Owner","User ID",userId));
-//	}
+	@Transactional(readOnly = true)
+	public Owner findOwnerByUser(int userId) throws DataAccessException {
+		return this.ownerRepository.findByUser(userId).orElseThrow(()->new ResourceNotFoundException("Owner","User ID",userId));
+	}
 
 	@Transactional(readOnly = true)
 	public Optional<Owner> optFindOwnerByUser(int userId) throws DataAccessException {
@@ -94,7 +94,6 @@ public class OwnerService {
 	@Transactional
 	public void deleteOwner(int id) throws DataAccessException {
 		Owner toDelete = findOwnerById(id);
-//		for(Pet pet: petService.findAllPetsByOwnerId(id)) petService.deletePet(pet.getId());
 		ownerRepository.delete(toDelete);
 	}
 
@@ -103,11 +102,9 @@ public class OwnerService {
 		Map<String, Object> res = new HashMap<>();
 		Integer totalOwners = this.ownerRepository.countAll();
 		Integer moreThanOnePet = getOwnersWithMoreThanOnePet();
-//		Map<String, Integer> ownersVisits = getOwnersVisits();
 
 		res.put("ownersByPlan", getOwnersPlans());
 		res.put("totalOwners", totalOwners);
-//		res.put("ownersVisits", ownersVisits);
 		res.put("moreThanOnePet", moreThanOnePet);
 
 		return res;
@@ -123,18 +120,6 @@ public class OwnerService {
 		}
 		return res;
 	}
-//
-//	private Map<String, Integer> getOwnersVisits() {
-//		Map<String, Integer> unsortedOwnersVisits = new HashMap<>();
-//		this.ownerRepository.getOwnersWithMostVisits().forEach(m -> {
-//			String key = findOwnerById(m.get("userId")).getUser().getUsername();
-//			Integer value = m.get("visits");
-//			unsortedOwnersVisits.put(key, value);
-//		});
-//		return unsortedOwnersVisits.entrySet().stream().sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-//				.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (oldValue, newValue) -> oldValue,
-//						LinkedHashMap::new));
-//	}
 	
 	private Map<String, Integer> getOwnersPlans() {
 		Map<String, Integer> unsortedOwnersPlans = new HashMap<>();

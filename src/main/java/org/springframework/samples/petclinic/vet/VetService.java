@@ -72,9 +72,7 @@ public class VetService {
 	public Vet updateVet(Vet vet, int id) throws DataAccessException {
 		Vet toUpdate = findVetById(id);
 		BeanUtils.copyProperties(vet, toUpdate, "id", "user");
-		vetRepository.save(toUpdate);
-
-		return toUpdate;
+		return saveVet(toUpdate);
 	}
 
 	@Transactional

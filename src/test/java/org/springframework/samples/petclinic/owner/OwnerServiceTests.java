@@ -39,6 +39,7 @@ import org.springframework.samples.petclinic.pet.PetService;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
 import org.springframework.samples.petclinic.user.AuthoritiesService;
 import org.springframework.samples.petclinic.user.User;
+import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,12 +52,15 @@ class OwnerServiceTests {
 	private OwnerService ownerService;
 	private PetService petService;
 	private AuthoritiesService authService;
+	private UserService userService;
 
 	@Autowired
-	public OwnerServiceTests(OwnerService ownerService, PetService petService, AuthoritiesService authService) {
+	public OwnerServiceTests(OwnerService ownerService, PetService petService, AuthoritiesService authService,
+			UserService userService) {
 		this.ownerService = ownerService;
 		this.petService = petService;
 		this.authService = authService;
+		this.userService = userService;
 	}
 
 	@Test
@@ -71,7 +75,13 @@ class OwnerServiceTests {
 		assertEquals(2, owners.size());
 
 		owners = this.ownerService.findOwnerByLastName("Daviss");
-		assertThat(owners.isEmpty()).isTrue();
+		assertThat(owners).isEmpty();
+	}
+	
+	@Test
+	void shouldFindOwnerByUser() {
+		Owner owner = this.ownerService.findOwnerByUser(2);
+		assertThat(owner.getFirstName()).startsWith("George");
 	}
 
 	@Test
@@ -175,6 +185,7 @@ class OwnerServiceTests {
 		user.setUsername("Sam");
 		user.setPassword("supersecretpassword");
 		user.setAuthority(authService.findByAuthority("OWNER"));
+		this.userService.saveUser(user);
 		owner.setUser(user);
 		return this.ownerService.saveOwner(owner);
 	}

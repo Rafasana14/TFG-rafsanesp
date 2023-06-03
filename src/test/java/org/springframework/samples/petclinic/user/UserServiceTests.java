@@ -14,14 +14,13 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
+import org.springframework.samples.petclinic.exceptions.UniqueException;
 import org.springframework.samples.petclinic.owner.Owner;
-import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.samples.petclinic.vet.VetService;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.transaction.annotation.Transactional;
 
-//@DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
 @SpringBootTest
 @AutoConfigureTestDatabase
 class UserServiceTests {
@@ -35,8 +34,8 @@ class UserServiceTests {
 	@Autowired
 	private VetService vetService;
 
-	@Autowired
-	private OwnerService ownerService;
+//	@Autowired
+//	private OwnerService ownerService;
 
 	@Test
 	@WithMockUser(username = "owner1", password = "0wn3r")
@@ -148,6 +147,13 @@ class UserServiceTests {
 		user = this.userService.findUser(2);
 		assertEquals("Change", user.getUsername());
 	}
+	
+	@Test
+	void shouldNotUpdateUserWithSameUsername() {
+		User user = this.userService.findUser(2);
+		user.setUsername("owner2");
+		assertThrows(UniqueException.class, () -> userService.updateUser(user, 2));
+	}
 
 	@Test
 	@Transactional
@@ -155,7 +161,7 @@ class UserServiceTests {
 		int count = ((Collection<User>) this.userService.findAll()).size();
 
 		User user = new User();
-		user.setUsername("Sam");
+		user.setUsername("Prueba");
 		user.setPassword("password");
 		user.setAuthority(authService.findByAuthority("ADMIN"));
 
@@ -169,9 +175,20 @@ class UserServiceTests {
 	
 	@Test
 	@Transactional
+	void shouldNotInsertUserWithSameUsername() {
+		User user = new User();
+		user.setUsername("owner2");
+		user.setPassword("password");
+		user.setAuthority(authService.findByAuthority("ADMIN"));
+
+		assertThrows(UniqueException.class, () -> userService.saveUser(user));
+	}
+	
+	@Test
+	@Transactional
 	void shouldNotInsertUserWithoutAuthorities() {
 		User user = new User();
-		user.setUsername("Sam");
+		user.setUsername("Prueba");
 		user.setPassword("password");
 
 		assertThrows(DataIntegrityViolationException.class, () -> this.userService.saveUser(user));
@@ -182,7 +199,7 @@ class UserServiceTests {
 	void shouldDeleteUserWithoutOwner() {
 		Integer firstCount = ((Collection<User>) userService.findAll()).size();
 		User user = new User();
-		user.setUsername("Sam");
+		user.setUsername("Prueba");
 		user.setPassword("password");
 		Authorities auth = authService.findByAuthority("OWNER");
 		user.setAuthority(auth);
@@ -226,7 +243,7 @@ class UserServiceTests {
 	void shouldDeleteUserWithoutVet() {
 		Integer firstCount = ((Collection<User>) userService.findAll()).size();
 		User user = new User();
-		user.setUsername("Sam");
+		user.setUsername("Prueba");
 		user.setPassword("password");
 		Authorities auth = authService.findByAuthority("VET");
 		user.setAuthority(auth);
@@ -244,7 +261,7 @@ class UserServiceTests {
 	void shouldDeleteUserWithVet() {
 		Integer firstCount = ((Collection<User>) userService.findAll()).size();
 		User user = new User();
-		user.setUsername("Sam");
+		user.setUsername("Prueba");
 		user.setPassword("password");
 		Authorities auth = authService.findByAuthority("VET");
 		user.setAuthority(auth);

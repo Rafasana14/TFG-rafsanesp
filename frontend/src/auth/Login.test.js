@@ -52,9 +52,9 @@ describe('Login', () => {
             rest.post('*/auth/signin', (req, res, ctx) => {
                 return res(
                     ctx.status(404),
-                    ctx.json(
-                        'Error'
-                    )
+                    ctx.json({
+                        message: 'Error'
+                    })
                 )
             })
         )
@@ -65,6 +65,9 @@ describe('Login', () => {
         await user.click(submit);
 
         expect(window.location.assign).not.toHaveBeenCalled();
+        const modal = await screen.findByRole('dialog');
+        expect(modal).toBeInTheDocument();
+
         window.confirm = jsdomAlert;
     });
 });

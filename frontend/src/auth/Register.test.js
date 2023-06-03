@@ -76,6 +76,8 @@ describe('Register', () => {
 
         const submit = screen.getByRole('button', { name: /save/i });
         await user.click(submit);
+        const modal = await screen.findByRole('dialog');
+        expect(modal).toBeInTheDocument();
 
         expect(window.location.assign).not.toHaveBeenCalled();
     }
@@ -87,9 +89,9 @@ describe('Register', () => {
             rest.post('*/auth/signup', (req, res, ctx) => {
                 return res(
                     ctx.status(404),
-                    ctx.json(
-                        'Error registering'
-                    )
+                    ctx.json({
+                        message: 'Error'
+                    })
                 )
             })
         )
@@ -107,9 +109,9 @@ describe('Register', () => {
             rest.post('*/auth/signin', (req, res, ctx) => {
                 return res(
                     ctx.status(404),
-                    ctx.json(
-                        'Error logging in'
-                    )
+                    ctx.json({
+                        message: 'Error'
+                    })
                 )
             })
         )

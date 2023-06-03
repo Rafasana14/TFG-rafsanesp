@@ -241,6 +241,22 @@ export const handlers = [
             ))
     }),
 
+    rest.get('*/api/v1/owners/profile', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(
+                owner1
+            ))
+    }),
+
+    rest.put('*/api/v1/owners/profile', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(
+                owner1
+            ))
+    }),
+
     rest.get('*/api/v1/owners/:id', (req, res, ctx) => {
         return res(
             ctx.status(200),
@@ -379,13 +395,6 @@ export const handlers = [
         )
     }),
 
-    rest.post('*/api/v1/vets', (req, res, ctx) => {
-        return res(
-            ctx.status(200),
-            ctx.json(vet1),
-        )
-    }),
-
     rest.get('*/api/v1/vets/specialties', (req, res, ctx) => {
         return res(
             ctx.status(200),
@@ -400,6 +409,21 @@ export const handlers = [
         return res(
             ctx.status(200),
             ctx.json(radiology),
+        )
+    }),
+
+    rest.get('*/api/v1/vets/profile', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(vet1),
+        )
+    }),
+
+
+    rest.put('*/api/v1/vets/profile', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(vet1),
         )
     }),
 
@@ -431,6 +455,13 @@ export const handlers = [
     }),
 
     rest.get('*/api/v1/vets/:id', (req, res, ctx) => {
+        return res(
+            ctx.status(200),
+            ctx.json(vet1),
+        )
+    }),
+
+    rest.post('*/api/v1/vets', (req, res, ctx) => {
         return res(
             ctx.status(200),
             ctx.json(vet1),

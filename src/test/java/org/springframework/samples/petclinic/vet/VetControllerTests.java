@@ -1,5 +1,6 @@
 package org.springframework.samples.petclinic.vet;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -23,11 +24,15 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
+import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.user.Authorities;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -60,6 +65,7 @@ class VetControllerTests {
 
 	private Vet george;
 	private User user;
+	private User logged;
 
 	@BeforeEach
 	void setup() {
@@ -79,9 +85,20 @@ class VetControllerTests {
 		user.setPassword("password");
 		user.setAuthority(vetAuth);
 
-//		adminJwt = getToken("admin", "ADMIN");
-//		ownerJwt = getToken("owner", "OWNER");
+		when(this.userService.findCurrentUser()).thenReturn(getUserFromDetails(
+				(UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()));
+	}
 
+	private User getUserFromDetails(UserDetails details) {
+		logged = new User();
+		logged.setUsername(details.getUsername());
+		logged.setPassword(details.getPassword());
+		Authorities aux = new Authorities();
+		for (GrantedAuthority auth : details.getAuthorities()) {
+			aux.setAuthority(auth.getAuthority());
+		}
+		logged.setAuthority(aux);
+		return logged;
 	}
 
 	@Test
@@ -118,7 +135,8 @@ class VetControllerTests {
 	@WithMockUser("admin")
 	void shouldReturnNotFoundVet() throws Exception {
 		when(this.vetService.findVetById(TEST_VET_ID)).thenThrow(ResourceNotFoundException.class);
-		mockMvc.perform(get(BASE_URL + "/{id}", TEST_VET_ID)).andExpect(status().isNotFound());
+		mockMvc.perform(get(BASE_URL + "/{id}", TEST_VET_ID)).andExpect(status().isNotFound())
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException));
 	}
 
 	@Test
@@ -158,7 +176,8 @@ class VetControllerTests {
 		when(this.vetService.updateVet(any(Vet.class), any(Integer.class))).thenReturn(george);
 
 		mockMvc.perform(put(BASE_URL + "/{id}", TEST_VET_ID).with(csrf()).contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(george))).andExpect(status().isNotFound());
+				.content(objectMapper.writeValueAsString(george))).andExpect(status().isNotFound())
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException));
 	}
 
 	@Test
@@ -177,6 +196,53 @@ class VetControllerTests {
 		when(this.vetService.getVetsStats()).thenReturn(new HashMap<>());
 
 		mockMvc.perform(get(BASE_URL + "/stats")).andExpect(status().isOk());
+	}
+
+	@Test
+	@WithMockUser(username = "vet", authorities = "VET")
+	void shouldReturnProfile() throws Exception {
+		logged.setId(1);
+		when(this.vetService.findVetByUser(logged.getId())).thenReturn(george);
+		mockMvc.perform(get(BASE_URL + "/profile")).andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(TEST_VET_ID))
+				.andExpect(jsonPath("$.firstName").value(george.getFirstName()))
+				.andExpect(jsonPath("$.lastName").value(george.getLastName()))
+				.andExpect(jsonPath("$.city").value(george.getCity()));
+	}
+
+	@Test
+	@WithMockUser(username = "admin", authorities = "ADMIN")
+	void shouldNotReturnProfileForOtherAuth() throws Exception {
+		logged.setId(1);
+		when(this.vetService.findVetByUser(logged.getId())).thenReturn(george);
+		mockMvc.perform(get(BASE_URL + "/profile")).andExpect(status().isForbidden())
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof AccessDeniedException));
+	}
+
+	@Test
+	@WithMockUser(username = "vet", authorities = "VET")
+	void shouldUpdateProfile() throws Exception {
+		logged.setId(1);
+		when(this.userService.updateUser(user, logged.getId())).thenReturn(user);
+		when(this.vetService.findVetByUser(logged.getId())).thenReturn(george);
+		when(this.vetService.updateVet(any(Vet.class), any(Integer.class))).thenReturn(george);
+		mockMvc.perform(put(BASE_URL + "/profile").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(george))).andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(TEST_VET_ID))
+				.andExpect(jsonPath("$.firstName").value(george.getFirstName()))
+				.andExpect(jsonPath("$.lastName").value(george.getLastName()))
+				.andExpect(jsonPath("$.city").value(george.getCity()));
+	}
+
+	@Test
+	@WithMockUser(username = "admin", authorities = "ADMIN")
+	void shouldNotUpdateProfileForOtherAuth() throws Exception {
+		logged.setId(1);
+		when(this.userService.updateUser(user, logged.getId())).thenReturn(user);
+		when(this.vetService.findVetByUser(logged.getId())).thenReturn(george);
+		mockMvc.perform(put(BASE_URL + "/profile").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(george))).andExpect(status().isForbidden())
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof AccessDeniedException));
 	}
 
 }

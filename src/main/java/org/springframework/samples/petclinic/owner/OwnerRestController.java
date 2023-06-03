@@ -95,4 +95,18 @@ public class OwnerRestController {
 		return new ResponseEntity<>(ownerService.getOwnersStats(), HttpStatus.OK);
 	}
 
+	@GetMapping(value = "profile")
+	public ResponseEntity<Owner> getProfile() {
+		User user = userService.findCurrentUser();
+		return new ResponseEntity<>(this.ownerService.findOwnerByUser(user.getId()), HttpStatus.OK);
+	}
+
+	@PutMapping(value = "profile")
+	public ResponseEntity<Owner> updateProfile(@RequestBody @Valid Owner owner) {
+		User user = userService.findCurrentUser();
+		this.userService.updateUser(owner.getUser(), user.getId());
+		Owner aux = this.ownerService.findOwnerByUser(user.getId());
+		return new ResponseEntity<>(this.ownerService.updateOwner(owner, aux.getId()), HttpStatus.OK);
+	}
+
 }

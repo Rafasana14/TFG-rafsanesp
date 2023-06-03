@@ -16,7 +16,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -26,6 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * and open the template in the editor.
  */
 
+@SuppressWarnings("deprecation")
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -56,11 +57,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	public AuthenticationManager authenticationManagerBean() throws Exception {
 		return super.authenticationManagerBean();
 	}
-
+	
 	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
+	public PasswordEncoder passwordEncoder() {	    
+		return NoOpPasswordEncoder.getInstance();
+	    //BCryptPasswordEncoder not included because it caused errors
 	}
+
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -69,35 +72,25 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/resources/**", "/webjars/**", "/h2-console/**", "/static/**", "/swagger-resources/**")
 				.permitAll().antMatchers(HttpMethod.GET, "/", "/oups").permitAll().antMatchers("/api/v1/auth/**")
 				.permitAll().antMatchers("/v2/api-docs").permitAll().antMatchers("/swagger-ui.html/**").permitAll()
-				.antMatchers("/api/v1/plan").hasAuthority("OWNER").antMatchers("/api/v1/users/**").hasAuthority(ADMIN)
+				.antMatchers("/api/v1/plan").hasAuthority("OWNER").antMatchers("/api/v1/owners/profile")
+				.hasAuthority("OWNER").antMatchers("/api/v1/users/**").hasAuthority(ADMIN)
 				.antMatchers(HttpMethod.DELETE, "/api/v1/consultations/{consultationId:[0-9]\\d+}").hasAuthority(ADMIN)
 				.antMatchers("/api/v1/owners/**/pets/**").authenticated().antMatchers("/api/v1/owners/**")
 				.hasAuthority(ADMIN).antMatchers(HttpMethod.GET, "/api/v1/pets/stats").hasAuthority(ADMIN)
-//				.antMatchers("/api/v1/pets/**").hasAuthority("ADMIN")
 				.antMatchers(HttpMethod.GET, "/api/v1/vets/stats").hasAuthority(ADMIN)
 				.antMatchers(HttpMethod.GET, "/api/v1/vets/**").authenticated().antMatchers("/api/v1/vets/**")
 				.hasAnyAuthority(ADMIN, "VET")
-				// .antMatchers("/api/v1/**").authenticated();
 
 				.anyRequest().authenticated();
 
 		http.headers().frameOptions().sameOrigin();
 		http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-//			http.addFilterAfter(new SpaWebFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring()
-				// .antMatchers("/index.html")
-				.antMatchers("/static/**").antMatchers("/error").antMatchers("/swagger-ui.html")
+		web.ignoring().antMatchers("/static/**").antMatchers("/error").antMatchers("/swagger-ui.html")
 				.antMatchers("/swagger-resources/**");
 	}
-
-//		public void addResourceHandlers(ResourceHandlerRegistry registry) {
-//			registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-//
-//			registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-//		}
 
 }

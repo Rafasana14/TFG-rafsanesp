@@ -23,12 +23,11 @@ import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Digits;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.samples.petclinic.model.Person;
 import org.springframework.samples.petclinic.user.User;
 
@@ -66,9 +65,10 @@ public class Owner extends Person {
 	@NotNull
 	private PricingPlan plan;
 
-	@OneToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST })
+//	@OneToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST })
+	@Valid
+	@OneToOne(cascade =  CascadeType.REMOVE)
 	@JoinColumn(name = "user", referencedColumnName = "id")
-	@OnDelete(action = OnDeleteAction.CASCADE)
 	private User user;
 
 }

@@ -15,12 +15,15 @@
  */
 package org.springframework.samples.petclinic.user;
 
+import java.util.Optional;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
+import org.springframework.samples.petclinic.exceptions.UniqueException;
 import org.springframework.samples.petclinic.owner.Owner;
 import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.security.core.Authentication;
@@ -30,6 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class UserService {
+	
+	private static final String USERNAME_FIELD = "username";
 
 	private UserRepository userRepository;
 
@@ -46,14 +51,23 @@ public class UserService {
 
 	@Transactional
 	public User saveUser(User user) throws DataAccessException {
-		userRepository.save(user);
-		return user;
+		if (checkUniqueUsername(user).equals(true)) {
+			userRepository.save(user);
+			return user;
+		} else {
+			throw new UniqueException("Username");
+		}
 	}
 
 	@Transactional(readOnly = true)
 	public User findUser(String username) {
 		return userRepository.findByUsername(username)
-				.orElseThrow(() -> new ResourceNotFoundException("User", "username", username));
+				.orElseThrow(() -> new ResourceNotFoundException("User", USERNAME_FIELD, username));
+	}
+
+	@Transactional(readOnly = true)
+	public Optional<User> optFindUser(String username) {
+		return userRepository.findByUsername(username);
 	}
 
 	@Transactional(readOnly = true)
@@ -64,14 +78,14 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public Owner findOwnerByUser(String username) {
 		return userRepository.findOwnerByUser(username)
-				.orElseThrow(() -> new ResourceNotFoundException("Owner", "username", username));
+				.orElseThrow(() -> new ResourceNotFoundException("Owner", USERNAME_FIELD, username));
 	}
 
 	@Transactional(readOnly = true)
 	public Owner findOwnerByUser(int id) {
 		return userRepository.findOwnerByUser(id).orElseThrow(() -> new ResourceNotFoundException("Owner", "ID", id));
 	}
-	
+
 	@Transactional(readOnly = true)
 	public Vet findVetByUser(Integer id) {
 		return userRepository.findVetByUser(id).orElseThrow(() -> new ResourceNotFoundException("Vet", "ID", id));
@@ -84,7 +98,7 @@ public class UserService {
 			throw new ResourceNotFoundException("Nobody authenticated!");
 		else
 			return userRepository.findByUsername(auth.getName())
-					.orElseThrow(() -> new ResourceNotFoundException("User", "Username", auth.getName()));
+					.orElseThrow(() -> new ResourceNotFoundException("User", USERNAME_FIELD, auth.getName()));
 	}
 
 	public Boolean existsUser(String username) {
@@ -100,13 +114,20 @@ public class UserService {
 		return userRepository.findAllByAuthority(auth);
 	}
 
+	private Boolean checkUniqueUsername(User user) {
+		Optional<User> aux = optFindUser(user.getUsername());
+		return (aux.isEmpty() || aux.get().getId().equals(user.getId()));
+	}
+
 	@Transactional
 	public User updateUser(@Valid User user, Integer idToUpdate) {
-		User toUpdate = findUser(idToUpdate);
-		BeanUtils.copyProperties(user, toUpdate, "id");
-		userRepository.save(toUpdate);
-
-		return toUpdate;
+		if (checkUniqueUsername(user).equals(true)) {
+			User toUpdate = findUser(idToUpdate);
+			BeanUtils.copyProperties(user, toUpdate, "id");
+			this.userRepository.save(toUpdate);
+			return toUpdate;
+		} else
+			throw new UniqueException("Username");
 	}
 
 	@Transactional

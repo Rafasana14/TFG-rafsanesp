@@ -38,6 +38,7 @@ import TicketList from "./components/TicketList";
 import Register from "./auth/Register";
 import Logout from "./auth/Logout.js";
 import PrivateRoute from "./util/privateRoute";
+import ProfileEdit from "./components/ProfileEdit";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -64,6 +65,7 @@ function App() {
   let ownerRoutes = <></>;
   let userRoutes = <></>;
   let vetRoutes = <></>;
+  let commonRoutes = <></>;
   let publicRoutes = <></>;
 
   roles.forEach((role) => {
@@ -85,7 +87,7 @@ function App() {
           <Route path="/vets/specialties/:specialtyId" exact={true} element={<PrivateRoute><SpecialtyEditAdmin /></PrivateRoute>} />
           <Route path="/consultations" exact={true} element={<PrivateRoute><ConsultationListAdmin /></PrivateRoute>} />
           <Route path="/consultations/:consultationId" exact={true} element={<PrivateRoute><ConsultationEditAdmin /></PrivateRoute>} />
-          <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketList auth={"ADMIN"} /></PrivateRoute>} />
+          {/* <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketList auth={"ADMIN"} /></PrivateRoute>} /> */}
         </>)
     }
     if (role === "OWNER") {
@@ -99,7 +101,7 @@ function App() {
           <Route path="/pets/:id/visits/:id" exact={true} element={<PrivateRoute><VisitEditOwner /></PrivateRoute>} />
           <Route path="/consultations" exact={true} element={<PrivateRoute><ConsultationListOwner /></PrivateRoute>} />
           <Route path="/consultations/:consultationId" exact={true} element={<PrivateRoute><ConsultationEditOwner /></PrivateRoute>} />
-          <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketList auth={"OWNER"} /></PrivateRoute>} />
+          {/* <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketList auth={"OWNER"} /></PrivateRoute>} /> */}
         </>)
     }
     if (role === "VET") {
@@ -107,9 +109,15 @@ function App() {
         <>
           <Route path="/dashboard" element={<PrivateRoute><CalendarVet /></PrivateRoute>} />
           <Route path="/consultations" exact={true} element={<PrivateRoute><ConsultationListVet /></PrivateRoute>} />
-          <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketList auth={"VET"} /></PrivateRoute>} />
+          {/* <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketList auth={"VET"} /></PrivateRoute>} /> */}
         </>)
     }
+    commonRoutes = (
+      <>
+        <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketList auth={role} /></PrivateRoute>} />
+        <Route path="/profile" exact={true} element={<PrivateRoute><ProfileEdit auth={role} /></PrivateRoute>} />
+      </>
+    )
   })
   if (!jwt) {
     publicRoutes = (
@@ -121,7 +129,6 @@ function App() {
   } else {
     userRoutes = (
       <>
-        {/* <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} /> */}
         <Route path="/logout" element={<Logout />} />
         <Route path="/login" element={<Login />} />
       </>
@@ -141,6 +148,7 @@ function App() {
           {adminRoutes}
           {ownerRoutes}
           {vetRoutes}
+          {commonRoutes}
         </Routes>
       </ErrorBoundary>
     </div>

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Col, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap';
-import tokenService from '../services/token.service';
+import { login } from './Login';
+import getErrorModal from '../util/getErrorModal';
 
 function Register() {
 
@@ -18,6 +19,8 @@ function Register() {
 
     const [request, setRequest] = useState(emptyRequest);
     const [type, setType] = useState(null);
+    const [message, setMessage] = useState(null);
+    const [visible, setVisible] = useState(false);
 
     function handleChange(event) {
         const target = event.target;
@@ -49,44 +52,26 @@ function Register() {
             else state = "";
             return response.json();
         }).then(function (data) {
-            if (state !== "200") alert(data.message);
+            if (data.message) {
+                if (!data.message.includes("registered successfully")) {
+                    setMessage(data.message);
+                    setVisible(true);
+                }
+            }
         });
 
-        const loginRequest = {
-            username: request.username,
-            password: request.password,
-        };
         if (state === "200") {
-            await fetch("/api/v1/auth/signin", {
-                headers: { "Content-Type": "application/json" },
-                method: "POST",
-                body: JSON.stringify(loginRequest),
-            }).then(function (response) {
-                if (response.status === 200) {
-                    state = "200"
-                    return response.json();
-                }
-                else {
-                    state = "";
-                    return response.json();
-                }
-            }).then(function (data) {
-                if (state !== "200") alert(data.message);
-                else {
-                    tokenService.setUser(data);
-                    tokenService.updateLocalAccessToken(data.token);
-                    window.location.assign('/dashboard');
-                }
-            }).catch((message) => {
-                alert(message);
-            });
+            await login(request.username, request.password, false, setMessage, setVisible);
         }
 
     }
 
+    const modal = getErrorModal(setVisible, visible, message);
+
     if (type) {
         return <div>
             <Container style={{ marginTop: "15px" }}>
+                {modal}
                 <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                     <h2 className='text-center'>Register {type}</h2>
                     <Row className='justify-content-center'>
@@ -157,6 +142,7 @@ function Register() {
         return (
             <div>
                 <Container style={{ marginTop: "15px" }}>
+                    {modal}
                     <h1 className="text-center">Register</h1>
                     <h2 className="text-center">What type of User will you be?</h2>
                     <Row>
