@@ -37,10 +37,6 @@ public class Consultation extends BaseEntity {
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Pet pet;
 
-//	@OneToOne
-//	@JoinColumn(name = "vet_id", nullable = false)
-//	private Vet vet;
-
 	@Column(name = "creation_date")
 	@CreationTimestamp
 	private LocalDateTime creationDate;

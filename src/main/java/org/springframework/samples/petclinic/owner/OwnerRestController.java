@@ -15,7 +15,6 @@
  */
 package org.springframework.samples.petclinic.owner;
 
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +64,7 @@ public class OwnerRestController {
 
 	@PostMapping()
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Owner> create(@RequestBody @Valid Owner owner) throws URISyntaxException {
+	public ResponseEntity<Owner> create(@RequestBody @Valid Owner owner) {
 		Owner newOwner = new Owner();
 		BeanUtils.copyProperties(owner, newOwner, "id");
 		User user = userService.findCurrentUser();
