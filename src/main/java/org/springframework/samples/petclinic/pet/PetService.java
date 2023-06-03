@@ -33,9 +33,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PetService {
 
-	private final Integer BASIC_LIMIT = 2;
-	private final Integer GOLD_LIMIT = 4;
-	private final Integer PLATINUM_LIMIT = 7;
+	private static final Integer BASIC_LIMIT = 2;
+	private static final Integer GOLD_LIMIT = 4;
+	private static final Integer PLATINUM_LIMIT = 7;
 
 	private PetRepository petRepository;
 

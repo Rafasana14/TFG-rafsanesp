@@ -27,7 +27,7 @@ import org.springframework.samples.petclinic.vet.VetService;
 //@DataJpaTest(includeFilters = @ComponentScan.Filter(Service.class))
 @SpringBootTest
 @AutoConfigureTestDatabase
-public class VisitServiceTests {
+class VisitServiceTests {
 
 	@Autowired
 	protected PetService petService;
@@ -104,7 +104,7 @@ public class VisitServiceTests {
 		visit.setVet(this.vetService.findVetById(1));
 
 		this.visitService.saveVisit(visit);
-		assertThat(visit.getId().longValue()).isNotEqualTo(0);
+		assertThat(visit.getId().longValue()).isNotZero();
 
 		int finalCount = ((Collection<Visit>) this.visitService.findAll()).size();
 		assertEquals(initialCount + 1, finalCount);

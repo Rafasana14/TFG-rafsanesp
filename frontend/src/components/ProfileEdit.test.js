@@ -30,6 +30,7 @@ describe('ProfileEdit', () => {
     const route = '/profile'
 
     const realLocation = window.location;
+    const jsdomAlert = window.alert;
 
     beforeAll(() => {
         delete window.location
@@ -39,6 +40,14 @@ describe('ProfileEdit', () => {
     afterAll(() => {
         window.location = realLocation
     })
+
+    beforeEach(() => {
+        window.alert = () => { };
+    });
+
+    afterEach(() => {
+        window.alert = jsdomAlert;
+    });
 
     test('renders correctly for admin', async () => {
         render(<ProfileEdit auth={"ADMIN"} />, { route: route });
