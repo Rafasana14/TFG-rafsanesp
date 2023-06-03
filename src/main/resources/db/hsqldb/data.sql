@@ -1,48 +1,43 @@
 -- One admin user, named admin1 with passwor 4dm1n and authority admin
 INSERT INTO authorities(id,authority) VALUES (1,'ADMIN');
-INSERT INTO users(id,username,password,authority) VALUES (1,'admin1','$2a$10$nMmTWAhPTqXqLDJTag3prumFrAJpsYtroxf0ojesFYq0k4PmcbWUS',1);
+--INSERT INTO users(id,username,password,authority) VALUES (1,'admin1','$2a$10$nMmTWAhPTqXqLDJTag3prumFrAJpsYtroxf0ojesFYq0k4PmcbWUS',1);
+INSERT INTO users(id,username,password,authority) VALUES (1,'admin1','4dm1n',1);
 -- Ten owner user, named owner1 with passwor 0wn3r
-/*INSERT INTO users(username,password,enabled) VALUES ('owner1','0wn3r',TRUE);
-INSERT INTO authorities(id,username,authority) VALUES (2,'owner1','owner');
-INSERT INTO users(username,password,enabled) VALUES ('owner2','0wn3r',TRUE);
-INSERT INTO authorities(id,username,authority) VALUES (3,'owner2','owner');
-INSERT INTO users(username,password,enabled) VALUES ('owner3','0wn3r',TRUE);
-INSERT INTO authorities(id,username,authority) VALUES (4,'owner3','owner');
-INSERT INTO users(username,password,enabled) VALUES ('owner4','0wn3r',TRUE);
-INSERT INTO authorities(id,username,authority) VALUES (5,'owner4','owner');
-INSERT INTO users(username,password,enabled) VALUES ('owner5','0wn3r',TRUE);
-INSERT INTO authorities(id,username,authority) VALUES (6,'owner5','owner');
-INSERT INTO users(username,password,enabled) VALUES ('owner6','0wn3r',TRUE);
-INSERT INTO authorities(id,username,authority) VALUES (7,'owner6','owner');
-INSERT INTO users(username,password,enabled) VALUES ('owner7','0wn3r',TRUE);
-INSERT INTO authorities(id,username,authority) VALUES (8,'owner7','owner');
-INSERT INTO users(username,password,enabled) VALUES ('owner8','0wn3r',TRUE);
-INSERT INTO authorities(id,username,authority) VALUES (9,'owner8','owner');
-INSERT INTO users(username,password,enabled) VALUES ('owner9','0wn3r',TRUE);
-INSERT INTO authorities(id,username,authority) VALUES (10,'owner9','owner');
-INSERT INTO users(username,password,enabled) VALUES ('owner10','0wn3r',TRUE);
-INSERT INTO authorities(id,username,authority) VALUES (11,'owner10','owner');*/
 INSERT INTO authorities(id,authority) VALUES (2,'OWNER');
-INSERT INTO users(id,username,password,authority) VALUES (2,'owner1','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
-INSERT INTO users(id,username,password,authority) VALUES (3,'owner2','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
-INSERT INTO users(id,username,password,authority) VALUES (4,'owner3','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
-INSERT INTO users(id,username,password,authority) VALUES (5,'owner4','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
-INSERT INTO users(id,username,password,authority) VALUES (6,'owner5','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
-INSERT INTO users(id,username,password,authority) VALUES (7,'owner6','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
-INSERT INTO users(id,username,password,authority) VALUES (8,'owner7','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
-INSERT INTO users(id,username,password,authority) VALUES (9,'owner8','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
-INSERT INTO users(id,username,password,authority) VALUES (10,'owner9','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
-INSERT INTO users(id,username,password,authority) VALUES (11,'owner10','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
--- One vet user, named vet1 with passwor v3t
-/*INSERT INTO users(username,password,enabled) VALUES ('vet1','v3t',TRUE);
-INSERT INTO authorities(id,username,authority) VALUES (12,'vet1','veterinarian');*/
+--INSERT INTO users(id,username,password,authority) VALUES (2,'owner1','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+--INSERT INTO users(id,username,password,authority) VALUES (3,'owner2','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+--INSERT INTO users(id,username,password,authority) VALUES (4,'owner3','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+--INSERT INTO users(id,username,password,authority) VALUES (5,'owner4','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+--INSERT INTO users(id,username,password,authority) VALUES (6,'owner5','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+--INSERT INTO users(id,username,password,authority) VALUES (7,'owner6','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+--INSERT INTO users(id,username,password,authority) VALUES (8,'owner7','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+--INSERT INTO users(id,username,password,authority) VALUES (9,'owner8','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+--INSERT INTO users(id,username,password,authority) VALUES (10,'owner9','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+--INSERT INTO users(id,username,password,authority) VALUES (11,'owner10','$2a$10$DaS6KIEfF5CRTFrxIoGc7emY3BpZZ0.fVjwA3NiJ.BjpGNmocaS3e',2);
+INSERT INTO users(id,username,password,authority) VALUES (2,'owner1','0wn3r',2);
+INSERT INTO users(id,username,password,authority) VALUES (3,'owner2','0wn3r',2);
+INSERT INTO users(id,username,password,authority) VALUES (4,'owner3','0wn3r',2);
+INSERT INTO users(id,username,password,authority) VALUES (5,'owner4','0wn3r',2);
+INSERT INTO users(id,username,password,authority) VALUES (6,'owner5','0wn3r',2);
+INSERT INTO users(id,username,password,authority) VALUES (7,'owner6','0wn3r',2);
+INSERT INTO users(id,username,password,authority) VALUES (8,'owner7','0wn3r',2);
+INSERT INTO users(id,username,password,authority) VALUES (9,'owner8','0wn3r',2);
+INSERT INTO users(id,username,password,authority) VALUES (10,'owner9','0wn3r',2);
+INSERT INTO users(id,username,password,authority) VALUES (11,'owner10','0wn3r',2);
+-- Six vets
 INSERT INTO authorities(id,authority) VALUES (3,'VET');
-INSERT INTO users(id,username,password,authority) VALUES (12,'vet1','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',3);
-INSERT INTO users(id,username,password,authority) VALUES (13,'vet2','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',3);
-INSERT INTO users(id,username,password,authority) VALUES (14,'vet3','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',3);
-INSERT INTO users(id,username,password,authority) VALUES (15,'vet4','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',3);
-INSERT INTO users(id,username,password,authority) VALUES (16,'vet5','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',3);
-INSERT INTO users(id,username,password,authority) VALUES (17,'vet6','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',3);
+--INSERT INTO users(id,username,password,authority) VALUES (12,'vet1','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',3);
+--INSERT INTO users(id,username,password,authority) VALUES (13,'vet2','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',3);
+--INSERT INTO users(id,username,password,authority) VALUES (14,'vet3','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',3);
+--INSERT INTO users(id,username,password,authority) VALUES (15,'vet4','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',3);
+--INSERT INTO users(id,username,password,authority) VALUES (16,'vet5','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',3);
+--INSERT INTO users(id,username,password,authority) VALUES (17,'vet6','$2a$10$aeypcHWSf4YEkDAF0d.vjOLu94aS40MBUb4rOtDncFxZdo2wpkt8.',3);
+INSERT INTO users(id,username,password,authority) VALUES (12,'vet1','v3t',3);
+INSERT INTO users(id,username,password,authority) VALUES (13,'vet2','v3t',3);
+INSERT INTO users(id,username,password,authority) VALUES (14,'vet3','v3t',3);
+INSERT INTO users(id,username,password,authority) VALUES (15,'vet4','v3t',3);
+INSERT INTO users(id,username,password,authority) VALUES (16,'vet5','v3t',3);
+INSERT INTO users(id,username,password,authority) VALUES (17,'vet6','v3t',3);
 
 INSERT INTO vets(id, first_name,last_name,city,user) VALUES (1, 'James', 'Carter','Sevilla',12);
 INSERT INTO vets(id, first_name,last_name,city,user) VALUES (2, 'Helen', 'Leary','Sevilla',13);

@@ -1,21 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { Navbar, NavbarBrand, NavLink, NavItem, Nav, NavbarText, NavbarToggler, Collapse } from 'reactstrap';
+import { Navbar, NavbarBrand, NavLink, NavItem, Nav, NavbarToggler, Collapse, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import tokenService from './services/token.service';
 import jwt_decode from "jwt-decode";
 
 function AppNavbar() {
+    const jwt = tokenService.getLocalAccessToken();
     const [roles, setRoles] = useState([]);
     const [username, setUsername] = useState("");
-    const jwt = tokenService.getLocalAccessToken();
     const [collapsed, setCollapsed] = useState(true);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
+    const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
     const toggleNavbar = () => setCollapsed(!collapsed);
 
     useEffect(() => {
         if (jwt) {
             setRoles(jwt_decode(jwt).authorities);
-            setUsername(jwt_decode(jwt).sub);
+            setUsername(tokenService.getUser().username);
         }
     }, [jwt])
 
@@ -112,10 +114,20 @@ function AppNavbar() {
                 <NavItem>
                     <NavLink id="plans" tag={Link} to="/plans">Pricing Plans</NavLink>
                 </NavItem>
-                <NavbarText className="justify-content-end">{username}</NavbarText>
-                <NavItem className="d-flex">
+                <Dropdown nav isOpen={dropdownOpen} toggle={toggleDropdown}>
+                    <DropdownToggle nav caret>
+                        {username}
+                    </DropdownToggle>
+                    <DropdownMenu>
+                        <DropdownItem id="profile" tag={Link} to="/profile">Profile</DropdownItem>
+                        <DropdownItem divider />
+                        <DropdownItem id="logout" tag={Link} to="/logout">Logout</DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
+                {/* <NavbarText className="justify-content-end">{username}</NavbarText> */}
+                {/* <NavItem className="d-flex">
                     <NavLink id="logout" tag={Link} to="/logout">Logout</NavLink>
-                </NavItem>
+                </NavItem> */}
             </>
         )
 

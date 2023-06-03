@@ -17,6 +17,9 @@ export default function UserListAdmin({ test = false }) {
     const modal = getErrorModal(setVisible, visible, message);
 
     const renderButtons = (params) => {
+        if (params.row.id === tokenService.getUser()?.id) {
+            return <Button size="sm" className='edit-button' aria-label={'edit-' + params.row.name} tag={Link} to={"/profile"}>Edit</Button>
+        }
         return (
             <div>
                 <ButtonGroup>

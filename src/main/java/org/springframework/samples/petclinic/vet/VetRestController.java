@@ -9,6 +9,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.samples.petclinic.exceptions.AccessDeniedException;
+import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.samples.petclinic.util.RestPreconditions;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -49,7 +51,7 @@ public class VetRestController {
 
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public ResponseEntity<Vet> create(@RequestBody @Valid Vet vet){
+	public ResponseEntity<Vet> create(@RequestBody @Valid Vet vet) {
 		Vet newVet = new Vet();
 		BeanUtils.copyProperties(vet, newVet, "id");
 		Vet savedVet = this.vetService.saveVet(newVet);
@@ -75,6 +77,27 @@ public class VetRestController {
 	@GetMapping(value = "stats")
 	public ResponseEntity<Map<String, Object>> getStats() {
 		return new ResponseEntity<>(this.vetService.getVetsStats(), HttpStatus.OK);
+	}
+
+	@GetMapping(value = "profile")
+	public ResponseEntity<Vet> getProfile() {
+		User user = userService.findCurrentUser();
+		if (user.hasAuthority("VET").equals(true))
+			return new ResponseEntity<>(this.vetService.findVetByUser(user.getId()), HttpStatus.OK);
+		else
+			throw new AccessDeniedException();
+	}
+	
+	@PutMapping(value = "profile")
+	public ResponseEntity<Vet> updateProfile(@RequestBody @Valid Vet vet) {
+		User user = userService.findCurrentUser();
+		if (user.hasAuthority("VET").equals(true)) {
+			this.userService.updateUser(vet.getUser(), user.getId());
+			Vet aux = this.vetService.findVetByUser(user.getId());
+			return new ResponseEntity<>(this.vetService.updateVet(vet, aux.getId()), HttpStatus.OK);
+		}
+		else
+			throw new AccessDeniedException();
 	}
 
 }

@@ -13,7 +13,6 @@ import org.springframework.samples.petclinic.user.Authorities;
 import org.springframework.samples.petclinic.user.AuthoritiesService;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
-import org.springframework.samples.petclinic.vet.Specialty;
 import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.samples.petclinic.vet.VetService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -63,7 +62,7 @@ public class AuthService {
 			vet.setFirstName(request.getFirstName());
 			vet.setLastName(request.getLastName());
 			vet.setCity(request.getCity());
-			vet.setSpecialties(new ArrayList<Specialty>());
+			vet.setSpecialties(new ArrayList<>());
 			vet.setUser(user);
 			vetService.saveVet(vet);
 			break;

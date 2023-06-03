@@ -1,5 +1,6 @@
 package org.springframework.samples.petclinic.auth;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -23,9 +24,11 @@ import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.samples.petclinic.configuration.jwt.JwtUtils;
 import org.springframework.samples.petclinic.configuration.services.UserDetailsImpl;
+import org.springframework.samples.petclinic.exceptions.UniqueException;
 import org.springframework.samples.petclinic.owner.OwnerRestController;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.core.Authentication;
@@ -112,6 +115,34 @@ class AuthControllerTests {
 	}
 
 	@Test
+	void shouldNotAuthenticateUserBadCredentials() throws Exception {
+		Authentication auth = Mockito.mock(Authentication.class);
+
+		when(this.jwtUtils.generateJwtToken(any(Authentication.class))).thenReturn(token);
+		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+				.thenThrow(BadCredentialsException.class);
+		Mockito.doReturn(userDetails).when(auth).getPrincipal();
+
+		mockMvc.perform(post(BASE_URL + "/signin").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(loginRequest))).andExpect(status().isBadRequest())
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof BadCredentialsException));
+	}
+	
+	@Test
+	void shouldNotAuthenticateUserException() throws Exception {
+		Authentication auth = Mockito.mock(Authentication.class);
+
+		when(this.jwtUtils.generateJwtToken(any(Authentication.class))).thenReturn(token);
+		when(this.authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+				.thenThrow(RuntimeException.class);
+		Mockito.doReturn(userDetails).when(auth).getPrincipal();
+
+		mockMvc.perform(post(BASE_URL + "/signin").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(loginRequest))).andExpect(status().isInternalServerError())
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof RuntimeException));
+	}
+
+	@Test
 	void shouldValidateToken() throws Exception {
 		when(this.jwtUtils.validateJwtToken(token)).thenReturn(true);
 
@@ -144,8 +175,9 @@ class AuthControllerTests {
 		when(this.userService.existsUser(signupRequest.getUsername())).thenReturn(true);
 
 		mockMvc.perform(post(BASE_URL + "/signup").with(csrf()).contentType(MediaType.APPLICATION_JSON)
-				.content(objectMapper.writeValueAsString(signupRequest))).andExpect(status().isBadRequest())
-				.andExpect(jsonPath("$.message").value("Error: Username is already taken!"));
+				.content(objectMapper.writeValueAsString(signupRequest)))
+				.andExpect(status().isBadRequest())
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof UniqueException));
 	}
 
 }

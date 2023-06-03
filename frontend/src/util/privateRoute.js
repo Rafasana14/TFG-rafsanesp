@@ -21,7 +21,7 @@ const PrivateRoute = ({ children }) => {
             setIsValid(isValid);
             setIsLoading(false);
         }).catch(() => alert("Error validating token"));
-    } else return <Login message={message} navigation={false} />;
+    } else return <Login expiration={message} navigation={false} />;
 
     if (isLoading === true) {
         return <div>Loading...</div>;

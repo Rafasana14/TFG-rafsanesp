@@ -5,6 +5,8 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 import org.springframework.samples.petclinic.model.BaseEntity;
 
@@ -16,8 +18,10 @@ import lombok.Setter;
 @Entity
 @Table(name = "users")
 public class User extends BaseEntity {
-
-	@Column(unique = true)
+	
+	@NotBlank
+	@Size(min = 3, max = 50)
+	@Column(unique=true)
 	String username;
 
 	String password;

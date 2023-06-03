@@ -1,5 +1,6 @@
 package org.springframework.samples.petclinic.owner;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
@@ -27,6 +28,9 @@ import org.springframework.samples.petclinic.user.Authorities;
 import org.springframework.samples.petclinic.user.User;
 import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -67,7 +71,7 @@ class OwnerRestControllerTests {
 	private Owner george;
 	private Owner sara;
 	private Owner juan;
-	private User user;
+	private User user, logged;
 
 	@BeforeEach
 	void setup() {
@@ -107,6 +111,20 @@ class OwnerRestControllerTests {
 		user.setUsername("user");
 		user.setPassword("password");
 		user.setAuthority(ownerAuth);
+		when(this.userService.findCurrentUser()).thenReturn(getUserFromDetails(
+				(UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()));
+	}
+
+	private User getUserFromDetails(UserDetails details) {
+		logged = new User();
+		logged.setUsername(details.getUsername());
+		logged.setPassword(details.getPassword());
+		Authorities aux = new Authorities();
+		for (GrantedAuthority auth : details.getAuthorities()) {
+			aux.setAuthority(auth.getAuthority());
+		}
+		logged.setAuthority(aux);
+		return logged;
 	}
 
 	@Test
@@ -134,7 +152,8 @@ class OwnerRestControllerTests {
 	@WithMockUser("admin")
 	void shouldReturnNotFoundOwner() throws Exception {
 		when(this.ownerService.findOwnerById(TEST_OWNER_ID)).thenThrow(ResourceNotFoundException.class);
-		mockMvc.perform(get(BASE_URL + "/{id}", TEST_OWNER_ID)).andExpect(status().isNotFound());
+		mockMvc.perform(get(BASE_URL + "/{id}", TEST_OWNER_ID)).andExpect(status().isNotFound())
+				.andExpect(result -> assertTrue(result.getResolvedException() instanceof ResourceNotFoundException));
 	}
 
 	@Test
@@ -225,6 +244,33 @@ class OwnerRestControllerTests {
 		when(this.ownerService.getOwnersStats()).thenReturn(new HashMap<>());
 
 		mockMvc.perform(get(BASE_URL + "/stats")).andExpect(status().isOk());
+	}
+
+	@Test
+	@WithMockUser(username = "vet", authorities = "VET")
+	void shouldReturnProfile() throws Exception {
+		logged.setId(1);
+		when(this.ownerService.findOwnerByUser(logged.getId())).thenReturn(george);
+		mockMvc.perform(get(BASE_URL + "/profile")).andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(TEST_OWNER_ID))
+				.andExpect(jsonPath("$.firstName").value(george.getFirstName()))
+				.andExpect(jsonPath("$.lastName").value(george.getLastName()))
+				.andExpect(jsonPath("$.city").value(george.getCity()));
+	}
+
+	@Test
+	@WithMockUser(username = "owner", authorities = "OWNER")
+	void shouldUpdateProfile() throws Exception {
+		logged.setId(1);
+		when(this.userService.updateUser(user, logged.getId())).thenReturn(user);
+		when(this.ownerService.findOwnerByUser(logged.getId())).thenReturn(george);
+		when(this.ownerService.updateOwner(any(Owner.class), any(Integer.class))).thenReturn(george);
+		mockMvc.perform(put(BASE_URL + "/profile").with(csrf()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(george))).andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(TEST_OWNER_ID))
+				.andExpect(jsonPath("$.firstName").value(george.getFirstName()))
+				.andExpect(jsonPath("$.lastName").value(george.getLastName()))
+				.andExpect(jsonPath("$.city").value(george.getCity()));
 	}
 
 }

@@ -22,7 +22,9 @@ export default function ConsultationListOwner({ test = false }) {
                     to={`/consultations/${params.row.id}/tickets`}>
                     Details
                 </Button>{' '}
-                <Button size="sm" className='edit-button' aria-label={'edit-' + params.row.name} tag={Link} to={"/consultations/" + params.row.id}>Edit</Button>
+                {plan === "PLATINUM" ?
+                    <Button size="sm" className='edit-button' aria-label={'edit-' + params.row.name} tag={Link} to={"/consultations/" + params.row.id}>Edit</Button>
+                    : <></>}
             </div>
         )
     }
@@ -34,7 +36,7 @@ export default function ConsultationListOwner({ test = false }) {
         { field: 'owner', headerName: 'Owner', flex: 0.5, minWidth: 150 },
         { field: 'pet', headerName: 'Pet', flex: 0.4, minWidth: 150 },
         { field: 'creationDate', type: 'dateTime', headerName: 'Creation Date', flex: 0.5, minWidth: 150 },
-        { field: 'actions', headerName: 'Actions', flex: 0.3, minWidth: 90, sortable: false, filterable: false, renderCell: renderButtons },
+        { field: 'actions', headerName: 'Actions', flex: 0.3, minWidth: 130, sortable: false, filterable: false, renderCell: renderButtons },
     ];
 
     const rows = Array.from(consultations).map((consultation) => {
@@ -70,6 +72,7 @@ export default function ConsultationListOwner({ test = false }) {
                     rows={rows}
                     columns={columns}
                     initialState={{
+                        pinnedColumns: { left: ['id', 'title'], right: ['actions'] },
                         pagination: {
                             paginationModel: { page: 0, pageSize: 10 },
                         },

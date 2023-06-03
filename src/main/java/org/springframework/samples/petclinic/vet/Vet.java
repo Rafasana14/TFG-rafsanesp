@@ -27,6 +27,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
 import org.springframework.samples.petclinic.model.Person;
@@ -46,7 +47,8 @@ public class Vet extends Person {
 			@UniqueConstraint(columnNames = { "vet_id", "specialty_id" }) })
 	private List<Specialty> specialties;
 
-	@OneToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH })
+	@Valid
+	@OneToOne(cascade = CascadeType.REMOVE)
 	@JoinColumn(name = "user", referencedColumnName = "id")
 	private User user;
 
