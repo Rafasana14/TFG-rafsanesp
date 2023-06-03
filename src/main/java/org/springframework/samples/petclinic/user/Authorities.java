@@ -13,15 +13,9 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "authorities")
-public class Authorities extends BaseEntity{
-	
-//	@ManyToOne
-//	@JoinColumn(name = "username")
-//	User user;
-	
-//	@Enumerated(EnumType.STRING)
+public class Authorities extends BaseEntity {
+
 	@Column(length = 20)
 	String authority;
-	
-	
+
 }
