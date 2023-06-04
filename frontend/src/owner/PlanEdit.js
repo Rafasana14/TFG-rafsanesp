@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Col, Container } from 'reactstrap';
 import useFetchState from '../util/useFetchState';
 import tokenService from '../services/token.service';
-import getErrorModal from '../util/getErrorModal';
+import useErrorModal from '../util/useErrorModal';
 import { PricingPlanTable } from '../public/plan/PlanList';
 
 const jwt = tokenService.getLocalAccessToken()
@@ -47,15 +47,16 @@ export default function PlanEdit() {
             .catch((message) => alert(message));
     }
 
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
 
-    return <div>
-        <Container style={{ marginTop: "15px" }}>
+    return (
+        <Container className='page' style={{ marginTop: "15px" }}>
             <h1 className="text-center">My Plan - {plan}</h1>
             {modal}
             <Col align='center'>
                 <PricingPlanTable buttons={true} plan={plan} changePlan={changePlan} />
             </Col>
         </Container>
-    </div>
+    )
+
 }

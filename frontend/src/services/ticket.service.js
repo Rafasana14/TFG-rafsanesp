@@ -113,7 +113,7 @@ class TicketService {
         } else {
             return <Row>
                 <Col sm="3">
-                    <Button color="secondary" tag={Link} to="/consultations">Back</Button>
+                    <Button className="back-button" tag={Link} to="/consultations">Back</Button>
                 </Col>
                 <Col sm="6">
                     <h2 className="text-center">Consultation Number {consultation.id}</h2>

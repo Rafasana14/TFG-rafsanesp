@@ -4,7 +4,7 @@ import useFetchData from "../../util/useFetchData";
 import { Button, ButtonGroup, Container } from "reactstrap";
 import { Link } from "react-router-dom";
 import CalendarOwner from "./CalendarOwner";
-import getErrorModal from "../../util/getErrorModal";
+import useErrorModal from "../../util/useErrorModal";
 import StatsOwner from "./StatsOwner";
 
 const jwt = tokenService.getLocalAccessToken();
@@ -43,7 +43,7 @@ export default function DashboardOwner() {
         }
     }
 
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
 
     getFunctions();
 

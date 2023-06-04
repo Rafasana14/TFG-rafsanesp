@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button, ButtonGroup, Col, Container } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import useFetchState from '../../util/useFetchState';
-import getErrorModal from '../../util/getErrorModal';
+import useErrorModal from '../../util/useErrorModal';
 import deleteFromList from '../../util/deleteFromList';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
@@ -14,7 +14,7 @@ export default function VetListAdmin({ test = false }) {
     const [visible, setVisible] = useState(false);
     const [vets, setVets] = useFetchState([], `/api/v1/vets`, jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
 
     const renderButtons = (params) => {
         return (

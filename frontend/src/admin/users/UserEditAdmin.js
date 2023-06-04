@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
 import tokenService from '../../services/token.service';
-import getErrorModal from '../../util/getErrorModal';
+import useErrorModal from '../../util/useErrorModal';
 import useFetchData from '../../util/useFetchData';
 import useFetchState from '../../util/useFetchState';
 import getIdFromUrl from '../../util/getIdFromUrl';
@@ -38,7 +38,7 @@ export default function UserEditAdmin() {
     }
 
     const handleSubmit = async (event) => await submitState(event, user, `/api/v1/users`, setMessage, setVisible, setRedirect);
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
     const authOptions = Array.from(auths).map(auth => <option key={auth.id} value={auth.id}>{auth.authority}</option>);
 
     return (

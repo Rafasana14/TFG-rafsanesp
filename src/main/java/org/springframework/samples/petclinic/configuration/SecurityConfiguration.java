@@ -89,7 +89,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/static/**").antMatchers("/error").antMatchers("/swagger-ui.html")
+		web.ignoring().antMatchers("/static/**").antMatchers("/public/**").antMatchers("/error").antMatchers("/swagger-ui.html")
 				.antMatchers("/swagger-resources/**");
 	}
 

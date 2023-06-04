@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
 import tokenService from '../../services/token.service';
-import getErrorModal from '../../util/getErrorModal';
+import useErrorModal from '../../util/useErrorModal';
 import useFetchData from '../../util/useFetchData';
 import useFetchState from '../../util/useFetchState';
 import getIdFromUrl from '../../util/getIdFromUrl';
@@ -45,7 +45,7 @@ export default function PetEditAdmin() {
 
     const handleSubmit = async (event) => await submitState(event, pet, `/api/v1/pets`, setMessage, setVisible, setRedirect);
 
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
     const typeOptions = Array.from(types).map(type => <option key={type.id} value={type.id}>{type.name}</option>);
     const ownerOptions = Array.from(owners).map(owner => <option key={owner.id} value={owner.id}>{owner.user.username}</option>);
 
@@ -89,7 +89,7 @@ export default function PetEditAdmin() {
                     </FormGroup>
                     <FormGroup>
                         <Button className='save-button' type="submit">Save</Button>{' '}
-                        <Button className='cancel-button' tag={Link} to="/pets">Cancel</Button>
+                        <Button className='back-button' tag={Link} to="/pets">Cancel</Button>
                     </FormGroup>
                 </Form>
             </Container>

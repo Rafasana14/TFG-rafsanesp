@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button, ButtonGroup, Col, Container, Row } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import useFetchState from '../../util/useFetchState';
-import getErrorModal from '../../util/getErrorModal';
+import useErrorModal from '../../util/useErrorModal';
 import deleteFromList from '../../util/deleteFromList';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
@@ -14,7 +14,7 @@ export default function PetListAdmin({ test = false }) {
     const [visible, setVisible] = useState(false);
     const [pets, setPets] = useFetchState([], `/api/v1/pets`, jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
 
     const renderButtons = (params) => {
         return (

@@ -124,10 +124,6 @@ function AppNavbar() {
                         <DropdownItem id="logout" tag={Link} to="/logout">Logout</DropdownItem>
                     </DropdownMenu>
                 </Dropdown>
-                {/* <NavbarText className="justify-content-end">{username}</NavbarText> */}
-                {/* <NavItem className="d-flex">
-                    <NavLink id="logout" tag={Link} to="/logout">Logout</NavLink>
-                </NavItem> */}
             </>
         )
 
@@ -135,7 +131,7 @@ function AppNavbar() {
 
     return (
         <div>
-            <Navbar color='success' expand="lg" dark >
+            <Navbar style={{ zIndex: 2000 }} color='success' expand="lg" dark >
                 <NavbarBrand href="/">
                     <img alt="logo" src="/logo1-recortado.png" style={{ height: 40, width: 40 }} />
                     PetClinic

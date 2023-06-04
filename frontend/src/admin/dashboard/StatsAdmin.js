@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Col, Container, Row, Table } from 'reactstrap';
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import getErrorModal from '../../util/getErrorModal';
 import useFetchData from '../../util/useFetchData';
 import tokenService from '../../services/token.service';
 import { getBarStats, getPieStats } from '../../util/getStats';
 import { useMediaQuery } from 'react-responsive';
+import useErrorModal from '../../util/useErrorModal';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -19,7 +19,7 @@ function StatsAdmin() {
     const vetsStats = useFetchData(`/api/v1/vets/stats`, jwt, setMessage, setVisible); //vetsBySpecialty, vetsByCity, totalVets, visitsByVet
     const petsStats = useFetchData(`/api/v1/pets/stats`, jwt, setMessage, setVisible); //petsByType, avgPetsPerOwner, totalPets
 
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
 
     const title = <h2 className='text-center'>Stats</h2>;
 

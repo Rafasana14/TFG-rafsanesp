@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import tokenService from '../../services/token.service';
-import getErrorModal from '../../util/getErrorModal';
+import useErrorModal from '../../util/useErrorModal';
 import { Button, Col, Container } from 'reactstrap';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { Link } from 'react-router-dom';
@@ -12,7 +12,7 @@ export default function ConsultationListVet({ test = false }) {
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
     const consultations = useFetchData(`/api/v1/consultations`, jwt, setMessage, setVisible);
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
 
     const renderButtons = (params) => {
         return (

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Col, Container, Row, Table } from 'reactstrap';
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import getErrorModal from '../../util/getErrorModal';
+import useErrorModal from '../../util/useErrorModal';
 import useFetchData from '../../util/useFetchData';
 import tokenService from '../../services/token.service';
 import { getBarStats, getPieStats } from '../../util/getStats';
@@ -16,7 +16,7 @@ function StatsOwner() {
     const consultationsStats = useFetchData(`/api/v1/consultations/stats`, jwt, setMessage, setVisible);
     const visitsStats = useFetchData(`/api/v1/visits/stats`, jwt, setMessage, setVisible);
 
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
 
     const title = <h3 className='text-center'>Stats</h3>;
 

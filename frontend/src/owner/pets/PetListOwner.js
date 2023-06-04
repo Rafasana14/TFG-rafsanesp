@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Button, ButtonGroup, Card, CardBody, CardFooter, CardTitle, Col, Container, ListGroup, ListGroupItem, Row, Table } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import useFetchState from '../../util/useFetchState';
-import getErrorModal from '../../util/getErrorModal';
+import useErrorModal from '../../util/useErrorModal';
 import deleteFromList from '../../util/deleteFromList';
 
 const jwt = tokenService.getLocalAccessToken();
@@ -18,7 +18,7 @@ export default function PetListOwner() {
 
     const removeVisit = (petId, visitId) => deleteFromList(`/api/v1/pets/${petId}/visits/${visitId}`, visitId, [visits, setVisits], [alerts, setAlerts], setMessage, setVisible);
 
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
 
     const petList = pets.map((pet) => {
         const petVisits = visits.filter(i => i.pet.id === pet.id && new Date(i.datetime) > new Date());
@@ -37,11 +37,11 @@ export default function PetListOwner() {
                         <td>{visit.vet.firstName} {visit.vet.lastName}</td>
                         <td>
                             <ButtonGroup>
-                                <Button aria-label={`edit-visit-${visit.id}`} size="sm" color="primary" tag={Link}
+                                <Button aria-label={`edit-visit-${visit.id}`} size="sm" className='edit-button' tag={Link}
                                     to={`/pets/${pet.id}/visits/${visit.id}`}>
                                     Edit
                                 </Button>
-                                <Button aria-label={`cancel-visit-${visit.id}`} size="sm" color="danger"
+                                <Button aria-label={`cancel-visit-${visit.id}`} size="sm" className='delete-button'
                                     onClick={() => removeVisit(pet.id, visit.id)}>
                                     Cancel
                                 </Button>
@@ -58,10 +58,10 @@ export default function PetListOwner() {
                         <th >Next Visits</th>
                         <th colSpan={2} style={{ textAlign: "end" }}>
                             <ButtonGroup className='justify-content-end'>
-                                <Button color="success" tag={Link} to={`/pets/${pet.id}/visits/new`}>
+                                <Button className='add-button' tag={Link} to={`/pets/${pet.id}/visits/new`}>
                                     Add Visit
                                 </Button>
-                                <Button color="info" tag={Link} to={`/pets/${pet.id}/visits`}>
+                                <Button className='extra-button' tag={Link} to={`/pets/${pet.id}/visits`}>
                                     History
                                 </Button>
                             </ButtonGroup>
@@ -103,10 +103,10 @@ export default function PetListOwner() {
                             </CardBody>
                             <CardFooter>
                                 <ButtonGroup>
-                                    <Button aria-label={`edit-pet-${pet.id}`} size="sm" color="primary" tag={Link} to={"/pets/" + pet.id}>
+                                    <Button aria-label={`edit-pet-${pet.id}`} size="sm" className='edit-button' tag={Link} to={"/pets/" + pet.id}>
                                         Edit
                                     </Button>
-                                    <Button aria-label={`delete-pet-${pet.id}`} size="sm" color="danger" onClick={() => removePet(pet.id)}>
+                                    <Button aria-label={`delete-pet-${pet.id}`} size="sm" className='delete-button' onClick={() => removePet(pet.id)}>
                                         Delete
                                     </Button>
                                 </ButtonGroup>
@@ -126,16 +126,14 @@ export default function PetListOwner() {
     });
 
     return (
-        <div>
-            < Container fluid style={{ marginTop: "20px" }}>
-                <h1 className="text-center">Pets</h1>
-                {alerts.map((a) => a.alert)}
-                {modal}
-                <Button color="success" tag={Link} to="/pets/new">
-                    Add Pet
-                </Button><br></br><br></br>
-                {petList}
-            </Container >
-        </div >
+        < Container fluid style={{ marginTop: "20px" }}>
+            <h1 className="text-center">Pets</h1>
+            {alerts.map((a) => a.alert)}
+            {modal}
+            <Button className='add-button' tag={Link} to="/pets/new">
+                Add Pet
+            </Button><br></br><br></br>
+            {petList}
+        </Container >
     );
 }

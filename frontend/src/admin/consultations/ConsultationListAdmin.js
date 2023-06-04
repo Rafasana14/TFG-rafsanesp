@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import tokenService from '../../services/token.service';
 import useFetchState from '../../util/useFetchState';
-import getErrorModal from '../../util/getErrorModal';
+import useErrorModal from '../../util/useErrorModal';
 import { Button, ButtonGroup, Col, Container } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import deleteFromList from '../../util/deleteFromList';
@@ -14,7 +14,7 @@ export default function ConsultationListAdmin({ test = false }) {
     const [visible, setVisible] = useState(false);
     const [consultations, setConsultations] = useFetchState([], `/api/v1/consultations`, jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
 
     const renderButtons = (params) => {
         return (

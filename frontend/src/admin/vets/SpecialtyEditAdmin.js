@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
 import tokenService from '../../services/token.service';
-import getErrorModal from '../../util/getErrorModal';
+import useErrorModal from '../../util/useErrorModal';
 import useFetchState from '../../util/useFetchState';
 import getIdFromUrl from '../../util/getIdFromUrl';
 import submitState from '../../util/submitState';
@@ -30,7 +30,7 @@ export default function SpecialtyEditAdmin() {
     }
 
     const handleSubmit = async (event) => await submitState(event, specialty, `/api/v1/vets/specialties`, setMessage, setVisible, setRedirect);
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
 
     return (
         <div>

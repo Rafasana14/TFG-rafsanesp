@@ -39,6 +39,7 @@ import Register from "./auth/Register";
 import Logout from "./auth/Logout.js";
 import PrivateRoute from "./util/privateRoute";
 import ProfileEdit from "./components/ProfileEdit";
+import { Col, Container, Row } from "reactstrap";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -150,6 +151,15 @@ function App() {
           {vetRoutes}
           {commonRoutes}
         </Routes>
+        <Container fluid>
+          <Row>
+            <Col xs="4" md="4" lg="4" xl="4"><img className="footer-image-left responsive" src="/perros2.png" alt="dogs running" /></Col>
+            <Col xs="4" md="4" lg="4" xl="4" align="center"><img className="footer-image-center responsive" src="/logo1-recortado.png" alt="logo" /></Col>
+            <Col xs="4" md="4" lg="4" xl="4"><img className="footer-image-right responsive" src="/perros.png" alt="dogs running" /></Col>
+          </Row>
+        </Container>
+
+
       </ErrorBoundary>
     </div>
   );
