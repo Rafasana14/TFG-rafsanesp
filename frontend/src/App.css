@@ -187,6 +187,11 @@ tr>td.stats-cell {
   height: auto;
 }
 
+.home-img {
+  max-height: 300px;
+  border-radius: 30%;
+}
+
 @media screen and (max-width: 991px) {
   .modal {
     margin-top: 100px;
