@@ -73,7 +73,7 @@ export default function PetEditOwner() {
                             </FormGroup>
                             <FormGroup align="center">
                                 <Button className='save-button' type="submit">Save</Button>{' '}
-                                <Button className='back-button' color='outline' tag={Link} to="/pets">Cancel</Button>
+                                <Button className='back-button' tag={Link} to="/pets">Cancel</Button>
                             </FormGroup>
                         </Form>
                     </Col>

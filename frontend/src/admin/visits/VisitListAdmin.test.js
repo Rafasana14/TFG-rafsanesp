@@ -1,3 +1,4 @@
+import tokenService from "../../services/token.service";
 import { render, screen, testRenderList } from "../../test-utils";
 import VisitListAdmin from "./VisitListAdmin";
 
@@ -5,6 +6,24 @@ describe('VisitListAdmin', () => {
     test('renders correctly', async () => {
         render(<VisitListAdmin test={true} />);
         testRenderList(/visits/i, true);
+    });
+
+    test('renders correctly for vets', async () => {
+        tokenService.setUser({ id: 1 })
+        render(<VisitListAdmin test={true} admin={false} />);
+        testRenderList(/visits/i, true, false);
+
+        const detailsButtons = await screen.findAllByRole('link', { 'name': /edit/ });
+        expect(detailsButtons).toHaveLength(2);
+    });
+
+    test('renders correctly for vets owned visits', async () => {
+        tokenService.setUser({ id: 12 })
+        render(<VisitListAdmin test={true} admin={false} />);
+        testRenderList(/visits/i, true, false);
+
+        const detailsButtons = await screen.findAllByRole('link', { 'name': /edit/ });
+        expect(detailsButtons).toHaveLength(2);
     });
 
     test('renders visits correctly', async () => {

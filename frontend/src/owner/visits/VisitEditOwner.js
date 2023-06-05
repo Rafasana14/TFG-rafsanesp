@@ -187,8 +187,8 @@ export default function VisitEditOwner() {
                                 <Input type="text" disabled name="pet" id="pet" value={pet.name || ''} />
                             </FormGroup>
                             <FormGroup>
-                                <Button color="primary" type="submit">Save</Button>{' '}
-                                <Button color="secondary" onClick={() => window.history.back()}>Back</Button>
+                                <Button className='save-button' type="submit">Save</Button>{' '}
+                                <Button className='back-button' onClick={() => window.history.back()}>Back</Button>
                             </FormGroup>
                         </Form>
                     </Col>

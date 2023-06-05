@@ -11,7 +11,7 @@ const customRender = (ui, { route = '/' } = {}) => {
     }
 }
 
-const testRenderList = (title, grid = false) => {
+const testRenderList = (title, grid = false, admin = true) => {
     const heading = screen.getByRole('heading', { 'name': title });
     expect(heading).toBeInTheDocument();
 
@@ -23,8 +23,10 @@ const testRenderList = (title, grid = false) => {
         expect(table).toBeInTheDocument();
     }
 
-    const addLink = screen.getByRole('link', { 'name': /Add/ });
-    expect(addLink).toBeInTheDocument();
+    if (admin) {
+        const addLink = screen.getByRole('link', { 'name': /Add/ });
+        expect(addLink).toBeInTheDocument();
+    }
 
     const rows = screen.getAllByRole('row');
     expect(rows).toHaveLength(1);

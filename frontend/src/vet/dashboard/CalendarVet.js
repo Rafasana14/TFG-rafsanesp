@@ -55,7 +55,7 @@ function CalendarVet() {
             events={events}
             startAccessor="start"
             endAccessor="end"
-            onSelectEvent={(e) => window.location.assign(`/owners/${e.ownerId}/pets/${e.petId}/visits/${e.visitId}`)}
+            onSelectEvent={(e) => window.location.assign(`/pets/${e.petId}/visits/${e.visitId}`)}
             onSelectSlot={handleSelectSlot}
             selectable
             views={{

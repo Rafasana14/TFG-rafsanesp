@@ -23,7 +23,8 @@ export default function ProfileEdit({ auth }) {
         const value = target.value;
         const name = target.name;
         if (auth !== "ADMIN") {
-            if (name === "username" || name === "password") setProfile({ ...profile, user: { ...profile.user, [name]: value } })
+            if (name === "username" || name === "password") setProfile({ ...profile, user: { ...profile.user, [name]: value } });
+            else setProfile({ ...profile, [name]: value })
         }
         else setProfile({ ...profile, [name]: value })
     }
@@ -131,7 +132,6 @@ export default function ProfileEdit({ auth }) {
                 {modal}
                 <h2 className="text-center">My Profile</h2>
                 {alerts.map((a) => a.alert)}
-
                 {form}
             </Container>
         </div>

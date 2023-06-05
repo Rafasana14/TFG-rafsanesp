@@ -10,7 +10,7 @@ import useNavigateAfterSubmit from '../../util/useNavigateAfterSubmit';
 
 const jwt = tokenService.getLocalAccessToken();
 
-export default function OwnerEditAdmin() {
+export default function OwnerEditAdmin({ admin = true }) {
     const emptyItem = {
         id: null,
         firstName: '',
@@ -38,40 +38,44 @@ export default function OwnerEditAdmin() {
 
     const modal = useErrorModal(setVisible, visible, message);
 
+    let title;
+    if (admin) title = <h2>{owner.id ? 'Edit Owner' : 'Add Owner'}</h2>
+    else title = <h2>{'Owner Details'}</h2>
+
     return (
         <div>
             <Container style={{ marginTop: "15px" }}>
-                {<h2>{owner.id ? 'Edit Owner' : 'Add Owner'}</h2>}
+                {title}
                 {modal}
                 <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                     <FormGroup>
                         <Label for="firstName">First Name</Label>
                         <Input type="text" required name="firstName" id="firstName" value={owner.firstName || ''}
-                            onChange={handleChange} />
+                            onChange={handleChange} disabled={!admin} />
                     </FormGroup>
                     <FormGroup>
                         <Label for="lastName">Last Name</Label>
                         <Input type="text" required name="lastName" id="lastName" value={owner.lastName || ''}
-                            onChange={handleChange} />
+                            onChange={handleChange} disabled={!admin} />
                     </FormGroup>
                     <FormGroup>
                         <Label for="address">Address</Label>
                         <Input type="text" required name="address" id="address" value={owner.address || ''}
-                            onChange={handleChange} />
+                            onChange={handleChange} disabled={!admin} />
                     </FormGroup>
                     <FormGroup>
                         <Label for="city">City</Label>
                         <Input type="text" required name="city" id="city" value={owner.city || ''}
-                            onChange={handleChange} />
+                            onChange={handleChange} disabled={!admin} />
                     </FormGroup>
                     <FormGroup>
                         <Label for="telephone">Telephone</Label>
                         <Input type="tel" required pattern="[0-9]{9}" name="telephone" id="telephone" value={owner.telephone || ''}
-                            onChange={handleChange} />
+                            onChange={handleChange} disabled={!admin} />
                     </FormGroup>
                     <FormGroup>
                         <Label for="plan">Plan</Label>
-                        <Input id="plan" name="plan" required type="select" value={owner.plan || ''} onChange={handleChange}>
+                        <Input id="plan" name="plan" required type="select" value={owner.plan || ''} onChange={handleChange} disabled={!admin}>
                             <option value="">None</option>
                             <option value="BASIC">BASIC</option>
                             <option value="GOLD">GOLD</option>
@@ -79,8 +83,9 @@ export default function OwnerEditAdmin() {
                         </Input>
                     </FormGroup>
                     <FormGroup>
-                        <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="secondary" tag={Link} to="/owners">Cancel</Button>
+                        {admin ? <Button className='save-button' type="submit">Save</Button> : <></>}
+                        {admin ? ' ' : <></>}
+                        <Button className='back-button' tag={Link} to="/owners">Back</Button>
                     </FormGroup>
                 </Form>
             </Container>

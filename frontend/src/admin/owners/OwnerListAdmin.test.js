@@ -9,6 +9,14 @@ describe('OwnerListAdmin', () => {
         testRenderList(/owners/i, true);
     });
 
+    test('renders correctly for vets', async () => {
+        render(<OwnerListAdmin test={true} admin={false} />);
+        testRenderList(/owners/i, true, false);
+
+        const detailsButtons = await screen.findAllByRole('link', { 'name': /details/ });
+        expect(detailsButtons).toHaveLength(2);
+    });
+
     test('renders owners correctly', async () => {
         render(<OwnerListAdmin test={true} />);
         const owner1 = await screen.findByRole('cell', { 'name': /george/i });

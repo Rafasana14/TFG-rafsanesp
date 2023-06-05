@@ -167,9 +167,14 @@ tr>td.stats-cell {
   background-color: white;
 }
 
-.modal {
+.modal-content.basic-dashboard {
+  margin-top: 0px;
+}
+
+.modal-content {
   margin-top: 100px;
 }
+
 
 .footer-image-right {
   margin-top: 40px;
@@ -187,13 +192,42 @@ tr>td.stats-cell {
   height: auto;
 }
 
+.home-img-title {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 575px;
+}
+
 .home-img {
-  max-height: 300px;
+  height: 250px;
   border-radius: 30%;
 }
 
 @media screen and (max-width: 991px) {
-  .modal {
+  .modal-content.basic-dashboard {
+    margin-top: 120px;
+  }
+
+  .modal-content {
     margin-top: 100px;
+  }
+}
+
+@media screen and (max-width: 590px) {
+  .home-img-title {
+    width: 425px;
+  }
+}
+
+@media screen and (max-width: 440px) {
+  .home-img-title {
+    width: 350px;
+  }
+}
+
+@media screen and (max-width: 375px) {
+  .home-img-title {
+    width: 330px;
   }
 }

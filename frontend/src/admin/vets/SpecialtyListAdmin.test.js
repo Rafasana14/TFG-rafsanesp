@@ -7,6 +7,14 @@ describe('SpecialtyListAdmin', () => {
         testRenderList(/specialties/i, true);
     });
 
+    test('renders correctly for vets', async () => {
+        render(<SpecialtyListAdmin test={true} admin={false} />);
+        testRenderList(/specialties/i, true, false);
+
+        const detailsButtons = screen.queryAllByRole('link', { 'name': /details/ });
+        expect(detailsButtons).toHaveLength(0);
+    });
+
     test('renders specialties correctly', async () => {
         render(<SpecialtyListAdmin test={true} />);
         const specialty1 = await screen.findByRole('cell', { 'name': 'surgery' });

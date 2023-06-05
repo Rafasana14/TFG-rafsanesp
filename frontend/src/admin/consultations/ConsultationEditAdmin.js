@@ -108,8 +108,8 @@ export default function ConsultationEditAdmin() {
                             </Input>}
                     </FormGroup>
                     <FormGroup>
-                        <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="secondary" tag={Link} to="/consultations">Cancel</Button>
+                        <Button className='save-button' type="submit">Save</Button>{' '}
+                        <Button className='back-button' tag={Link} to="/consultations">Cancel</Button>
                     </FormGroup>
                 </Form>
             </Container>

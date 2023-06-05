@@ -45,6 +45,13 @@ describe('VetEditAdmin', () => {
 
         await testFilledEditForm(form)
 
+        const dentistry = await screen.findByLabelText(/dentistry/i);
+        await user.click(dentistry);
+        const radiology = await screen.findByLabelText(/radiology/i);
+        expect(radiology).toBeChecked();
+        await user.click(radiology);
+        expect(radiology).not.toBeChecked();
+
         const submit = screen.getByRole('button', { name: /save/i })
         await user.click(submit);
 
@@ -75,5 +82,13 @@ describe('VetEditAdmin', () => {
 
         const modal = await screen.findByRole('dialog');
         expect(modal).toBeInTheDocument();
+    });
+
+    test('back button works correctly', async () => {
+        const { user } = render(<VetEditAdmin />, { route: route });
+        const back = screen.getByRole('button', { 'name': /back/i });
+        await user.click(back);
+
+        expect(navigate).toHaveBeenCalledWith(-1);
     });
 });

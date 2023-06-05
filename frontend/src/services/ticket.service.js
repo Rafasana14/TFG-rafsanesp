@@ -105,7 +105,7 @@ class TicketService {
                     <h2 className="text-center">Consultation Number {consultation.id}</h2>
                 </Col>
                 <Col sm="3">
-                    <Button className="close-button" onClick={(e) => { (async () => { await handleClose(e); })(); }} >
+                    <Button style={{ float: "right" }} className="add-button" onClick={(e) => { (async () => { await handleClose(e); })(); }} >
                         Close Consultation
                     </Button>
                 </Col>

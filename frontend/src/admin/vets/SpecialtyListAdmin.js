@@ -9,7 +9,7 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 const jwt = tokenService.getLocalAccessToken();
 
-export default function SpecialtyListAdmin({ test = false }) {
+export default function SpecialtyListAdmin({ test = false, admin = true }) {
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
     const [specialties, setSpecialties] = useFetchState([], `/api/v1/vets/specialties`, jwt, setMessage, setVisible);
@@ -19,21 +19,21 @@ export default function SpecialtyListAdmin({ test = false }) {
     const renderButtons = (params) => {
         return (
             <div>
-                <ButtonGroup>
+                < ButtonGroup >
                     <Button size="sm" className='edit-button' aria-label={'edit-' + params.row.name} tag={Link} to={"/vets/specialties/" + params.row.id}>Edit</Button>
                     <Button size="sm" className='delete-button' aria-label={'delete-' + params.row.id}
                         onClick={() => deleteFromList(`/api/v1/vets/specialties/${params.row.id}`, params.row.id, [specialties, setSpecialties], [alerts, setAlerts], setMessage, setVisible)}>
                         Delete
                     </Button>
-                </ButtonGroup>
-            </div>
+                </ButtonGroup >
+            </div >
         )
     }
 
     const columns = [
         { field: 'id', headerName: 'ID', flex: 0.1, minWidth: 60, },
         { field: 'name', headerName: 'Name', minWidth: 150, flex: 1 },
-        { field: 'actions', headerName: 'Actions', flex: 0.3, minWidth: 180, sortable: false, filterable: false, renderCell: renderButtons },
+        { field: 'actions', headerName: 'Actions', flex: admin ? 0.3 : 0, minWidth: 180, sortable: false, filterable: false, renderCell: admin ? renderButtons : null },
     ];
 
     const rows = Array.from(specialties).map((s) => {
@@ -44,6 +44,11 @@ export default function SpecialtyListAdmin({ test = false }) {
             }
         );
     });
+    const getTogglableColumns = (columns) => {
+        return columns
+            .filter((column) => column.field !== 'actions' && admin)
+            .map((column) => column.field);
+    };
 
     return (
         <div>
@@ -51,10 +56,10 @@ export default function SpecialtyListAdmin({ test = false }) {
                 <h1 className="text-center">Specialties</h1>
                 {alerts.map((a) => a.alert)}
                 {modal}
-                <Button className='add-button' tag={Link} to="/vets/specialties/new">Add Specialty</Button>
+                {admin ? <Button className='add-button' tag={Link} to="/vets/specialties/new">Add Specialty</Button> : <></>}
                 {" "}
                 <Button className='back-button' tag={Link} to="/vets">Back</Button>
-                <Col style={{ maxWidth: "800px" }}>
+                <Col style={{ maxWidth: admin ? "800px" : "450px" }}>
                     <DataGrid
                         className='datagrid'
                         disableVirtualization={test}
@@ -62,6 +67,11 @@ export default function SpecialtyListAdmin({ test = false }) {
                         rows={rows}
                         columns={columns}
                         initialState={{
+                            columns: {
+                                columnVisibilityModel: {
+                                    actions: admin
+                                }
+                            },
                             pagination: {
                                 paginationModel: { page: 0, pageSize: 10 },
                             },
@@ -69,6 +79,11 @@ export default function SpecialtyListAdmin({ test = false }) {
                         pageSizeOptions={[10, 20]}
                         slots={{
                             toolbar: GridToolbar,
+                        }}
+                        slotProps={{
+                            columnsPanel: {
+                                getTogglableColumns,
+                            },
                         }}
                     />
                 </Col>

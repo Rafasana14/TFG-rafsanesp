@@ -3,20 +3,16 @@ import { Link } from 'react-router-dom';
 import { Button, ButtonGroup, Col, Container } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import useErrorModal from '../../util/useErrorModal';
-import getIdFromUrl from '../../util/getIdFromUrl';
 import useFetchState from '../../util/useFetchState';
 import deleteFromList from '../../util/deleteFromList';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import useFetchData from '../../util/useFetchData';
 
 const jwt = tokenService.getLocalAccessToken();
 
-export default function VisitListOwner({ test = false }) {
-    const petId = getIdFromUrl(2);
+export default function VisitListVet({ test = false }) {
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
-    const pet = useFetchData(`/api/v1/pets/${petId}`, jwt, setMessage, setVisible);
-    const [visits, setVisits] = useFetchState([], `/api/v1/pets/${petId}/visits`, jwt, setMessage, setVisible);
+    const [visits, setVisits] = useFetchState([], `/api/v1/visits`, jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
 
     const modal = useErrorModal(setVisible, visible, message);
@@ -27,11 +23,11 @@ export default function VisitListOwner({ test = false }) {
             return (
                 <ButtonGroup>
                     <Button size="sm" aria-label={"edit-" + params.row.id} className='edit-button' tag={Link}
-                        to={`/pets/${petId}/visits/${params.row.id}`}>
+                        to={`/pets/${params.row.petId}/visits/${params.row.id}`}>
                         Edit
                     </Button>
                     <Button size="sm" aria-label={"cancel-" + params.row.id} className='delete-button'
-                        onClick={() => deleteFromList(`/api/v1/pets/${petId}/visits/${params.row.id}`, params.row.id,
+                        onClick={() => deleteFromList(`/api/v1/pets/${params.row.petId}/visits/${params.row.id}`, params.row.id,
                             [visits, setVisits], [alerts, setAlerts], setMessage, setVisible)}>
                         Cancel
                     </Button>
@@ -39,7 +35,7 @@ export default function VisitListOwner({ test = false }) {
             )
         else return (
             <Button size="sm" aria-label={"edit-" + params.row.id} className='edit-button' tag={Link}
-                to={`/pets/${petId}/visits/${params.row.id}`}>
+                to={`/pets/${params.row.petId}/visits/${params.row.id}`}>
                 Edit
             </Button>
         )
@@ -49,45 +45,29 @@ export default function VisitListOwner({ test = false }) {
         { field: 'id', headerName: 'ID', flex: 0.1, minWidth: 70, filterable: false },
         { field: 'datetime', type: 'dateTime', headerName: 'Date and Time', flex: 0.7, minWidth: 170 },
         { field: 'description', headerName: 'Description', flex: 1, minWidth: 350, sortable: false },
-        { field: 'vet', headerName: 'Vet', flex: 0.9, minWidth: 250 },
-        { field: 'city', headerName: 'City', flex: 0.5, minWidth: 150 },
+        { field: 'petName', headerName: 'Pet', flex: 0.9, minWidth: 250 },
         { field: 'actions', headerName: 'Actions', flex: 0.3, minWidth: 130, sortable: false, filterable: false, renderCell: renderButtons },
     ];
 
     const rows = Array.from(visits).map((visit) => {
-        let spAux = visit.vet.specialties.map(s => s.name).toString().replace(",", ", ");
-        const vet = `${visit.vet.firstName} ${visit.vet.lastName} ${spAux !== "" ? "- " + spAux : ""}`;
 
         return (
             {
                 id: visit.id,
                 datetime: new Date(visit.datetime),
                 description: visit.description || "No description provided",
-                city: visit.vet.city,
-                vet: vet,
+                petName: visit.pet.name,
+                petId: visit.pet.id
             }
         );
     });
 
-
-    const getTogglableColumns = (columns) => {
-        return columns
-            .filter((column) => column.field !== 'id')
-            .map((column) => column.field);
-    };
-
     return (
         <div>
             <Container style={{ marginTop: "15px" }} fluid>
-                <h1 className="text-center">Visits{pet ? " of " + pet.name : ""}</h1>
+                <h2 className="text-center">My Visits</h2>
                 {alerts.map((a) => a.alert)}
                 {modal}
-                <Button className='add-button' tag={Link} to={`/pets/${petId}/visits/new`}>
-                    Add Visit
-                </Button>{" "}
-                <Button className='back-button' tag={Link} to={`/pets/`}>
-                    Back
-                </Button>
                 <Col style={{ maxWidth: "1600px" }} align="center" >
                     <DataGrid
                         className='datagrid'
@@ -99,9 +79,6 @@ export default function VisitListOwner({ test = false }) {
                             pagination: {
                                 paginationModel: { page: 0, pageSize: 10 },
                             },
-                            columns: {
-                                columnVisibilityModel: { id: false, }
-                            },
                             sorting: {
                                 sortModel: [{ field: 'datetime', sort: 'desc' }],
                             },
@@ -109,11 +86,6 @@ export default function VisitListOwner({ test = false }) {
                         pageSizeOptions={[10, 20]}
                         slots={{
                             toolbar: GridToolbar,
-                        }}
-                        slotProps={{
-                            columnsPanel: {
-                                getTogglableColumns,
-                            },
                         }}
                     />
                 </Col>

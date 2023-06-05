@@ -11,7 +11,7 @@ import useNavigateAfterSubmit from '../../util/useNavigateAfterSubmit';
 
 const jwt = tokenService.getLocalAccessToken();
 
-export default function PetEditAdmin() {
+export default function PetEditAdmin({ admin = true }) {
     const emptyItem = {
         id: null,
         name: '',
@@ -49,47 +49,47 @@ export default function PetEditAdmin() {
     const typeOptions = Array.from(types).map(type => <option key={type.id} value={type.id}>{type.name}</option>);
     const ownerOptions = Array.from(owners).map(owner => <option key={owner.id} value={owner.id}>{owner.user.username}</option>);
 
+    let title;
+    if (admin) title = <h2>{pet.id ? 'Edit Pet' : 'Add Pet'}</h2>
+    else title = <h2>{'Pet Details'}</h2>
+
     return (
         <div>
             <Container style={{ marginTop: "15px" }}>
-                {<h2>{pet.id ? 'Edit Pet' : 'Add Pet'}</h2>}
+                {title}
                 {modal}
                 <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                     <FormGroup>
                         <Label for="name">Name</Label>
                         <Input type="text" required name="name" id="name" value={pet.name || ''}
-                            onChange={handleChange} />
+                            onChange={handleChange} disabled={!admin} />
                     </FormGroup>
                     <FormGroup>
                         <Label for="birthDate">Birth Date</Label>
                         <Input type="date" name="birthDate" id="birthDate" value={pet.birthDate || ''}
-                            onChange={handleChange} />
+                            onChange={handleChange} disabled={!admin} />
                     </FormGroup>
                     <FormGroup>
                         <Label for="type">Type</Label>
                         <Input type="select" required name="type" id="type" value={pet.type?.id}
-                            onChange={handleChange}>
+                            onChange={handleChange} disabled={!admin} >
                             <option value="">None</option>
                             {typeOptions}
                         </Input>
                     </FormGroup>
                     <FormGroup>
                         <Label for="owner">Owner</Label>
-                        {pet.id ?
-                            <Input type="select" disabled name="owner" id="owner" value={pet.owner?.id || ""}
-                                onChange={handleChange} >
-                                <option value="">None</option>
-                                {ownerOptions}
-                            </Input> :
-                            <Input type="select" required name="owner" id="owner" value={pet.owner?.id || ""}
-                                onChange={handleChange} >
-                                <option value="">None</option>
-                                {ownerOptions}
-                            </Input>}
+                        <Input type="select" disabled={!admin || pet.id ? true : false} name="owner" id="owner" value={pet.owner?.id || ""}
+                            onChange={handleChange} required={pet.id ? false : true}>
+                            <option value="">None</option>
+                            {ownerOptions}
+                        </Input>
+
                     </FormGroup>
                     <FormGroup>
-                        <Button className='save-button' type="submit">Save</Button>{' '}
-                        <Button className='back-button' tag={Link} to="/pets">Cancel</Button>
+                        {admin ? <Button className='save-button' type="submit">Save</Button> : <></>}
+                        {admin ? ' ' : <></>}
+                        <Button className='back-button' tag={Link} to="/pets">{admin ? "Cancel" : "Back"}</Button>
                     </FormGroup>
                 </Form>
             </Container>

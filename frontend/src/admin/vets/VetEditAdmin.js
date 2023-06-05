@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import useErrorModal from '../../util/useErrorModal';
@@ -28,6 +28,7 @@ export default function VetEditAdmin() {
     const users = useFetchData(`/api/v1/users`, jwt, setMessage, setVisible);
     const [redirect, setRedirect] = useState(false);
     useNavigateAfterSubmit("/vets", redirect);
+    const navigate = useNavigate();
 
     function handleChange(event) {
         const target = event.target;
@@ -57,13 +58,13 @@ export default function VetEditAdmin() {
     const specialtiesBoxes = specialties.map(specialty => {
         if (selectedSpecialties?.includes(specialty.name)) {
             return (<FormGroup key={specialty.name}>
-                <Input type="checkbox" name={specialty.name} onChange={handleSpecialtyChange} checked />
-                <Label for={specialty.name}> {specialty.name}</Label>
+                <Input aria-labelledby={"label-" + specialty.name} type="checkbox" name={specialty.name} onChange={handleSpecialtyChange} checked />
+                <Label id={"label-" + specialty.name} for={specialty.name}> {specialty.name}</Label>
             </FormGroup>);
         } else {
             return (<FormGroup key={specialty.name}>
-                <Input type="checkbox" key={specialty.name} name={specialty.name} onChange={handleSpecialtyChange} />
-                <Label for={specialty.name}> {specialty.name}</Label>
+                <Input aria-labelledby={"label-" + specialty.name} type="checkbox" key={specialty.name} name={specialty.name} onChange={handleSpecialtyChange} />
+                <Label id={"label-" + specialty.name} for={specialty.name}> {specialty.name}</Label>
             </FormGroup>);
         }
     });
@@ -110,8 +111,8 @@ export default function VetEditAdmin() {
                         }
                     </FormGroup>
                     <FormGroup>
-                        <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="secondary" tag={Link} to="/vets">Cancel</Button>
+                        <Button className='save-button' type="submit">Save</Button>{' '}
+                        <Button className='back-button' onClick={() => navigate(-1)}>Back</Button>
                     </FormGroup>
                 </Form>
             </Container>

@@ -3,6 +3,7 @@ import { server } from "../../mocks/server";
 import { checkOption, fillForm, render, screen, testFilledEditForm, testRenderForm, waitFor } from "../../test-utils";
 import * as router from 'react-router'
 import VisitEditAdmin from "./VisitEditAdmin";
+import tokenService from "../../services/token.service";
 
 const navigate = jest.fn()
 
@@ -17,11 +18,20 @@ describe('VisitEditAdmin', () => {
         [/vet/i, "combobox", "1"],
         [/pet/i, "textbox", "1", "disabled"]
     ];
-    const route = '/pets/1/visits/new'
+    const route = '/pets/1/visits/new';
+
+    beforeAll(() => {
+        tokenService.setUser({ id: 1 })
+    });
 
     test('renders correctly', async () => {
         render(<VisitEditAdmin />, { route: route })
         testRenderForm(/add visit/i, form);
+    });
+
+    test('renders correctly for vets', async () => {
+        render(<VisitEditAdmin admin={false} />, { route: route })
+        testRenderForm(/visit details/i, form);
     });
 
     test('creates visit correctly', async () => {
@@ -49,6 +59,14 @@ describe('VisitEditAdmin', () => {
         await user.click(submit);
 
         await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/pets/1/visits'));
+    });
+
+    test('back button works correctly', async () => {
+        const { user } = render(<VisitEditAdmin />, { route: route });
+        const back = screen.getByRole('button', { 'name': /back/i });
+        await user.click(back);
+
+        expect(navigate).toHaveBeenCalledWith(-1);
     });
 
     test('creates visit with exception', async () => {

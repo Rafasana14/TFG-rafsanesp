@@ -34,7 +34,8 @@ export default function TicketList({ auth }) {
 
     async function handleClose(event) {
         event.preventDefault();
-        if (auth !== "OWNER") {
+        const confirm = window.confirm("Are you sure you want to close the consultation?")
+        if (confirm && auth !== "OWNER") {
             const aux = consultation;
             aux.status = "CLOSED"
 

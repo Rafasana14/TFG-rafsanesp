@@ -7,6 +7,14 @@ describe('PetListAdmin', () => {
         testRenderList(/pets/i, true);
     });
 
+    test('renders correctly for vets', async () => {
+        render(<PetListAdmin test={true} admin={false} />);
+        await testRenderList(/pets/i, true, false);
+
+        const detailsButtons = await screen.findAllByRole('link', { 'name': /details/ });
+        expect(detailsButtons).toHaveLength(2);
+    });
+
     test('renders pets correctly', async () => {
         render(<PetListAdmin test={true} />);
         const pet1 = await screen.findByRole('cell', { 'name': 'Leo' });

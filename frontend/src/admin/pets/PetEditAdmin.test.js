@@ -24,6 +24,11 @@ describe('PetEditAdmin', () => {
         testRenderForm(/add pet/i, form);
     });
 
+    test('renders correctly for vets', async () => {
+        render(<PetEditAdmin admin={false} />, { route: route })
+        testRenderForm(/pet details/i, form);
+    });
+
     test('creates pet correctly', async () => {
         const { user } = render(<PetEditAdmin />, { route: route });
 

@@ -26,6 +26,11 @@ describe('OwnerEditAdmin', () => {
         testRenderForm(/add owner/i, form);
     });
 
+    test('renders correctly for vets', async () => {
+        render(<OwnerEditAdmin admin={false} />, { route: route })
+        testRenderForm(/owner details/i, form);
+    });
+
     test('creates owner correctly', async () => {
         const { user } = render(<OwnerEditAdmin />, { route: route })
         await fillForm(user, form);

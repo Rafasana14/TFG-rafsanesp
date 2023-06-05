@@ -44,8 +44,8 @@ export default function SpecialtyEditAdmin() {
                             onChange={handleChange} />
                     </FormGroup>
                     <FormGroup style={{ marginTop: "10px" }}>
-                        <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="secondary" tag={Link} to="/vets/specialties">Cancel</Button>
+                        <Button className='save-button' type="submit">Save</Button>{' '}
+                        <Button className='back-button' tag={Link} to="/vets/specialties">Cancel</Button>
                     </FormGroup>
                 </Form>
             </Container>
