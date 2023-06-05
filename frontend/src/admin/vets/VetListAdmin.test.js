@@ -9,7 +9,7 @@ describe('VetListAdmin', () => {
 
     test('renders correctly for vets', async () => {
         render(<VetListAdmin test={true} admin={false} />);
-        await testRenderList(/vets/i, true, false);
+        testRenderList(/vets/i, true, false);
 
         const vet2 = await screen.findByRole('cell', { 'name': 'vet2' });
         expect(vet2).toBeInTheDocument();
