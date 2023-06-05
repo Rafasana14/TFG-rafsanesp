@@ -45,14 +45,14 @@ const userVet2 = {
 };
 
 export const owner1 = {
-    "id": 1,
-    "firstName": "George",
-    "lastName": "Franklin",
-    "address": "110 W. Liberty St.",
-    "city": "Sevilla",
-    "telephone": "608555103",
-    "plan": "PLATINUM",
-    "user": userOwner1
+    id: 1,
+    firstName: "George",
+    lastName: "Franklin",
+    address: "110 W. Liberty St.",
+    city: "Sevilla",
+    telephone: "608555103",
+    plan: "PLATINUM",
+    user: userOwner1
 };
 
 const owner2 = {

@@ -16,7 +16,7 @@ export default function DashboardOwner() {
     const plan = useFetchData("/api/v1/plan", jwt, setMessage, setVisible).plan;
     const [showStats, setShowStats] = useState(false);
 
-    function getFunctions() {
+    function getFunctions(plan) {
         if (plan === "GOLD") {
             return (
                 <CalendarOwner />
@@ -35,17 +35,15 @@ export default function DashboardOwner() {
                 </ButtonGroup>
                 {showStats ? <StatsOwner /> : <CalendarOwner />}
             </div>
-            // Stats
         } else {
             return (
                 <>
                     <ButtonGroup>
                         <Button aria-label={`show-calendar`} outline color="dark" className="dashboard-button"
-                            onClick={() => setShowStats(false)} active={!showStats}>
+                            active={true}>
                             Calendar
                         </Button>
-                        <Button aria-label={`show-stats`} outline color="dark" className="dashboard-button"
-                            onClick={() => setShowStats(true)} active={showStats}>
+                        <Button aria-label={`show-stats`} outline color="dark" className="dashboard-button">
                             Stats
                         </Button>
                     </ButtonGroup>
@@ -73,7 +71,7 @@ export default function DashboardOwner() {
         < Container fluid style={{ marginTop: "20px" }}>
             <h2 className="text-center" style={{ marginTop: "15px" }}>Dashboard</h2>
             {modal}
-            {getFunctions()}
+            {getFunctions(plan)}
         </Container >
     )
 
