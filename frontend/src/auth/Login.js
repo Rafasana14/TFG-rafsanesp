@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { Form, Button, Container, FormGroup, Input, Label, Col, Alert, Row } from "reactstrap";
 import tokenService from "../services/token.service";
-import getErrorModal from "../util/getErrorModal";
+import useErrorModal from "../util/useErrorModal";
 
 export async function login(username, password, navigation, setMessage, setVisible) {
 	await fetch("/api/v1/auth/signin", {
@@ -39,7 +39,7 @@ export default function Login({ expiration, navigation }) {
 		await login(username, password, navigation, setMessage, setVisible);
 	}
 
-	const modal = getErrorModal(setVisible, visible, message);
+	const modal = useErrorModal(setVisible, visible, message);
 	return (
 		<div>
 			<Container style={{ marginTop: "15px" }} fluid="lg">
@@ -64,7 +64,7 @@ export default function Login({ expiration, navigation }) {
 							</FormGroup>
 							<FormGroup align='center'>
 								<Button className="save-button" type="submit">Login</Button>{' '}
-								<Button className="cancel-button" tag={Link} to="/">Cancel</Button>
+								<Button className="back-button" tag={Link} to="/">Cancel</Button>
 							</FormGroup>
 						</Form>
 						{!navigation ? <p className="text-center">You are not registered? <a href="/register" tag={Link} to="register">Sign up</a></p> : <></>}

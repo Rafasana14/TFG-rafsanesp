@@ -80,16 +80,18 @@ class TicketService {
             return (
                 <Container>
                     {newTicket.id ? <h4>Edit Ticket</h4> : <h4>Add New Ticket</h4>}
-                    <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
-                        <FormGroup>
-                            <Label for="description">Description</Label>
-                            <Input type="textarea" required name="description" id="description" value={newTicket.description || ''}
-                                onChange={handleChange} />
-                        </FormGroup>
-                        <FormGroup>
-                            <Button className="save-button" type="submit">Save</Button>
-                        </FormGroup>
-                    </Form>
+                    <Col xs="12" sm="10" md="8" lg="8" xl="8">
+                        <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
+                            <FormGroup>
+                                <Label for="description">Description</Label>
+                                <Input type="textarea" required name="description" id="description" value={newTicket.description || ''}
+                                    onChange={handleChange} />
+                            </FormGroup>
+                            <FormGroup>
+                                <Button className="save-button" type="submit">Save</Button>
+                            </FormGroup>
+                        </Form>
+                    </Col>
                 </Container>
             );
         else return <></>;
@@ -105,7 +107,7 @@ class TicketService {
                     <h2 className="text-center">Consultation Number {consultation.id}</h2>
                 </Col>
                 <Col sm="3">
-                    <Button className="close-button" onClick={(e) => { (async () => { await handleClose(e); })(); }} >
+                    <Button style={{ float: "right" }} className="add-button" onClick={(e) => { (async () => { await handleClose(e); })(); }} >
                         Close Consultation
                     </Button>
                 </Col>
@@ -113,7 +115,7 @@ class TicketService {
         } else {
             return <Row>
                 <Col sm="3">
-                    <Button color="secondary" tag={Link} to="/consultations">Back</Button>
+                    <Button className="back-button" tag={Link} to="/consultations">Back</Button>
                 </Col>
                 <Col sm="6">
                     <h2 className="text-center">Consultation Number {consultation.id}</h2>

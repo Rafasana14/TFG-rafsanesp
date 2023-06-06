@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, ButtonGroup, Col, Container } from 'reactstrap';
 import tokenService from '../../services/token.service';
-import getErrorModal from '../../util/getErrorModal';
+import useErrorModal from '../../util/useErrorModal';
 import getIdFromUrl from '../../util/getIdFromUrl';
 import useFetchState from '../../util/useFetchState';
 import deleteFromList from '../../util/deleteFromList';
@@ -10,26 +10,35 @@ import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 const jwt = tokenService.getLocalAccessToken();
 
-export default function VisitListAdmin({ test = false }) {
+export default function VisitListAdmin({ test = false, admin = true }) {
     const petId = getIdFromUrl(2);
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
     const [visits, setVisits] = useFetchState([], `/api/v1/pets/${petId}/visits`, jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
 
     const renderButtons = (params) => {
-        return (
-            <div>
-                <ButtonGroup>
-                    <Button size="sm" className='edit-button' aria-label={'edit-' + params.row.name} tag={Link} to={`/pets/${petId}/visits/${params.row.id}`}>Edit</Button>
-                    <Button size="sm" className='delete-button' aria-label={'delete-' + params.row.id}
-                        onClick={() => deleteFromList(`/api/v1/pets/${petId}/visits/${params.row.id}`, params.row.id, [visits, setVisits], [alerts, setAlerts], setMessage, setVisible)}>
-                        Delete
-                    </Button>
-                </ButtonGroup>
-            </div>
-        )
+        if (admin) {
+            return (
+                <div>
+                    <ButtonGroup>
+                        <Button size="sm" className='edit-button' aria-label={'edit-' + params.row.name} tag={Link} to={`/pets/${petId}/visits/${params.row.id}`}>Edit</Button>
+                        <Button size="sm" className='delete-button' aria-label={'delete-' + params.row.id}
+                            onClick={() => deleteFromList(`/api/v1/pets/${petId}/visits/${params.row.id}`, params.row.id, [visits, setVisits], [alerts, setAlerts], setMessage, setVisible)}>
+                            Delete
+                        </Button>
+                    </ButtonGroup>
+                </div>
+            )
+        } else {
+            let edit = false
+            if (params.row.user?.id === tokenService.getUser().id) edit = true;
+            return (
+                <Button size="sm" className={edit ? 'edit-button' : 'extra-button'} aria-label={'edit-' + params.row.name}
+                    tag={Link} to={`/pets/${petId}/visits/${params.row.id}`}>{edit ? "Edit" : "Details"}</Button>
+            )
+        }
     }
 
     const columns = [
@@ -51,6 +60,7 @@ export default function VisitListAdmin({ test = false }) {
                 description: v.description || "No description provided",
                 city: v.vet.city,
                 vet: vet,
+                user: v.vet.user
             }
         );
     });
@@ -62,9 +72,10 @@ export default function VisitListAdmin({ test = false }) {
                 {alerts.map((a) => a.alert)}
                 {modal}
                 <div className="float-right">
-                    <Button className='add-button' tag={Link} to={`/pets/${petId}/visits/new`}>
+                    {admin ? <Button className='add-button' tag={Link} to={`/pets/${petId}/visits/new`}>
                         Add Visit
-                    </Button>{" "}
+                    </Button> : <></>}
+                    {" "}
                     <Button className='back-button' tag={Link} to={`/pets/`}>
                         Back
                     </Button>

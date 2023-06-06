@@ -4,7 +4,15 @@ import SpecialtyListAdmin from "./SpecialtyListAdmin";
 describe('SpecialtyListAdmin', () => {
     test('renders correctly', async () => {
         render(<SpecialtyListAdmin test={true} />);
-        testRenderList(/specialties/i, true);
+        testRenderList(/specialties/i);
+    });
+
+    test('renders correctly for vets', async () => {
+        render(<SpecialtyListAdmin test={true} admin={false} />);
+        testRenderList(/specialties/i, false);
+
+        const detailsButtons = screen.queryAllByRole('link', { 'name': /details/ });
+        expect(detailsButtons).toHaveLength(0);
     });
 
     test('renders specialties correctly', async () => {

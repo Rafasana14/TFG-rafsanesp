@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Col, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import { login } from './Login';
-import getErrorModal from '../util/getErrorModal';
+import useErrorModal from '../util/useErrorModal';
 
 function Register() {
 
@@ -66,7 +66,7 @@ function Register() {
 
     }
 
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
 
     if (type) {
         return <div>
@@ -131,7 +131,7 @@ function Register() {
                             <FormGroup>
                                 <Button className='save-button' type="submit">Save</Button>{' '}
                                 <Button className='back-button' value="Back" onClick={handleButtonClick}>Back</Button>{' '}
-                                <Button className='cancel-button' tag={Link} to="/">Cancel</Button>
+                                <Button className='delete-button' tag={Link} to="/">Cancel</Button>
                             </FormGroup>
                         </Col>
                     </Row>

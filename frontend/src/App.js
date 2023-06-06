@@ -39,6 +39,9 @@ import Register from "./auth/Register";
 import Logout from "./auth/Logout.js";
 import PrivateRoute from "./util/privateRoute";
 import ProfileEdit from "./components/ProfileEdit";
+import { Col, Container, Row } from "reactstrap";
+import SpecialtiesChange from "./vet/specialties/SpecialtiesChange";
+import VisitListVet from "./vet/visits/VisitListVet";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -108,8 +111,18 @@ function App() {
       vetRoutes = (
         <>
           <Route path="/dashboard" element={<PrivateRoute><CalendarVet /></PrivateRoute>} />
+          <Route path="/owners" exact={true} element={<PrivateRoute><OwnerListAdmin admin={false} /></PrivateRoute>} />
+          <Route path="/owners/:id" exact={true} element={<PrivateRoute><OwnerEditAdmin admin={false} /></PrivateRoute>} />
+          <Route path="/pets" exact={true} element={<PrivateRoute><PetListAdmin admin={false} /></PrivateRoute>} />
+          <Route path="/pets/:id" exact={true} element={<PrivateRoute><PetEditAdmin admin={false} /></PrivateRoute>} />
+          <Route path="/pets/:petId/visits" exact={true} element={<PrivateRoute><VisitListAdmin admin={false} /></PrivateRoute>} />
+          <Route path="/pets/:petId/visits/:visitId" exact={true} element={<PrivateRoute><VisitEditAdmin admin={false} /></PrivateRoute>} />
+          <Route path="/visits" exact={true} element={<PrivateRoute><VisitListVet /></PrivateRoute>} />
+          <Route path="/visits/:visitId" exact={true} element={<PrivateRoute><VisitEditAdmin admin={false} /></PrivateRoute>} />
+          <Route path="/vets" exact={true} element={<PrivateRoute><VetListAdmin admin={false} /></PrivateRoute>} />
+          <Route path="/vets/specialties" exact={true} element={<PrivateRoute><SpecialtyListAdmin admin={false} /></PrivateRoute>} />
           <Route path="/consultations" exact={true} element={<PrivateRoute><ConsultationListVet /></PrivateRoute>} />
-          {/* <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketList auth={"VET"} /></PrivateRoute>} /> */}
+          <Route path="/specialties" exact={true} element={<PrivateRoute><SpecialtiesChange /></PrivateRoute>} />
         </>)
     }
     commonRoutes = (
@@ -150,6 +163,15 @@ function App() {
           {vetRoutes}
           {commonRoutes}
         </Routes>
+        <Container fluid>
+          <Row>
+            <Col xs="4" md="4" lg="4" xl="4"><img className="footer-image-left responsive" src="/perros2.png" alt="dogs running" /></Col>
+            <Col xs="4" md="4" lg="4" xl="4" align="center"><img className="footer-image-center responsive" src="/logo1-recortado.png" alt="logo" /></Col>
+            <Col xs="4" md="4" lg="4" xl="4"><img className="footer-image-right responsive" src="/perros.png" alt="dogs running" /></Col>
+          </Row>
+        </Container>
+
+
       </ErrorBoundary>
     </div>
   );

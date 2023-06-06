@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
+import { useNavigate } from 'react-router-dom';
+import { Button, Col, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import tokenService from '../../services/token.service';
-import getErrorModal from '../../util/getErrorModal';
+import useErrorModal from '../../util/useErrorModal';
 import useFetchData from '../../util/useFetchData';
 import getIdFromUrl from '../../util/getIdFromUrl';
 import useFetchState from '../../util/useFetchState';
@@ -11,12 +11,12 @@ import useNavigateAfterSubmit from '../../util/useNavigateAfterSubmit';
 
 const jwt = tokenService.getLocalAccessToken();
 
-export default function VisitEditAdmin() {
+export default function VisitEditAdmin({ admin = true }) {
     const emptyItem = {
         id: '',
         datetime: '',
         description: '',
-        vet: {},
+        vet: { user: {} },
         pet: {},
     };
     const petId = getIdFromUrl(2);
@@ -28,6 +28,7 @@ export default function VisitEditAdmin() {
     const vets = useFetchData(`/api/v1/vets`, jwt, setMessage, setVisible);
     const [redirect, setRedirect] = useState(false);
     useNavigateAfterSubmit(`/pets/${petId}/visits`, redirect);
+    const navigate = useNavigate();
 
     function handleChange(event) {
         const target = event.target;
@@ -41,42 +42,51 @@ export default function VisitEditAdmin() {
     }
 
     const handleSubmit = async (event) => await submitState(event, visit, `/api/v1/pets/${petId}/visits`, setMessage, setVisible, setRedirect);
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
     const vetOptions = vets.map(vet => <option key={vet.id} value={vet.id}>{vet.firstName} {vet.lastName} - {vet.user.username}</option>);
+
+    const ownedVisit = tokenService.getUser().id === visit.vet.user?.id;
+    let title;
+    if (admin) title = <h2 className='text-center'>{visit.id ? 'Edit Visit' : 'Add Visit'}</h2>
+    else title = <h2 className='text-center'>{ownedVisit ? 'Edit Visit' : 'Visit Details'}</h2>
 
     return (
         <div>
             <Container style={{ marginTop: "15px" }}>
-                {<h2>{visit.id ? 'Edit Visit' : 'Add Visit'}</h2>}
+                {title}
                 {modal}
                 <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
-                    <FormGroup>
-                        <Label for="datetime">Date and Time</Label>
-                        <Input type="datetime-local" required name="datetime" id="datetime" value={visit.datetime || ''}
-                            onChange={handleChange} />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="description">Description</Label>
-                        <Input type="textarea" name="description" id="description" value={visit.description || ''}
-                            onChange={handleChange} />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="vet">Vet</Label>
-                        <Input type="select" required name="vet" id="vet" value={visit.vet.id}
-                            onChange={handleChange}>
-                            <option value="">None</option>
-                            {vetOptions}
-                        </Input>
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="pet">Pet</Label>
-                        <Input type="text" disabled name="pet" id="pet" value={pet.name || ''}
-                            onChange={handleChange} />
-                    </FormGroup>
-                    <FormGroup>
-                        <Button color="primary" type="submit">Save</Button>{' '}
-                        <Button color="secondary" tag={Link} to={`/pets/${petId}/visits`}>Cancel</Button>
-                    </FormGroup>
+                    <Row className='justify-content-center'>
+                        <Col xs="10" sm="8" md="6" lg="4" xl="3">
+                            <FormGroup>
+                                <Label for="datetime">Date and Time</Label>
+                                <Input type="datetime-local" required name="datetime" id="datetime" value={visit.datetime || ''}
+                                    onChange={handleChange} disabled={admin || ownedVisit ? false : true} />
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="description">Description</Label>
+                                <Input type="textarea" name="description" id="description" value={visit.description || ''}
+                                    onChange={handleChange} disabled={admin || ownedVisit ? false : true} />
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="vet">Vet</Label>
+                                <Input type="select" required name="vet" id="vet" value={visit.vet.id}
+                                    onChange={handleChange} disabled={!admin ? true : false}>
+                                    <option value="">None</option>
+                                    {vetOptions}
+                                </Input>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="pet">Pet</Label>
+                                <Input type="text" disabled name="pet" id="pet" value={pet.name || ''}
+                                    onChange={handleChange} />
+                            </FormGroup>
+                            <FormGroup align="center">
+                                {admin || ownedVisit ? <Button className='save-button' type="submit">Save</Button> : <></>}{' '}
+                                <Button className='back-button' onClick={() => navigate(-1)}>Back</Button>
+                            </FormGroup>
+                        </Col>
+                    </Row>
                 </Form>
             </Container>
         </div >

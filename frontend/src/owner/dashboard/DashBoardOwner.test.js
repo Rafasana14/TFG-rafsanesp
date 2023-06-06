@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "../../test-utils";
+import { fireEvent, render, screen, waitForElementToBeRemoved } from "../../test-utils";
 import { server } from "../../mocks/server";
 import { rest } from "msw";
 import DashboardOwner from "./DashboardOwner";
@@ -7,6 +7,9 @@ import { owner1 } from "../../mocks/handlers";
 describe('DashboardOwner', () => {
     test('renders calendar correctly', async () => {
         render(<DashboardOwner />);
+
+        await waitForElementToBeRemoved(() => screen.queryByRole('dialog'));
+
         const heading = screen.getByRole('heading', { 'name': /dashboard/i });
         expect(heading).toBeInTheDocument();
 
@@ -25,6 +28,8 @@ describe('DashboardOwner', () => {
         window.alert = () => { return true };
         render(<DashboardOwner />);
 
+        await waitForElementToBeRemoved(() => screen.queryByRole('dialog'));
+
         const statsButton = await screen.findByRole('button', { 'name': /show-stats/i });
         expect(statsButton).toBeInTheDocument();
         fireEvent.click(statsButton);
@@ -42,6 +47,8 @@ describe('DashboardOwner', () => {
 
     test('renders calendar after stats correctly', async () => {
         render(<DashboardOwner />);
+
+        await waitForElementToBeRemoved(() => screen.queryByRole('dialog'));
 
         const statsButton = await screen.findByRole('button', { 'name': /show-stats/i });
         expect(statsButton).toBeInTheDocument();
@@ -71,6 +78,8 @@ describe('DashboardOwner', () => {
         )
         render(<DashboardOwner />);
 
+        await waitForElementToBeRemoved(() => screen.queryByRole('dialog'));
+
         const headingCalendar = await screen.findByRole('heading', { 'name': /calendar/i });
         expect(headingCalendar).toBeInTheDocument();
 
@@ -94,13 +103,13 @@ describe('DashboardOwner', () => {
         )
         render(<DashboardOwner />);
 
-        const heading = await screen.findByRole('heading', { 'name': /This is only for GOLD or PLATINUM users/i });
-        expect(heading).toBeInTheDocument();
+        const modal = screen.getByRole('dialog');
+        expect(modal).toBeInTheDocument();
 
-        const statsButton = screen.queryByRole('button', { 'name': /show-stats/i });
-        expect(statsButton).not.toBeInTheDocument();
+        const statsButton = screen.getByRole('button', { 'name': /show-stats/i });
+        expect(statsButton).toBeInTheDocument();
 
-        const headingCalendar = screen.queryByRole('heading', { 'name': /calendar/i });
-        expect(headingCalendar).not.toBeInTheDocument();
+        const headingCalendar = screen.getByRole('heading', { 'name': /calendar/i });
+        expect(headingCalendar).toBeInTheDocument();
     });
 });

@@ -75,6 +75,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/api/v1/plan").hasAuthority("OWNER").antMatchers("/api/v1/owners/profile")
 				.hasAuthority("OWNER").antMatchers("/api/v1/users/**").hasAuthority(ADMIN)
 				.antMatchers(HttpMethod.DELETE, "/api/v1/consultations/{consultationId:[0-9]\\d+}").hasAuthority(ADMIN)
+				.antMatchers(HttpMethod.GET, "/api/v1/owners/**").hasAnyAuthority(ADMIN, "VET")
 				.antMatchers("/api/v1/owners/**/pets/**").authenticated().antMatchers("/api/v1/owners/**")
 				.hasAuthority(ADMIN).antMatchers(HttpMethod.GET, "/api/v1/pets/stats").hasAuthority(ADMIN)
 				.antMatchers(HttpMethod.GET, "/api/v1/vets/stats").hasAuthority(ADMIN)
@@ -89,7 +90,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		web.ignoring().antMatchers("/static/**").antMatchers("/error").antMatchers("/swagger-ui.html")
+		web.ignoring().antMatchers("/static/**").antMatchers("/public/**").antMatchers("/error").antMatchers("/swagger-ui.html")
 				.antMatchers("/swagger-resources/**");
 	}
 

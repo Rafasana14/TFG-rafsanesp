@@ -5,7 +5,7 @@ import getIdFromUrl from '../util/getIdFromUrl';
 import useFetchState from '../util/useFetchState';
 import ticketService from '../services/ticket.service';
 import getDeleteAlertsOrModal from '../util/getDeleteAlertsOrModal';
-import getErrorModal from '../util/getErrorModal';
+import useErrorModal from '../util/useErrorModal';
 import useFetchPlan from '../util/useFetchPlan';
 
 const jwt = tokenService.getLocalAccessToken();
@@ -34,7 +34,8 @@ export default function TicketList({ auth }) {
 
     async function handleClose(event) {
         event.preventDefault();
-        if (auth !== "OWNER") {
+        const confirm = window.confirm("Are you sure you want to close the consultation?")
+        if (confirm && auth !== "OWNER") {
             const aux = consultation;
             aux.status = "CLOSED"
 
@@ -62,7 +63,7 @@ export default function TicketList({ auth }) {
 
     }
 
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
     const ticketList = ticketService.getTicketList([tickets, setTickets], auth, [alerts, setAlerts], setMessage, setVisible, setNewTicket, plan);
     const ticketForm = ticketService.getTicketForm(newTicket, consultation.status, auth, handleChange, handleSubmit);
     const ticketHeading = ticketService.getTicketHeading(consultation, handleClose, auth);

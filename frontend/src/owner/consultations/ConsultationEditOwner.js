@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
+import { Button, Col, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import tokenService from '../../services/token.service';
-import getErrorModal from '../../util/getErrorModal';
+import useErrorModal from '../../util/useErrorModal';
 import useFetchData from '../../util/useFetchData';
 import useFetchState from '../../util/useFetchState';
 import getIdFromUrl from '../../util/getIdFromUrl';
@@ -43,7 +43,7 @@ export default function ConsultationEditOwner() {
         await submitState(event, aux, `/api/v1/consultations`, setMessage, setVisible, setRedirect);
     };
 
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
 
 
     const petOptions =
@@ -52,33 +52,37 @@ export default function ConsultationEditOwner() {
     return (
         <div>
             <Container style={{ marginTop: "15px" }}>
-                {<h2>{id !== 'new' ? 'Edit Consultation' : 'Add Consultation'}</h2>}
+                {<h2 className='text-center'>{id !== 'new' ? 'Edit Consultation' : 'Add Consultation'}</h2>}
                 {modal}
-                <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
-                    <FormGroup>
-                        <Label for="title">Title</Label>
-                        <Input type="text" required name="title" id="title" value={consultation.title || ''}
-                            onChange={handleChange} />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="pet">Pet</Label>
-                        {consultation.id ?
-                            <Input type="select" disabled name="pet" id="pet" value={consultation.pet?.id || ""}
-                                onChange={handleChange} >
-                                <option value="">None</option>
-                                {petOptions}
-                            </Input> :
-                            <Input type="select" required name="pet" id="pet" value={consultation.pet?.id || ""}
-                                onChange={handleChange} >
-                                <option value="">None</option>
-                                {petOptions}
-                            </Input>}
-                    </FormGroup>
-                    <FormGroup>
-                        <Button className='save-button' type="submit">Save</Button>{' '}
-                        <Button className='back-button' tag={Link} to="/consultations">Cancel</Button>
-                    </FormGroup>
-                </Form>
+                <Row className='justify-content-center'>
+                    <Col xs="10" sm="8" md="6" lg="4" xl="3">
+                        <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
+                            <FormGroup>
+                                <Label for="title">Title</Label>
+                                <Input type="text" required name="title" id="title" value={consultation.title || ''}
+                                    onChange={handleChange} />
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="pet">Pet</Label>
+                                {consultation.id ?
+                                    <Input type="select" disabled name="pet" id="pet" value={consultation.pet?.id || ""}
+                                        onChange={handleChange} >
+                                        <option value="">None</option>
+                                        {petOptions}
+                                    </Input> :
+                                    <Input type="select" required name="pet" id="pet" value={consultation.pet?.id || ""}
+                                        onChange={handleChange} >
+                                        <option value="">None</option>
+                                        {petOptions}
+                                    </Input>}
+                            </FormGroup>
+                            <FormGroup align="center">
+                                <Button className='save-button' type="submit">Save</Button>{' '}
+                                <Button className='back-button' tag={Link} to="/consultations">Cancel</Button>
+                            </FormGroup>
+                        </Form>
+                    </Col>
+                </Row>
             </Container>
         </div>
     );

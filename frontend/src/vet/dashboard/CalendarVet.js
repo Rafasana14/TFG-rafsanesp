@@ -3,7 +3,7 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import { Container } from 'reactstrap';
 import moment from 'moment';
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import getErrorModal from '../../util/getErrorModal';
+import useErrorModal from '../../util/useErrorModal';
 import useFetchData from '../../util/useFetchData';
 import tokenService from '../../services/token.service';
 import { useNavigate } from 'react-router-dom';
@@ -38,7 +38,7 @@ function CalendarVet() {
         }));
     }, [visits]);
 
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
 
     const title = <h1 className='text-center'>Dashboard</h1>;
 
@@ -55,7 +55,7 @@ function CalendarVet() {
             events={events}
             startAccessor="start"
             endAccessor="end"
-            onSelectEvent={(e) => window.location.assign(`/owners/${e.ownerId}/pets/${e.petId}/visits/${e.visitId}`)}
+            onSelectEvent={(e) => window.location.assign(`/pets/${e.petId}/visits/${e.visitId}`)}
             onSelectSlot={handleSelectSlot}
             selectable
             views={{

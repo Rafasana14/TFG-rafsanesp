@@ -20,16 +20,16 @@ export function fetchAndSet(url, jwt, ignore, setMessage, setVisible, setData) {
         }).catch((message) => alert(message));
 };
 
-export default function useFetchData(url, jwt, setMessage, setVisible) {
+export default function useFetchData(url, jwt, setMessage, setVisible, admin = true) {
     const [data, setData] = useState([]);
     useEffect(() => {
-        if (url) {
+        if (url && admin) {
             let ignore = false;
             fetchAndSet(url, jwt, ignore, setMessage, setVisible, setData);
             return () => {
                 ignore = true;
             };
         }
-    }, [url, jwt, setMessage, setVisible]);
+    }, [url, jwt, setMessage, setVisible, admin]);
     return data;
 }

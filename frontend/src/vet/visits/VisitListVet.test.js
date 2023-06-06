@@ -1,16 +1,17 @@
 import { rest } from "msw";
 import { server } from "../../mocks/server";
 import { render, screen, testRenderList } from "../../test-utils";
-import VisitListOwner from "./VisitListOwner";
+import VisitListVet from "./VisitListVet";
+import tokenService from "../../services/token.service";
 
-describe('VisitListOwner', () => {
+describe('VisitListVet', () => {
     test('renders correctly', async () => {
-        render(<VisitListOwner test={true} />);
-        testRenderList(/visits/i);
+        render(<VisitListVet test={true} />);
+        testRenderList(/visits/i, false);
     });
 
     test('renders visits correctly', async () => {
-        render(<VisitListOwner test={true} />);
+        render(<VisitListVet test={true} />);
         const visit1 = await screen.findByRole('cell', { 'name': /description1/i });
         expect(visit1).toBeInTheDocument();
 
@@ -40,7 +41,7 @@ describe('VisitListOwner', () => {
                 )
             })
         )
-        render(<VisitListOwner test={true} />);
+        render(<VisitListVet test={true} />);
 
         const modal = await screen.findByRole('dialog');
         expect(modal).toBeInTheDocument();
@@ -55,19 +56,20 @@ describe('VisitListOwner', () => {
                 )
             })
         )
-        render(<VisitListOwner test={true} />);
+        render(<VisitListVet test={true} />);
 
         const modal = await screen.findByRole('dialog');
         expect(modal).toBeInTheDocument();
     });
 
-    test('cancel visit correct', async () => {
+    test('delete visit correct', async () => {
+        tokenService.setUser({ id: 12 })
         const jsdomConfirm = window.confirm;
         window.confirm = () => { return true };
-        const { user } = render(<VisitListOwner test={true} />);
+        const { user } = render(<VisitListVet test={true} />);
 
-        const visit1Cancel = await screen.findByRole('button', { 'name': 'cancel-1' });
-        await user.click(visit1Cancel);
+        const visit1Delete = await screen.findByRole('button', { 'name': 'cancel-1' });
+        await user.click(visit1Delete);
         const alert = await screen.findByRole('alert');
         expect(alert).toBeInTheDocument();
 

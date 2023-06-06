@@ -17,22 +17,22 @@ const userAdmin1 = {
 };
 
 const userOwner1 = {
-    "id": 2,
-    "username": "owner1",
-    "authority": authOwner
+    id: 2,
+    username: "owner1",
+    authority: authOwner
 };
 
 const userOwner2 = {
-    "id": 3,
-    "username": "owner2",
-    "authority": authOwner
+    id: 3,
+    username: "owner2",
+    authority: authOwner
 };
 
 export const userVet1 = {
-    "id": 12,
-    "username": "vet1",
-    "authority": {
-        "authority": "VET"
+    id: 12,
+    username: "vet1",
+    authority: {
+        authority: "VET"
     }
 };
 
@@ -45,14 +45,14 @@ const userVet2 = {
 };
 
 export const owner1 = {
-    "id": 1,
-    "firstName": "George",
-    "lastName": "Franklin",
-    "address": "110 W. Liberty St.",
-    "city": "Sevilla",
-    "telephone": "608555103",
-    "plan": "PLATINUM",
-    "user": userOwner1
+    id: 1,
+    firstName: "George",
+    lastName: "Franklin",
+    address: "110 W. Liberty St.",
+    city: "Sevilla",
+    telephone: "608555103",
+    plan: "PLATINUM",
+    user: userOwner1
 };
 
 const owner2 = {
@@ -108,12 +108,12 @@ const dentistry = {
 };
 
 const vet1 = {
-    "id": 1,
-    "firstName": "James",
-    "lastName": "Carter",
-    "specialties": [radiology],
-    "user": userVet1,
-    "city": "Sevilla"
+    id: 1,
+    firstName: "James",
+    lastName: "Carter",
+    specialties: [radiology],
+    user: userVet1,
+    city: "Sevilla"
 }
 
 const vet2 = {
@@ -128,12 +128,12 @@ const vet2 = {
 };
 
 const visit1 = {
-    "id": 1,
-    "datetime": "2030-01-01T13:00:00",
-    "description": "description1",
-    "pet": pet1,
-    "vet": vet1,
-    "city": "Badajoz",
+    id: 1,
+    datetime: "2030-01-01T13:00:00",
+    description: "description1",
+    pet: pet1,
+    vet: vet1,
+    city: "Badajoz",
 };
 
 const visit2 = {

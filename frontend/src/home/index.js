@@ -7,10 +7,10 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            bird: {},
             cat: {},
+            catImage: {},
             dog: {},
-            panda: {},
+            kangaroo: {},
         };
     }
 
@@ -19,40 +19,42 @@ class Home extends Component {
         this.setState({ dog: dog, });
         const cat = await (await fetch("https://some-random-api.com/animal/cat")).json();
         this.setState({ cat: cat, });
-        const panda = await (await fetch("https://some-random-api.com/animal/red_panda")).json();
-        this.setState({ panda: panda, });
+        const catImage = await (await fetch("https://cataas.com/cat?type=or&json=true")).json();
+        this.setState({ catImage: catImage });
+
+        const kangaroo = await (await fetch("https://some-random-api.com/animal/kangaroo")).json();
+        this.setState({ kangaroo: kangaroo, });
     }
 
     render() {
-        const { dog, cat, panda } = this.state;
+        const { dog, cat, kangaroo, catImage } = this.state;
         return (
             <div>
-                {/* <AppNavbar/> */}
                 <Container fluid style={{ marginTop: "15px" }}>
-                    <h1 className='text-center'>PetClinic</h1>
-                    <Row>
-                        <Col>
+                    <img className="home-img-title" src={"/titulo.png"} alt='title' />
+                    <Row >
+                        <Col xs="0" md="6" align='center'>
                             <div>
-                                <img style={{ maxHeight: "300px" }} src={dog.image} alt='random dog' />
-                                <p>{dog.fact}</p>
+                                <img className="home-img" src={dog.image} alt='random dog' />
+                                <p style={{ fontStyle: "italic" }}>{dog.fact}</p>
                             </div>
                         </Col>
-                        <Col>
-                            <h2>The best place to care for your pet!!</h2>
-                            <h3>We have the best vets in the city ready to help your little friends.</h3>
+                        <Col xs="12" md="6" align='center' className='my-auto' style={{ fontFamily: "sensei", fontStyle: "bold" }}>
+                            <h2 >The best place to care for your pet!!</h2>
+                            <h3 >We have the best vets in the city ready to help your little friends.</h3>
                         </Col>
                     </Row>
-                    <Row>
-                        <Col>
+                    <Row >
+                        <Col xs="12" md="6" align='center'>
                             <div>
-                                <img style={{ maxHeight: "300px" }} src={cat.image} alt='random cat' />
-                                <p>{cat.fact}</p>
+                                <img className="home-img" src={"https://cataas.com" + catImage.url} alt='random cat' />
+                                <p style={{ fontStyle: "italic" }}>{cat.fact}</p>
                             </div>
                         </Col>
-                        <Col>
+                        <Col md="6" align='center'>
                             <div>
-                                <img style={{ maxHeight: "300px" }} src={panda.image} alt='random panda' />
-                                <p>{panda.fact}</p>
+                                <img className="home-img" src={kangaroo.image} alt='random panda' />
+                                <p style={{ fontStyle: "italic" }}>{kangaroo.fact}</p>
                             </div>
                         </Col>
                     </Row>

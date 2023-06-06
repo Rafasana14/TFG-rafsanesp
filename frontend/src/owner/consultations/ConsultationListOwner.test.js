@@ -1,10 +1,35 @@
 import { render, screen, testRenderList } from "../../test-utils";
+import { rest } from "msw";
+import { server } from "../../mocks/server";
 import ConsultationListOwner from "./ConsultationListOwner";
 
 describe('ConsultationListOwner', () => {
     test('renders correctly', async () => {
         render(<ConsultationListOwner test={true} />);
-        testRenderList(/consultations/i, true);
+        testRenderList(/consultations/i);
+    });
+
+    test('renders correctly for not PLATINUM', async () => {
+        server.use(
+            rest.get('*/plan', (req, res, ctx) => {
+                return res(
+                    ctx.status(404),
+                    ctx.json(
+                        {
+                            plan: 'GOLD'
+                        }
+                    )
+                )
+            })
+        )
+        render(<ConsultationListOwner test={true} />);
+        testRenderList(/consultations/i);
+
+        const editButtons = screen.queryAllByRole('link', { 'name': /edit/ });
+        expect(editButtons).toHaveLength(0);
+
+        const addButtons = screen.queryByRole('link', { 'name': /add/ });
+        expect(addButtons).not.toBeInTheDocument();
     });
 
     test('renders consultations correctly', async () => {

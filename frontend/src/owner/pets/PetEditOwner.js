@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Button, Col, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import tokenService from '../../services/token.service';
-import getErrorModal from '../../util/getErrorModal';
+import useErrorModal from '../../util/useErrorModal';
 import useFetchData from '../../util/useFetchData';
 import useFetchState from '../../util/useFetchState';
 import getIdFromUrl from '../../util/getIdFromUrl';
@@ -41,7 +41,7 @@ export default function PetEditOwner() {
 
     const handleSubmit = async (event) => await submitState(event, pet, `/api/v1/pets`, setMessage, setVisible, setRedirect);
 
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
     const typeOptions = Array.from(types).map(type => <option key={type.id} value={type.id}>{type.name}</option>);
 
     return (
@@ -49,9 +49,8 @@ export default function PetEditOwner() {
             <Container style={{ marginTop: "15px" }}>
                 {<h2 className='text-center'>{pet.id ? 'Edit Pet' : 'Add Pet'}</h2>}
                 {modal}
-                <Row>
-                    <Col></Col>
-                    <Col className='justify-content-center' xs="10" sm="8" md="6" lg="4" xl="3">
+                <Row className='justify-content-center'>
+                    <Col xs="10" sm="8" md="6" lg="4" xl="3">
                         <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                             <FormGroup>
                                 <Label for="name">Name</Label>
@@ -71,13 +70,12 @@ export default function PetEditOwner() {
                                     {typeOptions}
                                 </Input>
                             </FormGroup>
-                            <FormGroup>
-                                <Button color="primary" type="submit">Save</Button>{' '}
-                                <Button color="secondary" tag={Link} to="/pets">Cancel</Button>
+                            <FormGroup align="center">
+                                <Button className='save-button' type="submit">Save</Button>{' '}
+                                <Button className='back-button' tag={Link} to="/pets">Cancel</Button>
                             </FormGroup>
                         </Form>
                     </Col>
-                    <Col ></Col>
                 </Row>
             </Container>
         </div>

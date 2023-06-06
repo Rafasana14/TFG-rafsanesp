@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Button, Col, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import tokenService from '../../services/token.service';
-import getErrorModal from '../../util/getErrorModal';
+import useErrorModal from '../../util/useErrorModal';
 import useFetchData from '../../util/useFetchData';
 import getIdFromUrl from '../../util/getIdFromUrl';
 import useFetchState from '../../util/useFetchState';
@@ -153,16 +153,15 @@ export default function VisitEditOwner() {
     });
     const citiesOptions = getCitiesInput(cities, visit, datetime);
     const vetSelection = getVetSelectionInput(datetime);
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
 
     return (
         <div>
             <Container style={{ marginTop: "15px" }}>
                 {<h2 className='text-center'>{visit.id ? 'Edit Visit' : 'Add Visit'}</h2>}
                 {modal}
-                <Row>
-                    <Col sm="4"></Col>
-                    <Col sm="4">
+                <Row className='justify-content-center'>
+                    <Col xs="10" sm="8" md="6" lg="4" xl="3">
                         <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                             <FormGroup>
                                 <Label for="datetime">Date and Time</Label>
@@ -186,13 +185,12 @@ export default function VisitEditOwner() {
                                 <Label for="pet">Pet</Label>
                                 <Input type="text" disabled name="pet" id="pet" value={pet.name || ''} />
                             </FormGroup>
-                            <FormGroup>
-                                <Button color="primary" type="submit">Save</Button>{' '}
-                                <Button color="secondary" onClick={() => window.history.back()}>Back</Button>
+                            <FormGroup align="center">
+                                <Button className='save-button' type="submit">Save</Button>{' '}
+                                <Button className='back-button' onClick={() => window.history.back()}>Back</Button>
                             </FormGroup>
                         </Form>
                     </Col>
-                    <Col sm="4"></Col>
                 </Row>
             </Container>
         </div >

@@ -3,18 +3,18 @@ import { Link } from 'react-router-dom';
 import { Button, ButtonGroup, Col, Container } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import useFetchState from '../../util/useFetchState';
-import getErrorModal from '../../util/getErrorModal';
+import useErrorModal from '../../util/useErrorModal';
 import deleteFromList from '../../util/deleteFromList';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 
 const jwt = tokenService.getLocalAccessToken();
 
-export default function VetListAdmin({ test = false }) {
+export default function VetListAdmin({ test = false, admin = true }) {
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
     const [vets, setVets] = useFetchState([], `/api/v1/vets`, jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
 
     const renderButtons = (params) => {
         return (
@@ -36,7 +36,7 @@ export default function VetListAdmin({ test = false }) {
         { field: 'city', headerName: 'City', flex: 0.5, minWidth: 130 },
         { field: 'specialties', headerName: 'Specialties', flex: 1, minWidth: 150 },
         { field: 'username', headerName: 'Username', minWidth: 150, flex: 1 },
-        { field: 'actions', headerName: 'Actions', flex: 0.3, minWidth: 180, sortable: false, filterable: false, renderCell: renderButtons },
+        { field: 'actions', headerName: 'Actions', flex: admin ? 0.3 : 0, minWidth: 180, sortable: false, filterable: false, renderCell: admin ? renderButtons : null },
     ];
 
     const rows = Array.from(vets).map((vet) => {
@@ -51,6 +51,12 @@ export default function VetListAdmin({ test = false }) {
         );
     });
 
+    const getTogglableColumns = (columns) => {
+        return columns
+            .filter((column) => column.field !== 'actions')
+            .map((column) => column.field);
+    };
+
     return (
         <div>
             <Container style={{ marginTop: "15px" }} fluid>
@@ -58,7 +64,8 @@ export default function VetListAdmin({ test = false }) {
                 {alerts.map((a) => a.alert)}
                 {modal}
                 <div className="float-right">
-                    <Button className='add-button' tag={Link} to="/vets/new">Add Vet</Button>{" "}
+                    {admin ? <Button className='add-button' tag={Link} to="/vets/new">Add Vet</Button> : <></>}
+                    {" "}
                     <Button className='extra-button' tag={Link} to="/vets/specialties">Specialties</Button>
                 </div>
                 <Col style={{ maxWidth: "1600px" }}>
@@ -69,6 +76,11 @@ export default function VetListAdmin({ test = false }) {
                         rows={rows}
                         columns={columns}
                         initialState={{
+                            columns: {
+                                columnVisibilityModel: {
+                                    actions: admin,
+                                }
+                            },
                             pagination: {
                                 paginationModel: { page: 0, pageSize: 10 },
                             },
@@ -76,6 +88,11 @@ export default function VetListAdmin({ test = false }) {
                         pageSizeOptions={[10, 20]}
                         slots={{
                             toolbar: GridToolbar,
+                        }}
+                        slotProps={{
+                            columnsPanel: {
+                                getTogglableColumns,
+                            },
                         }}
                     />
                 </Col>

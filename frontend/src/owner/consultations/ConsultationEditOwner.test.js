@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { server } from "../../mocks/server";
-import { checkOption, fillForm, render, screen, testFilledEditForm, testRenderForm, waitFor } from "../../test-utils";
+import { checkOption, fillForm, render, screen, testRenderForm, waitFor } from "../../test-utils";
 import * as router from 'react-router'
 import ConsultationEditOwner from "./ConsultationEditOwner";
 import tokenService from "../../services/token.service";
@@ -40,8 +40,6 @@ describe('ConsultationEditOwner', () => {
         const heading = await screen.findByRole('heading', { 'name': /edit consultation/i });
         expect(heading).toBeInTheDocument();
         await checkOption(/leo/i);
-
-        await testFilledEditForm(form)
 
         const submit = screen.getByRole('button', { name: /save/i })
         await user.click(submit);

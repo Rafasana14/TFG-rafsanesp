@@ -1,4 +1,4 @@
-import { fillForm, render, screen } from "../test-utils";
+import { fillForm, render, screen, waitFor } from "../test-utils";
 import { server } from "../mocks/server";
 import { rest } from "msw";
 import tokenService from "../services/token.service";
@@ -15,7 +15,7 @@ beforeEach(() => {
 describe('ProfileEdit', () => {
     const adminForm = [
         [/username/i, "textbox", "test name"],
-        [/password/i, "label", "password"],
+        [/password/i, "textbox", "password"],
     ];
 
     const vetForm = [...adminForm,
@@ -66,7 +66,7 @@ describe('ProfileEdit', () => {
         const alert = await screen.findByRole('alert', { name: /alert-edit/i })
         expect(alert).toBeInTheDocument();
 
-        expect(window.location.reload).toHaveBeenCalled();
+        await waitFor(async () => expect(window.location.reload).toHaveBeenCalled());
     });
 
     test('edits profile dismiss alert admin', async () => {

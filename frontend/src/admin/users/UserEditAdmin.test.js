@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { server } from "../../mocks/server";
-import { checkOption, fillForm, render, screen, testFilledEditForm, testRenderForm, waitFor } from "../../test-utils";
+import { checkOption, fillForm, render, screen, testRenderForm, waitFor } from "../../test-utils";
 import * as router from 'react-router'
 import UserEditAdmin from "./UserEditAdmin";
 
@@ -13,6 +13,7 @@ beforeEach(() => {
 describe('UserEditAdmin', () => {
     const form = [
         [/username/i, "textbox", "test name"],
+        [/password/i, "textbox", "test password"],
         [/authority/i, "combobox", "1", "disabled"]
     ];
     const route = '/users/new'
@@ -26,20 +27,6 @@ describe('UserEditAdmin', () => {
         const { user } = render(<UserEditAdmin />, { route: route });
         await checkOption(/admin/i);
         await fillForm(user, form);
-
-        const submit = screen.getByRole('button', { name: /save/i })
-        await user.click(submit);
-
-        await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/users'));
-    });
-
-    test('edit user renders correctly', async () => {
-        const { user } = render(<UserEditAdmin />, { route: '/users/1' })
-        const heading = await screen.findByRole('heading', { 'name': /edit user/i });
-        expect(heading).toBeInTheDocument();
-        await checkOption(/admin/i);
-
-        await testFilledEditForm(form);
 
         const submit = screen.getByRole('button', { name: /save/i })
         await user.click(submit);
@@ -71,6 +58,17 @@ describe('UserEditAdmin', () => {
 
         const modal = await screen.findByRole('dialog');
         expect(modal).toBeInTheDocument();
+    });
 
+    test('edit user renders correctly', async () => {
+        const { user } = render(<UserEditAdmin />, { route: '/users/1' })
+        const heading = await screen.findByRole('heading', { 'name': /edit user/i });
+        expect(heading).toBeInTheDocument();
+        await checkOption(/admin/i);
+
+        const submit = screen.getByRole('button', { name: /save/i })
+        await user.click(submit);
+
+        await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/users'));
     });
 });

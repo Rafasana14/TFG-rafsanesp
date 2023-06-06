@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import tokenService from '../../services/token.service';
-import getErrorModal from '../../util/getErrorModal';
+import useErrorModal from '../../util/useErrorModal';
 import useFetchData from '../../util/useFetchData';
 import { Button, Col, Container } from 'reactstrap';
 import { Link } from 'react-router-dom';
@@ -13,7 +13,7 @@ export default function ConsultationListOwner({ test = false }) {
     const [visible, setVisible] = useState(false);
     const consultations = useFetchData(`/api/v1/consultations`, jwt, setMessage, setVisible);
     const plan = useFetchData("/api/v1/plan", jwt, setMessage, setVisible).plan;
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
 
     const renderButtons = (params) => {
         return (
@@ -36,7 +36,7 @@ export default function ConsultationListOwner({ test = false }) {
         { field: 'owner', headerName: 'Owner', flex: 0.5, minWidth: 150 },
         { field: 'pet', headerName: 'Pet', flex: 0.4, minWidth: 150 },
         { field: 'creationDate', type: 'dateTime', headerName: 'Creation Date', flex: 0.5, minWidth: 150 },
-        { field: 'actions', headerName: 'Actions', flex: 0.3, minWidth: 130, sortable: false, filterable: false, renderCell: renderButtons },
+        { field: 'actions', headerName: 'Actions', flex: 0.3, minWidth: 140, sortable: false, filterable: false, renderCell: renderButtons },
     ];
 
     const rows = Array.from(consultations).map((consultation) => {

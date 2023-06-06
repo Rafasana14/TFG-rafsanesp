@@ -23,6 +23,7 @@ function AppNavbar() {
 
     let adminLinks = <></>;
     let ownerLinks = <></>;
+    let vetLinks = <></>;
     let userLinks = <></>;
     let userLogout = <></>;
     let publicLinks = <></>;
@@ -65,13 +66,19 @@ function AppNavbar() {
             )
         }
         if (role === "VET") {
-            ownerLinks = (
+            vetLinks = (
                 <>
                     <NavItem>
                         <NavLink tag={Link} to="/owners">Owners</NavLink>
                     </NavItem>
                     <NavItem>
-                        <NavLink tag={Link} to="/visits">Visits</NavLink>
+                        <NavLink tag={Link} to="/pets">Pets</NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink tag={Link} to="/visits">My Visits</NavLink>
+                    </NavItem>
+                    <NavItem>
+                        <NavLink tag={Link} to="/vets">Vets</NavLink>
                     </NavItem>
                     <NavItem>
                         <NavLink tag={Link} to="/consultations">Consultations</NavLink>
@@ -120,14 +127,11 @@ function AppNavbar() {
                     </DropdownToggle>
                     <DropdownMenu>
                         <DropdownItem id="profile" tag={Link} to="/profile">Profile</DropdownItem>
+                        {roles.includes("VET") ? <DropdownItem id="specialties" tag={Link} to="/specialties">My Specialties</DropdownItem> : <></>}
                         <DropdownItem divider />
                         <DropdownItem id="logout" tag={Link} to="/logout">Logout</DropdownItem>
                     </DropdownMenu>
                 </Dropdown>
-                {/* <NavbarText className="justify-content-end">{username}</NavbarText> */}
-                {/* <NavItem className="d-flex">
-                    <NavLink id="logout" tag={Link} to="/logout">Logout</NavLink>
-                </NavItem> */}
             </>
         )
 
@@ -135,7 +139,7 @@ function AppNavbar() {
 
     return (
         <div>
-            <Navbar color='success' expand="lg" dark >
+            <Navbar style={{ zIndex: 2000 }} color='success' expand="lg" dark >
                 <NavbarBrand href="/">
                     <img alt="logo" src="/logo1-recortado.png" style={{ height: 40, width: 40 }} />
                     PetClinic
@@ -146,6 +150,7 @@ function AppNavbar() {
                         {userLinks}
                         {adminLinks}
                         {ownerLinks}
+                        {vetLinks}
                     </Nav>
                     <Nav className="ms-auto mb-2 mb-lg-0" navbar>
                         {publicLinks}

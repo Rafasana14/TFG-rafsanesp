@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button, Col, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import tokenService from '../services/token.service';
-import getErrorModal from '../util/getErrorModal';
+import useErrorModal from '../util/useErrorModal';
 import useFetchProfile from '../util/useFetchProfile';
 import submitProfile from '../util/submitProfile';
 import { useNavigate } from 'react-router-dom';
@@ -23,7 +23,8 @@ export default function ProfileEdit({ auth }) {
         const value = target.value;
         const name = target.name;
         if (auth !== "ADMIN") {
-            if (name === "username" || name === "password") setProfile({ ...profile, user: { ...profile.user, [name]: value } })
+            if (name === "username" || name === "password") setProfile({ ...profile, user: { ...profile.user, [name]: value } });
+            else setProfile({ ...profile, [name]: value })
         }
         else setProfile({ ...profile, [name]: value })
     }
@@ -42,7 +43,7 @@ export default function ProfileEdit({ auth }) {
                         </FormGroup>
                         <FormGroup>
                             <Label for="password">Password</Label>
-                            <Input type="password" required name="password" id="password" value={profile.password || ''}
+                            <Input type="password" role='textbox' required name="password" id="password" value={profile.password || ''}
                                 onChange={handleChange} />
                         </FormGroup>
                     </Col>
@@ -68,7 +69,7 @@ export default function ProfileEdit({ auth }) {
                         </FormGroup>
                         <FormGroup>
                             <Label for="password">Password</Label>
-                            <Input type="password" required name="password" id="password" value={profile.user?.password || ''}
+                            <Input type="password" role='textbox' required name="password" id="password" value={profile.user?.password || ''}
                                 onChange={handleChange} />
                         </FormGroup>
                         <FormGroup>
@@ -123,14 +124,14 @@ export default function ProfileEdit({ auth }) {
         }
     }
 
-    const modal = getErrorModal(setVisible, visible, message);
+    const modal = useErrorModal(setVisible, visible, message);
     const form = getProfileForm();
     return (
         <div>
             <Container style={{ marginTop: "15px" }}>
+                {modal}
                 <h2 className="text-center">My Profile</h2>
                 {alerts.map((a) => a.alert)}
-                {modal}
                 {form}
             </Container>
         </div>

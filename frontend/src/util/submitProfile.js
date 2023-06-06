@@ -7,7 +7,7 @@ function dismiss(alerts, id, setAlerts) {
     setAlerts(alerts.filter(i => i.id !== id))
 }
 
-export default async function submitProfile(event, state, auth, setMessage, setVisible, [alerts, setAlerts]) {
+export default async function submitProfile(event, state, auth, setMessage, setVisible, [alerts, setAlerts], specialties = false) {
     event.preventDefault();
 
     let url, username, password;
@@ -60,6 +60,6 @@ export default async function submitProfile(event, state, auth, setMessage, setV
                 id: alertId
             }
         ]);
-        await login(username, password, true, setMessage, setVisible);
+        if (!specialties) await login(username, password, true, setMessage, setVisible);
     }
 }
