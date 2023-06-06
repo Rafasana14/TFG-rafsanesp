@@ -19,13 +19,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 public interface VetRepository extends CrudRepository<Vet, Integer> {
 
 	@Query("SELECT DISTINCT vet FROM Vet vet WHERE vet.user.id = :userId")
 	public Optional<Vet> findVetByUser(int userId);
+	
+	@Modifying
+	@Query("UPDATE Ticket t SET t.user = NULL WHERE t.user.id = :userId")
+	public void setUserNullInTickets(@Param("userId") int userId);
+	
+	@Modifying
+	@Query("UPDATE Visit v SET v.vet = NULL WHERE v.vet.id = :vetId")
+	public void setVisitsNullByVet(@Param("vetId") int vetId);
 
 	// STATS
 	// ADMIN

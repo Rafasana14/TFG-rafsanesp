@@ -11,6 +11,10 @@ import useNavigateAfterSubmit from '../../util/useNavigateAfterSubmit';
 
 const jwt = tokenService.getLocalAccessToken();
 
+function isOwnedVisit(visit, vet) {
+    return (!visit.vet?.id && !visit.id) || (visit.vet?.id && vet?.id === visit.vet?.id);
+}
+
 export default function VisitEditAdmin({ admin = true }) {
     const emptyItem = {
         id: '',
@@ -49,9 +53,7 @@ export default function VisitEditAdmin({ admin = true }) {
     const modal = useErrorModal(setVisible, visible, message);
     const vetOptions = vets.map(vet => <option key={vet.id} value={vet.id}>{vet.firstName} {vet.lastName} - {vet.user.username}</option>);
 
-    const ownedVisit = vet?.id === visit.vet.id || !visit.vet.id;
-    console.log("VET ID" + vet.id);
-    console.log("VISIT VET ID" + vet.id);
+    const ownedVisit = isOwnedVisit(visit, vet);
     let title;
     if (admin || ownedVisit) title = <h2 className='text-center'>{visit.id ? 'Edit Visit' : 'Add Visit'}</h2>
     else title = <h2 className='text-center'>Visit Details</h2>
@@ -76,7 +78,7 @@ export default function VisitEditAdmin({ admin = true }) {
                             </FormGroup>
                             <FormGroup>
                                 <Label for="vet">Vet</Label>
-                                <Input type="select" required name="vet" id="vet" value={visit.vet.id || vet.id}
+                                <Input type="select" name="vet" id="vet" value={visit.id ? visit.vet?.id || "" : visit.vet?.id || vet.id}
                                     onChange={handleChange} disabled={!admin ? true : false}>
                                     <option value="">None</option>
                                     {vetOptions}

@@ -70,6 +70,16 @@ class VisitServiceTests {
 		Visit v4 = EntityUtils.getById(visits, Visit.class, 4);
 		assertEquals("Samantha", v4.getPet().getName());
 	}
+	
+	@Test
+	void shouldFindVisitsByVetId() {
+		Collection<Visit> visits = (Collection<Visit>) this.visitService.findVisitsByVetId(1);
+
+		Visit v1 = EntityUtils.getById(visits, Visit.class, 5);
+		assertEquals("James", v1.getVet().getFirstName());
+		Visit v4 = EntityUtils.getById(visits, Visit.class, 6);
+		assertEquals("James", v4.getVet().getFirstName());
+	}
 
 	@Test
 	void shouldFindVisitWithCorrectId() {

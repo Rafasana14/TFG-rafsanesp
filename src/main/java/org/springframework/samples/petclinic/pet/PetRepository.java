@@ -37,8 +37,12 @@ public interface PetRepository extends CrudRepository<Pet, Integer> {
 	List<Pet> findAllPetsByOwnerId(int id) throws DataAccessException;
 
 	@Modifying
-	@Query("DELETE FROM Visit v WHERE v.pet.id = :petId")
-	public void deleteVisitsByPet(@Param("petId") int petId);
+	@Query("UPDATE Visit v SET v.pet = NULL WHERE v.pet.id = :petId")
+	public void setVisitsNullByPet(@Param("petId") int petId);
+	
+	@Modifying
+	@Query("UPDATE Consultation c SET c.pet = NULL WHERE c.pet.id = :petId")
+	public void setConsultationsNullByPet(@Param("petId") int petId);
 
 	@Query(("SELECT COUNT(p) FROM Pet p WHERE p.owner.id = :id"))
 	public Integer countPetsByOwner(int id);

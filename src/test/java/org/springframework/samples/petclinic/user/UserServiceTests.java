@@ -16,6 +16,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.exceptions.UniqueException;
 import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.owner.OwnerService;
+import org.springframework.samples.petclinic.owner.PricingPlan;
 import org.springframework.samples.petclinic.vet.Vet;
 import org.springframework.samples.petclinic.vet.VetService;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -34,8 +36,8 @@ class UserServiceTests {
 	@Autowired
 	private VetService vetService;
 
-//	@Autowired
-//	private OwnerService ownerService;
+	@Autowired
+	private OwnerService ownerService;
 
 	@Test
 	@WithMockUser(username = "owner1", password = "0wn3r")
@@ -196,58 +198,23 @@ class UserServiceTests {
 
 	@Test
 	@Transactional
-	void shouldDeleteUserWithoutOwner() {
+	void shouldDeleteUserWithOwner() {
 		Integer firstCount = ((Collection<User>) userService.findAll()).size();
 		User user = new User();
-		user.setUsername("Prueba");
+		user.setUsername("Sam");
 		user.setPassword("password");
 		Authorities auth = authService.findByAuthority("OWNER");
 		user.setAuthority(auth);
 		this.userService.saveUser(user);
-
-		Integer secondCount = ((Collection<User>) userService.findAll()).size();
-		assertEquals(firstCount + 1, secondCount);
-		userService.deleteUser(user.getId());
-		Integer lastCount = ((Collection<User>) userService.findAll()).size();
-		assertEquals(firstCount, lastCount);
-	}
-
-//	@Test
-//	@Transactional
-//	void shouldDeleteUserWithOwner() {
-//		Integer firstCount = ((Collection<User>) userService.findAll()).size();
-//		User user = new User();
-//		user.setUsername("Sam");
-//		user.setPassword("password");
-//		Authorities auth = authService.findByAuthority("OWNER");
-//		user.setAuthority(auth);
-//		Owner owner = new Owner();
-//		owner.setAddress("Test");
-//		owner.setFirstName("Test");
-//		owner.setLastName("Test");
-//		owner.setPlan(PricingPlan.BASIC);
-//		owner.setTelephone("999999999");
-//		owner.setUser(user);
-//		owner.setCity("Test");
-//		this.ownerService.saveOwner(owner);
-//
-//		Integer secondCount = ((Collection<User>) userService.findAll()).size();
-//		assertEquals(firstCount + 1, secondCount);
-//		userService.deleteUser(user.getId());
-//		Integer lastCount = ((Collection<User>) userService.findAll()).size();
-//		assertEquals(firstCount, lastCount);
-//	}
-
-	@Test
-	@Transactional
-	void shouldDeleteUserWithoutVet() {
-		Integer firstCount = ((Collection<User>) userService.findAll()).size();
-		User user = new User();
-		user.setUsername("Prueba");
-		user.setPassword("password");
-		Authorities auth = authService.findByAuthority("VET");
-		user.setAuthority(auth);
-		this.userService.saveUser(user);
+		Owner owner = new Owner();
+		owner.setAddress("Test");
+		owner.setFirstName("Test");
+		owner.setLastName("Test");
+		owner.setPlan(PricingPlan.BASIC);
+		owner.setTelephone("999999999");
+		owner.setUser(user);
+		owner.setCity("Test");
+		this.ownerService.saveOwner(owner);
 
 		Integer secondCount = ((Collection<User>) userService.findAll()).size();
 		assertEquals(firstCount + 1, secondCount);

@@ -3,7 +3,6 @@ import tokenService from "../../services/token.service";
 import useFetchData from "../../util/useFetchData";
 import { Button, ButtonGroup, Container, Modal, ModalBody, ModalFooter, ModalHeader } from "reactstrap";
 import { Link } from "react-router-dom";
-import CalendarOwner from "./CalendarOwner";
 import useErrorModal from "../../util/useErrorModal";
 import StatsOwner from "./StatsOwner";
 import CalendarAuth from "../../components/CalendarAuth";
@@ -48,7 +47,7 @@ export default function DashboardOwner() {
                             Stats
                         </Button>
                     </ButtonGroup>
-                    <CalendarOwner />
+                    <CalendarAuth auth={"OWNER"} />
                     <Modal contentClassName="basic-dashboard" isOpen={true} keyboard={false} fade={false} centered >
                         <ModalHeader >Alert!</ModalHeader>
                         <ModalBody>

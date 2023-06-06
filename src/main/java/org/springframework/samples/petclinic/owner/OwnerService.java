@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.exceptions.LimitReachedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
-import org.springframework.samples.petclinic.user.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,12 +36,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class OwnerService {
 
 	private OwnerRepository ownerRepository;
-//	private UserService userService;
+
+	private static final Integer PET_BASIC_LIMIT = 2;
+	private static final Integer PET_GOLD_LIMIT = 4;
 
 	@Autowired
-	public OwnerService(OwnerRepository ownerRepository, UserService petService) {
+	public OwnerService(OwnerRepository ownerRepository) {
 		this.ownerRepository = ownerRepository;
-//		this.userService = userService;
 	}
 
 	@Transactional(readOnly = true)
@@ -61,7 +62,8 @@ public class OwnerService {
 
 	@Transactional(readOnly = true)
 	public Owner findOwnerByUser(int userId) throws DataAccessException {
-		return this.ownerRepository.findByUser(userId).orElseThrow(()->new ResourceNotFoundException("Owner","User ID",userId));
+		return this.ownerRepository.findByUser(userId)
+				.orElseThrow(() -> new ResourceNotFoundException("Owner", "User ID", userId));
 	}
 
 	@Transactional(readOnly = true)
@@ -81,19 +83,35 @@ public class OwnerService {
 		BeanUtils.copyProperties(owner, toUpdate, "id", "user");
 		return saveOwner(toUpdate);
 	}
+	
+	private boolean withinLimits(Owner owner) {
+		Integer petCount = ownerRepository.countAllPetsOfOwner(owner.getId());
+		PricingPlan plan = owner.getPlan();
+		if(plan.equals(PricingPlan.BASIC)) return petCount<=PET_BASIC_LIMIT;
+		else if(plan.equals(PricingPlan.GOLD)) return petCount<=PET_GOLD_LIMIT;
+		else return true;
+	}
 
 	@Transactional
 	public Owner updatePlan(PricingPlan plan, int id) throws DataAccessException {
 		Owner toUpdate = findOwnerById(id);
 		toUpdate.setPlan(plan);
-		ownerRepository.save(toUpdate);
-
-		return toUpdate;
+		if (withinLimits(toUpdate)) {
+			ownerRepository.save(toUpdate);
+			return toUpdate;
+		} else {
+			if (plan.equals(PricingPlan.BASIC))
+				throw new LimitReachedException(ownerRepository.countAllPetsOfOwner(id), plan, PET_BASIC_LIMIT);
+			else
+				throw new LimitReachedException(ownerRepository.countAllPetsOfOwner(id), plan, PET_GOLD_LIMIT);
+		}
 	}
 
 	@Transactional
 	public void deleteOwner(int id) throws DataAccessException {
 		Owner toDelete = findOwnerById(id);
+		ownerRepository.setOwnerNullInPets(id);
+		ownerRepository.setUserNullInTickets(toDelete.getUser().getId());
 		ownerRepository.delete(toDelete);
 	}
 
@@ -120,7 +138,7 @@ public class OwnerService {
 		}
 		return res;
 	}
-	
+
 	private Map<String, Integer> getOwnersPlans() {
 		Map<String, Integer> unsortedOwnersPlans = new HashMap<>();
 		unsortedOwnersPlans.put("BASIC", 0);

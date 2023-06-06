@@ -26,8 +26,11 @@ function CalendarAuth({ auth }) {
             const start = new Date(visit.datetime);
             let end = new Date(visit.datetime);
             end.setMinutes(start.getMinutes() + 30);
-            const title = auth === "OWNER" ? `Visit for ${visit.pet.name} with Vet ${visit.vet.firstName} ${visit.vet.lastName}`
-                : `Visit for ${visit.pet.name} of Owner ${visit.pet.owner.firstName} ${visit.pet.owner.lastName} - ${visit.pet.owner.user.username} `;
+            const vet = visit.vet ? visit.vet.firstName + " " + visit.vet.lastName : "not specified";
+            const pet = visit.pet ? visit.pet.name : "not specified";
+            const owner = pet !== "not specified" ? `${visit.pet.owner.firstName} ${visit.pet.owner.lastName} - ${visit.pet.owner.user.username} ` : "not specified";
+            const title = auth === "OWNER" ? `Visit for ${visit.pet.name} with Vet ${vet}`
+                : `Visit for  Pet ${pet} of Owner ${owner} `;
             return {
                 visitId: Number(visit.id),
                 petId: Number(visit.pet.id),

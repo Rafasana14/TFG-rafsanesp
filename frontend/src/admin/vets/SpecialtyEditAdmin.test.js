@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { server } from "../../mocks/server";
-import { act, fillForm, render, screen, testRenderForm, waitFor } from "../../test-utils";
+import { fillForm, render, screen, testRenderForm, waitFor } from "../../test-utils";
 import * as router from 'react-router'
 import SpecialtyEditAdmin from "./SpecialtyEditAdmin";
 
@@ -37,7 +37,7 @@ describe('SpecialtyEditAdmin', () => {
         expect(heading).toBeInTheDocument();
 
         const submit = screen.getByRole('button', { name: /save/i })
-        await act(async () => await user.click(submit));
+        await user.click(submit);
 
         await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/vets/specialties'));
     });
@@ -56,7 +56,7 @@ describe('SpecialtyEditAdmin', () => {
             })
         )
         const { user } = render(<SpecialtyEditAdmin />, { route: route })
-        await act(async () => await fillForm(user, form));
+        await fillForm(user, form);
 
         const submit = screen.getByRole('button', { name: /save/i })
         await user.click(submit);

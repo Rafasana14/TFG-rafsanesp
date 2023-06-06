@@ -33,7 +33,7 @@ export default function PetListOwner() {
                 return (
                     <tr className="table-info" key={visit["id"]}>
                         <td>{datetime.toLocaleString()}</td>
-                        <td>{visit.vet.firstName} {visit.vet.lastName}</td>
+                        <td>{visit.vet?.firstName || "Not specified"} {visit.vet?.lastName}</td>
                         <td>
                             <ButtonGroup>
                                 <Button aria-label={`edit-visit-${visit.id}`} size="sm" className='edit-button' tag={Link}

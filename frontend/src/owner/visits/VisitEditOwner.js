@@ -34,10 +34,11 @@ export default function VisitEditOwner() {
     useNavigateAfterSubmit(`/pets/${petId}/visits`, redirect);
 
     useEffect(() => {
-        if (visit?.vet.city) {
+        if (visit?.vet?.city) {
             let ignore = false;
-            if (!ignore)
+            if (!ignore) {
                 setCity(visit.vet.city);
+            }
             return () => {
                 ignore = true;
             };
@@ -84,22 +85,23 @@ export default function VisitEditOwner() {
         }
     }
 
-    const datetime = new Date(visit.datetime);
-    const datetimeInput = getDateTimeInput(visit, datetime);
+    const datetimeAux = new Date(visit.datetime);
+    const datetimeInput = getDateTimeInput(visit, datetimeAux);
 
     function getVetSelectionInput(datetime) {
+        const vetName = visit.vet?.id ? (visit.vet.firstName + " " + visit.vet.lastName) : 'Not specified';
         if (visit.id && datetime < Date.now()) {
-            return <Input type="text" disabled name="vet" id="vet" value={visit.vet.id ? (visit.vet.firstName + " " + visit.vet.lastName) : ''} />
+            return <Input type="text" disabled name="vet" id="vet" value={vetName} />
         } else {
             if (plan !== "BASIC") {
                 const vetsAux = vets.filter(vet => vet.city === city);
                 const vetsOptions = getVetOptions(vetsAux);
-                return <Input type="select" required name="vet" id="vet" value={visit.vet.id ? visit.vet.id : ''}
-                    onChange={handleChange} >
+                return <Input type="select" required name="vet" id="vet" value={visit.vet?.id || ''}
+                    onChange={handleChange} disabled={city ? false : true}>
                     <option value="">None</option>
                     {vetsOptions}</Input>
             } else {
-                return <Input type="text" disabled name="vet" id="vet" value={visit.vet.id ? (visit.vet.firstName + " " + visit.vet.lastName) : ''} />
+                return <Input type="text" disabled name="vet" id="vet" value={vetName} />
             }
         }
     }
@@ -109,7 +111,7 @@ export default function VisitEditOwner() {
         return cities.map(city => {
             i++;
             if (visit.id && datetime < Date.now()) {
-                if (visit.vet.city === city) {
+                if (visit.vet?.city === city) {
                     return (<div key={city} className="form-check form-check-inline">
                         <Input className="form-check-input" readOnly type="radio" defaultChecked name="city" id={`city${i}`} value={city}
                             onChange={handleCityChange} ></Input>
@@ -123,7 +125,7 @@ export default function VisitEditOwner() {
                     </div>)
                 }
             } else {
-                if (visit.vet.city === city) {
+                if (visit.vet?.city === city) {
                     return (<div key={city} className="form-check form-check-inline">
                         <Input className="form-check-input" defaultChecked type="radio" name="city" id={`city${i}`} value={city}
                             onChange={handleCityChange}></Input>
@@ -144,8 +146,8 @@ export default function VisitEditOwner() {
     vets.forEach(vet => {
         if (!cities.includes(vet.city)) cities.push(vet.city);
     });
-    const citiesOptions = getCitiesInput(cities, visit, datetime);
-    const vetSelection = getVetSelectionInput(datetime);
+    const citiesOptions = getCitiesInput(cities, visit, datetimeAux);
+    const vetSelection = getVetSelectionInput(datetimeAux);
     const modal = useErrorModal(setVisible, visible, message);
 
     return (

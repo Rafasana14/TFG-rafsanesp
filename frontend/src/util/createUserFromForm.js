@@ -5,10 +5,10 @@ const jwt = tokenService.getLocalAccessToken();
 
 export function getUserCreateForm(entity, user, handleChange, handleUserChange, userOptions) {
     if (entity.id) {
-        return <Input type="select" disabled name="user" id="user" value={entity.user?.id || ""} >
-            <option value="">None</option>
-            {userOptions}
-        </Input>
+        return <FormGroup>
+            <Label for="user">User</Label>
+            <Input type="text" disabled name="user" id="user" value={entity.user?.username || ""} />
+        </FormGroup>
     } else {
         if (user.create === "yes") {
             return <FormGroup>

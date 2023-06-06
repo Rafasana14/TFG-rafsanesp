@@ -49,8 +49,8 @@ export default function ConsultationListAdmin({ test = false }) {
                 id: consultation.id,
                 title: consultation.title,
                 status: consultation.status,
-                owner: consultation.pet.owner.user.username,
-                pet: consultation.pet.name,
+                owner: consultation.pet?.owner?.user.username || "Not specified",
+                pet: consultation.pet?.name || "Not specified",
                 creationDate: new Date(consultation.creationDate),
             }
         );

@@ -43,11 +43,6 @@ public class ConsultationController {
 		this.userService = userService;
 	}
 
-//	@InitBinder("consultation")
-//	public void initConsultationBinder(WebDataBinder dataBinder) {
-//		dataBinder.setValidator(new ConsultationValidator());
-//	}
-
 	@GetMapping
 	public ResponseEntity<List<Consultation>> findAllConsultations() {
 		User user = userService.findCurrentUser();

@@ -55,15 +55,16 @@ export default function VisitListOwner({ test = false }) {
     ];
 
     const rows = Array.from(visits).map((visit) => {
-        let spAux = visit.vet.specialties.map(s => s.name).toString().replace(",", ", ");
-        const vet = `${visit.vet.firstName} ${visit.vet.lastName} ${spAux !== "" ? "- " + spAux : ""}`;
+        let spAux = visit.vet?.specialties.map(s => s.name).toString().replace(",", ", ");
+        const sp = spAux !== "" ? "- " + spAux : ""
+        const vet = visit.vet ? `${visit.vet.firstName} ${visit.vet.lastName} ${sp}` : "Not specified";
 
         return (
             {
                 id: visit.id,
                 datetime: new Date(visit.datetime),
                 description: visit.description || "No description provided",
-                city: visit.vet.city,
+                city: visit.vet?.city || "Not specified",
                 vet: vet,
             }
         );

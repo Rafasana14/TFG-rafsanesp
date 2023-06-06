@@ -24,8 +24,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.samples.petclinic.model.NamedEntity;
 import org.springframework.samples.petclinic.owner.Owner;
@@ -56,7 +54,6 @@ public class Pet extends NamedEntity {
 
 	@Valid
 	@ManyToOne(optional = true)
-	@OnDelete(action = OnDeleteAction.CASCADE)
 	protected Owner owner;
 
 }

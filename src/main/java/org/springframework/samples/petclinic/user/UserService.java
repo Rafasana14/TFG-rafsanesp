@@ -25,7 +25,9 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.exceptions.UniqueException;
 import org.springframework.samples.petclinic.owner.Owner;
+import org.springframework.samples.petclinic.owner.OwnerService;
 import org.springframework.samples.petclinic.vet.Vet;
+import org.springframework.samples.petclinic.vet.VetService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -37,16 +39,14 @@ public class UserService {
 	private static final String USERNAME_FIELD = "username";
 
 	private UserRepository userRepository;
-
-//	private OwnerService ownerService;
-//
-//	private VetService vetService;
+	private OwnerService ownerService;
+	private VetService vetService;
 
 	@Autowired
-	public UserService(UserRepository userRepository) {
+	public UserService(UserRepository userRepository, OwnerService ownerService, VetService vetService) {
 		this.userRepository = userRepository;
-//		this.ownerService = ownerService;
-//		this.vetService = vetService;
+		this.ownerService = ownerService;
+		this.vetService = vetService;
 	}
 
 	@Transactional
@@ -134,18 +134,18 @@ public class UserService {
 	public void deleteUser(Integer id) {
 		User toDelete = findUser(id);
 		deleteRelations(id, toDelete.getAuthority().getAuthority());
-//		this.userRepository.deleteOwnerRelation(id);
-//		this.userRepository.deleteVetRelation(id);
 		this.userRepository.delete(toDelete);
 	}
 
 	private void deleteRelations(Integer id, String auth) {
 		switch (auth) {
 		case "OWNER":
-			this.userRepository.deleteOwnerRelation(id);
+			Owner owner = this.ownerService.findOwnerByUser(id);
+			this.ownerService.deleteOwner(owner.getId());
 			break;
 		case "VET":
-			this.userRepository.deleteVetRelation(id);
+			Vet vet = this.vetService.findVetByUser(id);
+			this.vetService.deleteVet(vet.getId());
 			break;
 		default:
 			// The only relations that have user are Owner and Vet
