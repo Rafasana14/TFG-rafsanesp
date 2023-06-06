@@ -20,3 +20,18 @@ export default function useFetchProfile(auth, jwt, setMessage, setVisible) {
     }, [auth, jwt, setMessage, setVisible]);
     return [data, setData];
 }
+
+export function useFetchProfileData(auth, jwt, setMessage, setVisible) {
+    const [data, setData] = useState([]);
+    useEffect(() => {
+        let url;
+        if (auth === "OWNER") url = "/api/v1/owners/profile";
+        else url = "/api/v1/vets/profile";
+        let ignore = false;
+        fetchAndSet(url, jwt, ignore, setMessage, setVisible, setData);
+        return () => {
+            ignore = true;
+        };
+    }, [auth, jwt, setMessage, setVisible]);
+    return data;
+}

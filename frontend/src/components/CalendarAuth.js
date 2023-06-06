@@ -3,17 +3,17 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import { Container } from 'reactstrap';
 import moment from 'moment';
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import useErrorModal from '../../util/useErrorModal';
-import useFetchData from '../../util/useFetchData';
-import tokenService from '../../services/token.service';
 import { useNavigate } from 'react-router-dom';
+import tokenService from '../services/token.service';
+import useFetchData from '../util/useFetchData';
+import useErrorModal from '../util/useErrorModal';
 
 require('moment/locale/es.js');
 
 const localizer = momentLocalizer(moment);
 const jwt = tokenService.getLocalAccessToken();
 
-function CalendarVet() {
+function CalendarAuth({ auth }) {
 
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
@@ -26,25 +26,27 @@ function CalendarVet() {
             const start = new Date(visit.datetime);
             let end = new Date(visit.datetime);
             end.setMinutes(start.getMinutes() + 30);
+            const title = auth === "OWNER" ? `Visit for ${visit.pet.name} with Vet ${visit.vet.firstName} ${visit.vet.lastName}`
+                : `Visit for ${visit.pet.name} of Owner ${visit.pet.owner.firstName} ${visit.pet.owner.lastName} - ${visit.pet.owner.user.username} `;
             return {
                 visitId: Number(visit.id),
                 petId: Number(visit.pet.id),
-                ownerId: Number(visit.pet.owner.id),
                 start: start,
                 end: end,
-                title: `Visit for ${visit.pet.name} of Owner ${visit.pet.owner.firstName} ${visit.pet.owner.lastName} - ${visit.pet.owner.user.username} `,
+                title: title,
                 description: visit.description,
             }
         }));
-    }, [visits]);
+    }, [visits, auth]);
 
     const modal = useErrorModal(setVisible, visible, message);
 
-    const title = <h1 className='text-center'>Dashboard</h1>;
+    const title = <h3 className='text-center'>Visits Calendar</h3>;
 
     const handleSelectSlot = useCallback(
-        ({ start, end }) => {
-            navigate(`myPets/visits/create`, { state: { datetime: start } })
+        ({ start }) => {
+            const date = new Date(start).setHours(9, 0)
+            navigate(`/visits/new`, { state: { datetime: date } });
         },
         [navigate]
     )
@@ -60,10 +62,9 @@ function CalendarVet() {
             selectable
             views={{
                 month: true,
-                // work_week: true,
-                // day: true,
                 agenda: true,
             }}
+            popup
         />
     </div>;
 
@@ -75,4 +76,4 @@ function CalendarVet() {
         {modal}
     </div >
 }
-export default CalendarVet;
+export default CalendarAuth;
