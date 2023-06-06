@@ -72,6 +72,19 @@ export default function OwnerEditAdmin({ admin = true }) {
     const userOptions = users.filter((i) => i.authority.authority !== "VET").map(user => <option key={user.id} value={user.id}>{user.username}</option>);
     const userForm = admin ? getUserCreateForm(owner, user, handleChange, handleUserChange, userOptions) : <></>;
 
+    const telephoneCityInput = <>
+        <FormGroup>
+            <Label for="city">City</Label>
+            <Input type="text" required name="city" id="city" value={owner.city || ''}
+                onChange={handleChange} disabled={!admin} />
+        </FormGroup>
+        <FormGroup>
+            <Label for="telephone">Telephone</Label>
+            <Input type="tel" required placeholder="9 numbers" pattern="[0-9]{9}" name="telephone" id="telephone" value={owner.telephone || ''}
+                onChange={handleChange} disabled={!admin} />
+        </FormGroup>
+    </>;
+
     return (
         <div>
             <Container style={{ marginTop: "15px" }}>
@@ -96,34 +109,12 @@ export default function OwnerEditAdmin({ admin = true }) {
                                     onChange={handleChange} disabled={!admin} />
                             </FormGroup>
                             {admin ?
-                                <>
-                                    <FormGroup>
-                                        <Label for="city">City</Label>
-                                        <Input type="text" required name="city" id="city" value={owner.city || ''}
-                                            onChange={handleChange} disabled={!admin} />
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <Label for="telephone">Telephone</Label>
-                                        <Input type="tel" required placeholder="9 numbers" pattern="[0-9]{9}" name="telephone" id="telephone" value={owner.telephone || ''}
-                                            onChange={handleChange} disabled={!admin} />
-                                    </FormGroup>
-                                </>
+                                telephoneCityInput
                                 : <></>}
                         </Col>
                         <Col xs="10" sm="8" md="6" lg="4" xl="3">
                             {!admin ?
-                                <>
-                                    <FormGroup>
-                                        <Label for="city">City</Label>
-                                        <Input type="text" required name="city" id="city" value={owner.city || ''}
-                                            onChange={handleChange} disabled={!admin} />
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <Label for="telephone">Telephone</Label>
-                                        <Input type="tel" required placeholder="9 numbers" pattern="[0-9]{9}" name="telephone" id="telephone" value={owner.telephone || ''}
-                                            onChange={handleChange} disabled={!admin} />
-                                    </FormGroup>
-                                </>
+                                telephoneCityInput
                                 : <></>}
                             <FormGroup>
                                 <Label for="plan">Plan</Label>
@@ -136,31 +127,7 @@ export default function OwnerEditAdmin({ admin = true }) {
                             </FormGroup>
                             <FormGroup>
                                 {!owner.id ?
-                                    <FormGroup tag="fieldset">
-                                        <Label>
-                                            Do you want to create a new user for this Owner?
-                                        </Label>
-                                        <Row>
-                                            <Col>
-                                                <FormGroup check>
-                                                    <Input aria-label='yes' required name="create" type="radio" value="yes" onChange={handleUserChange} />
-                                                    {' '}
-                                                    <Label check>
-                                                        Yes
-                                                    </Label>
-                                                </FormGroup>
-                                            </Col>
-                                            <Col>
-                                                <FormGroup check>
-                                                    <Input aria-label='no' required name="create" type="radio" value="no" onChange={handleUserChange} />
-                                                    {' '}
-                                                    <Label check>
-                                                        No
-                                                    </Label>
-                                                </FormGroup>
-                                            </Col>
-                                        </Row>
-                                    </FormGroup>
+                                    getUserCreateRadio(handleUserChange, "Owner")
                                     : <></>}
                                 {userForm}
                             </FormGroup>
@@ -178,4 +145,32 @@ export default function OwnerEditAdmin({ admin = true }) {
             </Container>
         </div >
     );
+}
+
+export function getUserCreateRadio(handleUserChange, type) {
+    return <FormGroup tag="fieldset">
+        <Label>
+            Do you want to create a new user for this {type}?
+        </Label>
+        <Row>
+            <Col>
+                <FormGroup check>
+                    <Input aria-label='yes' required name="create" type="radio" value="yes" onChange={handleUserChange} />
+                    {' '}
+                    <Label check>
+                        Yes
+                    </Label>
+                </FormGroup>
+            </Col>
+            <Col>
+                <FormGroup check>
+                    <Input aria-label='no' required name="create" type="radio" value="no" onChange={handleUserChange} />
+                    {' '}
+                    <Label check>
+                        No
+                    </Label>
+                </FormGroup>
+            </Col>
+        </Row>
+    </FormGroup>
 }
