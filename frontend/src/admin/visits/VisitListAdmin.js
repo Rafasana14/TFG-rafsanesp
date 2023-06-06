@@ -72,9 +72,9 @@ export default function VisitListAdmin({ test = false, admin = true }) {
                 {alerts.map((a) => a.alert)}
                 {modal}
                 <div className="float-right">
-                    {admin ? <Button className='add-button' tag={Link} to={`/pets/${petId}/visits/new`}>
+                    <Button className='add-button' tag={Link} to={`/pets/${petId}/visits/new`}>
                         Add Visit
-                    </Button> : <></>}
+                    </Button>
                     {" "}
                     <Button className='back-button' tag={Link} to={`/pets/`}>
                         Back

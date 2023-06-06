@@ -31,7 +31,6 @@ import VisitListOwner from "./owner/visits/VisitListOwner";
 import { PlanList } from "./public/plan/PlanList";
 import ConsultationListVet from "./vet/consultations/ConsultationListVet";
 import DashboardOwner from "./owner/dashboard/DashboardOwner";
-import CalendarVet from "./vet/dashboard/CalendarVet";
 import StatsAdmin from "./admin/dashboard/StatsAdmin";
 import './App.css';
 import TicketList from "./components/TicketList";
@@ -42,6 +41,8 @@ import ProfileEdit from "./components/ProfileEdit";
 import { Col, Container, Row } from "reactstrap";
 import SpecialtiesChange from "./vet/specialties/SpecialtiesChange";
 import VisitListVet from "./vet/visits/VisitListVet";
+import CalendarAuth from "./components/CalendarAuth";
+import VisitCreate from "./components/VisitCreate";
 
 function ErrorFallback({ error, resetErrorBoundary }) {
   return (
@@ -90,7 +91,6 @@ function App() {
           <Route path="/vets/specialties/:specialtyId" exact={true} element={<PrivateRoute><SpecialtyEditAdmin /></PrivateRoute>} />
           <Route path="/consultations" exact={true} element={<PrivateRoute><ConsultationListAdmin /></PrivateRoute>} />
           <Route path="/consultations/:consultationId" exact={true} element={<PrivateRoute><ConsultationEditAdmin /></PrivateRoute>} />
-          {/* <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketList auth={"ADMIN"} /></PrivateRoute>} /> */}
         </>)
     }
     if (role === "OWNER") {
@@ -102,15 +102,15 @@ function App() {
           <Route path="/pets/:id" exact={true} element={<PrivateRoute><PetEditOwner /></PrivateRoute>} />
           <Route path="/pets/:id/visits" exact={true} element={<PrivateRoute><VisitListOwner /></PrivateRoute>} />
           <Route path="/pets/:id/visits/:id" exact={true} element={<PrivateRoute><VisitEditOwner /></PrivateRoute>} />
+          <Route path="/visits/new" exact={true} element={<PrivateRoute><VisitCreate auth={"OWNER"} /></PrivateRoute>} />
           <Route path="/consultations" exact={true} element={<PrivateRoute><ConsultationListOwner /></PrivateRoute>} />
           <Route path="/consultations/:consultationId" exact={true} element={<PrivateRoute><ConsultationEditOwner /></PrivateRoute>} />
-          {/* <Route path="/consultations/:consultationId/tickets" exact={true} element={<PrivateRoute><TicketList auth={"OWNER"} /></PrivateRoute>} /> */}
         </>)
     }
     if (role === "VET") {
       vetRoutes = (
         <>
-          <Route path="/dashboard" element={<PrivateRoute><CalendarVet /></PrivateRoute>} />
+          <Route path="/dashboard" element={<PrivateRoute><CalendarAuth auth={"VET"} /></PrivateRoute>} />
           <Route path="/owners" exact={true} element={<PrivateRoute><OwnerListAdmin admin={false} /></PrivateRoute>} />
           <Route path="/owners/:id" exact={true} element={<PrivateRoute><OwnerEditAdmin admin={false} /></PrivateRoute>} />
           <Route path="/pets" exact={true} element={<PrivateRoute><PetListAdmin admin={false} /></PrivateRoute>} />
@@ -118,7 +118,7 @@ function App() {
           <Route path="/pets/:petId/visits" exact={true} element={<PrivateRoute><VisitListAdmin admin={false} /></PrivateRoute>} />
           <Route path="/pets/:petId/visits/:visitId" exact={true} element={<PrivateRoute><VisitEditAdmin admin={false} /></PrivateRoute>} />
           <Route path="/visits" exact={true} element={<PrivateRoute><VisitListVet /></PrivateRoute>} />
-          <Route path="/visits/:visitId" exact={true} element={<PrivateRoute><VisitEditAdmin admin={false} /></PrivateRoute>} />
+          <Route path="/visits/new" exact={true} element={<PrivateRoute><VisitCreate auth={"VET"} /></PrivateRoute>} />
           <Route path="/vets" exact={true} element={<PrivateRoute><VetListAdmin admin={false} /></PrivateRoute>} />
           <Route path="/vets/specialties" exact={true} element={<PrivateRoute><SpecialtyListAdmin admin={false} /></PrivateRoute>} />
           <Route path="/consultations" exact={true} element={<PrivateRoute><ConsultationListVet /></PrivateRoute>} />

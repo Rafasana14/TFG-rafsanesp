@@ -153,23 +153,6 @@ class PetRestControllerTests {
 	}
 
 	@Test
-	@WithMockUser(value = "owner", authorities = { "OWNER" })
-	void ownerShouldNotFindAll() throws Exception {
-		Pet timon = new Pet();
-		timon.setId(2);
-		timon.setName("Timon");
-
-		Pet pumba = new Pet();
-		pumba.setName("Pumba");
-		pumba.setId(3);
-
-		when(this.petService.findAll()).thenReturn(List.of(simba, timon, pumba));
-
-		mockMvc.perform(get(BASE_URL)).andExpect(status().isForbidden())
-				.andExpect(result -> assertTrue(result.getResolvedException() instanceof AccessDeniedException));
-	}
-
-	@Test
 	@WithMockUser(value = "admin", authorities = { "ADMIN" })
 	void adminShouldFindAllWithOwner() throws Exception {
 		logged.setId(2);
@@ -205,6 +188,25 @@ class PetRestControllerTests {
 		when(this.petService.findAllPetsByUserId(TEST_USER_ID)).thenReturn(List.of(simba, timon));
 
 		mockMvc.perform(get(BASE_URL).param("userId", TEST_USER_ID.toString())).andExpect(status().isOk())
+				.andExpect(jsonPath("$.size()").value(2)).andExpect(jsonPath("$[?(@.id == 1)].name").value("Simba"))
+				.andExpect(jsonPath("$[?(@.id == 2)].name").value("Timon"))
+				.andExpect(jsonPath("$[?(@.id == 1)].owner.firstName").value(george.getFirstName()))
+				.andExpect(jsonPath("$[?(@.id == 2)].owner.firstName").value(george.getFirstName()));
+	}
+	
+	@Test
+	@WithMockUser(value = "owner", authorities = { "OWNER" })
+	void ownerShouldFindAllOwnedPetsWithoutParameter() throws Exception {
+		logged.setId(TEST_USER_ID);
+
+		Pet timon = new Pet();
+		timon.setId(2);
+		timon.setName("Timon");
+		timon.setOwner(george);
+
+		when(this.petService.findAllPetsByUserId(TEST_USER_ID)).thenReturn(List.of(simba, timon));
+
+		mockMvc.perform(get(BASE_URL)).andExpect(status().isOk())
 				.andExpect(jsonPath("$.size()").value(2)).andExpect(jsonPath("$[?(@.id == 1)].name").value("Simba"))
 				.andExpect(jsonPath("$[?(@.id == 2)].name").value("Timon"))
 				.andExpect(jsonPath("$[?(@.id == 1)].owner.firstName").value(george.getFirstName()))

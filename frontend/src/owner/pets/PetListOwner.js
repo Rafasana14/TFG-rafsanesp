@@ -9,10 +9,9 @@ import deleteFromList from '../../util/deleteFromList';
 const jwt = tokenService.getLocalAccessToken();
 
 export default function PetListOwner() {
-    const user = tokenService.getUser();
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
-    const [pets, setPets] = useFetchState([], `/api/v1/pets?userId=${user.id}`, jwt, setMessage, setVisible);
+    const [pets, setPets] = useFetchState([], `/api/v1/pets`, jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
     const [visits, setVisits] = useFetchState([], `/api/v1/visits`, jwt, setMessage, setVisible);
 

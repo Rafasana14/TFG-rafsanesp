@@ -4,6 +4,7 @@ import { checkOption, fillForm, render, screen, testRenderForm, waitFor } from "
 import * as router from 'react-router'
 import VisitEditAdmin from "./VisitEditAdmin";
 import tokenService from "../../services/token.service";
+import { vet2 } from "../../mocks/handlers";
 
 const navigate = jest.fn()
 
@@ -31,11 +32,24 @@ describe('VisitEditAdmin', () => {
 
     test('renders correctly for vets', async () => {
         render(<VisitEditAdmin admin={false} />, { route: route })
-        testRenderForm(/visit details/i, form);
+        testRenderForm(/add visit/i, form);
     });
 
     test('creates visit correctly', async () => {
         const { user } = render(<VisitEditAdmin />, { route: route });
+
+        await checkOption(/james/i);
+
+        await fillForm(user, form);
+
+        const submit = screen.getByRole('button', { name: /save/i })
+        await user.click(submit);
+
+        await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/pets/1/visits'));
+    });
+
+    test('creates visit correctly for vets', async () => {
+        const { user } = render(<VisitEditAdmin admin={false} />, { route: route });
 
         await checkOption(/james/i);
 
@@ -57,6 +71,24 @@ describe('VisitEditAdmin', () => {
         await user.click(submit);
 
         await waitFor(async () => expect(navigate).toHaveBeenCalledWith('/pets/1/visits'));
+    });
+
+    test('visit details renders correctly for vets', async () => {
+        server.use(
+            rest.get('*/vets/profile', (req, res, ctx) => {
+                return res(
+                    ctx.status(200),
+                    ctx.json(vet2)
+                )
+            })
+        )
+        render(<VisitEditAdmin admin={false} />, { route: 'pets/1/visits/1' })
+        const heading = await screen.findByRole('heading', { 'name': /visit details/i });
+        expect(heading).toBeInTheDocument();
+        await checkOption(/james/i);
+
+        const submit = screen.queryByRole('button', { name: /save/i })
+        expect(submit).not.toBeInTheDocument();
     });
 
     test('back button works correctly', async () => {

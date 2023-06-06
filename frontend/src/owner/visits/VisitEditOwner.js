@@ -70,8 +70,8 @@ export default function VisitEditOwner() {
     }
 
     const handleSubmit = async (event) => {
-        setVisit({ ...visit, pet: pet });
-        await submitState(event, visit, `/api/v1/pets/${petId}/visits`, setMessage, setVisible, setRedirect)
+        const aux = { ...visit, pet: pet };
+        await submitState(event, aux, `/api/v1/pets/${petId}/visits`, setMessage, setVisible, setRedirect)
     };
 
     function getDateTimeInput(visit, datetime) {
@@ -81,6 +81,26 @@ export default function VisitEditOwner() {
         } else {
             return <Input type="datetime-local" required name="datetime" id="datetime" value={visit.datetime || ''}
                 onChange={handleChange} />
+        }
+    }
+
+    const datetime = new Date(visit.datetime);
+    const datetimeInput = getDateTimeInput(visit, datetime);
+
+    function getVetSelectionInput(datetime) {
+        if (visit.id && datetime < Date.now()) {
+            return <Input type="text" disabled name="vet" id="vet" value={visit.vet.id ? (visit.vet.firstName + " " + visit.vet.lastName) : ''} />
+        } else {
+            if (plan !== "BASIC") {
+                const vetsAux = vets.filter(vet => vet.city === city);
+                const vetsOptions = getVetOptions(vetsAux);
+                return <Input type="select" required name="vet" id="vet" value={visit.vet.id ? visit.vet.id : ''}
+                    onChange={handleChange} >
+                    <option value="">None</option>
+                    {vetsOptions}</Input>
+            } else {
+                return <Input type="text" disabled name="vet" id="vet" value={visit.vet.id ? (visit.vet.firstName + " " + visit.vet.lastName) : ''} />
+            }
         }
     }
 
@@ -119,33 +139,6 @@ export default function VisitEditOwner() {
 
         });
     }
-
-    function getVetSelectionInput(datetime) {
-        if (visit.id && datetime < Date.now()) {
-            return <Input type="text" disabled name="vet" id="vet" value={visit.vet.id ? (visit.vet.firstName + " " + visit.vet.lastName) : ''} />
-        } else {
-            if (plan !== "BASIC") {
-                const vetsAux = vets.filter(vet => vet.city === city);
-                const vetsOptions = getVetOptions(vetsAux);
-                return <Input type="select" required name="vet" id="vet" value={visit.vet.id ? visit.vet.id : ''}
-                    onChange={handleChange} >
-                    <option value="">None</option>
-                    {vetsOptions}</Input>
-            } else {
-                return <Input type="text" disabled name="vet" id="vet" value={visit.vet.id ? (visit.vet.firstName + " " + visit.vet.lastName) : ''} />
-            }
-        }
-    }
-
-    function getVetOptions(vets) {
-        return vets.map(vet => {
-            let spAux = vet.specialties.map(s => s.name).toString().replace(",", ", ");
-            return <option key={vet.id} value={vet.id}>{vet.firstName} {vet.lastName + " "}{spAux !== "" ? "- " + spAux : ""}</option>
-        })
-    }
-
-    const datetime = new Date(visit.datetime);
-    const datetimeInput = getDateTimeInput(visit, datetime);
 
     let cities = [];
     vets.forEach(vet => {
@@ -195,4 +188,11 @@ export default function VisitEditOwner() {
             </Container>
         </div >
     );
+}
+
+export function getVetOptions(vets) {
+    return vets.map(vet => {
+        let spAux = vet.specialties.map(s => s.name).toString().replace(",", ", ");
+        return <option key={vet.id} value={vet.id}>{vet.firstName} {vet.lastName + " "}{spAux !== "" ? "- " + spAux : ""}</option>
+    })
 }

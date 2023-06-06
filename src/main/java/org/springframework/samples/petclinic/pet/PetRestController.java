@@ -76,6 +76,8 @@ public class PetRestController {
 		} else {
 			if (user.hasAnyAuthority("VET", "ADMIN").equals(true))
 				return new ResponseEntity<>((List<Pet>) this.petService.findAll(), HttpStatus.OK);
+			else
+				return new ResponseEntity<>(petService.findAllPetsByUserId(user.getId()), HttpStatus.OK);
 		}
 		throw new AccessDeniedException();
 	}

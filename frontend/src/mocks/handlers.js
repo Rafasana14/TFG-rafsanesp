@@ -1,19 +1,19 @@
 import { rest } from 'msw'
 
 const authAdmin = {
-    "id": 1,
-    "authority": "ADMIN"
+    id: 1,
+    authority: "ADMIN"
 };
 
 const authOwner = {
-    "id": 2,
-    "authority": "OWNER"
+    id: 2,
+    authority: "OWNER"
 };
 
 const userAdmin1 = {
-    "id": 1,
-    "username": "admin1",
-    "authority": authAdmin
+    id: 1,
+    username: "admin1",
+    authority: authAdmin
 };
 
 const userOwner1 = {
@@ -37,10 +37,10 @@ export const userVet1 = {
 };
 
 const userVet2 = {
-    "id": 13,
-    "username": "vet2",
-    "authority": {
-        "authority": "VET"
+    id: 13,
+    username: "vet2",
+    authority: {
+        authority: "VET"
     }
 };
 
@@ -56,55 +56,55 @@ export const owner1 = {
 };
 
 const owner2 = {
-    "id": 2,
-    "firstName": "Betty",
-    "lastName": "Davis",
-    "address": "638 Cardinal Ave.",
-    "city": "Sevilla",
-    "telephone": "608555174",
-    "plan": "PLATINUM",
-    "user": userOwner2
+    id: 2,
+    firstName: "Betty",
+    lastName: "Davis",
+    address: "638 Cardinal Ave.",
+    city: "Sevilla",
+    telephone: "608555174",
+    plan: "PLATINUM",
+    user: userOwner2
 };
 
 const cat = {
-    "id": 1,
-    "name": "cat"
+    id: 1,
+    name: "cat"
 };
 
 const dog = {
-    "id": 2,
-    "name": "dog"
+    id: 2,
+    name: "dog"
 };
 
 const pet1 = {
-    "id": 1,
-    "name": "Leo",
-    "birthDate": "2010-09-07",
-    "type": cat,
-    "owner": owner1
+    id: 1,
+    name: "Leo",
+    birthDate: "2010-09-07",
+    type: cat,
+    owner: owner1
 };
 
 const pet2 = {
-    "id": 2,
-    "name": "Basil",
-    "birthDate": "2012-08-06",
-    "type": dog,
-    "owner": owner2
+    id: 2,
+    name: "Basil",
+    birthDate: "2012-08-06",
+    type: dog,
+    owner: owner2
 };
 
 const radiology = {
-    "id": 1,
-    "name": "radiology"
+    id: 1,
+    name: "radiology"
 };
 
 const surgery = {
-    "id": 2,
-    "name": "surgery"
+    id: 2,
+    name: "surgery"
 };
 
 const dentistry = {
-    "id": 3,
-    "name": "dentistry"
+    id: 3,
+    name: "dentistry"
 };
 
 const vet1 = {
@@ -116,15 +116,15 @@ const vet1 = {
     city: "Sevilla"
 }
 
-const vet2 = {
-    "id": 2,
-    "firstName": "Helen",
-    "lastName": "Leary",
-    "specialties": [
+export const vet2 = {
+    id: 2,
+    firstName: "Helen",
+    lastName: "Leary",
+    specialties: [
         radiology
     ],
-    "user": userVet2,
-    "city": "Badajoz"
+    user: userVet2,
+    city: "Badajoz"
 };
 
 const visit1 = {
@@ -137,58 +137,58 @@ const visit1 = {
 };
 
 const visit2 = {
-    "id": 2,
-    "datetime": "2013-01-02T15:30:00",
-    "description": "",
-    "pet": pet1,
-    "vet": vet2
+    id: 2,
+    datetime: "2013-01-02T15:30:00",
+    description: "",
+    pet: pet1,
+    vet: vet2
 };
 
 export const consultation1 = {
-    "id": 1,
-    "title": "Mi gato no come",
-    "status": "ANSWERED",
-    "pet": pet1,
-    "creationDate": "2023-04-11T11:20:00"
+    id: 1,
+    title: "Mi gato no come",
+    status: "ANSWERED",
+    pet: pet1,
+    creationDate: "2023-04-11T11:20:00"
 };
 
 const consultation2 = {
-    "id": 2,
-    "title": "Título 2",
-    "status": "PENDING",
-    "pet": pet2,
-    "creationDate": "2023-04-11T11:20:00"
+    id: 2,
+    title: "Título 2",
+    status: "PENDING",
+    pet: pet2,
+    creationDate: "2023-04-11T11:20:00"
 };
 
 export const ticket1 = {
-    "id": 1,
-    "description": "What vaccine should my dog recieve?",
-    "creationDate": "2023-01-04T17:32:00",
-    "user": userOwner1,
-    "consultation": consultation1
+    id: 1,
+    description: "What vaccine should my dog recieve?",
+    creationDate: "2023-01-04T17:32:00",
+    user: userOwner1,
+    consultation: consultation1
 };
 
 export const ticket2 = {
-    "id": 2,
-    "description": "Rabies' one.",
-    "creationDate": "2023-01-04T17:36:00",
-    "user": userVet1,
-    "consultation": consultation1
+    id: 2,
+    description: "Rabies' one.",
+    creationDate: "2023-01-04T17:36:00",
+    user: userVet1,
+    consultation: consultation1
 }
 
 const ticket3 = {
-    "id": 3,
-    "description": "Thank you",
-    "creationDate": "2023-01-04T17:36:00",
-    "user": userOwner1,
-    "consultation": consultation1
+    id: 3,
+    description: "Thank you",
+    creationDate: "2023-01-04T17:36:00",
+    user: userOwner1,
+    consultation: consultation1
 }
 
 const request = {
-    "token": "token",
-    "id": 1,
-    "username": "username",
-    "roles": "VET"
+    token: "token",
+    id: 1,
+    username: "username",
+    roles: "VET"
 }
 
 export const handlers = [

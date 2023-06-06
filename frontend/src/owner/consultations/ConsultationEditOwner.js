@@ -19,11 +19,10 @@ export default function ConsultationEditOwner() {
         owner: null,
     };
     const id = getIdFromUrl(2);
-    const userId = tokenService.getUser().id;
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
     const [consultation, setConsultation] = useFetchState(emptyItem, `/api/v1/consultations/${id}`, jwt, setMessage, setVisible, id);
-    const pets = useFetchData(`/api/v1/pets?userId=${userId}`, jwt, setMessage, setVisible);
+    const pets = useFetchData(`/api/v1/pets`, jwt, setMessage, setVisible);
     const [redirect, setRedirect] = useState(false);
     useNavigateAfterSubmit("/consultations", redirect);
 

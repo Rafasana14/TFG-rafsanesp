@@ -26,6 +26,7 @@ export default function VisitEditAdmin({ admin = true }) {
     const [visit, setVisit] = useFetchState(emptyItem, `/api/v1/pets/${petId}/visits/${visitId}`, jwt, setMessage, setVisible, visitId);
     const pet = useFetchData(`/api/v1/pets/${petId}`, jwt, setMessage, setVisible);
     const vets = useFetchData(`/api/v1/vets`, jwt, setMessage, setVisible);
+    const vet = useFetchData(`/api/v1/vets/profile`, jwt, setMessage, setVisible, !admin);
     const [redirect, setRedirect] = useState(false);
     useNavigateAfterSubmit(`/pets/${petId}/visits`, redirect);
     const navigate = useNavigate();
@@ -41,14 +42,19 @@ export default function VisitEditAdmin({ admin = true }) {
             setVisit({ ...visit, [name]: value })
     }
 
-    const handleSubmit = async (event) => await submitState(event, visit, `/api/v1/pets/${petId}/visits`, setMessage, setVisible, setRedirect);
+    const handleSubmit = async (event) => {
+        const aux = admin ? visit : { ...visit, vet: vet };
+        await submitState(event, aux, `/api/v1/pets/${petId}/visits`, setMessage, setVisible, setRedirect);
+    }
     const modal = useErrorModal(setVisible, visible, message);
     const vetOptions = vets.map(vet => <option key={vet.id} value={vet.id}>{vet.firstName} {vet.lastName} - {vet.user.username}</option>);
 
-    const ownedVisit = tokenService.getUser().id === visit.vet.user?.id;
+    const ownedVisit = vet?.id === visit.vet.id || !visit.vet.id;
+    console.log("VET ID" + vet.id);
+    console.log("VISIT VET ID" + vet.id);
     let title;
-    if (admin) title = <h2 className='text-center'>{visit.id ? 'Edit Visit' : 'Add Visit'}</h2>
-    else title = <h2 className='text-center'>{ownedVisit ? 'Edit Visit' : 'Visit Details'}</h2>
+    if (admin || ownedVisit) title = <h2 className='text-center'>{visit.id ? 'Edit Visit' : 'Add Visit'}</h2>
+    else title = <h2 className='text-center'>Visit Details</h2>
 
     return (
         <div>
@@ -70,7 +76,7 @@ export default function VisitEditAdmin({ admin = true }) {
                             </FormGroup>
                             <FormGroup>
                                 <Label for="vet">Vet</Label>
-                                <Input type="select" required name="vet" id="vet" value={visit.vet.id}
+                                <Input type="select" required name="vet" id="vet" value={visit.vet.id || vet.id}
                                     onChange={handleChange} disabled={!admin ? true : false}>
                                     <option value="">None</option>
                                     {vetOptions}

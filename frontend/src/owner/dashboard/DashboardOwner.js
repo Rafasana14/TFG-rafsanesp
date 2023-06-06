@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import CalendarOwner from "./CalendarOwner";
 import useErrorModal from "../../util/useErrorModal";
 import StatsOwner from "./StatsOwner";
+import CalendarAuth from "../../components/CalendarAuth";
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -19,7 +20,7 @@ export default function DashboardOwner() {
     function getFunctions(plan) {
         if (plan === "GOLD") {
             return (
-                <CalendarOwner />
+                <CalendarAuth auth={"OWNER"} />
             )
         } else if (plan === "PLATINUM") {
             return <div>
@@ -33,7 +34,7 @@ export default function DashboardOwner() {
                         Stats
                     </Button>
                 </ButtonGroup>
-                {showStats ? <StatsOwner /> : <CalendarOwner />}
+                {showStats ? <StatsOwner /> : <CalendarAuth auth={"OWNER"} />}
             </div>
         } else {
             return (

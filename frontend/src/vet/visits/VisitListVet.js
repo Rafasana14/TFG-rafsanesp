@@ -35,9 +35,7 @@ export default function VisitListVet({ test = false }) {
             )
         else return (
             <Button size="sm" aria-label={"edit-" + params.row.id} className='edit-button' tag={Link}
-                to={`/pets/${params.row.petId}/visits/${params.row.id}`}>
-                Edit
-            </Button>
+                to={`/pets/${params.row.petId}/visits/${params.row.id}`}>Edit</Button>
         )
     }
 
@@ -68,6 +66,9 @@ export default function VisitListVet({ test = false }) {
                 <h2 className="text-center">My Visits</h2>
                 {alerts.map((a) => a.alert)}
                 {modal}
+                <Button className='add-button' tag={Link} to={`/visits/new`}>
+                    Add Visit
+                </Button>
                 <Col style={{ maxWidth: "1600px" }} align="center" >
                     <DataGrid
                         className='datagrid'
