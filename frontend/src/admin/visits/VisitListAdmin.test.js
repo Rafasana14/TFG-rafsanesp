@@ -5,13 +5,13 @@ import VisitListAdmin from "./VisitListAdmin";
 describe('VisitListAdmin', () => {
     test('renders correctly', async () => {
         render(<VisitListAdmin test={true} />);
-        testRenderList(/visits/i, true);
+        testRenderList(/visits/i);
     });
 
     test('renders correctly for vets', async () => {
         tokenService.setUser({ id: 1 })
         render(<VisitListAdmin test={true} admin={false} />);
-        testRenderList(/visits/i, true, false);
+        testRenderList(/visits/i, false);
 
         const detailsButtons = await screen.findAllByRole('link', { 'name': /edit/ });
         expect(detailsButtons).toHaveLength(2);
@@ -20,7 +20,7 @@ describe('VisitListAdmin', () => {
     test('renders correctly for vets owned visits', async () => {
         tokenService.setUser({ id: 12 })
         render(<VisitListAdmin test={true} admin={false} />);
-        testRenderList(/visits/i, true, false);
+        testRenderList(/visits/i, false);
 
         const detailsButtons = await screen.findAllByRole('link', { 'name': /edit/ });
         expect(detailsButtons).toHaveLength(2);

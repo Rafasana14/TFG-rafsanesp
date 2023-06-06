@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
+import { Button, Col, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import useErrorModal from '../../util/useErrorModal';
 import useFetchData from '../../util/useFetchData';
@@ -50,8 +50,8 @@ export default function PetEditAdmin({ admin = true }) {
     const ownerOptions = Array.from(owners).map(owner => <option key={owner.id} value={owner.id}>{owner.user.username}</option>);
 
     let title;
-    if (admin) title = <h2>{pet.id ? 'Edit Pet' : 'Add Pet'}</h2>
-    else title = <h2>{'Pet Details'}</h2>
+    if (admin) title = <h2 className='text-center'>{pet.id ? 'Edit Pet' : 'Add Pet'}</h2>
+    else title = <h2 className='text-center'>{'Pet Details'}</h2>
 
     return (
         <div>
@@ -59,38 +59,42 @@ export default function PetEditAdmin({ admin = true }) {
                 {title}
                 {modal}
                 <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
-                    <FormGroup>
-                        <Label for="name">Name</Label>
-                        <Input type="text" required name="name" id="name" value={pet.name || ''}
-                            onChange={handleChange} disabled={!admin} />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="birthDate">Birth Date</Label>
-                        <Input type="date" name="birthDate" id="birthDate" value={pet.birthDate || ''}
-                            onChange={handleChange} disabled={!admin} />
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="type">Type</Label>
-                        <Input type="select" required name="type" id="type" value={pet.type?.id}
-                            onChange={handleChange} disabled={!admin} >
-                            <option value="">None</option>
-                            {typeOptions}
-                        </Input>
-                    </FormGroup>
-                    <FormGroup>
-                        <Label for="owner">Owner</Label>
-                        <Input type="select" disabled={!admin || pet.id ? true : false} name="owner" id="owner" value={pet.owner?.id || ""}
-                            onChange={handleChange} required={pet.id ? false : true}>
-                            <option value="">None</option>
-                            {ownerOptions}
-                        </Input>
+                    <Row className='justify-content-center'>
+                        <Col xs="10" sm="8" md="6" lg="4" xl="3">
+                            <FormGroup>
+                                <Label for="name">Name</Label>
+                                <Input type="text" required name="name" id="name" value={pet.name || ''}
+                                    onChange={handleChange} disabled={!admin} />
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="birthDate">Birth Date</Label>
+                                <Input type="date" name="birthDate" id="birthDate" value={pet.birthDate || ''}
+                                    onChange={handleChange} disabled={!admin} />
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="type">Type</Label>
+                                <Input type="select" required name="type" id="type" value={pet.type?.id}
+                                    onChange={handleChange} disabled={!admin} >
+                                    <option value="">None</option>
+                                    {typeOptions}
+                                </Input>
+                            </FormGroup>
+                            <FormGroup>
+                                <Label for="owner">Owner</Label>
+                                <Input type="select" disabled={!admin || pet.id ? true : false} name="owner" id="owner" value={pet.owner?.id || ""}
+                                    onChange={handleChange} required={pet.id ? false : true}>
+                                    <option value="">None</option>
+                                    {ownerOptions}
+                                </Input>
 
-                    </FormGroup>
-                    <FormGroup>
-                        {admin ? <Button className='save-button' type="submit">Save</Button> : <></>}
-                        {admin ? ' ' : <></>}
-                        <Button className='back-button' tag={Link} to="/pets">{admin ? "Cancel" : "Back"}</Button>
-                    </FormGroup>
+                            </FormGroup>
+                            <FormGroup align="center">
+                                {admin ? <Button className='save-button' type="submit">Save</Button> : <></>}
+                                {' '}
+                                <Button className='back-button' tag={Link} to="/pets">{admin ? "Cancel" : "Back"}</Button>
+                            </FormGroup>
+                        </Col>
+                    </Row>
                 </Form>
             </Container>
         </div>

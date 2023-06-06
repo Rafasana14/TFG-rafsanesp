@@ -4,12 +4,12 @@ import PetListAdmin from "./PetListAdmin";
 describe('PetListAdmin', () => {
     test('renders correctly', async () => {
         render(<PetListAdmin test={true} />);
-        testRenderList(/pets/i, true);
+        testRenderList(/pets/i);
     });
 
     test('renders correctly for vets', async () => {
         render(<PetListAdmin test={true} admin={false} />);
-        testRenderList(/pets/i, true, false);
+        testRenderList(/pets/i, false);
 
         const detailsButtons = await screen.findAllByRole('link', { 'name': /details/ });
         expect(detailsButtons).toHaveLength(2);

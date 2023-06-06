@@ -7,7 +7,7 @@ import tokenService from "../../services/token.service";
 describe('VisitListVet', () => {
     test('renders correctly', async () => {
         render(<VisitListVet test={true} />);
-        testRenderList(/visits/i, true, false);
+        testRenderList(/visits/i, false);
     });
 
     test('renders visits correctly', async () => {

@@ -131,7 +131,7 @@ function Register() {
                             <FormGroup>
                                 <Button className='save-button' type="submit">Save</Button>{' '}
                                 <Button className='back-button' value="Back" onClick={handleButtonClick}>Back</Button>{' '}
-                                <Button className='back-button' tag={Link} to="/">Cancel</Button>
+                                <Button className='delete-button' tag={Link} to="/">Cancel</Button>
                             </FormGroup>
                         </Col>
                     </Row>

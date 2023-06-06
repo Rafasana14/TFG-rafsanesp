@@ -160,9 +160,8 @@ export default function VisitEditOwner() {
             <Container style={{ marginTop: "15px" }}>
                 {<h2 className='text-center'>{visit.id ? 'Edit Visit' : 'Add Visit'}</h2>}
                 {modal}
-                <Row>
-                    <Col sm="4"></Col>
-                    <Col sm="4">
+                <Row className='justify-content-center'>
+                    <Col xs="10" sm="8" md="6" lg="4" xl="3">
                         <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                             <FormGroup>
                                 <Label for="datetime">Date and Time</Label>
@@ -186,13 +185,12 @@ export default function VisitEditOwner() {
                                 <Label for="pet">Pet</Label>
                                 <Input type="text" disabled name="pet" id="pet" value={pet.name || ''} />
                             </FormGroup>
-                            <FormGroup>
+                            <FormGroup align="center">
                                 <Button className='save-button' type="submit">Save</Button>{' '}
                                 <Button className='back-button' onClick={() => window.history.back()}>Back</Button>
                             </FormGroup>
                         </Form>
                     </Col>
-                    <Col sm="4"></Col>
                 </Row>
             </Container>
         </div >

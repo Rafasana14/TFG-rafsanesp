@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Button, Container, Form, FormGroup, Input, Label } from 'reactstrap';
+import { Button, Col, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import useErrorModal from '../../util/useErrorModal';
 import useFetchState from '../../util/useFetchState';
@@ -35,18 +35,22 @@ export default function SpecialtyEditAdmin() {
     return (
         <div>
             <Container style={{ marginTop: "15px" }}>
-                {<h2>{specialty.id ? 'Edit Specialty' : 'Add Specialty'}</h2>}
+                {<h2 className='text-center'>{specialty.id ? 'Edit Specialty' : 'Add Specialty'}</h2>}
                 {modal}
                 <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
-                    <FormGroup>
-                        <Label for="name">Name</Label>
-                        <Input type="text" name="name" id="name" value={specialty.name || ''}
-                            onChange={handleChange} />
-                    </FormGroup>
-                    <FormGroup style={{ marginTop: "10px" }}>
-                        <Button className='save-button' type="submit">Save</Button>{' '}
-                        <Button className='back-button' tag={Link} to="/vets/specialties">Cancel</Button>
-                    </FormGroup>
+                    <Row className='justify-content-center'>
+                        <Col xs="10" sm="8" md="6" lg="4" xl="3">
+                            <FormGroup>
+                                <Label for="name">Name</Label>
+                                <Input type="text" name="name" id="name" value={specialty.name || ''}
+                                    onChange={handleChange} />
+                            </FormGroup>
+                            <FormGroup align='center' style={{ marginTop: "10px" }}>
+                                <Button className='save-button' type="submit">Save</Button>{' '}
+                                <Button className='back-button' tag={Link} to="/vets/specialties">Cancel</Button>
+                            </FormGroup>
+                        </Col>
+                    </Row>
                 </Form>
             </Container>
         </div >

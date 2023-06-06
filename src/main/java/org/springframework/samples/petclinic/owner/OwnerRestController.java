@@ -67,8 +67,8 @@ public class OwnerRestController {
 	public ResponseEntity<Owner> create(@RequestBody @Valid Owner owner) {
 		Owner newOwner = new Owner();
 		BeanUtils.copyProperties(owner, newOwner, "id");
-		User user = userService.findCurrentUser();
-		newOwner.setUser(user);
+//		User user = userService.findCurrentUser();
+//		newOwner.setUser(user);
 		Owner savedOwner = this.ownerService.saveOwner(newOwner);
 
 		return new ResponseEntity<>(savedOwner, HttpStatus.CREATED);

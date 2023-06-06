@@ -6,7 +6,7 @@ import ConsultationListOwner from "./ConsultationListOwner";
 describe('ConsultationListOwner', () => {
     test('renders correctly', async () => {
         render(<ConsultationListOwner test={true} />);
-        testRenderList(/consultations/i, true);
+        testRenderList(/consultations/i);
     });
 
     test('renders correctly for not PLATINUM', async () => {
@@ -23,7 +23,7 @@ describe('ConsultationListOwner', () => {
             })
         )
         render(<ConsultationListOwner test={true} />);
-        testRenderList(/consultations/i, true);
+        testRenderList(/consultations/i);
 
         const editButtons = screen.queryAllByRole('link', { 'name': /edit/ });
         expect(editButtons).toHaveLength(0);

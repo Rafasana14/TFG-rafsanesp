@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap';
+import { Button, Col, Container, Form, FormGroup, Input, Label, Row } from 'reactstrap';
 import tokenService from '../../services/token.service';
 import useErrorModal from '../../util/useErrorModal';
 import useFetchData from '../../util/useFetchData';
@@ -57,16 +57,20 @@ export default function SpecialtiesChange() {
                 {alerts.map((a) => a.alert)}
                 {modal}
                 <Form data-testid="form" align="center" onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
-                    <FormGroup>
-                        <Label for="specialties" >Specialties</Label>
-                        <Row style={{ justifyContent: "center" }} className="row-cols-lg-auto g-3 align-items-center">
-                            {specialtiesBoxes}
-                        </Row>
-                    </FormGroup>
-                    <FormGroup>
-                        <Button className='save-button' type="submit">Save</Button>{' '}
-                        <Button className='back-button' onClick={() => navigate(-1)}>Back</Button>
-                    </FormGroup>
+                    <Row className='justify-content-center'>
+                        <Col xs="10" sm="8" md="6" lg="4" xl="3">
+                            <FormGroup>
+                                <Label for="specialties" >Specialties</Label>
+                                <Row style={{ justifyContent: "center" }} className="row-cols-auto g-3 align-items-center">
+                                    {specialtiesBoxes}
+                                </Row>
+                            </FormGroup>
+                            <FormGroup>
+                                <Button className='save-button' type="submit">Save</Button>{' '}
+                                <Button className='back-button' onClick={() => navigate(-1)}>Back</Button>
+                            </FormGroup>
+                        </Col>
+                    </Row>
                 </Form>
             </Container>
         </div >

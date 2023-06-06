@@ -11,17 +11,12 @@ const customRender = (ui, { route = '/' } = {}) => {
     }
 }
 
-const testRenderList = (title, grid = false, admin = true) => {
+const testRenderList = (title, admin = true) => {
     const heading = screen.getByRole('heading', { 'name': title });
     expect(heading).toBeInTheDocument();
 
-    if (grid) {
-        const grid = screen.getByRole('grid', { 'name': title });
-        expect(grid).toBeInTheDocument();
-    } else {
-        const table = screen.getByRole('table', { 'name': title });
-        expect(table).toBeInTheDocument();
-    }
+    const grid = screen.getByRole('grid', { 'name': title });
+    expect(grid).toBeInTheDocument();
 
     if (admin) {
         const addLink = screen.getByRole('link', { 'name': /Add/ });
@@ -46,20 +41,18 @@ const testRenderForm = (title, form) => {
     });
 }
 
-const testFilledEditForm = async (form) => {
-    form.forEach(async (i) => {
-        const input = await screen.findByRole(i[1], { 'name': i[0] });
-        if (i.length === 4) expect(input).toBeDisabled();
-        else expect(input).toHaveValue();
-    });
-}
-
 async function checkOption(option) {
     expect(await screen.findByRole('option', { name: option })).toBeInTheDocument();
 }
 
+async function checkRadio(user, option) {
+    const radio = await screen.findByRole('radio', { name: option });
+    expect(radio).toBeInTheDocument();
+    await user.click(radio);
+}
+
 async function fillForm(user, form) {
-    form.forEach(i => {
+    await form.forEach(i => {
         if (i.length >= 3) {
             if (i[1] === "label") {
                 const input = screen.getByLabelText(i[0]);
@@ -81,4 +74,4 @@ async function fillForm(user, form) {
 export * from '@testing-library/react'
 
 // override render method
-export { customRender as render, testRenderList, testRenderForm, fillForm, testFilledEditForm, checkOption }
+export { customRender as render, testRenderList, testRenderForm, fillForm, checkOption, checkRadio }

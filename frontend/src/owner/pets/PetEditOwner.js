@@ -49,9 +49,8 @@ export default function PetEditOwner() {
             <Container style={{ marginTop: "15px" }}>
                 {<h2 className='text-center'>{pet.id ? 'Edit Pet' : 'Add Pet'}</h2>}
                 {modal}
-                <Row>
-                    <Col></Col>
-                    <Col className='justify-content-center' xs="10" sm="8" md="6" lg="4" xl="3">
+                <Row className='justify-content-center'>
+                    <Col xs="10" sm="8" md="6" lg="4" xl="3">
                         <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
                             <FormGroup>
                                 <Label for="name">Name</Label>
@@ -77,7 +76,6 @@ export default function PetEditOwner() {
                             </FormGroup>
                         </Form>
                     </Col>
-                    <Col ></Col>
                 </Row>
             </Container>
         </div>

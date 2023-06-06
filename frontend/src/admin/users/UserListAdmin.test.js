@@ -5,7 +5,7 @@ import UserListAdmin from "./UserListAdmin";
 describe('UserListAdmin', () => {
     test('renders correctly', async () => {
         render(<UserListAdmin test={true} />);
-        testRenderList(/users/i, true);
+        testRenderList(/users/i);
     });
 
     test('renders users correctly', async () => {

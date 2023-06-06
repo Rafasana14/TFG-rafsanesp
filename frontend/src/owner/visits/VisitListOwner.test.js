@@ -6,7 +6,7 @@ import VisitListOwner from "./VisitListOwner";
 describe('VisitListOwner', () => {
     test('renders correctly', async () => {
         render(<VisitListOwner test={true} />);
-        testRenderList(/visits/i, true);
+        testRenderList(/visits/i);
     });
 
     test('renders visits correctly', async () => {

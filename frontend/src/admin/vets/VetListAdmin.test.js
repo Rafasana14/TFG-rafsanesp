@@ -4,12 +4,12 @@ import VetListAdmin from "./VetListAdmin";
 describe('VetListAdmin', () => {
     test('renders correctly', async () => {
         render(<VetListAdmin test={true} />);
-        testRenderList(/vets/i, true);
+        testRenderList(/vets/i);
     });
 
     test('renders correctly for vets', async () => {
         render(<VetListAdmin test={true} admin={false} />);
-        testRenderList(/vets/i, true, false);
+        testRenderList(/vets/i, false);
 
         const vet2 = await screen.findByRole('cell', { 'name': 'vet2' });
         expect(vet2).toBeInTheDocument();

@@ -24,4 +24,5 @@ export default async function submitState(event, state, baseUrl, setMessage, set
             }
         })
         .catch((message) => alert(message));
+
 }

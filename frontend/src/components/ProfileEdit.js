@@ -43,7 +43,7 @@ export default function ProfileEdit({ auth }) {
                         </FormGroup>
                         <FormGroup>
                             <Label for="password">Password</Label>
-                            <Input type="password" required name="password" id="password" value={profile.password || ''}
+                            <Input type="password" role='textbox' required name="password" id="password" value={profile.password || ''}
                                 onChange={handleChange} />
                         </FormGroup>
                     </Col>
@@ -69,7 +69,7 @@ export default function ProfileEdit({ auth }) {
                         </FormGroup>
                         <FormGroup>
                             <Label for="password">Password</Label>
-                            <Input type="password" required name="password" id="password" value={profile.user?.password || ''}
+                            <Input type="password" role='textbox' required name="password" id="password" value={profile.user?.password || ''}
                                 onChange={handleChange} />
                         </FormGroup>
                         <FormGroup>

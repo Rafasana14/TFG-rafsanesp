@@ -80,16 +80,18 @@ class TicketService {
             return (
                 <Container>
                     {newTicket.id ? <h4>Edit Ticket</h4> : <h4>Add New Ticket</h4>}
-                    <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
-                        <FormGroup>
-                            <Label for="description">Description</Label>
-                            <Input type="textarea" required name="description" id="description" value={newTicket.description || ''}
-                                onChange={handleChange} />
-                        </FormGroup>
-                        <FormGroup>
-                            <Button className="save-button" type="submit">Save</Button>
-                        </FormGroup>
-                    </Form>
+                    <Col xs="12" sm="10" md="8" lg="8" xl="8">
+                        <Form onSubmit={(e) => { (async () => { await handleSubmit(e); })(); }}>
+                            <FormGroup>
+                                <Label for="description">Description</Label>
+                                <Input type="textarea" required name="description" id="description" value={newTicket.description || ''}
+                                    onChange={handleChange} />
+                            </FormGroup>
+                            <FormGroup>
+                                <Button className="save-button" type="submit">Save</Button>
+                            </FormGroup>
+                        </Form>
+                    </Col>
                 </Container>
             );
         else return <></>;

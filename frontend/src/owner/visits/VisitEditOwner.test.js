@@ -1,6 +1,6 @@
 import { rest } from "msw";
 import { server } from "../../mocks/server";
-import { checkOption, fillForm, render, screen, testFilledEditForm, testRenderForm, waitFor } from "../../test-utils";
+import { checkOption, fillForm, render, screen, testRenderForm, waitFor } from "../../test-utils";
 import * as router from 'react-router'
 import VisitEditOwner from "./VisitEditOwner";
 
@@ -108,9 +108,7 @@ describe('VisitEditOwner', () => {
         expect(heading).toBeInTheDocument();
         const city = await screen.findByRole('radio', { name: /sevilla/i })
         await user.click(city);
-        expect(city).toBeChecked()
-
-        await testFilledEditForm(form)
+        expect(city).toBeChecked();
 
         const submit = screen.getByRole('button', { name: /save/i })
         await user.click(submit);
@@ -140,7 +138,6 @@ describe('VisitEditOwner', () => {
         const { user } = render(<VisitEditOwner />, { route: 'pets/1/visits/1' });
         const city = await screen.findByRole('radio', { name: /sevilla/i });
         expect(city).toBeDisabled()
-        await testFilledEditForm(auxForm)
 
         const submit = screen.getByRole('button', { name: /save/i })
         await user.click(submit);

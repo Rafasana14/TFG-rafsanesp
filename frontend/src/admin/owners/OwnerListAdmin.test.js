@@ -6,12 +6,12 @@ import OwnerListAdmin from "./OwnerListAdmin";
 describe('OwnerListAdmin', () => {
     test('renders correctly', async () => {
         render(<OwnerListAdmin test={true} />);
-        testRenderList(/owners/i, true);
+        testRenderList(/owners/i);
     });
 
     test('renders correctly for vets', async () => {
         render(<OwnerListAdmin test={true} admin={false} />);
-        testRenderList(/owners/i, true, false);
+        testRenderList(/owners/i, false);
 
         const detailsButtons = await screen.findAllByRole('link', { 'name': /details/ });
         expect(detailsButtons).toHaveLength(2);

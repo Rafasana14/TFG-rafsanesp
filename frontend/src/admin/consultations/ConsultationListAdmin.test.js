@@ -4,7 +4,7 @@ import ConsultationListAdmin from "./ConsultationListAdmin";
 describe('ConsultationListAdmin', () => {
     test('renders correctly', async () => {
         render(<ConsultationListAdmin test={true} />);
-        testRenderList(/consultations/i, true);
+        testRenderList(/consultations/i);
     });
 
     test('renders consultations correctly', async () => {
