@@ -9,6 +9,7 @@ import useFetchState from '../../util/useFetchState';
 import submitState from '../../util/submitState';
 import useNavigateAfterSubmit from '../../util/useNavigateAfterSubmit';
 import { getUserCreateForm, submitUserState } from '../../util/createUserFromForm';
+import { getUserCreateRadio } from '../owners/OwnerEditAdmin';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -121,31 +122,7 @@ export default function VetEditAdmin() {
                             </Row>
                             <FormGroup>
                                 {!vet.id ?
-                                    <FormGroup tag="fieldset">
-                                        <Label>
-                                            Do you want to create a new user for this Vet?
-                                        </Label>
-                                        <Row>
-                                            <Col>
-                                                <FormGroup check>
-                                                    <Input aria-label='yes' required name="create" type="radio" value="yes" onChange={handleUserChange} />
-                                                    {' '}
-                                                    <Label check>
-                                                        Yes
-                                                    </Label>
-                                                </FormGroup>
-                                            </Col>
-                                            <Col>
-                                                <FormGroup check>
-                                                    <Input aria-label='no' required name="create" type="radio" value="no" onChange={handleUserChange} />
-                                                    {' '}
-                                                    <Label check>
-                                                        No
-                                                    </Label>
-                                                </FormGroup>
-                                            </Col>
-                                        </Row>
-                                    </FormGroup>
+                                    getUserCreateRadio(handleUserChange, "Vet")
                                     : <></>}
                                 {userForm}
                             </FormGroup>
