@@ -51,16 +51,16 @@ export default function VisitListAdmin({ test = false, admin = true }) {
     ];
 
     const rows = Array.from(visits).map((v) => {
-        const vet = `${v.vet.firstName} ${v.vet.lastName} - ${v.vet.user.username} `;
+        const vet = v.vet ? `${v.vet.firstName} ${v.vet.lastName} - ${v.vet.user.username} ` : "Not specified";
 
         return (
             {
                 id: v.id,
                 datetime: new Date(v.datetime),
                 description: v.description || "No description provided",
-                city: v.vet.city,
+                city: v.vet?.city || "Not specified",
                 vet: vet,
-                user: v.vet.user
+                user: v.vet?.user || "Not specified"
             }
         );
     });

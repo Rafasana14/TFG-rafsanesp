@@ -3,7 +3,7 @@ import getDeleteAlertsOrModal from "./getDeleteAlertsOrModal";
 
 export default function deleteFromList(url, id, [state, setState], [alerts, setAlerts], setMessage, setVisible, options = {}) {
     const jwt = tokenService.getLocalAccessToken();
-    const confirmMessage = options.user ? " This will also delete the asociated user." : "";
+    const confirmMessage = options.user ? ` This will also delete the asociated ${options.user}.` : "";
     const confirm = window.confirm("Are you sure you want to delete it?" + confirmMessage);
     if (confirm) {
         fetch(url, {

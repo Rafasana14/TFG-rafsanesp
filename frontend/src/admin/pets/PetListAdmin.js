@@ -52,8 +52,8 @@ export default function PetListAdmin({ test = false, admin = true }) {
                 id: pet.id,
                 name: pet.name,
                 birthdate: pet.birthDate,
-                type: pet.type.name || "Not defined",
-                owner: pet.owner?.user.username || "Not defined",
+                type: pet.type.name || "Not specified",
+                owner: pet.owner?.user.username || "Not specified",
             }
         );
     });

@@ -65,7 +65,6 @@ public class Owner extends Person {
 	@NotNull
 	private PricingPlan plan;
 
-//	@OneToOne(cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.PERSIST })
 	@Valid
 	@OneToOne(cascade =  CascadeType.REMOVE)
 	@JoinColumn(name = "user", referencedColumnName = "id")

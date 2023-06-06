@@ -23,8 +23,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.samples.petclinic.model.BaseEntity;
 import org.springframework.samples.petclinic.pet.Pet;
@@ -41,21 +39,17 @@ public class Visit extends BaseEntity {
 
 	@Column(name = "visit_date_time")
 	@DateTimeFormat(pattern = "yyyy/MM/dd HH/mm")
-//	@NotNull
 	private LocalDateTime datetime;
 
-//	@NotEmpty
 	@Column(name = "description")
 	private String description;
 
-	@ManyToOne
+	@ManyToOne(optional=true)
 	@JoinColumn(name = "pet_id")
-	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Pet pet;
 
-	@ManyToOne()
+	@ManyToOne(optional=true)
 	@JoinColumn(name = "vet_id")
-	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Vet vet;
 
 	public Visit() {

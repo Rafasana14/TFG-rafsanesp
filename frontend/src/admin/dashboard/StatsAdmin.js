@@ -93,7 +93,7 @@ function StatsAdmin() {
                     <Table aria-label='visits-stats' color='info' align='center' style={{ maxWidth: "400px" }}>
                         <tbody>
                             <tr className="border border-dark">
-                                <td className="table-info border border-dark">Total Vets</td>
+                                <td className="table-info border border-dark">Total Visits</td>
                                 <td className='stats-cell'>{visitsStats.totalVisits}</td>
                             </tr>
                             <tr className="border border-dark">

@@ -11,8 +11,6 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.samples.petclinic.model.BaseEntity;
 import org.springframework.samples.petclinic.pet.Pet;
 
@@ -34,7 +32,6 @@ public class Consultation extends BaseEntity {
 
 	@OneToOne
 	@JoinColumn(name = "pet_id")
-	@OnDelete(action = OnDeleteAction.CASCADE)
 	private Pet pet;
 
 	@Column(name = "creation_date")

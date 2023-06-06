@@ -42,11 +42,6 @@ public class ConsultationService {
 		return consultationRepository.findConsultationsByOwner(ownerId);
 	}
 
-//	@Transactional(readOnly = true)
-//	public Iterable<Consultation> findAllConsultationsByUser(int userId) throws DataAccessException {
-//		return consultationRepository.findConsultationsByUser(userId);
-//	}
-
 	@Transactional(readOnly = true)
 	public Consultation findConsultationById(int id) throws DataAccessException {
 		return this.consultationRepository.findById(id)
@@ -69,8 +64,6 @@ public class ConsultationService {
 	@Transactional
 	public void deleteConsultation(int id) throws DataAccessException {
 		Consultation toDelete = findConsultationById(id);
-//		for (Ticket ticket : findAllTicketsByConsultation(id))
-//			deleteTicket(ticket.getId());
 		this.consultationRepository.delete(toDelete);
 	}
 
@@ -174,10 +167,8 @@ public class ConsultationService {
 			}
 
 			int years = LocalDate.now().getYear() - this.consultationRepository.getYearOfFirstConsultation(ownerId);
-			if (years >= 1) {
-				Double avgConsultationsPerYear = (double) countAll / (years + 1);
-				res.put("avgConsultationsPerYear", UtilFunctions.round(2, avgConsultationsPerYear));
-			}
+			Double avgConsultationsPerYear = (double) countAll / (years + 1);
+			res.put("avgConsultationsPerYear", UtilFunctions.round(2, avgConsultationsPerYear));
 		}
 
 		res.put("totalConsultations", countAll);
@@ -188,11 +179,6 @@ public class ConsultationService {
 	public Map<String, Object> getAdminConsultationsStats() {
 		Map<String, Object> res = new HashMap<>();
 		Integer countAll = this.consultationRepository.countAll();
-		if (this.consultationRepository.countAllPlatinums() > 0) {
-			Double avgConsultationsPerPlatinumOwner = (double) countAll / this.consultationRepository.countAllPlatinums();
-
-			res.put("avgConsultationsPerPlatinumOwner", avgConsultationsPerPlatinumOwner);
-		}
 		Double avgConsultationsPerOwner = (double) countAll / this.consultationRepository.countAllOwners();
 
 		res.put("totalConsultations", countAll);

@@ -41,7 +41,6 @@ describe('ConsultationEditAdmin', () => {
         const { user } = render(<ConsultationEditAdmin />, { route: '/consultations/1' })
         const heading = await screen.findByRole('heading', { 'name': /edit consultation/i });
         expect(heading).toBeInTheDocument();
-        await checkOption(/leo/i);
 
         const submit = screen.getByRole('button', { name: /save/i })
         await user.click(submit);

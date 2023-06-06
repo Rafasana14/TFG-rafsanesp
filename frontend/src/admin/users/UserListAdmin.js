@@ -20,12 +20,16 @@ export default function UserListAdmin({ test = false }) {
         if (params.row.id === tokenService.getUser()?.id) {
             return <Button size="sm" className='edit-button' aria-label={'edit-' + params.row.name} tag={Link} to={"/profile"}>Edit</Button>
         }
+        let type;
+        if (params.row.authority === "OWNER") type = "owner";
+        else if (params.row.authority === "VET") type = "vet";
+        else type = null
         return (
             <div>
                 <ButtonGroup>
                     <Button size="sm" className='edit-button' aria-label={'edit-' + params.row.name} tag={Link} to={"/users/" + params.row.id}>Edit</Button>
                     <Button size="sm" className='delete-button' aria-label={'delete-' + params.row.id}
-                        onClick={() => deleteFromList(`/api/v1/users/${params.row.id}`, params.row.id, [users, setUsers], [alerts, setAlerts], setMessage, setVisible)}>
+                        onClick={() => deleteFromList(`/api/v1/users/${params.row.id}`, params.row.id, [users, setUsers], [alerts, setAlerts], setMessage, setVisible, { user: type })}>
                         Delete
                     </Button>
                 </ButtonGroup>

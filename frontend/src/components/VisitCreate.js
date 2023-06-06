@@ -46,7 +46,7 @@ export default function VisitCreate({ auth }) {
             const pet = pets.find((v) => v.id === Number(value));
             setVisit({ ...visit, pet: pet })
         } else if (name === "vet") {
-            const vet = vets.find((v) => v.id === Number(value));
+            const vet = vets.find((v) => v.id === Number(value)) || null;
             setVisit({ ...visit, vet: vet })
         } else
             setVisit({ ...visit, [name]: value })
@@ -65,9 +65,8 @@ export default function VisitCreate({ auth }) {
             setVisit({ ...visit, vet: vet });
         }
     }
-
     const handleSubmit = async (event) => {
-        const aux = { ...visit, vet: profile };
+        const aux = auth === "VET" ? { ...visit, vet: profile } : { ...visit, vet: null };
         await submitState(event, aux, `/api/v1/pets/${aux.pet.id}/visits`, setMessage, setVisible, setRedirect);
     }
     const modal = useErrorModal(setVisible, visible, message);
@@ -91,8 +90,8 @@ export default function VisitCreate({ auth }) {
         if (plan !== "BASIC") {
             const vetsAux = vets.filter(vet => vet.city === city);
             const vetsOptions = getVetOptions(vetsAux);
-            return <Input type="select" required name="vet" id="vet" value={visit.vet.id ? visit.vet.id : ''}
-                onChange={handleChange} >
+            return <Input required type="select" name="vet" id="vet" value={visit.vet?.id || ''}
+                onChange={handleChange} disabled={city ? false : true}>
                 <option value="">None</option>
                 {vetsOptions}</Input>
         } else {

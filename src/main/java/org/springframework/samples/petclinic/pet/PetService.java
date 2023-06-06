@@ -77,14 +77,11 @@ public class PetService {
 
 	@Transactional(rollbackFor = DuplicatedPetNameException.class)
 	public Pet savePet(Pet pet) throws DataAccessException, DuplicatedPetNameException {
-//		if (pet.getOwner() != null) {
 		Pet otherPet = getPetWithNameAndIdDifferent(pet);
 		if (otherPet != null && !otherPet.getId().equals(pet.getId())) {
 			throw new DuplicatedPetNameException();
 		} else
 			petRepository.save(pet);
-//		} else
-//			petRepository.save(pet);
 
 		return pet;
 	}
@@ -110,7 +107,8 @@ public class PetService {
 	@Transactional
 	public void deletePet(int id) throws DataAccessException {
 		Pet toDelete = findPetById(id);
-		petRepository.deleteVisitsByPet(toDelete.getId());
+		this.petRepository.setConsultationsNullByPet(id);
+		this.petRepository.setVisitsNullByPet(id);
 		petRepository.delete(toDelete);
 	}
 

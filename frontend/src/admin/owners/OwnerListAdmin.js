@@ -24,7 +24,7 @@ export default function OwnerListAdmin({ test = false, admin = true }) {
                 <ButtonGroup>
                     <Button size="sm" className='edit-button' aria-label={'edit-' + params.row.username} tag={Link} to={"/owners/" + params.row.id}>Edit</Button>
                     <Button size="sm" className='delete-button' aria-label={'delete-' + params.row.username}
-                        onClick={() => deleteFromList(`/api/v1/owners/${params.row.id}`, params.row.id, [owners, setOwners], [alerts, setAlerts], setMessage, setVisible, { user: true })}>
+                        onClick={() => deleteFromList(`/api/v1/owners/${params.row.id}`, params.row.id, [owners, setOwners], [alerts, setAlerts], setMessage, setVisible, { user: "user" })}>
                         Delete</Button>
                 </ButtonGroup>
             )

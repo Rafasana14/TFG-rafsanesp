@@ -33,11 +33,11 @@ export default function ConsultationEditAdmin() {
         const value = target.value;
         const name = target.name;
         if (name === "owner") {
-            const owner = owners.find((owner) => owner.id === Number(value));
-            setConsultation({ ...consultation, owner: owner });
-            setPetsOwned(pets.filter((pet) => pet.owner.id === Number(value)));
+            const owner = owners.find((owner) => owner.id === Number(value)) || null;
+            value === "" ? setConsultation({ ...consultation, owner: owner, pet: null }) : setConsultation({ ...consultation, owner: owner });
+            setPetsOwned(pets.filter((pet) => pet.owner?.id === Number(value)));
         } else if (name === "pet") {
-            const pet = pets.find((pet) => pet.id === Number(value));
+            const pet = pets.find((pet) => pet.id === Number(value)) || null;
             setConsultation({ ...consultation, pet: pet });
         }
         else setConsultation({ ...consultation, [name]: value });
@@ -46,7 +46,6 @@ export default function ConsultationEditAdmin() {
     const handleSubmit = async (event) => {
         await submitState(event, consultation, `/api/v1/consultations`, setMessage, setVisible, setRedirect);
     };
-
     const modal = useErrorModal(setVisible, visible, message);
 
     const ownerOptions = Array.from(owners).map(owner => <option key={owner.id} value={owner.id}>{owner.user.username}</option>);
@@ -84,12 +83,9 @@ export default function ConsultationEditAdmin() {
                             <FormGroup>
                                 <Label for="owner">Owner</Label>
                                 {consultation.id ?
-                                    <Input type="select" disabled name="owner" id="owner" value={consultation.owner?.id || consultation.pet?.owner.id || ""}
-                                        onChange={handleChange} >
-                                        <option value="">None</option>
-                                        {ownerOptions}
-                                    </Input> :
-                                    <Input type="select" required name="owner" id="owner" value={consultation.owner?.id || consultation.pet?.owner.id || ""}
+                                    <Input type="text" disabled name="owner" id="owner" value={consultation.pet?.owner?.user.username || "Not specified"}
+                                        onChange={handleChange} /> :
+                                    <Input type="select" required name="owner" id="owner" value={consultation.owner?.id || consultation.pet?.owner?.id || ""}
                                         onChange={handleChange} >
                                         <option value="">None</option>
                                         {ownerOptions}
@@ -98,12 +94,9 @@ export default function ConsultationEditAdmin() {
                             <FormGroup>
                                 <Label for="pet">Pet</Label>
                                 {consultation.id ?
-                                    <Input type="select" disabled name="pet" id="pet" value={consultation.pet?.id || ""}
-                                        onChange={handleChange} >
-                                        <option value="">None</option>
-                                        {petOptions}
-                                    </Input> :
-                                    <Input type="select" required name="pet" id="pet" value={consultation.pet?.id || ""}
+                                    <Input type="text" disabled name="pet" id="pet" value={consultation.pet?.name || ""}
+                                        onChange={handleChange} /> :
+                                    <Input type="select" required disabled={consultation.owner ? false : true} name="pet" id="pet" value={consultation.pet?.id || ""}
                                         onChange={handleChange} >
                                         <option value="">None</option>
                                         {petOptions}

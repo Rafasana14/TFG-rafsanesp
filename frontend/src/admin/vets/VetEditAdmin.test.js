@@ -152,7 +152,6 @@ describe('VetEditAdmin', () => {
         const { user } = render(<VetEditAdmin />, { route: '/vets/1' })
         const heading = await screen.findByRole('heading', { 'name': /edit vet/i });
         expect(heading).toBeInTheDocument();
-        await checkOption(/admin1/i);
 
         const dentistry = await screen.findByLabelText(/dentistry/i);
         await user.click(dentistry);

@@ -355,7 +355,17 @@ class ConsultationServiceTests {
 		Map<String, Object> stats = this.consultationService.getAdminConsultationsStats();
 		assertTrue(stats.containsKey("totalConsultations"));
 		assertEquals(5, stats.get("totalConsultations"));
-		assertTrue(stats.containsKey("avgConsultationsPerPlatinumOwner"));
+		assertNotEquals(0, stats.get("avgConsultationsPerPlatinumOwner"));
+		assertTrue(stats.containsKey("avgConsultationsPerOwner"));
+		assertNotEquals(0, stats.get("avgConsultationsPerOwner"));
+	}
+	
+	@Test
+	@Transactional
+	void shouldReturnStatsForAdminWithoutPlatinum() {
+		Map<String, Object> stats = this.consultationService.getAdminConsultationsStats();
+		assertTrue(stats.containsKey("totalConsultations"));
+		assertEquals(5, stats.get("totalConsultations"));
 		assertNotEquals(0, stats.get("avgConsultationsPerPlatinumOwner"));
 		assertTrue(stats.containsKey("avgConsultationsPerOwner"));
 		assertNotEquals(0, stats.get("avgConsultationsPerOwner"));

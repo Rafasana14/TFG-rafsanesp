@@ -6,6 +6,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -33,9 +34,8 @@ public class Ticket extends BaseEntity {
 	@CreationTimestamp
 	private LocalDateTime creationDate;
 
-	@ManyToOne(optional = false)
+	@OneToOne(optional = true)
 	@JoinColumn(name = "user_id")
-	@OnDelete(action = OnDeleteAction.CASCADE)
 	private User user;
 
 	@Valid

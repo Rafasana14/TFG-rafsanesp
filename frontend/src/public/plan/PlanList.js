@@ -38,7 +38,7 @@ function PlanList() {
                             GOLD
                         </CardTitle>
                         <CardText className="text-center">
-                            €5
+                            €5/Month
                         </CardText>
                         <ListGroup flush>
                             <ListGroupItem>
@@ -73,7 +73,7 @@ function PlanList() {
                             PLATINUM
                         </CardTitle>
                         <CardText className="text-center">
-                            €12
+                            €12/Month
                         </CardText>
                         <ListGroup flush>
                             <ListGroupItem>
@@ -216,10 +216,10 @@ function PricingPlanTable({ plan, changePlan, buttons = false }) {
                     <td style={platinumStyle} className={cell}>High</td>
                 </tr>
                 <tr className="border border-dark">
-                    <td className="table-info border border-dark">Prize</td>
+                    <td className="table-info border border-dark">Price</td>
                     <td style={basicStyle} className={cell}>FREE</td>
-                    <td style={goldStyle} className={cell}>€5</td>
-                    <td style={platinumStyle} className={cell}>€12</td>
+                    <td style={goldStyle} className={cell}>€5/Month</td>
+                    <td style={platinumStyle} className={cell}>€12/Month</td>
                 </tr>
                 {buttons ?
                     <tr style={{ height: "60px" }}>

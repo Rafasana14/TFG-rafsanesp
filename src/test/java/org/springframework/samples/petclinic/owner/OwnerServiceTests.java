@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.exceptions.LimitReachedException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.pet.Pet;
 import org.springframework.samples.petclinic.pet.PetService;
@@ -83,6 +84,11 @@ class OwnerServiceTests {
 		Owner owner = this.ownerService.findOwnerByUser(2);
 		assertThat(owner.getFirstName()).startsWith("George");
 	}
+	
+	@Test
+	void shouldNotFindOwnerByIncorrectUser() {
+		assertThrows(ResourceNotFoundException.class, () -> this.ownerService.findOwnerByUser(34));
+	}
 
 	@Test
 	void shouldFindSingleOwnerWithPet() {
@@ -98,17 +104,6 @@ class OwnerServiceTests {
 	void shouldNotFindSingleOwnerWithBadID() {
 		assertThrows(ResourceNotFoundException.class, () -> this.ownerService.findOwnerById(100));
 	}
-
-//	@Test
-//	void shouldFindOwnerByUser() {
-//		Owner owner = this.ownerService.findOwnerByUser(2);
-//		assertEquals("Franklin", owner.getLastName());
-//	}
-//	
-//	@Test
-//	void shouldNotFindOwnerByIncorrectUser() {
-//		assertThrows(ResourceNotFoundException.class, () -> this.ownerService.findOwnerByUser(34));
-//	}
 
 	@Test
 	void shouldFindOptOwnerByUser() {
@@ -129,6 +124,57 @@ class OwnerServiceTests {
 		ownerService.updatePlan(PricingPlan.GOLD, 1);
 		assertEquals(PricingPlan.GOLD, owner.getPlan());
 	}
+	
+	@Test
+	@Transactional
+	void shouldUpdatePlanToBasic() {
+		Owner owner = this.ownerService.findOwnerById(1);
+		assertEquals(PricingPlan.PLATINUM, owner.getPlan());
+		ownerService.updatePlan(PricingPlan.BASIC, 1);
+		assertEquals(PricingPlan.BASIC, owner.getPlan());
+	}
+	
+	@Test
+	@Transactional
+	void shouldUpdatePlanToPlatinum() {
+		Owner owner = this.ownerService.findOwnerById(3);
+		assertEquals(PricingPlan.BASIC, owner.getPlan());
+		ownerService.updatePlan(PricingPlan.PLATINUM, 3);
+		assertEquals(PricingPlan.PLATINUM, owner.getPlan());
+	}
+	
+	@Test
+	@Transactional
+	void shouldNotUpdatePlanToBasicNotWithinLimits() {
+		Owner owner = this.ownerService.findOwnerById(6);
+		addPetToOwner(owner, "Sisi");
+
+		
+		assertEquals(PricingPlan.PLATINUM, owner.getPlan());
+		assertThrows(LimitReachedException.class, () -> ownerService.updatePlan(PricingPlan.BASIC, 6));
+	}
+	
+	private void addPetToOwner(Owner owner, String name) {
+		Pet pet = new Pet();
+		pet.setName(name);
+		pet.setType(petService.findPetTypeByName("dog"));
+		pet.setOwner(owner);
+		petService.savePet(pet);
+	}
+	
+	@Test
+	@Transactional
+	void shouldNotUpdatePlanToGoldNotWithinLimits() {
+		Owner owner = this.ownerService.findOwnerById(6);
+		
+		addPetToOwner(owner, "Sisi");
+		addPetToOwner(owner, "Lulu");
+		addPetToOwner(owner, "Nunu");
+		
+		assertEquals(PricingPlan.PLATINUM, owner.getPlan());
+		assertThrows(LimitReachedException.class, () -> ownerService.updatePlan(PricingPlan.GOLD, 6));
+	}
+
 
 	@Test
 	@Transactional

@@ -41,7 +41,7 @@ public class VisitService {
 	public Collection<Visit> findVisitsByOwnerId(int ownerId) {
 		return visitRepository.findByOwnerId(ownerId);
 	}
-	
+
 	@Transactional(readOnly = true)
 	public Collection<Visit> findVisitsByVetId(int vetId) {
 		return visitRepository.findByVetId(vetId);
@@ -114,10 +114,10 @@ public class VisitService {
 			}
 
 			int years = LocalDate.now().getYear() - this.visitRepository.getYearOfFirstVisit(ownerId);
-			if (years >= 1) {
-				Double avgVisitsPerYear = (double) countAll / (years + 1);
-				res.put("avgVisitsPerYear", UtilFunctions.round(2, avgVisitsPerYear));
-			}
+
+			Double avgVisitsPerYear = (double) countAll / (years + 1);
+			res.put("avgVisitsPerYear", UtilFunctions.round(2, avgVisitsPerYear));
+
 		}
 
 		res.put("totalVisits", countAll);
@@ -166,7 +166,5 @@ public class VisitService {
 		});
 		return unsortedVisitsByPet;
 	}
-
-
 
 }

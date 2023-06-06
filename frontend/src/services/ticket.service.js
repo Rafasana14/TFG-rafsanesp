@@ -61,7 +61,7 @@ class TicketService {
                             <Col md="8">
                                 <CardBody>
                                     <CardTitle tag="h5">
-                                        {t.user.username} -&gt; {t.description}
+                                        {t.user?.username || "Deleted user"} -&gt; {t.description}
                                     </CardTitle>
                                     <CardText><small className="text-muted">{new Date(t.creationDate).toLocaleString()}</small></CardText>
                                     {buttons}
