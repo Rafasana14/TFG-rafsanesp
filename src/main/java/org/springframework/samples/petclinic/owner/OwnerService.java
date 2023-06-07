@@ -110,6 +110,7 @@ public class OwnerService {
 	@Transactional
 	public void deleteOwner(int id) throws DataAccessException {
 		Owner toDelete = findOwnerById(id);
+		ownerRepository.setStatusClosedInConsultations(id);
 		ownerRepository.setOwnerNullInPets(id);
 		ownerRepository.setUserNullInTickets(toDelete.getUser().getId());
 		ownerRepository.delete(toDelete);

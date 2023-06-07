@@ -40,6 +40,10 @@ public interface OwnerRepository extends CrudRepository<Owner, Integer> {
 	public void setOwnerNullInPets(@Param("ownerId") int ownerId);
 	
 	@Modifying
+	@Query("UPDATE Consultation c SET c.status = 2 WHERE c.pet.id IN (SELECT p.id FROM Pet p JOIN p.owner o WHERE o.id = :ownerId)")
+	public void setStatusClosedInConsultations(@Param("ownerId") int ownerId);
+	
+	@Modifying
 	@Query("UPDATE Ticket t SET t.user = NULL WHERE t.user.id = :userId")
 	public void setUserNullInTickets(@Param("userId") int userId);
 
