@@ -99,6 +99,12 @@ export default function VisitListAdmin({ test = false, admin = true }) {
                         slots={{
                             toolbar: GridToolbar,
                         }}
+                        slotProps={{
+                            toolbar: {
+                                showQuickFilter: true,
+                                quickFilterProps: { debounceMs: 500 },
+                            },
+                        }}
                     />
                 </Col>
             </Container>

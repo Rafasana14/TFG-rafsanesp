@@ -36,7 +36,10 @@ export default function ConsultationListAdmin({ test = false }) {
     const columns = [
         { field: 'id', headerName: 'ID', flex: 0.1, minWidth: 70, filterable: false },
         { field: 'title', headerName: 'Title', flex: 1, minWidth: 300 },
-        { field: 'status', headerName: 'Status', flex: 0.4, minWidth: 130 },
+        {
+            field: 'status', headerName: 'Status', flex: 0.4, minWidth: 130, type: 'singleSelect',
+            valueOptions: ['PENDING', 'ANSWERED', 'CLOSED']
+        },
         { field: 'owner', headerName: 'Owner', flex: 0.5, minWidth: 120 },
         { field: 'pet', headerName: 'Pet', flex: 0.4, minWidth: 120 },
         { field: 'creationDate', type: 'dateTime', headerName: 'Creation Date', flex: 0.4, minWidth: 150 },
@@ -82,6 +85,12 @@ export default function ConsultationListAdmin({ test = false }) {
                     pageSizeOptions={[10, 20]}
                     slots={{
                         toolbar: GridToolbar,
+                    }}
+                    slotProps={{
+                        toolbar: {
+                            showQuickFilter: true,
+                            quickFilterProps: { debounceMs: 500 },
+                        },
                     }}
                 />
             </Col>

@@ -93,6 +93,11 @@ export default function VetListAdmin({ test = false, admin = true }) {
                             columnsPanel: {
                                 getTogglableColumns,
                             },
+                            toolbar: {
+                                showQuickFilter: true,
+                                quickFilterProps: { debounceMs: 500 },
+                            },
+
                         }}
                     />
                 </Col>
