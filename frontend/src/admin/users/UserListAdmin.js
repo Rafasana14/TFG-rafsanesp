@@ -40,7 +40,10 @@ export default function UserListAdmin({ test = false }) {
     const columns = [
         { field: 'id', headerName: 'ID', flex: 0.1, minWidth: 60, },
         { field: 'username', headerName: 'Username', minWidth: 150, flex: 1 },
-        { field: 'authority', headerName: 'Authority', flex: 0.5, minWidth: 150 },
+        {
+            field: 'authority', headerName: 'Authority', flex: 0.5, minWidth: 150, type: 'singleSelect',
+            valueOptions: ['OWNER', 'VET', 'ADMIN']
+        },
         { field: 'actions', headerName: 'Actions', flex: 0.3, minWidth: 180, sortable: false, filterable: false, renderCell: renderButtons },
     ];
 
@@ -78,6 +81,12 @@ export default function UserListAdmin({ test = false }) {
                         pageSizeOptions={[10, 20]}
                         slots={{
                             toolbar: GridToolbar,
+                        }}
+                        slotProps={{
+                            toolbar: {
+                                showQuickFilter: true,
+                                quickFilterProps: { debounceMs: 500 },
+                            },
                         }}
                     />
                 </Col>

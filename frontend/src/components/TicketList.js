@@ -34,38 +34,43 @@ export default function TicketList({ auth }) {
 
     async function handleClose(event) {
         event.preventDefault();
-        const confirm = window.confirm("Are you sure you want to close the consultation?")
-        if (confirm && auth !== "OWNER") {
-            const aux = consultation;
-            aux.status = "CLOSED"
 
-            await fetch(`/api/v1/consultations/${id}`, {
-                method: 'PUT',
-                headers: {
-                    "Authorization": `Bearer ${jwt}`,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(aux),
-            })
-                .then(response => response.json())
-                .then(json => {
-                    if (json.message) {
-                        setMessage(json.message);
-                        setVisible(true);
-                    }
-                    else {
-                        setConsultation({ ...consultation, status: "CLOSED" });
-                        getDeleteAlertsOrModal({ message: "Consultation closed!" }, id, alerts, setAlerts, setMessage, setVisible)
-                    }
-                }).catch((message) => alert(message));
+        if (auth === "VET" && tickets.length === 0) {
+            setMessage("You can't close a consultation with no tickets.");
+            setVisible(true);
+        } else {
+            const confirm = window.confirm("Are you sure you want to close the consultation?")
+            if (confirm && auth !== "OWNER") {
+                const aux = consultation;
+                aux.status = "CLOSED"
+
+                await fetch(`/api/v1/consultations/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        "Authorization": `Bearer ${jwt}`,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(aux),
+                })
+                    .then(response => response.json())
+                    .then(json => {
+                        if (json.message) {
+                            setMessage(json.message);
+                            setVisible(true);
+                        }
+                        else {
+                            setConsultation({ ...consultation, status: "CLOSED" });
+                            getDeleteAlertsOrModal({ message: "Consultation closed!" }, id, alerts, setAlerts, setMessage, setVisible)
+                        }
+                    }).catch((message) => alert(message));
+            }
         }
-
     }
 
     const modal = useErrorModal(setVisible, visible, message);
-    const ticketList = ticketService.getTicketList([tickets, setTickets], auth, [alerts, setAlerts], setMessage, setVisible, setNewTicket, plan);
-    const ticketForm = ticketService.getTicketForm(newTicket, consultation.status, auth, handleChange, handleSubmit);
+    const ticketList = ticketService.getTicketList(consultation.status, [tickets, setTickets], auth, [alerts, setAlerts], setMessage, setVisible, setNewTicket, plan);
+    const ticketForm = ticketService.getTicketForm(newTicket, consultation.status, auth, handleChange, handleSubmit, plan);
     const ticketHeading = ticketService.getTicketHeading(consultation, handleClose, auth);
     return (
         <div>

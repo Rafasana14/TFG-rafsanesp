@@ -7,6 +7,7 @@ import useErrorModal from '../../util/useErrorModal';
 import deleteFromList from '../../util/deleteFromList';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { useMediaQuery } from 'react-responsive';
+import useFetchData from '../../util/useFetchData';
 
 const jwt = tokenService.getLocalAccessToken();
 
@@ -14,6 +15,7 @@ export default function PetListAdmin({ test = false, admin = true }) {
     const [message, setMessage] = useState(null);
     const [visible, setVisible] = useState(false);
     const [pets, setPets] = useFetchState([], `/api/v1/pets`, jwt, setMessage, setVisible);
+    const types = useFetchData('/api/v1/pets/types', jwt, setMessage, setVisible);
     const [alerts, setAlerts] = useState([]);
     const modal = useErrorModal(setVisible, visible, message);
     const isMobile = useMediaQuery({ query: `(max-width: 860px)` })
@@ -41,7 +43,10 @@ export default function PetListAdmin({ test = false, admin = true }) {
         { field: 'id', headerName: 'ID', flex: 0.1, minWidth: 60, },
         { field: 'name', headerName: 'Name', minWidth: 150, flex: 0.8 },
         { field: 'birthdate', headerName: 'Birth Date', flex: 0.5, minWidth: 150, sortable: false },
-        { field: 'type', headerName: 'Type', minWidth: 100, flex: 0.5 },
+        {
+            field: 'type', headerName: 'Type', minWidth: 100, flex: 0.5, type: 'singleSelect',
+            valueOptions: types.map((t) => t.name)
+        },
         { field: 'owner', headerName: 'Owner', minWidth: 150, flex: 1 },
         { field: 'actions', headerName: 'Actions', flex: 0.5, minWidth: 180, sortable: false, filterable: false, renderCell: renderButtons },
     ];
@@ -91,6 +96,12 @@ export default function PetListAdmin({ test = false, admin = true }) {
                             pageSizeOptions={[10, 20]}
                             slots={{
                                 toolbar: GridToolbar,
+                            }}
+                            slotProps={{
+                                toolbar: {
+                                    showQuickFilter: true,
+                                    quickFilterProps: { debounceMs: 500 },
+                                },
                             }}
                         />
                     </Col>

@@ -14,7 +14,7 @@ export default function useErrorModal(setVisible, visible = false, message = nul
                 &times;
             </button>
         );
-        const cond = message.includes("limit");
+        const cond = message.includes("limit") && window.location.pathname !== "/plan";
 
         return (
             <Modal isOpen={visible} toggle={() => handleVisible(setVisible, visible)}

@@ -115,6 +115,11 @@ export default function VisitListOwner({ test = false }) {
                             columnsPanel: {
                                 getTogglableColumns,
                             },
+                            toolbar: {
+                                showQuickFilter: true,
+                                quickFilterProps: { debounceMs: 500 },
+                            },
+
                         }}
                     />
                 </Col>

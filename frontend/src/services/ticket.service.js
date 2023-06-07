@@ -4,9 +4,8 @@ import { Link } from "react-router-dom";
 import tokenService from "./token.service";
 
 class TicketService {
-    getTicketList([tickets, setTickets], auth, [alerts, setAlerts], setMessage, setVisible, setNewTicket, plan = null) {
+    getTicketList(status, [tickets, setTickets], auth, [alerts, setAlerts], setMessage, setVisible, setNewTicket, plan = null) {
         return tickets.map((t, index) => {
-            const status = t.consultation.status;
             const removeOwnerVet = () => deleteFromList(`/api/v1/consultations/${t.consultation.id}/tickets/${t.id}`, t.id, [tickets, setTickets],
                 [alerts, setAlerts], setMessage, setVisible);
             const removeAdmin = () => deleteFromList(`/api/v1/consultations/${t.consultation.id}/tickets/${t.id}`, t.id, [tickets, setTickets],
@@ -75,8 +74,8 @@ class TicketService {
         })
     }
 
-    getTicketForm(newTicket, status, auth, handleChange, handleSubmit) {
-        if (auth === "ADMIN" || status !== "CLOSED")
+    getTicketForm(newTicket, status, auth, handleChange, handleSubmit, plan) {
+        if (auth === "ADMIN" || (auth === "VET" && status !== "CLOSED") || (auth === "OWNER" && plan === "PLATINUM" && status !== "CLOSED"))
             return (
                 <Container>
                     {newTicket.id ? <h4>Edit Ticket</h4> : <h4>Add New Ticket</h4>}

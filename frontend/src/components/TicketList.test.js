@@ -148,6 +148,25 @@ describe('TicketList', () => {
         window.confirm = jsdomConfirm;
     });
 
+    test('do not close consultation for vet with no tickets', async () => {
+        const route = '/consultations/1/tickets'
+        server.use(
+            rest.get('*/api/v1/consultations/:id/tickets', (req, res, ctx) => {
+                return res(
+                    ctx.status(200),
+                    ctx.json([]),
+                )
+            }),
+        )
+        window.confirm = () => { return true };
+        const { user } = render(<TicketList auth="VET" />, { route: route });
+
+        const closeButton = screen.getByRole('button', { 'name': /Close/ });
+        await user.click(closeButton);
+        const modal = await screen.findByRole('dialog');
+        expect(modal).toBeInTheDocument();
+    });
+
     test('close consultation with exception for admin or vet', async () => {
         server.use(
             rest.put('*/api/v1/consultations/:id', (req, res, ctx) => {
@@ -251,7 +270,6 @@ describe('TicketList', () => {
         render(<TicketList auth="OWNER" />);
 
         const input = screen.queryByRole('textbox', { 'name': 'Description' });
-        await waitForElementToBeRemoved(input);
         expect(input).not.toBeInTheDocument();
     });
 

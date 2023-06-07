@@ -43,7 +43,10 @@ export default function OwnerListAdmin({ test = false, admin = true }) {
         { field: 'city', headerName: 'City', flex: 1, minWidth: 150, sortable: false },
         { field: 'telephone', headerName: 'Telephone', flex: 1, minWidth: 150, sortable: false },
         { field: 'username', headerName: 'Username', flex: 1, minWidth: 160 },
-        { field: 'plan', headerName: 'Plan', flex: 1, minWidth: 150 },
+        {
+            field: 'plan', headerName: 'Plan', flex: 1, minWidth: 150, type: 'singleSelect',
+            valueOptions: ['BASIC', 'GOLD', 'PLATINUM']
+        },
         { field: 'actions', headerName: 'Actions', flex: 1, minWidth: admin ? 130 : 80, sortable: false, filterable: false, renderCell: renderButtons },
     ];
 
@@ -94,6 +97,12 @@ export default function OwnerListAdmin({ test = false, admin = true }) {
                         pageSizeOptions={[10, 20]}
                         slots={{
                             toolbar: GridToolbar,
+                        }}
+                        slotProps={{
+                            toolbar: {
+                                showQuickFilter: true,
+                                quickFilterProps: { debounceMs: 500 },
+                            },
                         }}
                     />
                 </Col>

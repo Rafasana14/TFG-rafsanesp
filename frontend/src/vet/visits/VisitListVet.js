@@ -88,6 +88,12 @@ export default function VisitListVet({ test = false }) {
                         slots={{
                             toolbar: GridToolbar,
                         }}
+                        slotProps={{
+                            toolbar: {
+                                showQuickFilter: true,
+                                quickFilterProps: { debounceMs: 500 },
+                            },
+                        }}
                     />
                 </Col>
             </Container>
