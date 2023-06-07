@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import tokenService from "./token.service";
 
 class TicketService {
-    getTicketList(status, [tickets, setTickets], auth, [alerts, setAlerts], setMessage, setVisible, setNewTicket, plan = null) {
+    getTicketList(status, [tickets, setTickets], auth, [alerts, setAlerts], [setMessage, setVisible], setNewTicket, plan = null) {
         return tickets.map((t, index) => {
             const removeOwnerVet = () => deleteFromList(`/api/v1/consultations/${t.consultation.id}/tickets/${t.id}`, t.id, [tickets, setTickets],
                 [alerts, setAlerts], setMessage, setVisible);

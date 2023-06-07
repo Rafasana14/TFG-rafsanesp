@@ -69,7 +69,7 @@ export default function TicketList({ auth }) {
     }
 
     const modal = useErrorModal(setVisible, visible, message);
-    const ticketList = ticketService.getTicketList(consultation.status, [tickets, setTickets], auth, [alerts, setAlerts], setMessage, setVisible, setNewTicket, plan);
+    const ticketList = ticketService.getTicketList(consultation.status, [tickets, setTickets], auth, [alerts, setAlerts], [setMessage, setVisible], setNewTicket, plan);
     const ticketForm = ticketService.getTicketForm(newTicket, consultation.status, auth, handleChange, handleSubmit, plan);
     const ticketHeading = ticketService.getTicketHeading(consultation, handleClose, auth);
     return (

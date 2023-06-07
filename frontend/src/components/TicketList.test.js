@@ -1,4 +1,4 @@
-import { render, screen, waitFor, waitForElementToBeRemoved } from "../test-utils";
+import { render, screen, waitFor } from "../test-utils";
 import { server } from "../mocks/server";
 import { rest } from "msw";
 import TicketList from "./TicketList";
