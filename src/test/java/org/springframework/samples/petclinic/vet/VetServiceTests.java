@@ -30,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.exceptions.DuplicatedSpecialtyException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.samples.petclinic.pet.exceptions.DuplicatedPetNameException;
 import org.springframework.samples.petclinic.user.AuthoritiesService;
@@ -203,6 +204,14 @@ class VetServiceTests {
 
 		specialties = (Collection<Specialty>) this.vetService.findSpecialties();
 		assertEquals(found + 1, specialties.size());
+	}
+	
+	@Test
+	@Transactional
+	void shouldNotInsertSpecialtyWithSameName() {
+		Specialty specialty = new Specialty();
+		specialty.setName("surgery");
+		assertThrows(DuplicatedSpecialtyException.class, () -> this.vetService.saveSpecialty(specialty));
 	}
 
 	@Test

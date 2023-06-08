@@ -40,8 +40,10 @@ public interface PetRepository extends CrudRepository<Pet, Integer> {
 	@Query("UPDATE Visit v SET v.pet = NULL WHERE v.pet.id = :petId")
 	public void setVisitsNullByPet(@Param("petId") int petId);
 	
+	
+	
 	@Modifying
-	@Query("UPDATE Consultation c SET c.pet = NULL WHERE c.pet.id = :petId")
+	@Query("UPDATE Consultation c SET c.pet = NULL, c.status = 2 WHERE c.pet.id = :petId")
 	public void setConsultationsNullByPet(@Param("petId") int petId);
 
 	@Query(("SELECT COUNT(p) FROM Pet p WHERE p.owner.id = :id"))

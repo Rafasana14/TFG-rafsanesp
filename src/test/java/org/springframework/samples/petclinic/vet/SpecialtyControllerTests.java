@@ -22,6 +22,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.http.MediaType;
 import org.springframework.samples.petclinic.configuration.SecurityConfiguration;
+import org.springframework.samples.petclinic.exceptions.DuplicatedSpecialtyException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -103,6 +104,17 @@ class SpecialtyControllerTests {
 
 		mockMvc.perform(post(BASE_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
 				.content(objectMapper.writeValueAsString(sp))).andExpect(status().isCreated());
+	}
+	
+	@Test
+	@WithMockUser("admin")
+	void shouldNotCreateSpecialtyWithSameName() throws Exception {
+		Specialty sp = new Specialty();
+		sp.setName("Prueba");
+		
+		when(this.vetService.saveSpecialty(any(Specialty.class))).thenThrow(DuplicatedSpecialtyException.class);
+		mockMvc.perform(post(BASE_URL).with(csrf()).contentType(MediaType.APPLICATION_JSON)
+				.content(objectMapper.writeValueAsString(sp))).andExpect(status().isBadRequest());
 	}
 
 	@Test

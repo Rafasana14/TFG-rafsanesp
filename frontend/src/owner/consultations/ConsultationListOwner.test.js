@@ -24,6 +24,8 @@ describe('ConsultationListOwner', () => {
         )
         render(<ConsultationListOwner test={true} />);
         testRenderList(/consultations/i);
+        const consultation1Status = await screen.findByRole('cell', { 'name': 'ANSWERED' });
+        expect(consultation1Status).toBeInTheDocument();
 
         const editButtons = screen.queryAllByRole('link', { 'name': /edit/ });
         expect(editButtons).toHaveLength(0);
@@ -34,14 +36,10 @@ describe('ConsultationListOwner', () => {
 
     test('renders consultations correctly', async () => {
         render(<ConsultationListOwner test={true} />);
+        testRenderList(/consultations/i);
+
         const consultation1 = await screen.findByRole('cell', { 'name': 'Mi gato no come' });
         expect(consultation1).toBeInTheDocument();
-
-        const consultation1Status = await screen.findByRole('cell', { 'name': 'ANSWERED' });
-        expect(consultation1Status).toBeInTheDocument();
-
-        const consultation2Status = await screen.findByRole('cell', { 'name': 'PENDING' });
-        expect(consultation2Status).toBeInTheDocument();
 
         const editButtons = await screen.findAllByRole('link', { 'name': /edit/ });
         expect(editButtons).toHaveLength(2);

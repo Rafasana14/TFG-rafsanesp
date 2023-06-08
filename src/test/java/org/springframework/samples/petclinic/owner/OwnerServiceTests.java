@@ -148,7 +148,6 @@ class OwnerServiceTests {
 	void shouldNotUpdatePlanToBasicNotWithinLimits() {
 		Owner owner = this.ownerService.findOwnerById(6);
 		addPetToOwner(owner, "Sisi");
-
 		
 		assertEquals(PricingPlan.PLATINUM, owner.getPlan());
 		assertThrows(LimitReachedException.class, () -> ownerService.updatePlan(PricingPlan.BASIC, 6));
