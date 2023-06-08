@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.petclinic.exceptions.DuplicatedSpecialtyException;
 import org.springframework.samples.petclinic.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,11 +95,33 @@ public class VetService {
 		return specialtyRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Specialty", "ID", id));
 	}
 
+	@Transactional(readOnly = true)
+	public Optional<Specialty> findSpecialtyByName(String name) throws DataAccessException {
+		return specialtyRepository.findByName(name);
+	}
+
 	@Transactional
 	public Specialty saveSpecialty(Specialty specialty) throws DataAccessException {
-		specialtyRepository.save(specialty);
+		specialty.setName(specialty.getName().toLowerCase());
+		Specialty otherSpecialty = getSpecialtyWithNameAndIdDifferent(specialty);
+		if (otherSpecialty != null && !otherSpecialty.getId().equals(specialty.getId())) {
+			throw new DuplicatedSpecialtyException();
+		} else 
+			specialtyRepository.save(specialty);
 
 		return specialty;
+	}
+
+	private Specialty getSpecialtyWithNameAndIdDifferent(Specialty specialty) {
+		String name = specialty.getName();
+		for (Specialty s : findSpecialties()) {
+			String compName = s.getName();
+			if (compName.equals(name) && !s.getId().equals(specialty.getId())) {
+				return s;
+			}
+		}
+		return null;
+
 	}
 
 	@Transactional
