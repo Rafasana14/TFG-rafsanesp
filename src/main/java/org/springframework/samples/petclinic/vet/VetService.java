@@ -95,11 +95,6 @@ public class VetService {
 		return specialtyRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Specialty", "ID", id));
 	}
 
-	@Transactional(readOnly = true)
-	public Optional<Specialty> findSpecialtyByName(String name) throws DataAccessException {
-		return specialtyRepository.findByName(name);
-	}
-
 	@Transactional
 	public Specialty saveSpecialty(Specialty specialty) throws DataAccessException {
 		specialty.setName(specialty.getName().toLowerCase());
