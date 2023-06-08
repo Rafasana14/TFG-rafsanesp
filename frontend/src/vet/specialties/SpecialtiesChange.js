@@ -65,7 +65,7 @@ export default function SpecialtiesChange() {
                                     {specialtiesBoxes}
                                 </Row>
                             </FormGroup>
-                            <FormGroup>
+                            <FormGroup align='center'>
                                 <Button className='save-button' type="submit">Save</Button>{' '}
                                 <Button className='back-button' onClick={() => navigate(-1)}>Back</Button>
                             </FormGroup>

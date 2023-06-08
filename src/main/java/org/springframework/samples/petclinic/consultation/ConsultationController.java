@@ -36,6 +36,7 @@ public class ConsultationController {
 	private final UserService userService;
 	private static final String OWNER_AUTH = "OWNER";
 	private static final String ADMIN_AUTH = "ADMIN";
+	private static final String VET_AUTH = "VET";
 
 	@Autowired
 	public ConsultationController(ConsultationService consultationService, UserService userService) {
@@ -47,7 +48,7 @@ public class ConsultationController {
 	public ResponseEntity<List<Consultation>> findAllConsultations() {
 		User user = userService.findCurrentUser();
 		List<Consultation> res;
-		if (user.hasAnyAuthority("VET", ADMIN_AUTH).equals(true)) {
+		if (user.hasAnyAuthority(VET_AUTH, ADMIN_AUTH).equals(true)) {
 			res = (List<Consultation>) consultationService.findAll();
 		} else {
 			Owner owner = userService.findOwnerByUser(user.getId());
@@ -60,7 +61,7 @@ public class ConsultationController {
 	public ResponseEntity<Consultation> findConsultationById(@PathVariable("consultationId") int id) {
 		User user = userService.findCurrentUser();
 		Consultation cons = this.consultationService.findConsultationById(id);
-		if (user.hasAnyAuthority(ADMIN_AUTH, "VET").equals(true))
+		if (user.hasAnyAuthority(ADMIN_AUTH, VET_AUTH).equals(true))
 			return new ResponseEntity<>(cons, HttpStatus.OK);
 		else {
 			Owner owner = userService.findOwnerByUser(user.getId());
